@@ -1,11 +1,3 @@
-/*
- * @Description:
- * @Author: your name
- * @version:
- * @Date: 2024-02-06 15:28:13
- * @LastEditors: your name
- * @LastEditTime: 2024-05-08 14:06:34
- */
 import * as Cesium from "cesium";
 
 /**

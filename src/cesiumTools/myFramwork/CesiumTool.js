@@ -7,6 +7,8 @@ import DataLoader from './DataLoader';
 import EventManager from './EventManager';
 import AnimationManager from './AnimationManager';
 import addControls from './addControls';
+import CoordTransformer from './CoordTransformer';
+import DataPrepocesser from './DataPrepocesser';
 
 class CesiumFramework {
     constructor(viewer) {
