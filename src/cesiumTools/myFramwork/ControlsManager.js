@@ -1,4 +1,4 @@
-class addControls {
+class ControlsManager {
     constructor(viewer) {
         this.viewer = viewer;
     }
@@ -7,4 +7,4 @@ class addControls {
     addLegend() { /* ... */ }
 }
 
-export default addControls;
+export default ControlsManager;

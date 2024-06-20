@@ -6,9 +6,10 @@ import ViewController from './ViewController';
 import DataLoader from './DataLoader';
 import EventManager from './EventManager';
 import AnimationManager from './AnimationManager';
-import addControls from './addControls';
+import ControlsManager from './ControlsManager';
 import CoordTransformer from './CoordTransformer';
 import DataPrepocesser from './DataPrepocesser';
+import EffectController from './EffectController';
 
 class CesiumFramework {
     constructor(viewer) {
@@ -21,7 +22,8 @@ class CesiumFramework {
         this.dataLoader = new DataLoader(viewer);
         this.eventManager = new EventManager(viewer);
         this.animation = new AnimationManager(viewer);
-        this.controls = new addControls(viewer);
+        this.ControlsManager = new ControlsManager(viewer);
+        this.EffectController = new EffectController(viewer);
     }
 }
 
