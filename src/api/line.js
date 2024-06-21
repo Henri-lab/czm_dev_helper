@@ -1,6 +1,6 @@
 import api from "./request";
 import { lineColors } from "@/store/staticData";
-import DataPrepocesser from "../cesiumTools/myFramwork/DataPrepocesser";
+import DataPrepocesser from "../cesiumTools/myFramwork/Data/DataPrepocesser";
 import { CoordTransform } from '@/cesiumTools/mapPlugin.js'
 
 export const getLine = async (params) => {
