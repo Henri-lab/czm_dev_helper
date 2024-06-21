@@ -2,6 +2,7 @@
 // 2. 使用vite-plugin-insert-html插件在index.html中实现自动引入
 // 3. 使用viteStaticCopy插件将cesium文件从node_modules下拷贝出来
 // 4. 使用vite-plugin-compression插件对大文件进行进一步压缩
+// 5. 使用vite-plugin-glsl加载本地glsl文件
 import { defineConfig, loadEnv } from "vite";
 import { fileURLToPath } from "url";
 import vue from "@vitejs/plugin-vue";
@@ -9,6 +10,7 @@ import { viteExternalsPlugin } from "vite-plugin-externals";
 import { insertHtml, h } from "vite-plugin-insert-html";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import compress from "vite-plugin-compression";
+import glsl from 'vite-plugin-glsl';
 
 const config = (context) => {
   const mode = context.mode;
@@ -47,6 +49,7 @@ const config = (context) => {
         }),
       ],
     }),
+    glsl(),
   ];
   if (!isProd) {
     // 开发模式，复制 node_modules 下的 cesium 依赖
