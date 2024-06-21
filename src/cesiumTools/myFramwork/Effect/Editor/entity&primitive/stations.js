@@ -1,9 +1,15 @@
 // metro stations的增删改查
-// 光柱特效
+// 光柱特效+底部圆特效
+// const station = {
+//         conePrimitve,
+//         bottomCircleEntity,
+//         name
+//     };
 
 import GeometryCreater from '../../GeometryCreater'
 import EffectController from '../../EffectController';
 import { changeDisplayBillBoard } from './billboards';
+
 
 
 
@@ -87,11 +93,11 @@ export const hideStationByName = (names, isShow) => {
 /**
  * 
  * @param {string} name -站点名字
- * @param {{stationsData:Array}} cacheData -缓存数据 
- * @returns {{target:Entity}}
+ * @param {{stationsEnts:Array}} cacheData -缓存数据 
+ * @returns {Entity}
  */
 // 通过名称找到对应的站点
-export const findbyStationName = (name, cacheData) => {
+export const findStationByName = (name, cacheData) => {
     let stationsData = stations
     // 如果传入缓存数据则使用传入的缓存数据
     if (cacheData) {
@@ -99,7 +105,9 @@ export const findbyStationName = (name, cacheData) => {
         stationsData = stationEnts
     }
     const stationEnt = stationsData.find((item) => item.name === name);
-    return {
-        target: stationEnt,
-    }
+    return stationEnt;
+
 }
+
+
+

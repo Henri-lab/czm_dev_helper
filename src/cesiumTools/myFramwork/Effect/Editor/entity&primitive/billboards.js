@@ -1,5 +1,11 @@
-import PopupLoader from "../../../../../components/Bubble/PopupLoader";
+import _PopupLoader /*类名和实例名重复的处理*/ from "../../../../../components/Bubble/PopupLoader";
+import { findStationByName } from "./stations";
 // 站点标牌 (billboard) 缩写 bb,BB
+//  const bb = {
+//         PopupLoader,
+//         htmlEle: PopupLoader.vmInstance.el,
+//         name
+//     };
 
 
 // 渲染站点标牌
@@ -25,7 +31,8 @@ export const renderStationBill = async (viewer, options) => {
         type: 'marker'
     };
 
-    const PopupLoader = new PopupLoader(
+
+    const PopupLoader = new _PopupLoader(
         viewer,
         billboardOpt,
     );
@@ -34,7 +41,7 @@ export const renderStationBill = async (viewer, options) => {
 
     const target = {
         PopupLoader,
-        billboard: PopupLoader.vmInstance.el,
+        htmlEle: PopupLoader.vmInstance.el,
         name
     };
     isCache && billboards.push(target);
@@ -50,9 +57,9 @@ export const changeDisplayBillBoard = (names, isShow) => {
         (bb) => names.indexOf(bb.PopupLoader.label) > -1
     );
     isThatBBs.forEach((bb) => {
-        const { billboard, PopupLoader } = bb;
+        const { htmlEle, PopupLoader } = bb;
         PopupLoader.isDisplay = isShow;
-        billboard.style.display = isShow ? "block" : "none";
+        htmlEle.style.display = isShow ? "block" : "none";
     });
 }
 
@@ -71,18 +78,44 @@ export const removeAllBillboards = () => {
 /**
  * 
  * @param {string} name -站牌名字
- * @param {{billboardsData:Array}} cacheData -缓存数据 
- * @returns  {{target:Entity}}
+ * @param {{billboards:Array}} cacheData -缓存数据 
+ * @returns  {Entity}
  */
-export const findbyBillboardByName = (name, cacheData) => {
+export const findBillboardByName = (name, cacheData) => {
     let billboardsData = billboards
     // 如果传入缓存数据则使用传入的缓存数据
     if (cacheData) {
         const { billboards } = cacheData
         billboardsData = billboards
     }
-    const targetBillboard = billboardsData.find((item) => item.billControler.label === name);
-    return {
-        target: targetBillboard,
+    const targetBillboard = billboardsData.find((item) => item.PopupLoader.label === name);
+    return targetBillboard;
+
+}
+
+
+let activeBB/* 展示中的站牌*/
+// 输入站点名称 则展示站点的站牌
+export const focusOnStation = (viewer, name, cacheData) => {
+    const targetBB = findBillboardByName(name, cacheData);
+    const { PopupLoader/* 目标站牌的loader*/ } = targetBB;
+    const targetSta = findStationByName(name, cacheData);
+
+    // 移除正在展示的查询型popup
+    if (activeBB) {
+        const { PopupLoader /* 展示中的站牌loader*/ } = activeBB
+        PopupLoader.removeQueryPopup()
+    }
+
+    // 如果找到了车站+站牌 
+    if (targetSta && PopupLoader) {
+        const { bottomCircleEntity } = targetSta
+        viewer.flyTo(bottomCircleEntity, {
+            offset: new Cesium.HeadingPitchRange(Cesium.Math.toRadians(40), Cesium.Math.toRadians(-40), 5000)
+        });
+        // 挂载目标站牌
+        PopupLoader/* 目标站牌的loader*/.showQueryPopup()
+        // 注册正在聚焦的站牌
+        activeBB = targetBB
     }
 }

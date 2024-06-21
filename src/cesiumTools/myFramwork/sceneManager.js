@@ -1,13 +1,6 @@
-/*
- * @Description:
- * @Author: your name
- * @version:
- * @Date: 2024-05-08 14:05:51
- * @LastEditors: your name
- * @LastEditTime: 2024-05-08 14:51:55
- */
+
 import * as Cesium from "cesium";
-import { TencentImageryProvider } from "./mapPlugin";
+import { TencentImageryProvider } from "./Map/mapPlugin";
 
 // 初始化地图场景
 export const initViewer = (container) => {

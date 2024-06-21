@@ -83,8 +83,8 @@ export const binkLineByName = (name /*selected*/, binkCount = 6 /*闪烁次数*/
     }, timeBreak);
 };
 
-
-// 根据名称视角跳转到对应线路
+// 跳转
+// --根据名称视角跳转到对应线路
 export const flyToLine = (viewer, name) => {
     const targetEnt = lines.find((item) => item.name === name);
     if (!targetEnt) {
@@ -92,6 +92,17 @@ export const flyToLine = (viewer, name) => {
     }
     viewer.flyTo(targetEnt);
 };
+
+// --通过站线名称跳转到站线质心点
+export const flyToLineCenter = (viewer, lineName, linesData) => {
+    let lineEnt
+    let dataSource = linesData ? linesData : lines
+    lineEnt = dataSource.find(item => item.name === lineName)
+    viewer.flyTo(lineEnt, {
+        offset: new Cesium.HeadingPitchRange(Cesium.Math.toRadians(40), Cesium.Math.toRadians(-40), 20000)
+    })
+}
+
 
 // 通过名称控制线路显示隐藏
 export const hideLineByName = (names, isShow) => {
