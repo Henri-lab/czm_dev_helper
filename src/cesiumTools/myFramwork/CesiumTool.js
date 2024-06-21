@@ -1,5 +1,5 @@
 import LayerManager from './LayerManager';
-import DrawingManager from './DrawingManager';
+import DrawingManager from './Effect/Editor/DrawingManager';
 import MeasurementManager from './Compute/MeasurementManager';
 import AnnotationManager from './AnnotationManager';
 import ViewController from './ViewController';

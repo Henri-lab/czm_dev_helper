@@ -38,6 +38,8 @@ export const getLine = async (params) => {
     }
 };
 export const getLinePlan = (params) => api.get(`/getLinePlan`, { params });
+
+// by name
 export const getStationInfo = (params) =>
     api.get(`/getStationInfo`, { params });
 

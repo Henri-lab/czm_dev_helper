@@ -57,4 +57,7 @@ class GeometryCreater {
         );
         return res
     }
+
 }
+
+export default GeometryCreater;
