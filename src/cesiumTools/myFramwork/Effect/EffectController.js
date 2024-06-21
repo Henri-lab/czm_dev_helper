@@ -121,7 +121,7 @@ class EffectController {
      添加底部圆形实体带贴图
      @param {Cesium.Color} color -圆形实体颜色
      */
-    addConeGlowBottomCircle(options, color) {
+    addConeGlowBottomCircle(options) {
         const position = Cesium.defaultValue(
             options.position,
             Cesium.Cartesian3.ZERO
