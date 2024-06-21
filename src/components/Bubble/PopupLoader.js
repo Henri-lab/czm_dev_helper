@@ -2,14 +2,14 @@ import PopupCreator from "../../cesiumTools/myFramwork/PopupCreator";
 import { getStationInfo } from "@/api/line";
 
 
-
+// route，cb硬编码
 const pathOfVueComponentMap = {
     marker: () => import("./MakerTemplate.vue"),
     carPopup: () => import("./PopupCar.vue"),
     queryPopup: () => import("./PopupQuery.vue"),
 };
-// VueCompLoader 负责动态加载 目录下的vue组件
-class VueCompLoader extends PopupCreator {
+// PopupLoader 负责动态加载 目录下的vue组件
+class PopupLoader extends PopupCreator {
     constructor(viewer, options) {
         super(viewer, options, pathOfVueComponentMap, this.showQueryPopup);
     }
@@ -45,7 +45,7 @@ class VueCompLoader extends PopupCreator {
                 type: "queryPopup",
                 offset: [150, -20],
             }
-            this.queryPopup = new VueCompLoader(this.viewer, opt);
+            this.queryPopup = new PopupLoader(this.viewer, opt);
 
             // 可视化 挂载元素
             this.queryPopup.addLabel();
@@ -57,5 +57,5 @@ class VueCompLoader extends PopupCreator {
     }
 }
 
-export default VueCompLoader;
+export default PopupLoader;
 

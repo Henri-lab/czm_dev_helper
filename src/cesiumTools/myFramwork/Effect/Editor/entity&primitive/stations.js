@@ -3,10 +3,11 @@
 
 import GeometryCreater from '../../GeometryCreater'
 import EffectController from '../../EffectController';
+import { changeDisplayBillBoard } from './billboards';
 
 
 
-const stations = [];
+let stations = [];
 
 // 渲染站点
 export const renderStation = (viewer, options) => {
@@ -70,7 +71,7 @@ export const removeAllStations = (viewer) => {
 };
 
 // 站点的显示
-// 通过名称Array控制站点显示隐藏
+// 通过 站点牌名称-Array 控制站点显示隐藏
 export const hideStationByName = (names, isShow) => {
     changeDisplayBillBoard(names, isShow);
     const targets = stations.filter((item) => names.indexOf(item.name) > -1);
@@ -82,3 +83,23 @@ export const hideStationByName = (names, isShow) => {
         });
     }
 };
+
+/**
+ * 
+ * @param {string} name -站点名字
+ * @param {{stationsData:Array}} cacheData -缓存数据 
+ * @returns {{target:Entity}}
+ */
+// 通过名称找到对应的站点
+export const findbyStationName = (name, cacheData) => {
+    let stationsData = stations
+    // 如果传入缓存数据则使用传入的缓存数据
+    if (cacheData) {
+        const { stationEnts } = cacheData
+        stationsData = stationEnts
+    }
+    const stationEnt = stationsData.find((item) => item.name === name);
+    return {
+        target: stationEnt,
+    }
+}
