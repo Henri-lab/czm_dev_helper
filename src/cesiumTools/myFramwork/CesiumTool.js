@@ -1,15 +1,15 @@
 import LayerManager from './LayerManager';
 import DrawingManager from './DrawingManager';
-import MeasurementManager from './MeasurementManager';
+import MeasurementManager from './Compute/MeasurementManager';
 import AnnotationManager from './AnnotationManager';
 import ViewController from './ViewController';
-import DataLoader from './DataLoader';
+import DataLoader from './Data/DataLoader';
 import EventManager from './EventManager';
 import AnimationManager from './AnimationManager';
 import ControlsManager from './ControlsManager';
-import CoordTransformer from './CoordTransformer';
-import DataPrepocesser from './DataPrepocesser';
-import EffectController from './EffectController';
+import CoordTransformer from './Compute/CoordTransformer';
+import DataPrepocesser from './Data/DataPrepocesser';
+import EffectController from './Effect/EffectController';
 
 class CesiumFramework {
     constructor(viewer) {

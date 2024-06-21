@@ -1,4 +1,5 @@
 import * as Cesium from "cesium";
+import MaterialCreator from "./MaterialCreator";
 
 class EffectController {
     constructor(viewer) {
@@ -7,7 +8,9 @@ class EffectController {
         this.camera = viewer.camera;
     }
 
-    // 单个圆的涟漪效果
+    /**
+    * 单个圆的涟漪效果
+    */
     addSingleCircleRipple(position, material) {
         const startTime = Cesium.JulianDate.now();
         const duration = 2000; // Duration of the ripple effect in milliseconds
@@ -46,14 +49,14 @@ class EffectController {
     }
 
     /**
- * 创建两个圆扩散纹理效果
- * @param {Object} data - 参数对象
- * @param {number} data.deviationR - 半径增长速度（每帧增长量）
- * @param {number} data.eachInterval - 两个圆的运行时间间隔
- * @param {number} data.maxR - 两个圆的最大半径
- * @param {string} data.imageUrl - 两个圆的图片地址
- * @param {Array} data.position - 两个圆的中心位置
- */
+     * 创建两个圆扩散纹理效果
+     * @param {Object} data - 参数对象
+     * @param {number} data.deviationR - 半径增长速度（每帧增长量）
+     * @param {number} data.eachInterval - 两个圆的运行时间间隔
+     * @param {number} data.maxR - 两个圆的最大半径
+     * @param {string} data.imageUrl - 两个圆的图片地址
+     * @param {Array} data.position - 两个圆的中心位置
+     */
     addDoubleCircleRipple(data) {
         // 根据不同类的圆生成不同的动态颜色
         function getColor(circleType) {
@@ -112,6 +115,28 @@ class EffectController {
                 }
             });
         }, data.eachInterval)
+    }
+
+    /**
+     添加底部圆形实体带贴图
+     @param {Cesium.Color} color -圆形实体颜色
+     */
+    addConeGlowBottomCircle(options, color) {
+        const position = Cesium.defaultValue(
+            options.position,
+            Cesium.Cartesian3.ZERO
+        );
+        const color = Cesium.defaultValue(options.color, Cesium.Color.AQUA);
+        const bottomRadius = Cesium.defaultValue(options.bottomRadius, 100);
+        return this.viewer.entities.add({
+            position,
+            ellipse: {
+                semiMinorAxis: bottomRadius * 2,
+                semiMajorAxis: bottomRadius * 2,
+                height: 0.0,
+                material: new MaterialCreator().ConeGlowBottomCircle(color)
+            },
+        });
     }
 }
 
