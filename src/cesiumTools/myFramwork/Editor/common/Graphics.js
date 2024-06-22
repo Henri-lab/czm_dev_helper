@@ -1,6 +1,7 @@
-// 参考https://github.com/dengxiaoning/cesium_dev_kit
-import SuperGif from 'libgif'
+//在https://github.com/dengxiaoning/cesium_dev_kit的src\utils\cesiumPluginsExtends\libs\Graphics.js的基础上改进了许多地方
 import DrawingManager from "../../Manager/DrawingManager";
+import CoordTransformer from '../../Compute/CoordTransformer';
+import gifLoader from '../../Data/gifLoader';
 import * as Cesium from 'cesium';
 
 let Cesium = null
@@ -26,8 +27,37 @@ class Graphics extends DrawingManager {
     this.viewer && this.viewer.dataSources.add(this._graphicsLayer)
   }
 
+  // 公共方法--------------------------------------------------------
+  /**
+    * 判断对象是否有某个属性
+    * @private
+    * @param {object} obj 对象
+    * @param {string} field  属性字段
+    * @param {string} defVal  默认返回
+    * @returns {string}
+    */
+  _objHasOwnProperty(obj, field, defVal) {
+    return obj.hasOwnProperty(field) ? obj.field : defVal
+  }
 
-  //创建一个实体
+  /**
+   * 批量设置对象属性
+   * @private
+   * @param {object} obj -需要改造的对象
+   * @param {Array<Object>} properties - 属性图数组
+   * @returns {Object} -修改后属性的对象
+   */
+  _setProperties(obj, properties) {
+    properties.forEach(property => {
+      obj[property.key] = this._objHasOwnProperty(options, property.key, property.defaultValue);
+    });
+    return obj;
+  }
+
+  /**
+  * 创建一个实体
+  * @returns {Object} 实体空对象（带签名）
+  */
   createGraphics() {
     let entity = {
       Author: 'henriFox',
@@ -42,19 +72,115 @@ class Graphics extends DrawingManager {
   }
 
   /**
-    * 判断对象是否有某个属性
-    * @private
-    * @param {object} obj 对象
-    * @param {string} field  属性字段
-    * @param {string} defVal  默认返回
-    * @returns {string}
-    */
-  _objHasOwnProperty(obj, field, defVal) {
-    return obj.hasOwnProperty(field) ? obj.field : defVal
+ * 设置实体的旋转属性
+ * @function
+ * @param {Object} options 
+ * @param {Cesium.Entity} options.entity - 需要设置的实体
+ * @param {Cesium.Cartesian3} options.position - 实体的位置
+ * @param {number} options.rotateAmount - 旋转量（度数）
+ */
+  setGraphicsRotate({ entity, position, rotateAmount }) {
+    // 将位置转换为WGS84坐标
+    const wgs84Position = transformCartesianToWGS84(position);
+
+    // 创建旋转矩阵
+    const rotateAmountRadians = Cesium.Math.toRadians(rotateAmount);
+    const rotationMatrix = Cesium.Matrix3.fromRotationZ(rotateAmountRadians);
+
+    // 将旋转矩阵应用到实体
+    entity.orientation = Cesium.Transforms.headingPitchRollQuaternion(
+      wgs84Position,
+      new Cesium.HeadingPitchRoll(rotateAmountRadians, 0, 0)
+    );
+
+    // 设置实体的位置
+    entity.position = wgs84Position;
+  }
+
+  /**
+  * 设置图形浮动
+  * @function
+  * @param {object} options
+  * @param {Cartesian3} options.position - 坐标数组
+  * @param {Entity} options.entity - 实体对象
+  * @param {number} options.maxHeiht - 最大高度
+  * @param {number} options.minHeiht - 最小高度
+  * @param {Array<Cartesian3>} options.startPos - 原始位置
+  * @param {number} options.speed - 速度
+  * @returns {Array<Cartesian3>} - 实时位置
+  */
+  setGraphicsFloat(options) {
+    if (options && options.entity && options.maxHeiht) {
+      try {
+        let entity = options.entity,
+          minHeiht = options.minHeiht || 5,
+          maxHeiht = options.maxHeiht || 100,
+          startPos = options.startPos,
+          speed = options.speed || 0.06
+
+        if (startPos.length >= 1) {
+          let flag = false,//控制上升还是下降
+            bg_minHeiht = minHeiht,
+            $this = this
+
+          entity.positions = new Cesium.CallbackProperty(function () {
+            let positions = $this.transformCartesianToWGS84(startPos)
+
+            for (let i in positions) {
+              let position = positions[i]
+              // 浮动转换条件
+              if (minHeiht >= maxHeiht || minHeiht <= bg_minHeiht) {
+                flag = !flag
+              }
+              flag ? (minHeiht -= speed) : (minHeiht += speed)
+              position.alt = minHeiht
+            }
+
+            return $this.transformWGS84ToCartesian(positions)
+          }, false)
+        } else console.log('Invalid startPos')
+      } catch (error) {
+        console.log('Graphics floating failed', error)
+      }
+    }
+  }
+
+  /**
+   * 将Cartesian3位置转换为WGS84坐标
+   * 可以输入数组
+   * @function
+   * @param {Array|Cesium.Cartesian3} cartesianPosition - Cartesian3位置
+   * @returns {Array|Cesium.Cartesian3} WGS84坐标
+   */
+  transformCartesianToWGS84(cartesianPosition) {
+    if (!Array.isArray(cartesianPosition))
+      return new CoordTransformer().transformCartesianToWGS84(cartesianPosition);
+    else {
+      let result = []
+      cartesianPosition.forEach(cartesian => result.push(this.transformCartesianToWGS84(cartesian)))
+      return result
+    }
+  }
+
+  /**
+  * 将WGS84坐标转换Cartesian3位置
+  * 可以输入数组
+  * @function
+  * @param {Array|Cesium.Cartesian3} wgs84Position - WGS84坐标
+  * @returns {Array|Cesium.Cartesian3} Cartesian3位置
+  */
+  transformWGS84ToCartesian(wgs84Position) {
+    if (!Array.isArray(wgs84Position))
+      return new CoordTransformer().transformWGS84ToCartesian(wgs84Position);
+    else {
+      let result = []
+      wgs84Position.forEach(wgs84 => result.push(this.transformWGS84ToCartesian(wgs84)))
+      return result
+    }
   }
 
 
-
+  //  生成图形------------------------------------------------------------------------
   /**
    *获取点图形
    * @function
@@ -158,6 +284,7 @@ class Graphics extends DrawingManager {
       })
     }
   }
+
   /**
      *获取广告牌图形
      * @function
@@ -187,6 +314,7 @@ class Graphics extends DrawingManager {
       })
     }
   }
+
   /**
    * 获取路径
    * @function
@@ -211,6 +339,7 @@ class Graphics extends DrawingManager {
       })
     }
   }
+
   /**
    * 获取模型
    * @function
@@ -231,27 +360,37 @@ class Graphics extends DrawingManager {
       })
     }
   }
+
   /**
    * 获取椭圆
    * @function
    * @param {object} options
-   * @param {number} options.e_semiMajorAxis - 长半轴
-   * @param {number} options.e_semiMinorAxis - 短半轴
-   * @param {object} options.e_metarial - 材质
-   * @param {boolean} options.e_outline - 是否显示外边线
+   * @param {number} options.semiMajorAxis - 长半轴
+   * @param {number} options.semiMinorAxis - 短半轴
+   * @param {object} options.metarial - 材质
+   * @param {boolean} options.outline - 是否显示外边线
+   * @param {Object} options.outlineColor - 轮廓线颜色
+   * @param {boolean} options.height - 高度
    * @returns {EllipseGraphics}   返回EllipseGraphics实例
    */
   EllipseGraphics(options) {
     options = options || {}
     if (options) {
       return new Cesium.EllipseGraphics({
-        semiMajorAxis: options.e_semiMajorAxis || 1000000.0,
-        semiMinorAxis: options.e_semiMinorAxis || 1000000.0,
-        metarial: options.e_metarial || Cesium.Color.RED.withAlpha(0.5),
-        outline: this._objHasOwnProperty(options, 'e_outline', true)
+        semiMajorAxis: options.semiMajorAxis || 1000000.0,
+        semiMinorAxis: options.semiMinorAxis || 1000000.0,
+        outlineColor: this._objHasOwnProperty(
+          options,
+          'outlineColor',
+          Cesium.Color.RED
+        ),
+        height: options.height || 10,
+        metarial: options.metarial || Cesium.Color.RED.withAlpha(0.5),
+        outline: this._objHasOwnProperty(options, 'outline', true)
       })
     }
   }
+
   /**
    * 获取球
    * @function
@@ -292,9 +431,6 @@ class Graphics extends DrawingManager {
     }
   }
 
-
-
-
   /**
    * 获取盒子图形
    * @function
@@ -323,25 +459,6 @@ class Graphics extends DrawingManager {
     }
   }
   /**
-   * 获取面板图形
-   * @function
-   * @param {object} options
-   * @param {object} options.plane - 面板垂直方向
-   * @param {object} options.dimensions - 面板长宽高
-   * @param {boolean} options.material - 材质
-   * @returns {PlaneGraphics} 返回PlaneGraphics实例
-   */
-  PlaneGraphics(options) {
-    options = options || {}
-    if (options) {
-      return new Cesium.PlaneGraphics({
-        plane: options.plane || new Cesium.Plane(Cesium.Cartesian3.UNIT_Y, 0.0),
-        dimensions: options.dimensions || new Cesium.Cartesian2(170.0, 130.0),
-        material: options.material || Cesium.Color.BLUE
-      })
-    }
-  }
-  /**
    * 获取锥体图形
    * @function
    * @param {object} options
@@ -366,7 +483,60 @@ class Graphics extends DrawingManager {
     }
   }
 
+  /**
+  * 获取走廊图形
+  * @function
+  * @param {object} options
+  * @param {number} options.length - 走廊长度
+  * @param {number} options.width - 走廊宽度
+  * @param {Object} options.material - 材质
+  * @param {boolean} options.outline - 轮廓线显示
+  * @param {Object} options.outlineColor - 轮廓线颜色
+  * @returns {CorriderGraphics} 返回CorriderGraphics实例
+  */
+  CorridorGraphics(options) {
+    options = options || {}
+    if (options) {
+      return new Cesium.CorridorGraphics({
+        positions: options.positions,
+        width: options.width || 200000.0, // 走廊宽度（米）
+        material: options.material || Cesium.Color.RED.withAlpha(0.5), // 走廊的颜色和透明度
+        outline: options.outline || true, // 是否显示轮廓线
+        outlineColor: options.outline || Cesium.Color.BLACK // 轮廓线颜色
+      })
+    }
+  }
 
+  /**
+  * 获取面板图形
+  * @function
+  * @param {object} options
+  * @param {Cartesian2} options.dimensions - 平面维度
+  * @param {Object} options.plane - 平面
+  * @param {Object} options.material - 材质
+  * @param {boolean} options.outline - 轮廓线显示
+  * @param {Object} options.outlineColor - 轮廓线颜色
+  * @param {ShadowMode} options.shadows - 投影模式
+  * @param {DistanceDisplayCondition} options.distanceDisplayCondition -可视距离 new Cesium.DistanceDisplayCondition(near, far).
+  * @returns {CorriderGraphics} 返回CorriderGraphics实例
+  */
+  PlaneGraphics(options) {
+    options = options || {}
+    if (options) {
+      return new Cesium.PlaneGraphics({
+        plane: options.plane || new Cesium.Plane(Cesium.Cartesian3.UNIT_Y, 0.0), // PlaneGraphics 的一个属性是 Plane 
+        dimensions: options.dimensions || new Cesium.Cartesian2(100.0, 100.0),
+        material: options.material || Cesium.Color.RED.withAlpha(0.5), // 走廊的颜色和透明度
+        outline: options.outline || true, // 是否显示轮廓线
+        outlineColor: options.outline || Cesium.Color.BLACK, // 轮廓线颜色
+        distanceDisplayCondition: options.distanceDisplayCondition || undefined,
+        shadows: options.shadows || Cesium.ShadowMode.DISABLED // 投影模式
+      })
+    }
+  }
+
+
+  // 创建实体--------------------------------------------------------
   /**
   * 创建点实体集合
   * @function
@@ -467,8 +637,8 @@ class Graphics extends DrawingManager {
     options = options || {}
     if (options) {
       let entity = this.createGraphics()
-      entity.position = options.position
       entity.name = options.name || 'box_graphic'
+      entity.position = options.position
       entity.box = this.BoxGraphics(options.box)
       return this._graphicsLayer.entities.add(entity)
     }
@@ -495,14 +665,6 @@ class Graphics extends DrawingManager {
     }
   }
 
-
-
-
-
-
-
-
-
   /**
      * 创建地面指示实体
      * @function
@@ -518,31 +680,31 @@ class Graphics extends DrawingManager {
      */
   CorridorEntity(options) {
     if (options && options.positions) {
-      let { positions, height, width, material, ...rest } = options
-      /** @inheritdoc */
-      let entity = this.createGraphics()
-      height = height === undefined ? 6.0 : height
-      width = width === undefined ? 15.0 : width
-      entity.corridor = {
-        positions,
-        height,
-        width,
-        ...rest,
-        material:
-          material ||
-          new Cesium.Scene.WarnLinkMaterialProperty({
+      let entity = this.createGraphics();
+
+      const properties = [
+        { key: 'height', defaultValue: 10 },
+        { key: 'width', defaultValue: 10 },
+        { key: 'extrudedHeight', defaultValue: 10 },
+        { key: 'cornerType', defaultValue: 'round' },
+        {
+          key: 'material', defaultValue: new Cesium.Scene.WarnLinkMaterialProperty({
             freely: 'cross',
             color: Cesium.Color.YELLOW,
             duration: 1000,
             count: 1.0,
             direction: '+'
           })
-      }
+        }
+      ];
+      this._setProperties(options, properties);
+
+
+      entity.corridor = this.CorridorGraphics(options);
 
       return this._graphicsLayer.entities.add(entity)
     }
   }
-
 
   /**
     * 构建动态线实体
@@ -557,6 +719,7 @@ class Graphics extends DrawingManager {
   DynamicPolyLineEntity(options) {
     if (options && options.positions) {
       let entity = this.createGraphics()
+      entity.name = options.name || ''
       entity.polyline = this.LineEntity(options)
       entity.polyline.positions = new Cesium.CallbackProperty(function () {
         return options.positions
@@ -565,7 +728,6 @@ class Graphics extends DrawingManager {
       return this._graphicsLayer.entities.add(entity)
     }
   }
-
 
   /**
      * 构建动态椎体
@@ -583,6 +745,7 @@ class Graphics extends DrawingManager {
       let entity = options.entity
       let cylinder = options.cylinder
       let $this = this
+      entity.name = options.name || ''
       entity.cylinder = this.CylinderGraphics(cylinder)
       entity.position = new Cesium.CallbackProperty(function () {
         let positions = entity.position.getValue(
@@ -608,6 +771,399 @@ class Graphics extends DrawingManager {
       }, false)
 
       return this._graphicsLayer.entities.add(entity)
+    }
+  }
+
+  /**
+  * 创建渐变锥体
+  * @function
+  * @param {object} options
+  * @param {Cartesian3} options.position - 坐标数组
+  * @param {string} options.color - 颜色
+  * @param {number} options.duration - 持续时长
+  * @param {number} options.length - 长度
+  * @param {number} options.topRadius - 顶部半径
+  * @param {number} options.bottomRadius - 底部半径
+  * @param {number} options.slices - 垂直分段数量
+  * @returns {cylinder} 返回cylinder实例
+  */
+  FadeCylinderEntity(options) {
+    options = options || {}
+    if (options && options.position) {
+      let entity = this.createGraphics()
+      entity.name = options.name || ''
+      entity.position = options.position
+      options.material = new Cesium.Scene.CircleFadeMaterialProperty({
+        color: options.color || Cesium.Color.fromCssColorString('#02ff00'),
+        duration: options.duration || 2000
+      })
+      entity.cylinder = this.CylinderGraphics(options)
+
+      return this._graphicsLayer.entities.add(entity)
+    }
+  }
+
+  /**
+  *  创建旋转圆柱
+  * @function
+  * @param {object} options
+  * @param {Cartesian3} options.position - 坐标数组
+  * @param {number} options.length - 长度
+  * @param {number} options.topRadius - 顶部半径
+  * @param {number} options.bottomRadius - 底部半径
+  * @param {number} options.slices - 垂直分段数量
+  * @param {string} options.img - 材质图片
+  * @param {object} options.material - 材质(与图片二选一)
+  * @returns {cylinder} 返回cylinder实例
+  */
+  RotateCylinderEntity(options) {
+    if (options && options.position) {
+      let entity = this.createGraphics()
+      entity.name = options.name || ''
+      options.material = options.material ||
+        new Cesium.ImageMaterialProperty({
+          image: options.img || '',//后续更新：可以加载默认的静态资源
+          transparent: true,
+          repeat: {
+            x: 1,
+            y: -1
+          }
+        })
+      entity.cylinder = this.CylinderGraphics(options)
+      entity.position = options.position
+
+      this.setGraphicsRotate({
+        entity,
+        position: this.transformCartesianToWGS84(options.position),
+        rotateAmount: 4
+      })
+      return this._graphicsLayer.entities.add(entity)
+    }
+  }
+
+  /**
+  *  创建闪烁圆
+  * @function
+  * @param {object} options
+  * @param {Cartesian3} options.position - 坐标数组
+  * @param {number} options.alp - 频率
+  * @param {boolean} options.flog - 显示雾气效果
+  * @param {number} options.height - 高度
+  * @param {number} options.semiMinorAxis - 短半轴
+  * @param {number} options.semiMajorAxis - 长半轴
+  * @returns {ellipse} 返回ellipse实例
+  */
+  DynamicBlinkCircleEntity(options) {
+    if (options && options.position) {
+      let entity = this.createGraphics(),
+        alp = options.alp || 1,
+        flog = this._objHasOwnProperty(options, 'flog', true)
+      entity.position = options.position
+      options.material = options.material || new Cesium.ColorMaterialProperty(
+        new Cesium.CallbackProperty(function () {
+          if (flog) {
+            alp = alp - 0.05
+            if (alp <= 0) {
+              flog = false // hide
+            }
+          } else {
+            alp = alp + 0.05
+            if (alp >= 1) {
+              flog = true // show
+            }
+          }
+          return Cesium.Color.RED.withAlpha(alp)
+        }, false)
+      )
+      let ellipse = this.EllipseGraphics(options)
+
+      entity.ellipse = ellipse
+      return this._graphicsLayer.entities.add(entity)
+    }
+  }
+
+  /**
+  *  创建动态旋转圆
+  * @function
+  * @param {object} options
+  * @param {object} options.center - 中心坐标数组
+  * @param {number} options.radius - 半径
+  * @param {number} options.rotateAmount - 旋转频率
+  * @param {number} options.height - 高度
+  * @param {number} options.scale - 外圆缩放比例
+  * @param {number} options.scale2 - 内圆缩放比例
+  * @param {string} options.imge - 材质图片
+  * @param {object} options.material - 材质(与图片二选一)
+  * @returns {ellipse} 返回ellipse实例
+  */
+  DynamicCricleEntity(options) {
+    if (options && options.center) {
+      let entity = this.createGraphics(),
+        $this = this
+
+      //生成动态实体配置选项
+      let dynamicOpt = {},
+        heading = 0,
+        pitch = 0,
+        roll = 0,
+        _center = options.center,
+        _radius = options.radius || 800,
+        _rotateAmount = options.rotateAmount || 0.05,
+        _stRotation = 0,
+        _height = options.height || 1,
+        _scale = options.scale || null,
+        _scale2 = options.scale2 || null,
+        _material =
+          options.material ||
+          new Cesium.ImageMaterialProperty({
+            image: options.imge || "",
+            transparent: true
+          })
+
+      let bg_scale = _radius
+      let flag = false
+      let updateScalerAxis = () => {
+        if (_radius >= _scale || _radius <= bg_scale) {
+          flag = !flag
+        }
+        flag ? (_radius += 2) : (_radius -= 2)
+      }
+      let updateScalerAxis2 = () => {
+        _scale2 >= _radius ? (_radius += 2) : (_radius = bg_scale)
+      }
+
+      dynamicOpt = {
+        material: _material,
+        height: _height,
+        semiMajorAxis: new Cesium.CallbackProperty(function () {
+          return _radius
+        }, false),
+        semiMinorAxis: new Cesium.CallbackProperty(function () {
+          return _radius
+        }, false),
+        stRotation: new Cesium.CallbackProperty(function () {
+          if (_rotateAmount > 0) {
+            _stRotation += _rotateAmount
+            if (_stRotation >= 360) {
+              _stRotation = 0
+            }
+          }
+          if (_scale) updateScalerAxis()
+          if (_scale2) updateScalerAxis2()
+          return _stRotation
+        }, false)
+      }
+
+      entity.position = new Cesium.CallbackProperty(function () {
+        return $this.transformWGS84ToCartesian(_center)
+      }, false);
+
+      entity.orientation = new Cesium.CallbackProperty(function () {
+        return Cesium.Transforms.headingPitchRollQuaternion(
+          $this.transformWGS84ToCartesian(_center),
+          new Cesium.HeadingPitchRoll(
+            Cesium.Math.toRadians(heading),
+            Cesium.Math.toRadians(pitch),
+            Cesium.Math.toRadians(roll)
+          )
+        )
+      }, false);
+
+      entity.ellipse = this.EllipseGraphics(dynamicOpt);
+
+      return this._graphicsLayer.entities.add(entity)
+    }
+  }
+
+  /**
+  *  动态渐变墙
+  * @function
+  * @param {object} options
+  * @param {Cartesian3} options.positions - 坐标数组
+  * @param {number} options.alp - 透明比例 0~1
+  * @param {number} options.num - 渐变步长
+  * @param {number} options.speed - 速度 0~1
+  * @param {object} options.color - 颜色
+  * @param {string} options.img - 材质图片
+  * @returns {wall} 返回wall实例
+  */
+  DynamicShadeWallEntity(options) {
+    if (options && options.positions) {
+      let alp = options.alp || 1,
+        num = options.num || 20,
+        color = options.color || Cesium.Color.RED,
+        speed = options.speed || 0.003
+
+      let wallEntity = this.createGraphics()
+      wallEntity.wall = {
+        positions: options.positions,
+        material: new Cesium.ImageMaterialProperty({
+          image: options.img || "",
+          transparent: true,
+          color: new Cesium.CallbackProperty(function () {
+            if (num % 2 === 0) {
+              alp -= speed
+            } else {
+              alp += speed
+            }
+
+            if (alp <= 0.1) {
+              num++
+            } else if (alp >= 1) {
+              num++
+            }
+            return color.withAlpha(alp)
+          }, false)
+        })
+      }
+      return this._graphicsLayer.entities.add(wallEntity)
+    }
+  }
+
+  /**
+   * 旋转面
+   * @function
+   * @param {object} options
+   * @param {boolean} options.isRotated -  是否开启旋转
+   * @param {Cartesian3} options.positions - 坐标数组
+   * @param {Cartesian2} options.dimensions - 长宽高
+   * @param {string} options.image - 图片
+   * @returns {plane} 返回plane实例
+   */
+  RotatePlaneEntity(options) {
+    if (options && options.center && options.positions) {
+      let entity = this.createGraphics(),
+        index = 0,
+        positions = options.positions,
+        _position = positions[0],
+        _center = options.center,
+        _plane = new Cesium.Plane(Cesium.Cartesian3.UNIT_Y, 0);// 默认的固定平面
+
+      entity.position = new Cesium.CallbackProperty(function () {
+        _position = positions[index];
+        index = (index + 1) % positions.length;//更新索引;   索引顺序:0,1,2,~len-1,0~len-1,...
+        return _position;
+      }, false);
+
+      if (options.isRotated/* 如果开启旋转 */) {
+        // 平面随着 _center 和 _position 的变化而实时更新
+        _plane =
+          new Cesium.CallbackProperty(function () {
+            // 计算法向量
+            let normal = Cesium.Cartesian3.normalize(
+              Cesium.Cartesian3.subtract(_center, _position, new Cesium.Cartesian3()), new Cesium.Cartesian3()
+            )
+            //  返回Plane对象
+            return Cesium.Plane.fromPointNormal(_position, normal)
+          }, false)
+      }
+
+      const planeOpt = {
+        plane: _plane,
+        dimensions: options.dimensions || new Cesium.Cartesian2(200.0, 150.0),
+        material: new Cesium.ImageMaterialProperty({
+          image: options.image
+        })
+      };
+      entity.plane = this.PlaneGraphics(planeOpt)
+
+      return this._graphicsLayer.entities.add(entity)
+    }
+  }
+
+  /**
+   * 视频投放
+   * @function
+   * @param {object} options
+   * @param {Cartesian3} options.position - 坐标数组
+   * @param {Cartesian2} options.dimensions - 长宽高
+   * @param {HTMLElement} options.videoElement - video绑定dom
+     * @param {Cartesian3} options.normal - 垂直方向
+   * @example
+   * import { Graphics } from 'cesium_dev_kit'
+   * const graphicObj = new Graphics({
+   *     cesiumGlobal: Cesium,
+   *     containerId: 'cesiumContainer'
+   * })
+   * graphicObj.graphics.createVideoPlaneGraphics({
+        position: Cesium.Cartesian3.fromDegrees(104.081701757991, 30.627042558105988, 200),
+        videoElement: videoDom,
+        dimensions: new Cesium.Cartesian2(400.0, 200.0),
+   * })
+   * @returns {plane} 返回plane实例
+   */
+  createVideoPlaneGraphics(options) {
+    if (options && options.position) {
+      var entity = this.createGraphics()
+      entity.position = options.position
+      entity.plane = {
+        plane: new Cesium.Plane(
+          options.normal || Cesium.Cartesian3.UNIT_Y,
+          0.0
+        ),
+        dimensions: options.dimensions || new Cesium.Cartesian2(200.0, 150.0),
+        material: new Cesium.ImageMaterialProperty({
+          image: options.videoElement
+        })
+      }
+      return this._graphicsLayer.entities.add(entity)
+    }
+  }
+
+  
+  // 高级entity
+  /**
+   * 视频面板
+   * @function
+   * @param {object} options
+   * @param {Cartesian3} options.position - 坐标数组
+   * @param {Cartesian2} options.dimensions - 长宽高
+   * @param {HTMLElement} options.videoElement - video绑定dom
+   * @param {Cartesian3} options.normal - 面板法向方向
+   * @returns {plane} 返回plane实例
+   */
+  VideoPlaneEntity(options) {
+    if (options && options.position) {
+      let entity = this.createGraphics()
+      entity.position = options.position
+      entity.plane = {
+        plane: new Cesium.Plane(
+          options.normal || Cesium.Cartesian3.UNIT_Y,
+          0.0
+        ),
+        dimensions: options.dimensions || new Cesium.Cartesian2(200.0, 150.0),
+        material: new Cesium.ImageMaterialProperty({
+          image: options.videoElement
+        })
+      }
+      return this._graphicsLayer.entities.add(entity)
+    }
+  }
+
+  /**
+   * GIF广告牌
+   * @function
+   * @param {object} options
+   * @param {Cartesian3} options.position - 坐标数组
+   * @param {Cartesian2} options.dimensions - 长宽高
+   * @param {string} options.url - 图片
+   * @param {Cartesian3} options.normal - 垂直方向
+   * @returns {billboard} 返回entity实例
+   */
+  GifBillboardEntity(options) {
+    if (options && options.position) {
+      let gif = [],
+        url = options.url,
+        slow = 6
+      const imageProperty = gifLoader(url, gif, slow, '')
+      return this._graphicsLayer.entities.add({
+        position: options.position,
+        billboard: {
+          verticalOrigin: Cesium.VerticalOrigin.BASELINE,
+          image: imageProperty,
+          scale: 0.2
+        }
+      })
     }
   }
 }
