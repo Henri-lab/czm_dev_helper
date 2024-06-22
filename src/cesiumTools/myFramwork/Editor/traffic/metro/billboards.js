@@ -1,4 +1,4 @@
-import _PopupLoader /*类名和实例名重复的处理*/ from "../../../../../components/Bubble/PopupLoader";
+import _PopupLoader /*类名和实例名重复的处理*/ from "../../../Bubble/PopupLoader";
 import { findStationByName } from "./stations";
 // 站点标牌 (billboard) 缩写 bb,BB
 //  const bb = {

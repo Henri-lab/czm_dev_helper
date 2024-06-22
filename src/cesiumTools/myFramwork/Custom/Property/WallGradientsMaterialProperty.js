@@ -1,3 +1,5 @@
+import * as Cesium from "cesium";
+
 //渐变墙体材质  color 颜色
 export default function WallGradientsMaterialProperty(color) {
     this._definitionChanged = new Cesium.Event();

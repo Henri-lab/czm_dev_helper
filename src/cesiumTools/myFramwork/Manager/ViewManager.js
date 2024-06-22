@@ -1,6 +1,6 @@
 import { Cartesian3, HeadingPitchRoll, Math as CesiumMath } from 'cesium';
 
-class ViewController {
+class ViewManager {
     constructor(viewer) {
         this.viewer = viewer;
         this.scene = viewer.scene;
@@ -137,4 +137,4 @@ class ViewController {
     }
 }
 
-export default ViewController;
+export default ViewManager;

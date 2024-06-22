@@ -1,5 +1,3 @@
-// 函数工厂模式
-
 import * as Cesium from "cesium";
 /** 
  * 自定义材质属性

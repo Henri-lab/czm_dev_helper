@@ -5,7 +5,7 @@ class DrawingManager {
 
     drawPoint(option = {}) {
         const handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        
+
         const defaultOptions = {
             pixelSize: 10,
             color: Cesium.Color.RED,
@@ -17,7 +17,7 @@ class DrawingManager {
             translucencyByDistance: undefined,
             distanceDisplayCondition: undefined
         };
-        
+
         const opt = Object.assign(defaultOptions, option);
 
         handler.setInputAction((event) => {
@@ -52,7 +52,7 @@ class DrawingManager {
             material: Cesium.Color.RED,
             clampToGround: true,
         };
-        
+
         const opt = Object.assign(defaultOptions, option);
 
         handler.setInputAction((event) => {
@@ -253,34 +253,35 @@ class DrawingManager {
         });
     }
 }
+export default DrawingManager;
 
-// Usage
-const viewer = new Cesium.Viewer('cesiumContainer');
-const drawingManager = new DrawingManager(viewer);
+//// Usage
+// const viewer = new Cesium.Viewer('cesiumContainer');
+// const drawingManager = new DrawingManager(viewer);
 
-// Drawing a point
-drawingManager.drawPoint({
-    pixelSize: 15,
-    color: Cesium.Color.BLUE,
-    outlineColor: Cesium.Color.YELLOW,
-    outlineWidth: 2
-});
+// // Drawing a point
+// drawingManager.drawPoint({
+//     pixelSize: 15,
+//     color: Cesium.Color.BLUE,
+//     outlineColor: Cesium.Color.YELLOW,
+//     outlineWidth: 2
+// });
 
-// Drawing a line
-drawingManager.drawLine({
-    width: 8,
-    material: Cesium.Color.GREEN,
-    clampToGround: true
-});
+// // Drawing a line
+// drawingManager.drawLine({
+//     width: 8,
+//     material: Cesium.Color.GREEN,
+//     clampToGround: true
+// });
 
-// Drawing a polygon
-drawingManager.drawPolygon({
-    material: new Cesium.ColorMaterialProperty(Cesium.Color.RED.withAlpha(0.7)),
-    heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
-});
+// // Drawing a polygon
+// drawingManager.drawPolygon({
+//     material: new Cesium.ColorMaterialProperty(Cesium.Color.RED.withAlpha(0.7)),
+//     heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
+// });
 
-// Drawing a circle
-drawingManager.drawCircle({
-    material: new Cesium.ColorMaterialProperty(Cesium.Color.GREEN.withAlpha(0.5)),
-    heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
-});
+// // Drawing a circle
+// drawingManager.drawCircle({
+//     material: new Cesium.ColorMaterialProperty(Cesium.Color.GREEN.withAlpha(0.5)),
+//     heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
+// });

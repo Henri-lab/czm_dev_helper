@@ -1,6 +1,6 @@
 
 import * as Cesium from "cesium";
-import { TencentImageryProvider } from "./Map/mapPlugin";
+import { TencentImageryProvider } from "../Map/mapPlugin";
 
 // 初始化地图场景
 export const initViewer = (container) => {

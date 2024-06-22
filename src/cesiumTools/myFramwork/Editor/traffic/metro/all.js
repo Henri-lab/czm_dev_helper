@@ -1,5 +1,5 @@
 import { renderLines, removeAllLines, hideLineByName } from "./line";
-import { renderStation, removeAllStations, hideStationByName } from "./stations";
+import { renderStation, removeAllStations, hideStationByName } from "../stations";
 import { renderStationBill, removeAllBillboards } from "./billboards";
 
 

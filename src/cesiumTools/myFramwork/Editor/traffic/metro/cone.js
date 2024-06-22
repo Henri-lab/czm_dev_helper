@@ -1,4 +1,4 @@
-import MaterialCreator from "../../MaterialCreator";
+import MaterialCreator from "../../../Effect/MaterialCreator";
 // 重保活动圆柱
 // 材质是自定义WallGradientsMaterialProperty
 
