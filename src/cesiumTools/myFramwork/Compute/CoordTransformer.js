@@ -5,6 +5,22 @@ class CoordTransformer {
         this.RADIUS = 6378245.0;
         this.EE = 0.00669342162296594323;
     }
+
+    transformCartesianToWGS84(cartesianPosition) {
+        const cartographic = Cesium.Cartographic.fromCartesian(cartesianPosition);
+        const longitude = Cesium.Math.toDegrees(cartographic.longitude);
+        const latitude = Cesium.Math.toDegrees(cartographic.latitude);
+        const height = cartographic.height;
+        return Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
+    }
+
+    transformWGS84ToCartesian(wgs84Position) {
+        const longitude = wgs84Position.longitude;
+        const latitude = wgs84Position.latitude;
+        const height = wgs84Position.height;
+        return Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
+    }
+
     /**
      * BD-09 To GCJ-02
      * @param lng
