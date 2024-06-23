@@ -1,7 +1,3 @@
-
-
-
-
 class EventManager {
     constructor(viewer) {
         this.viewer = viewer;

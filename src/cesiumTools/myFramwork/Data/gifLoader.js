@@ -24,16 +24,24 @@ export default async function gifLoader(url, gifArr, slow, _url) {
     return property;
 }
 
-// 加载gif图片
-// gifArr--->urlArray
+/**
+ * Loads gif images and stores them as base64 URLs in an array.
+ *
+ * @async
+ * @function parseGifImages
+ * @param {string} url - The URL of the GIF to load.
+ * @param {Array<string>} gifArr - The array to store the frames of the GIF as base64 URLs.
+ * @returns {Promise<Array<string>>} gifArr - The array of GIF frames as base64 URLs.
+ * @throws Will throw an error if the GIF fails to load or parse.
+ */
 async function parseGifImages(url, gifArr) {
     let img = document.createElement('img');
     img.src = url;
-    img.setAttribute('rel:animated_src', url); // SuperGif库需要img标签配置下面两个属性
+    img.setAttribute('rel:animated_src', url); // SuperGif library requires img tag to have these attributes
     img.setAttribute('rel:auto_play', '0');
     document.body.appendChild(img);
 
-    // libgif 的核心类
+    // SuperGif core class
     let rub = new SuperGif({
         gif: img/*HTML Element*/
     });
@@ -43,7 +51,7 @@ async function parseGifImages(url, gifArr) {
             rub.load(() => {
                 try {
                     for (let i = 1; i <= rub.get_length(); i++) {
-                        rub.move_to(i); // 遍历gif实例的每一帧
+                        rub.move_to(i); // Traverse gif instance's each frame
                         gifArr.push(rub.get_canvas().toDataURL());
                     }
                     resolve(gifArr);
@@ -59,12 +67,16 @@ async function parseGifImages(url, gifArr) {
         document.body.removeChild(img);
         throw e;
     }
-
-
 }
 
-// 创建图片回调函数
-// slow 约大gif播放越慢
+/**
+ * Creates a Cesium CallbackProperty for animating the GIF.
+ *
+ * @function createImageCallback
+ * @param {Array<string>} gifArr - The array of GIF frames as base64 URLs.
+ * @param {number} [slow=1] - The speed factor for the GIF animation. Higher values make the animation slower.
+ * @returns {Cesium.CallbackProperty} imageProperty - A Cesium CallbackProperty that can be used to animate the GIF.
+ */
 function createImageCallback(gifArr, slow = 1) {
     let _slow = 1;
     if (Number(slow) || (Number(slow) > 0)) _slow = Number(slow);

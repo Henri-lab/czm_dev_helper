@@ -3,6 +3,22 @@ class DrawingManager {
         this.viewer = viewer;
     }
 
+    /**
+     * Draws a point on the map at the clicked location.
+     *
+     * @param {Object} [option] - An optional object to customize the point's appearance.
+     * @param {Number} [option.pixelSize=10] - The size of the point in pixels.
+     * @param {Cesium.Color} [option.color=Cesium.Color.RED] - The color of the point.
+     * @param {Cesium.Color} [option.outlineColor=Cesium.Color.BLACK] - The color of the point's outline.
+     * @param {Number} [option.outlineWidth=1] - The width of the point's outline in pixels.
+     * @param {Cesium.HeightReference} [option.heightReference=Cesium.HeightReference.CLAMP_TO_GROUND] - The height reference of the point.
+     * @param {Number} [option.disableDepthTestDistance=Number.POSITIVE_INFINITY] - The distance from the camera at which to disable the depth test to, for example, avoid z-fighting.
+     * @param {Cesium.NearFarScalar} [option.scaleByDistance] - A NearFarScalar object that determines how the point's size scales with distance from the camera.
+     * @param {Cesium.NearFarScalar} [option.translucencyByDistance] - A NearFarScalar object that determines how the point's translucency changes with distance from the camera.
+     * @param {Cesium.DistanceDisplayCondition} [option.distanceDisplayCondition] - A DistanceDisplayCondition object that determines if the point is displayed.
+     *
+     * @returns {undefined}
+     */
     drawPoint(option = {}) {
         const handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
 

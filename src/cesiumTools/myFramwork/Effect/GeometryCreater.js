@@ -6,7 +6,16 @@ class GeometryCreater {
         this.scene = viewer.scene;
     }
 
-    // 光柱(光锥)
+    /**
+     * Creates a light cone (or light cylinder) in the 3D scene.   光柱(光锥)
+     *
+     * @param {Object} options - The options for creating the light cone.
+     * @param {Cartesian3} [options.position=Cartesian3.ZERO] - The position of the light cone in the 3D scene.
+     * @param {Number} [options.height=700] - The height of the light cone.
+     * @param {Number} [options.bottomRadius=100] - The bottom radius of the light cone.
+     * @param {Color} [options.color=Color.AQUA] - The color of the light cone.
+     * @returns {Primitive} - The created light cone primitive.
+     */
     lightCone(options) {
         const position = Cesium.defaultValue(
             options.position,

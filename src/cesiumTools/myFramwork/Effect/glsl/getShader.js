@@ -10,7 +10,19 @@ import directionWall_glsl from './directionWall.glsl';
 import radarScan_glsl from './radarScan.glsl';
 import circleScan_glsl from './circleScan.glsl';
 
-function _getDirectionWallShader(options) {
+/**
+ * Function to generate a dynamic GLSL shader for directional wall visualization.
+ * The shader is based on the provided options and a pre-defined GLSL template.
+ *
+ * @param {Object} options - An object containing the options for the shader.
+ * @param {string} options.freely - The direction of the wall. Can be either 'vertical' or 'horizontal'.
+ * @param {number} options.count - The number of repetitions for the wall pattern.
+ * @param {string} options.direction - The direction of the wall pattern. Can be either '+' or '-'.
+ * @param {boolean} options.get - A flag indicating whether to generate the shader.
+ *
+ * @returns {string} - The generated GLSL shader string.
+ */
+function getDirectionWallShader(options) {
     if (options && options.get) {
         let materialString = directionWall_glsl;
 
@@ -68,7 +80,23 @@ function _getDirectionWallShader(options) {
 //     }
 //   }
 
-function _getRadarScanShader(options) {
+
+
+/**
+ * Function to generate a dynamic GLSL shader for radar scan visualization.
+ * The shader is based on the provided options and a pre-defined GLSL template.
+ *
+ * @param {Object} options - An object containing the options for the shader.
+ * @param {number} options.width - The width of the radar scan.
+ * @param {number} options.border - The border width of the radar scan.
+ * @param {boolean} options.get - A flag indicating whether to generate the shader.
+ *
+ * @returns {string} - The generated GLSL shader string.
+ *
+ * @throws Will throw an error if the 'options' parameter is not provided or if the 'get' property is not a boolean.
+ * @throws Will throw an error if the 'width' or 'border' properties are not numbers.
+ */
+function getRadarScanShader(options) {
     if (options && options.get) {
         let material = radarScan_glsl;
 
@@ -80,7 +108,20 @@ function _getRadarScanShader(options) {
     }
 }
 
-function _getCircleScanShader(options) {
+/**
+ * Function to generate a dynamic GLSL shader for circle scan visualization.
+ * The shader is based on the provided options and a pre-defined GLSL template.
+ *
+ * @param {Object} options - An object containing the options for the shader.
+ * @param {number} options.border - The border width of the circle scan.
+ * @param {boolean} options.get - A flag indicating whether to generate the shader.
+ *
+ * @returns {string} - The generated GLSL shader string.
+ *
+ * @throws Will throw an error if the 'options' parameter is not provided or if the 'get' property is not a boolean.
+ * @throws Will throw an error if the 'border' property is not a number.
+ */
+function getCircleScanShader(options) {
     if (options && options.get) {
         let material = circleScan_glsl;
 
@@ -89,4 +130,10 @@ function _getCircleScanShader(options) {
 
         return material;
     }
+}
+
+export {
+    getDirectionWallShader,
+    getRadarScanShader,
+    getCircleScanShader,
 }

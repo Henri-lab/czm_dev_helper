@@ -8,8 +8,13 @@ class EffectController {
     }
 
     /**
-    * 单个圆的涟漪效果
-    */
+      * Adds a single circle ripple effect to the viewer.
+      *
+      * @param {Cesium.Cartesian3} position - The position where the ripple will appear.
+      * @param {Cesium.MaterialProperty} [material] - The material to use for the ripple. If not provided, a default gradient white material will be used.
+      *
+      * @returns {undefined}
+      */
     addSingleCircleRipple(position, material) {
         const startTime = Cesium.JulianDate.now();
         const duration = 2000; // Duration of the ripple effect in milliseconds
@@ -117,8 +122,14 @@ class EffectController {
     }
 
     /**
-     添加底部圆形实体带贴图
-     @param {Cesium.Color} color -圆形实体颜色
+     * Adds a cone-shaped entity with a glowing bottom circle effect to the viewer.
+     *
+     * @param {Object} options - An object containing the following properties:
+     * @param {Cesium.Cartesian3} [options.position=Cesium.Cartesian3.ZERO] - The position of the entity.
+     * @param {Cesium.Color} [options.color=Cesium.Color.AQUA] - The color of the glowing bottom circle.
+     * @param {number} [options.bottomRadius=100] - The radius of the bottom circle.
+     *
+     * @returns {Cesium.Entity} - The added entity.
      */
     addConeGlowBottomCircle(options) {
         const position = Cesium.defaultValue(

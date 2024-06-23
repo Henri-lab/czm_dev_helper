@@ -4,18 +4,25 @@ class DataPrepocesser {
 		this.Cesium = Cesium
 	}
 
-	// 白膜偏移纠正
-	// 更新3dtiles的模型矩阵
+	/**
+	 * Corrects the offset of a white film on 3D tiles.
+	 * Updates the model matrix of the 3D tiles.
+	 * @param {number} tx - The x-coordinate offset.
+	 * @param {number} ty - The y-coordinate offset.
+	 * @param {Object} tile - The 3D tile to be updated.
+	 * @static
+	 */
 	static update3dtilesMaxtrix = (tx, ty, tile) => {
 		const center = tile.boundingSphere.center
-		// 获取以当前模型为原点的垂直于当前地表的垂直坐标系
+		// Get the vertical coordinate system based on the current model as the origin
 		const m = this.Cesium.Transforms.eastNorthUpToFixedFrame(center);
-		// x,y,z三个方向上的偏移值
+		// Offset values in the x, y, and z directions
 		const _tx = tx ? tx : 0;
 		const _ty = ty ? ty : 0;
 		const _tz = 0;
 		const tempTranslation = new Cesium.Cartesian3(_tx, _ty, _tz);
-		// 计算模型原点与偏移坐标的方向向量 offset是偏移之后的点，translation是方向向量
+		// Calculate the direction vector from the model origin to the offset coordinates
+		// offset is the point after offset, and translation is the direction vector
 		const offset = Cesium.Matrix4.multiplyByPoint(
 			m,
 			tempTranslation,
@@ -26,12 +33,20 @@ class DataPrepocesser {
 			center,
 			new Cesium.Cartesian3()
 		);
-		// 通过方向向量，计算进行的模型矩阵 相当于gl-matrix中的	// mat4.translate()
+		// Calculate the model matrix performed by the direction vector
+		// Equivalent to gl-matrix's mat4.translate()
 		tile.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
 	};
 
 
-	// 将字符串xs，ys数据 加载为 坐标数组
+	/**
+	 * Converts string xs, ys data into an array of coordinates.
+	 * @function xsysLoader
+	 * @param {string} xs - A string of comma-separated x-coordinates.
+	 * @param {string} ys - A string of comma-separated y-coordinates.
+	 * @returns {Array<number>} An array of coordinates [x1, y1, x2, y2, ...].
+	 * @throws Will throw an error if the lengths of xs and ys are not equal.
+	 */
 	static xsysLoader = (xs, ys) => {
 		let posArr = [];
 		if (typeof xs === 'string' && typeof ys === 'string') {
@@ -41,7 +56,11 @@ class DataPrepocesser {
 				for (let i = 0; i < xArr.length; i++) {
 					posArr.push(xArr[i], yArr[i]);
 				}
+			} else {
+				throw new Error('The lengths of xs and ys are not equal.');
 			}
+		} else {
+			throw new Error('xs and ys must be strings.');
 		}
 		return posArr;
 	}
@@ -54,3 +73,5 @@ class DataPrepocesser {
 
 
 export default DataPrepocesser
+
+
