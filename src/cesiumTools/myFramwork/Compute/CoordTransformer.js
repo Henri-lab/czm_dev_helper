@@ -6,21 +6,6 @@ class CoordTransformer {
         this.EE = 0.00669342162296594323;
     }
 
-    transformCartesianToWGS84(cartesianPosition) {
-        const cartographic = Cesium.Cartographic.fromCartesian(cartesianPosition);
-        const longitude = Cesium.Math.toDegrees(cartographic.longitude);
-        const latitude = Cesium.Math.toDegrees(cartographic.latitude);
-        const height = cartographic.height;
-        return Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
-    }
-
-    transformWGS84ToCartesian(wgs84Position) {
-        const longitude = wgs84Position.longitude;
-        const latitude = wgs84Position.latitude;
-        const height = wgs84Position.height;
-        return Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
-    }
-
     /**
      * BD-09 To GCJ-02
      * @param lng
@@ -182,6 +167,59 @@ class CoordTransformer {
         lat = +lat;
         lng = +lng;
         return !(lng > 73.66 && lng < 135.05 && lat > 3.86 && lat < 53.55);
+    }
+
+
+
+    /**
+     * Gets the Cartesian coordinates from a screen position using the provided Cesium viewer.
+     *
+     * @param {Cartesian2} screenPosition - The screen position to convert.
+     * @param {Viewer} viewer - The Cesium viewer instance.
+     * @returns {Cartesian3|null} The Cartesian coordinates corresponding to the screen position, or null if the conversion failed.
+     */
+    getCartesianFromScreenPosition(screenPosition, viewer) {
+        let scene = viewer.scene;
+        let ellipsoid = scene.globe.ellipsoid;
+
+        // Convert the screen position to Cartesian coordinates
+        let cartesian = viewer.camera.pickEllipsoid(screenPosition, ellipsoid);
+        if (cartesian) {
+            return cartesian;
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Transforms a Cartesian position to WGS84 coordinates.
+     *
+     * @param {Cartesian3} cartesianPosition - The Cartesian position to transform.
+     * @returns {Cartesian3} The WGS84 coordinates.
+     */
+    transformCartesianToWGS84(cartesianPosition) {
+        const cartographic = Cesium.Cartographic.fromCartesian(cartesianPosition);
+        const longitude = Cesium.Math.toDegrees(cartographic.longitude);
+        const latitude = Cesium.Math.toDegrees(cartographic.latitude);
+        const height = cartographic.height;
+        return Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
+    }
+
+    /**
+     * Transforms a WGS84 position to Cartesian coordinates.
+     *
+     * @param {Object} wgs84Position - The WGS84 position to transform.
+     * @param {number} wgs84Position.longitude - The longitude in degrees.
+     * @param {number} wgs84Position.latitude - The latitude in degrees.
+     * @param {number} wgs84Position.height - The height in meters.
+     * @returns {Cartesian3} The Cartesian coordinates.
+     */
+    transformWGS84ToCartesian(wgs84Position) {
+        const longitude = wgs84Position.longitude;
+        const latitude = wgs84Position.latitude;
+        const height = wgs84Position.height;
+        return Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
     }
 }
 
