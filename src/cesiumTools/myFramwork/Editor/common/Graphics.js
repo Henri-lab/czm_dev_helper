@@ -1,4 +1,3 @@
-//在https://github.com/dengxiaoning/cesium_dev_kit的src\utils\cesiumPluginsExtends\libs\Graphics.js的基础上改进了许多地方
 import { CoordTransformer } from '../../Compute';
 import { gifLoader } from '../../Data';
 import { DrawingManager } from "../../Manager"
@@ -18,7 +17,7 @@ let dfSt = undefined
  * @param {Array} params.defaultStatic - 静态资源
  * @exports  Graphics
  */
-class Graphics extends DrawingManager {
+export default class Graphics extends DrawingManager {
   constructor(viewer, cesiumGlobal, defaultStatic) {
     super(viewer);
     this.Cesium = cesiumGlobal
@@ -29,155 +28,29 @@ class Graphics extends DrawingManager {
 
   // 公共方法--------------------------------------------------------
   /**
-    * 判断对象是否有某个属性
-    * @private
-    * @param {object} obj 对象
-    * @param {string} field  属性字段
-    * @param {string} defVal  默认返回
-    * @returns {string}
+    * 获取指定名称的静态资源的URL数组
+    * @param {string[]} nameArray - 名称数组
+    * @returns {string[]} - 静态资源的URL数组
     */
-  _objHasOwnProperty(obj, field, defVal) {
-    return obj.hasOwnProperty(field) ? obj.field : defVal
-  }
-
-  /**
-   * 批量设置对象属性
-   * @private
-   * @param {object} obj -需要改造的对象
-   * @param {Array<Object>} properties - 属性图数组
-   * @returns {Object} -修改后属性的对象
-   */
-  _setProperties(obj, properties) {
-    properties.forEach(property => {
-      obj[property.key] = this._objHasOwnProperty(options, property.key, property.defaultValue);
-    });
-    return obj;
-  }
-
-  /**
-  * 创建一个实体
-  * @returns {Object} 实体空对象（带签名）
-  */
-  createGraphics() {
-    let entity = {
-      Author: 'henriFox',
-    }
-    Object.defineProperty(entity, Auther, {
-      value: 'henriFox',
-      writable: false,    // 不可写
-      configurable: false // 不可配置
-    });
-
-    return entity;
-  }
-
-  /**
- * 设置实体的旋转属性
- * @function
- * @param {Object} options 
- * @param {Cesium.Entity} options.entity - 需要设置的实体
- * @param {Cesium.Cartesian3} options.position - 实体的位置
- * @param {number} options.rotateAmount - 旋转量（度数）
- */
-  setGraphicsRotate({ entity, position, rotateAmount }) {
-    // 将位置转换为WGS84坐标
-    const wgs84Position = transformCartesianToWGS84(position);
-
-    // 创建旋转矩阵
-    const rotateAmountRadians = Cesium.Math.toRadians(rotateAmount);
-    const rotationMatrix = Cesium.Matrix3.fromRotationZ(rotateAmountRadians);
-
-    // 将旋转矩阵应用到实体
-    entity.orientation = Cesium.Transforms.headingPitchRollQuaternion(
-      wgs84Position,
-      new Cesium.HeadingPitchRoll(rotateAmountRadians, 0, 0)
-    );
-
-    // 设置实体的位置
-    entity.position = wgs84Position;
-  }
-
-  /**
-  * 设置图形浮动
-  * @function
-  * @param {object} options
-  * @param {Cartesian3} options.position - 坐标数组
-  * @param {Entity} options.entity - 实体对象
-  * @param {number} options.maxHeiht - 最大高度
-  * @param {number} options.minHeiht - 最小高度
-  * @param {Array<Cartesian3>} options.startPos - 原始位置
-  * @param {number} options.speed - 速度
-  * @returns {Array<Cartesian3>} - 实时位置
-  */
-  setGraphicsFloat(options) {
-    if (options && options.entity && options.maxHeiht) {
-      try {
-        let entity = options.entity,
-          minHeiht = options.minHeiht || 5,
-          maxHeiht = options.maxHeiht || 100,
-          startPos = options.startPos,
-          speed = options.speed || 0.06
-
-        if (startPos.length >= 1) {
-          let flag = false,//控制上升还是下降
-            bg_minHeiht = minHeiht,
-            $this = this
-
-          entity.positions = new Cesium.CallbackProperty(function () {
-            let positions = $this.transformCartesianToWGS84(startPos)
-
-            for (let i in positions) {
-              let position = positions[i]
-              // 浮动转换条件
-              if (minHeiht >= maxHeiht || minHeiht <= bg_minHeiht) {
-                flag = !flag
-              }
-              flag ? (minHeiht -= speed) : (minHeiht += speed)
-              position.alt = minHeiht
-            }
-
-            return $this.transformWGS84ToCartesian(positions)
-          }, false)
-        } else console.log('Invalid startPos')
-      } catch (error) {
-        console.log('Graphics floating failed', error)
+  getDfSt(nameArray) {
+    let imgUrls = [];
+    nameArray.forEach(name => {
+      // If the dfSt object exists and contains the specified name,
+      // push the corresponding URL to the imgUrls array.
+      if (this.dfSt && this.dfSt[name]) {
+        imgUrls.push(this.dfSt[name]);
+      } else {
+        // If the dfSt object does not exist or does not contain the specified name,
+        // push the default image URL to the imgUrls array.
+        imgUrls.push(this.defaultImageUrl);
       }
-    }
+    });
+    // Return the array of URLs.
+    return imgUrls;
   }
 
-  /**
-   * 将Cartesian3位置转换为WGS84坐标
-   * 可以输入数组
-   * @function
-   * @param {Array|Cesium.Cartesian3} cartesianPosition - Cartesian3位置
-   * @returns {Array|Cesium.Cartesian3} WGS84坐标
-   */
-  transformCartesianToWGS84(cartesianPosition) {
-    if (!Array.isArray(cartesianPosition))
-      return new CoordTransformer().transformCartesianToWGS84(cartesianPosition);
-    else {
-      let result = []
-      cartesianPosition.forEach(cartesian => result.push(this.transformCartesianToWGS84(cartesian)))
-      return result
-    }
-  }
 
-  /**
-  * 将WGS84坐标转换Cartesian3位置
-  * 可以输入数组
-  * @function
-  * @param {Array|Cesium.Cartesian3} wgs84Position - WGS84坐标
-  * @returns {Array|Cesium.Cartesian3} Cartesian3位置
-  */
-  transformWGS84ToCartesian(wgs84Position) {
-    if (!Array.isArray(wgs84Position))
-      return new CoordTransformer().transformWGS84ToCartesian(wgs84Position);
-    else {
-      let result = []
-      wgs84Position.forEach(wgs84 => result.push(this.transformWGS84ToCartesian(wgs84)))
-      return result
-    }
-  }
+
 
 
   //  生成图形------------------------------------------------------------------------
