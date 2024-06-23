@@ -1,5 +1,4 @@
-import * as Cesium from "cesium";
-import MaterialCreator from "./MaterialCreator";
+import { Cesium, MaterialCreator } from "./index.js";
 
 class EffectController {
     constructor(viewer) {

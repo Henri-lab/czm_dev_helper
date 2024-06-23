@@ -1,9 +1,11 @@
-import ConeGlowBottomCircleMaterialProperty from "../Custom/Property/ConeGlowBottomCircleMaterialProperty";
-import WallGradientsMaterialProperty from "../Custom/Property/WallGradientsMaterialProperty";
-import TextureCreator from './TextureCreator';
-import circleMapping_glsl from './glsl/circleMapping_glsl';
-import wallMapping_glsl from './glsl/wallMapping.glsl';
-import * as Cesium from "cesium";
+import {
+    Cesium,
+    ConeGlowBottomCircleMaterialProperty,
+    WallGradientsMaterialProperty,
+    TextureCreator,
+    circleMapping_glsl,
+    wallMapping_glsl
+} from './index.js'
 
 
 /**

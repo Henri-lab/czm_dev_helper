@@ -1,5 +1,4 @@
-import * as Cesium from "cesium";
-import Ripple_glsl from '../Effect/glsl/Ripple';
+import { Cesium, Ripple_glsl } from "./index.js";
 
 class GeometryCreater {
     constructor(viewer) {

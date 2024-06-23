@@ -1,7 +1,7 @@
 //在https://github.com/dengxiaoning/cesium_dev_kit的src\utils\cesiumPluginsExtends\libs\Graphics.js的基础上改进了许多地方
-import DrawingManager from "../../Manager/DrawingManager";
-import CoordTransformer from '../../Compute/CoordTransformer';
-import gifLoader from '../../Data/gifLoader';
+import { CoordTransformer } from '../../Compute';
+import { gifLoader } from '../../Data';
+import { DrawingManager } from "../../Manager"
 import * as Cesium from 'cesium';
 
 let Cesium = null
@@ -1110,7 +1110,7 @@ class Graphics extends DrawingManager {
     }
   }
 
-  
+
   // 高级entity
   /**
    * 视频面板

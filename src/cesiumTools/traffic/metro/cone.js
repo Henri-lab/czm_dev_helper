@@ -1,9 +1,5 @@
-import MaterialCreator from "../../../Effect/MaterialCreator";
 // 重保活动圆柱
 // 材质是自定义WallGradientsMaterialProperty
-
-
-
 
 // options: {
 //   position: {lng,lat,height},
@@ -13,6 +9,9 @@ import MaterialCreator from "../../../Effect/MaterialCreator";
 //   color: "#ff0000", // 圆柱颜色
 //   name: "活动圆柱" // 圆柱名称
 // }
+
+import MaterialCreator from "./index.js";
+
 let cones = [];
 export const addGradientCone = (viewer, options) => {
     // 圆柱颜色

@@ -1,7 +1,7 @@
 import * as turf from '@turf/turf';
 import Cesium from 'cesium';
 
-class turfUser {
+class TurfUser {
     constructor(viewer) {
         this.viewer = viewer;
         this.handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
@@ -282,7 +282,7 @@ class turfUser {
     }
 }
 
-export default turfUser;
+export default TurfUser;
 
 
 

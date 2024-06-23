@@ -20,7 +20,7 @@ export const generateCirclePoints = (center, radius) => {
  * @param {number} radius - The radius of the circle in meters.
  * @returns {number[]} The [longitude, latitude] coordinates of the point on the circumference.
  */
-const getCirclePoint = (lon, lat, angle, radius) => {
+export const getCirclePoint = (lon, lat, angle, radius) => {
     let dx = radius * Math.sin((angle * Math.PI) / 180.0);
     let dy = radius * Math.cos((angle * Math.PI) / 180.0);
     let ec = 6356725 + ((6378137 - 6356725) * (90.0 - lat)) / 90.0;

@@ -6,11 +6,8 @@
 //         name
 //     };
 
-import GeometryCreater from '../../GeometryCreater'
-import EffectController from '../../EffectController';
-import { changeDisplayBillBoard } from './billboards';
 
-
+import { GeometryCreater, EffectController, changeDisplayBillBoard } from './index.js';
 
 
 let stations = [];
