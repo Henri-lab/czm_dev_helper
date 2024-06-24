@@ -14,15 +14,16 @@ let dfSt = undefined
  * @param {object} params
  * @param {object} params.viewer - cesium 实例
  * @param {object} params.cesiumGlobal - cesium 全局对象
+ * @param {Array} params.dataSource - 想要添加实体的图层
  * @param {Array} params.defaultStatic - 静态资源
  * @exports  Graphics
  */
 export default class Graphics extends DrawingManager {
-  constructor(viewer, cesiumGlobal, defaultStatic) {
+  constructor(viewer, cesiumGlobal, dataSource, defaultStatic) {
     super(viewer);
     this.Cesium = cesiumGlobal
     this.dfSt = defaultStatic
-    this._graphicsLayer = new Cesium.CustomDataSource('graphicsLayer')
+    this._graphicsLayer = dataSource || new Cesium.CustomDataSource('graphicsLayer')
     this.viewer && this.viewer.dataSources.add(this._graphicsLayer)
   }
 
@@ -603,6 +604,34 @@ export default class Graphics extends DrawingManager {
   }
 
   /**
+   * Creates a dynamic polygon entity that updates based on provided positions.
+   *
+   * @param {Object} options - The options for creating the polygon entity.
+   * @param {Array<Cesium.Cartesian3>} options.positions - An array of Cartesian3 positions that define the polygon.
+   * @param {string} [options.name] - The name of the polygon entity.
+   * @param {Cesium.Material} [options.material] - The material to be used for the polygon.
+   * @param {boolean} [options.clampToGround] - Whether the polygon should be clamped to the ground.
+   * @returns {Cesium.Entity} The created polygon entity.
+   */
+  DynamicPolygonEntity(options) {
+    if (options && options.positions) {
+      let entity = this.createGraphics();
+      entity.name = options.name || '';
+
+      entity.polygon = {
+        hierarchy: new Cesium.CallbackProperty(function () {
+          return new Cesium.PolygonHierarchy(options.positions);
+        }, false),
+        material: options.material || Cesium.Color.BLUE.withAlpha(0.8),
+        clampToGround: options.clampToGround || true,
+        extrudedHeight: options.extrudedHeight || undefined
+      };
+
+      return this._graphicsLayer.entities.add(entity);
+    }
+  }
+
+  /**
      * 构建动态椎体
      * @function
      * @param {object} options
@@ -945,44 +974,31 @@ export default class Graphics extends DrawingManager {
   }
 
   /**
-   * 视频投放
-   * @function
-   * @param {object} options
-   * @param {Cartesian3} options.position - 坐标数组
-   * @param {Cartesian2} options.dimensions - 长宽高
-   * @param {HTMLElement} options.videoElement - video绑定dom
-     * @param {Cartesian3} options.normal - 垂直方向
-   * @example
-   * import { Graphics } from 'cesium_dev_kit'
-   * const graphicObj = new Graphics({
-   *     cesiumGlobal: Cesium,
-   *     containerId: 'cesiumContainer'
-   * })
-   * graphicObj.graphics.createVideoPlaneGraphics({
-        position: Cesium.Cartesian3.fromDegrees(104.081701757991, 30.627042558105988, 200),
-        videoElement: videoDom,
-        dimensions: new Cesium.Cartesian2(400.0, 200.0),
-   * })
-   * @returns {plane} 返回plane实例
-   */
-  createVideoPlaneGraphics(options) {
-    if (options && options.position) {
-      var entity = this.createGraphics()
-      entity.position = options.position
-      entity.plane = {
-        plane: new Cesium.Plane(
-          options.normal || Cesium.Cartesian3.UNIT_Y,
-          0.0
-        ),
-        dimensions: options.dimensions || new Cesium.Cartesian2(200.0, 150.0),
-        material: new Cesium.ImageMaterialProperty({
-          image: options.videoElement
-        })
-      }
-      return this._graphicsLayer.entities.add(entity)
-    }
-  }
+ * Creates a dynamic polygon with a border, and adds it to the data source.
+ *
+ * @param {Object} polygonEntity - The entity object to be added to the data source.
+ * @param {Object} style - The style options for the border line.
+ * @param {Array} dynamicPos - The dynamic positions for the border line.
+ * @param {Object} dataSource - The data source to which the polygon and border line will be added ,if null then defaultLayer.
+ *
+ * @returns {undefined} - This function does not return a value.
+ */
+  DaymicPolygonWithBorder(polygonEntity, style, dynamicPos, dataSource) {
+    // Including the polyline property when drawing a polygon in Cesium can enhance the visual clarity during the drawing process
+    // 给面实体一个边缘线 并动态渲染 
+    const lineOpt = null;
+    Object.assign(lineOpt, style);
+    lineOpt.positions = dynamicPos;//动态加载边缘线数据点位置
+    polygonEntity.polyline = $this.$graphics.DynamicPolyLineEntity(lineOpt);
 
+    // 面实体 并动态渲染 
+    options.positions = dynamicPos;
+    polygonEntity.polygon = $this.$graphics.DynamicPolygonEntity(options);
+    polygonEntity.clampToS3M = true;
+
+    const _dataSource = dataSource || this._graphicsLayer;
+    polyObj = _dataSource.entities.add(polygonEntity);
+  };
 
   // 高级entity
   /**
