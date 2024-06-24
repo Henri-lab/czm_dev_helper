@@ -1,14 +1,17 @@
 import * as turf from '@turf/turf';
 import Cesium from 'cesium';
+import { typeOf } from "../util/type";
+import { DataPrepocesser } from "../Data";
 
 class TurfUser {
     constructor(viewer) {
         this.viewer = viewer;
         this.handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
         this.entities = [];
+        this.$data = new DataPrepocesser(Cesium);
     }
 
-    measureDistance(units, precision) {
+    measureDistance1Event(units, precision) {
         this._clearHandler();
         this._clearEntities();
         let positions = [];
@@ -33,7 +36,7 @@ class TurfUser {
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     }
 
-    measureDistance2(units, precision) {
+    measureDistance2Event(units, precision) {
         this._clearHandler();
         this._clearEntities();
         let positions = [];
@@ -58,7 +61,7 @@ class TurfUser {
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     }
 
-    measureArea() {
+    measureAreaEvent() {
         this._clearHandler();
         this._clearEntities();
         let positions = [];
@@ -87,7 +90,7 @@ class TurfUser {
         }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
     }
 
-    measureHeight() {
+    measureHeightEvent() {
         this._clearHandler();
         this._clearEntities();
         let positions = [];
@@ -106,6 +109,44 @@ class TurfUser {
             }
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     }
+
+
+
+    /**
+     * Method to perform simple measurements based on provided type and coordinates.
+     *
+     * @param {Array.<Array.<number>>} posArr - Array of coordinates for the measurement.
+     * @param {string} type - Type of measurement. Can be 'Point', 'line', 'Polygon', or 'height'.
+     *
+     * @returns {number} - The result of the measurement. For 'Point' and 'line', it returns 0.
+     *                      For 'Polygon', it returns the area of the polygon in square meters.
+     *                      For 'height', it returns the absolute difference in height between two points.
+     *
+     * @throws {Error} - Throws an error if the provided type is not one of the valid types.
+     */
+    // The turf.polygon function and convertToGeoJSON(positions, 'Polygon') function can achieve similar results when converting an array of positions to a GeoJSON polygon.
+    // However, turf.polygon expects the input to be in a specific format, which is a nested array of coordinates.
+    measureSimple(type, posArr) {
+        let res, geojson;
+        switch (type) {
+            case 'point':
+                break;
+            case 'line':
+                geojson = this.$data.convertToGeoJSON(posArr, 'LineString');
+                res = turf.length(geojson, { units: 'kilometers' }) || 0;
+                break;
+            case 'Polygon':
+                res = turf.area(turf.polygon([posArr])) || 0;
+                break;
+            case 'height':
+                break;
+            default:
+                throw new Error('Invalid measurement type. Expected one of: Point, line, Polygon, height');;
+        }
+        return res;
+    }
+
+
 
     isPointInPolygon(point, polygonCoordinates) {
         const coordinates = this._toGeographicCoordinate(point);
