@@ -21,7 +21,7 @@ export default class Draw extends DrawingManager {
         this.Cesium = cesiumGlobal;// Cesium 版本
         this.dfSt = defaultStatic || undefined;
         this._drawLayer = new Cesium.CustomDataSource("drawLayer");
-        this.$graphics = new Graphics(viewer, Cesium);
+        this.$graphics = new Graphics(viewer, Cesium, this._drawLayer);
         this.$coords = new CoordTransformer();
         this.viewer && this.viewer.dataSources.add(this._drawLayer);
         this.defaultImageUrl = '';
@@ -62,7 +62,7 @@ export default class Draw extends DrawingManager {
         return isValidCartesian(cartesian)
     }
 
-    getCatesian3FromPX/*pixel*/(position) {
+    getCartesian3FromPX/*pixel*/(position) {
         return this.$coords.getCartesianFromScreenPosition(position);
     }
 
@@ -89,11 +89,11 @@ export default class Draw extends DrawingManager {
         };
 
         if (this.viewer && options) {
-            let _point = this.$graphics.PointEntities(options),
+            let $this = this,
+                _point = $this.$graphics.PointEntities(options),
                 position,
                 positions = [],
                 poiObj,
-                $this = this,
                 _handlers = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
             // Get handler
             drawHandler = _handlers;
@@ -122,6 +122,7 @@ export default class Draw extends DrawingManager {
             poiObj = this._drawLayer.entities.add(_point);
         }
     }
+
     /**
   * Draws a line on the map.
   * @param {Object} options - The options for drawing the line.
@@ -138,15 +139,15 @@ export default class Draw extends DrawingManager {
         options = options || {};
         if (this.viewer && options) {
             let positions = [],
-                _line = this.$graphics.LineEntity(options),
                 $this = this,
+                _line = $this.$graphics.LineEntity(options),
                 lineObj,
                 _handlers = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
             // 获取handler
             drawHandler = _handlers;
             // left
             _handlers.setInputAction(function (movement) {
-                let cartesian = $this.getCatesian3FromPX(movement.position/*pixel*/);
+                let cartesian = $this.getCartesian3FromPX(movement.position/*pixel*/);
                 if (cartesian && isValidCartesian(cartesian)) {
                     if (positions.length == 0) {
                         positions.push(cartesian.clone());
@@ -180,7 +181,7 @@ export default class Draw extends DrawingManager {
                 _handlers.destroy();
                 _handlers = null;
 
-                let cartesian = $this.getCatesian3FromPX(movement.position);
+                let cartesian = $this.getCartesian3FromPX(movement.position);
                 if (options.measure) {
                     //添加测量功能
                 }
@@ -198,200 +199,98 @@ export default class Draw extends DrawingManager {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // 即将施工 
-
     /**
-     * 画面 or 测面积
+     * Draws a polygon on the map.
+     * 
+     * LEFT_CLICK: Adds vertices to the polygon.
+     * 
+     * MOUSE_MOVE: Updates the polygon dynamically as the mouse moves.
+     * 
+     * RIGHT_CLICK: Finalizes the polygon by closing it and executing the callback.
      * @function
      * @param {object} options
-     * @param {boolean} options.style - 图形风格配置
+     * @param {boolean} options.style - 边缘线样式
      * @param {boolean} options.measure - 是否为量测
      * @param {number} options.height - 拉伸高度
      * @param {boolean} options.clampToGround - 是否贴地
      * @param {function} options.callback - 回调函数
-     * @see {@link module:Base#getCatesian3FromPX|getCatesian3FromPX}
-     * @see {@link module:Math3d#getPositionsArea|getPositionsArea}
-     * @see {@link module:Base#transformCartesianToWGS84|transformCartesianToWGS84}
-     * @example
-     *  import { Draw } from 'cesium_dev_kit'
-     * const drawObj = new Draw({
-     *    cesiumGlobal: Cesium,
-          containerId: 'cesiumContainer'
-        })
-     * drawObj.draw.drawPolygonGraphics({
-          measure:false,
-          height:300,
-          clampToGround:true,
-          style:{
-              width: 3,
-              material: Cesium.Color.BLUE.withAlpha(0.8),
-              clampToGround: true,
-          }
-          callback=(res)=>{console.log(res)}
-     })
      */
-    drawPolygonGraphics(options) {
+    PolygonEvent(options) {
         options = options || {};
-        options.style = options.style || {
+
+        const defaultStyle = {
             width: 3,
             material: Cesium.Color.BLUE.withAlpha(0.8),
             clampToGround: true,
         };
-        if (this.viewer && options) {
-            let positions = [],
-                polygon = new Cesium.PolygonHierarchy(),
-                _polygonEntity = new Cesium.Entity(),
+        options.style = options.style || defaultStyle;
+
+        if ($this.viewer && options) {
+            let _positions = [],//点击坐标集合
                 $this = this,
+                _polygonEntity = $this.$graphics.PolygonEntity(options),
                 polyObj = null,
                 _handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
             // 获取handler
             drawHandler = _handler;
-            const create = function () {
-                _polygonEntity.polyline = options.style;
 
-                _polygonEntity.polyline.positions = new Cesium.CallbackProperty(function () {
-                    return positions;
-                }, false);
+            $this._drawLayer.entities.add(polygonEntity);
+        };
 
-                _polygonEntity.polygon = {
-                    hierarchy: new Cesium.CallbackProperty(function () {
-                        return polygon;
-                    }, false),
+        // Left-click to add vertices
+        _handler.setInputAction(function (movement) {
+            let cartesian = $this.getCartesian3FromPX(movement.position);
+            if (cartesian && isValidCartesian(cartesian)) {
+                _positions.push(cartesian.clone());
+                polygon.positions.push(cartesian.clone());
 
-                    material: Cesium.Color.WHITE.withAlpha(0.1),
-                    clampToGround: options.clampToGround || false,
-                };
-                _polygonEntity.clampToS3M = true;
+                if (!polyObj) $this.$graphics.DaymicPolygonWithBorder(_polygonEntity, options.style, _positions);
+            }
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        // Mouse move to dynamically update the polygon
+        _handler.setInputAction(function (movement) {
+            let cartesian = $this.getCatesian3FromPX(movement.endPosition);
+            // 三点成面
+            if (_positions.length >= 2 && cartesian && isValidCartesian(cartesian)) {
+                _positions.pop();
+                _positions.push(cartesian);
+                polygon.positions.pop();
+                polygon.positions.push(cartesian);
+            }
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-                polyObj = $this._drawLayer.entities.add(_polygonEntity);
-            };
+        // Right-click to finalize the polygon
+        _handler.setInputAction(function () {
+            _handler.destroy();
+            // Closing the Polygon
+            _positions.push(_positions[0]);
 
-            const _addInfoPoint = function (position) {
-                let _labelEntity = new Cesium.Entity();
-                _labelEntity.position = position;
-                _labelEntity.point = {
-                    pixelSize: 10,
-                    outlineColor: Cesium.Color.BLUE,
-                    outlineWidth: 5,
-                };
-                _labelEntity.label = {
-                    text:
-                        ($this.getPositionsArea($this.transformCartesianToWGS84(positions)) / 1000000.0).toFixed(4) +
-                        "平方公里",
-                    show: true,
-                    showBackground: true,
-                    font: "14px monospace",
-                    horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
-                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-                    pixelOffset: new Cesium.Cartesian2(-20, -50), //left top
-                };
-                $this._drawLayer.entities.add(_labelEntity);
-            };
-
-            // left
-            _handler.setInputAction(function (movement) {
-                let cartesian = $this.getCatesian3FromPX(movement.position);
-                if (cartesian && isValidCartesian(cartesian)) {
-                    if (positions.length == 0) {
-                        polygon.positions.push(cartesian.clone());
-                        positions.push(cartesian.clone());
-                    }
-                    positions.push(cartesian.clone());
-                    polygon.positions.push(cartesian.clone());
-
-                    if (!polyObj) create();
-                }
-            }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-            // mouse
-            _handler.setInputAction(function (movement) {
-                let cartesian = $this.getCatesian3FromPX(movement.endPosition);
-                if (positions.length >= 2) {
-                    if (cartesian && isValidCartesian(cartesian)) {
-                        positions.pop();
-                        positions.push(cartesian);
-                        polygon.positions.pop();
-                        polygon.positions.push(cartesian);
-                    }
-                }
-            }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-
-            // right
-            _handler.setInputAction(function () {
-                _handler.destroy();
-
-                positions.push(positions[0]);
-
-                if (options.height) {
-                    //立体
-                    _polygonEntity.polygon.extrudedHeight = options.height;
-                    _polygonEntity.polygon.material = Cesium.Color.BLUE.withAlpha(0.5);
-                }
-                if (options.measure) {
-                    // 量测
-                    _addInfoPoint(positions[0]);
-                }
-                if (typeof options.callback === "function") {
-                    options.callback($this.transformCartesianToWGS84(positions), polyObj);
-                }
-            }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-        }
+            //指定立体高度
+            if (options.height) {
+                _polygonEntity.polygon.extrudedHeight = options.height;
+                _polygonEntity.polygon.material = Cesium.Color.BLUE.withAlpha(0.5);
+            }
+            // 开启测量功能
+            if (options.measure) {
+                _addInfoPoint(_positions[0]);
+            }
+            // 启动右键回调
+            if (typeof options.callback === "function") {
+                options.callback($this.transformCartesianToWGS84(_positions), polyObj);
+            }
+        }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
     }
+
+
     /**
-     * 画矩形
+     * 画矩形；
+     * LEFT_CLICK: Handles the first and second clicks to define the corners of the rectangle.
+     * MOUSE_MOVE: Updates the rectangle dynamically as the mouse moves, before the second click.
      * @function
      * @param {object} options
      * @param {boolean} options.style - 图形风格配置
      * @param {number} options.height - 拉伸高度
      * @param {function} options.callback - 回调函数
-     * @see {@link module:Base#getCatesian3FromPX|getCatesian3FromPX}
-     * @see {@link module:Base#transformCartesianToWGS84|transformCartesianToWGS84}
-     * @example
-     *  import { Draw } from 'cesium_dev_kit'
-     * const drawObj = new Draw({
-     *    cesiumGlobal: Cesium,
-          containerId: 'cesiumContainer'
-        })
-     * drawObj.draw.drawRectangleGraphics({
-          height:300,
-          style:{
-              width: 3,
-              material: Cesium.Color.BLUE.withAlpha(0.5),
-              clampToGround: true,
-          }
-          callback=(res)=>{console.log(res)}
-     })
      */
     drawRectangleGraphics(options) {
         options = options || {};
@@ -401,25 +300,36 @@ export default class Draw extends DrawingManager {
             clampToGround: true,
         };
         if (this.viewer && options) {
-            let _positions = [],
+            let _positions = [],//存储click生成点的集合
                 _rectangleEntity = new Cesium.Entity(),
                 _coordinates = new Cesium.Rectangle(),
                 $this = this,
-                rectangleObj,
-                _handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+                rectangleObj,//暴露回调的实体
+                _handler = new Cesium.ScreenSpaceEventHandler($this.viewer.scene.canvas);
+
+            _rectangleEntity.rectangle = options.style;
+
+            if (options.height) _rectangleEntity.rectangle.extrudedHeight = options.height;
+            _rectangleEntity.rectangle.coordinates = new Cesium.CallbackProperty(function () {
+                return _coordinates;
+            }, false);
+
+            rectangleObj = $this._drawLayer.entities.add(_rectangleEntity);
+
+
             // 获取handler
             drawHandler = _handler;
-            // left
-            _handler.setInputAction(function (movement) {
-                let cartesian = $this.getCatesian3FromPX(movement.position);
+            //left click to define rectangle corners
+            _handler.setInputAction(function (event) {
+                let cartesian = $this.getCartesian3FromPX(event.position);
                 if (cartesian && isValidCartesian(cartesian)) {
                     if (_positions.length == 0) {
                         _positions.push(cartesian.clone());
                     } else {
+                        // Destroy the handler after the second click
                         _handler.destroy();
 
                         _positions.push(cartesian.clone());
-
                         _coordinates = Cesium.Rectangle.fromCartesianArray([..._positions, cartesian], Cesium.Ellipsoid.WGS84);
 
                         if (typeof options.callback === "function") {
@@ -428,24 +338,22 @@ export default class Draw extends DrawingManager {
                     }
                 }
             }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-            // mouse
+            // Mouse move to update the rectangle coordinates dynamically
             _handler.setInputAction(function (movement) {
                 let cartesian = $this.getCatesian3FromPX(movement.endPosition);
 
-                if (cartesian) {
+                if (cartesian && _positions.length > 0) {
                     _coordinates = Cesium.Rectangle.fromCartesianArray([..._positions, cartesian], Cesium.Ellipsoid.WGS84);
                 }
             }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-            _rectangleEntity.rectangle = options.style;
-
-            if (options.height) _rectangleEntity.rectangle.extrudedHeight = options.height;
-            _rectangleEntity.rectangle.coordinates = new Cesium.CallbackProperty(function () {
-                return _coordinates;
-            }, false);
-            rectangleObj = this._drawLayer.entities.add(_rectangleEntity);
         }
     }
+
+
+
+
+
     /**
      * 画圆
      * @function
