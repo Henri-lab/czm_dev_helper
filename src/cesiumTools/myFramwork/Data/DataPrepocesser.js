@@ -12,7 +12,7 @@ class DataPrepocesser {
 	 * @param {Object} tile - The 3D tile to be updated.
 	 * @static
 	 */
-	static update3dtilesMaxtrix = (tx, ty, tile) => {
+	update3dtilesMaxtrix = (tx, ty, tile) => {
 		const center = tile.boundingSphere.center
 		// Get the vertical coordinate system based on the current model as the origin
 		const m = this.Cesium.Transforms.eastNorthUpToFixedFrame(center);
@@ -47,7 +47,7 @@ class DataPrepocesser {
 	 * @returns {Array<number>} An array of coordinates [x1, y1, x2, y2, ...].
 	 * @throws Will throw an error if the lengths of xs and ys are not equal.
 	 */
-	static xsysLoader = (xs, ys) => {
+	xsysLoader = (xs, ys) => {
 		let posArr = [];
 		if (typeof xs === 'string' && typeof ys === 'string') {
 			const xArr = xs.split(',').map(parseFloat);
@@ -64,6 +64,59 @@ class DataPrepocesser {
 		}
 		return posArr;
 	}
+
+	/**
+	 * Convert Cesium Cartesian3 coordinates to GeoJSON format.
+	 * @param {Array} positions - Array of Cesium.Cartesian3 positions.
+	 * @param {String} type - Type of GeoJSON feature ('Point', 'LineString', 'Polygon').
+	 * @returns {Object} GeoJSON feature object.
+	 */
+	convertToGeoJSON(positions, type) {
+		let coordinates;
+
+		switch (type) {
+			case 'Point':
+				if (positions.length !== 1) {
+					throw new Error('Point type requires exactly one position.');
+				}
+				const cartographic = Cesium.Cartographic.fromCartesian(positions[0]);
+				coordinates = [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];
+				break;
+
+			case 'LineString':
+				coordinates = positions.map(position => {
+					const cartographic = Cesium.Cartographic.fromCartesian(position);
+					return [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];
+				});
+				break;
+
+			case 'Polygon':
+				if (positions.length < 3) {
+					throw new Error('Polygon type requires at least three positions.');
+				}
+				coordinates = [positions.map(position => {
+					const cartographic = Cesium.Cartographic.fromCartesian(position);
+					return [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];
+				})];
+				break;
+
+			default:
+				throw new Error(`Unsupported GeoJSON type: ${type}`);
+		}
+
+		return {
+			type: 'Feature',
+			geometry: {
+				type: type,
+				coordinates: coordinates
+			},
+			properties: {}
+		};
+	}
+
+
+
+
 
 }
 
