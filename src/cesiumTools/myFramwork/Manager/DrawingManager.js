@@ -38,9 +38,9 @@ class DrawingManager {
     * @returns {Object} 实体空对象（带签名）
     */
     createGraphics() {
-        let entity = {
-            Author: 'henriFox',
-        }
+        let entity = new Cesium.Entity();
+
+        // author sign
         Object.defineProperty(entity, Auther, {
             value: 'henriFox',
             writable: false,    // 不可写
