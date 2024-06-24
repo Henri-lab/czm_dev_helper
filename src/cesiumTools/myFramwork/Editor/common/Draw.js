@@ -36,7 +36,6 @@ export default class Draw extends DrawingManager {
         // -或者! 仍然创建一个公共handler,但是调用之前先清空添加的事件
     }
 
-
     // 私有方法--------------------------------------------------------
     /**
       * 获取指定名称的静态资源的URL数组
@@ -404,6 +403,24 @@ export default class Draw extends DrawingManager {
     }
 
     // circle-is-Ellipse
+    /**
+     * Draws a circle on the map.
+     * 
+     * LEFT_CLICK: Adds the center point of the circle.
+     * 
+     * MOUSE_MOVE: Updates the circle dynamically as the mouse moves.
+     * 
+     * RIGHT_CLICK: Finalizes the circle by closing it and executes the callback.
+     * 
+     * @function
+     * @param {object} options
+     * @param {object} options.style - The style of the circle's edge.
+     * @param {boolean} options.measure - Whether the circle should be measured.
+     * @param {number} options.height - The extruded height of the circle.
+     * @param {boolean} options.clampToGround - Whether the circle should be clamped to the ground.
+     * @param {function} options.callback - The callback function to be called when the circle is drawn.
+     * @returns {undefined}
+     */
     CircleWithEvent(options) {
         if (!this.viewer || !options) return null;
 
@@ -472,6 +489,7 @@ export default class Draw extends DrawingManager {
             }
         }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
     }
+
 
 
 
