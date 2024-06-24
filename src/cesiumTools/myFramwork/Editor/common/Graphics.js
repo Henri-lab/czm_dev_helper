@@ -8,20 +8,18 @@ let dfSt = undefined
 
 /**
  * 图形模块
- * 用于向地图加载各种实体对象
+ * 用于向地图加载各种实体对象*16
  * @class
  * @augments  module:Base
  * @param {object} params
  * @param {object} params.viewer - cesium 实例
- * @param {object} params.cesiumGlobal - cesium 全局对象
  * @param {Array} params.dataSource - 想要添加实体的图层
  * @param {Array} params.defaultStatic - 静态资源
  * @exports  Graphics
  */
 export default class Graphics extends DrawingManager {
-  constructor(viewer, cesiumGlobal, dataSource, defaultStatic) {
+  constructor(viewer, dataSource, defaultStatic) {
     super(viewer);
-    this.Cesium = cesiumGlobal
     this.dfSt = defaultStatic
     this._graphicsLayer = dataSource || new Cesium.CustomDataSource('graphicsLayer')
     this.viewer && this.viewer.dataSources.add(this._graphicsLayer)
@@ -631,6 +629,34 @@ export default class Graphics extends DrawingManager {
     }
   }
 
+  // xxx
+  /**
+   * Creates a dynamic rectangle entity that updates based on provided positions.
+   *
+   * @param {Object} options - The options for creating the rectangle entity.
+   * @param {Array<Cesium.Cartesian3>} options.positions - An array of Cartesian3 positions that define the rectangle.
+   * @param {string} [options.name] - The name of the rectangle entity.
+   * @param {Cesium.Material} [options.material] - The material to be used for the rectangle.
+   * @returns {Cesium.Entity} The created rectangle entity.
+   */
+  DynamicRectangleEntity(options) {
+    if (options && options.positions) {
+      let entity = this.createGraphics();
+      let positions = options.positions;
+      entity.name = options.name || '';
+
+      entity.rectangle = {
+        coordinates: new Cesium.CallbackProperty(function () {
+          if (positions.length < 2) return undefined;
+          return Cesium.Rectangle.fromCartesianArray(positions);
+        }, false),
+        material: options.material || Cesium.Color.BLUE.withAlpha(0.5),
+        outline: true,
+        outlineColor: options.outlineColor || Cesium.Color.BLUE.withAlpha(0.5),
+      };
+      return this._graphicsLayer.entities.add(entity);
+    }
+  }
   /**
      * 构建动态椎体
      * @function
@@ -785,81 +811,97 @@ export default class Graphics extends DrawingManager {
   }
 
   /**
-  *  创建动态旋转圆
-  * @function
-  * @param {object} options
-  * @param {object} options.center - 中心坐标数组
-  * @param {number} options.radius - 半径
-  * @param {number} options.rotateAmount - 旋转频率
-  * @param {number} options.height - 高度
-  * @param {number} options.scale - 外圆缩放比例
-  * @param {number} options.scale2 - 内圆缩放比例
-  * @param {string} options.imge - 材质图片
-  * @param {object} options.material - 材质(与图片二选一)
-  * @returns {ellipse} 返回ellipse实例
-  */
-  DynamicCricleEntity(options) {
+   * Creates a dynamic circle entity with the specified options.
+   * 
+   * @param {Object} options - Options for creating the dynamic circle.
+   * @param {Object} options.center - The center of the circle in WGS84 coordinates.
+   * @param {number} [options.radius=800] - The radius of the circle.
+   * @param {number} [options.rotateAmount=0.05] - The amount of rotation per update.
+   * @param {number} [options.height=1] - The height of the circle.
+   * @param {number} [options.maxR=10] - max Radius.
+   * @param {number} [options.minR=0] - min radius.
+   * @param {string} [options.image=""] - Image URL for the circle material.
+   * @param {Cesium.MaterialProperty} [options.material] - Custom material for the circle.
+   * 
+   * @returns {Cesium.Entity} The created circle entity.
+   */
+  DynamicCircleEntity(options) {
     if (options && options.center) {
       let entity = this.createGraphics(),
-        $this = this
+        $this = this;
 
-      //生成动态实体配置选项
+      // Default options
+      const defaultOptions = {
+        radius: 800,
+        rotateAmount: 0.05,
+        height: 1,
+        scale: null,
+        scale2: null,
+        image: "",
+        material: new Cesium.ImageMaterialProperty({
+          image: "",
+          transparent: true
+        })
+      };
+
+      // Assign default values to options if not provided
+      options = { ...defaultOptions, ...options };
+
+      // Circle properties
       let dynamicOpt = {},
         heading = 0,
         pitch = 0,
         roll = 0,
         _center = options.center,
-        _radius = options.radius || 800,
-        _rotateAmount = options.rotateAmount || 0.05,
+        _radius = options.radius,//动态半径
+        _maxR = options.maxR,
+        _minR = options.minR,
+        _rotateAmount = options.rotateAmount,
         _stRotation = 0,
-        _height = options.height || 1,
-        _scale = options.scale || null,
-        _scale2 = options.scale2 || null,
-        _material =
-          options.material ||
-          new Cesium.ImageMaterialProperty({
-            image: options.imge || "",
-            transparent: true
-          })
+        _height = options.height,
+        _material = options.material || new Cesium.ImageMaterialProperty({
+          image: options.image || "",
+          transparent: true
+        });
 
-      let bg_scale = _radius
-      let flag = false
+      let flag = false;
+
+      // 改变radius的增长方向
       let updateScalerAxis = () => {
-        if (_radius >= _scale || _radius <= bg_scale) {
-          flag = !flag
+        if (_radius >= _maxR || _radius <= _minR) {
+          flag = !flag;
         }
-        flag ? (_radius += 2) : (_radius -= 2)
-      }
-      let updateScalerAxis2 = () => {
-        _scale2 >= _radius ? (_radius += 2) : (_radius = bg_scale)
-      }
+        flag ? (_radius -= 2) : (_radius += 2);
+      };
 
+      // Dynamic circle options
       dynamicOpt = {
         material: _material,
         height: _height,
         semiMajorAxis: new Cesium.CallbackProperty(function () {
-          return _radius
+          return _radius;
         }, false),
         semiMinorAxis: new Cesium.CallbackProperty(function () {
-          return _radius
+          return _radius;
         }, false),
-        stRotation: new Cesium.CallbackProperty(function () {
+        stRotation:/*旋转角度*/ new Cesium.CallbackProperty(function () {
           if (_rotateAmount > 0) {
-            _stRotation += _rotateAmount
+            _stRotation += _rotateAmount;
             if (_stRotation >= 360) {
-              _stRotation = 0
+              _stRotation = 0;
             }
           }
-          if (_scale) updateScalerAxis()
-          if (_scale2) updateScalerAxis2()
-          return _stRotation
+          if (_maxR && _minR) updateScalerAxis();
+          return _stRotation;
         }, false)
-      }
+      };
 
+      // Entity position
       entity.position = new Cesium.CallbackProperty(function () {
-        return $this.transformWGS84ToCartesian(_center)
+        return $this.transformWGS84ToCartesian(_center);
       }, false);
 
+      // Entity orientation
       entity.orientation = new Cesium.CallbackProperty(function () {
         return Cesium.Transforms.headingPitchRollQuaternion(
           $this.transformWGS84ToCartesian(_center),
@@ -868,14 +910,17 @@ export default class Graphics extends DrawingManager {
             Cesium.Math.toRadians(pitch),
             Cesium.Math.toRadians(roll)
           )
-        )
+        );
       }, false);
 
+      // Define ellipse graphics for the entity
       entity.ellipse = this.EllipseGraphics(dynamicOpt);
 
-      return this._graphicsLayer.entities.add(entity)
+      // Add entity to the graphics layer
+      return this._graphicsLayer.entities.add(entity);
     }
   }
+
 
   /**
   *  动态渐变墙
@@ -983,21 +1028,21 @@ export default class Graphics extends DrawingManager {
  *
  * @returns {undefined} - This function does not return a value.
  */
-  DaymicPolygonWithBorder(polygonEntity, style, dynamicPos, dataSource) {
+  DynamicPolygonWithBorder(polygonEntity, style, dynamicPos, dataSource) {
     // Including the polyline property when drawing a polygon in Cesium can enhance the visual clarity during the drawing process
     // 给面实体一个边缘线 并动态渲染 
     const lineOpt = null;
     Object.assign(lineOpt, style);
     lineOpt.positions = dynamicPos;//动态加载边缘线数据点位置
-    polygonEntity.polyline = $this.$graphics.DynamicPolyLineEntity(lineOpt);
+    polygonEntity.polyline = this.DynamicPolyLineEntity(lineOpt);
 
     // 面实体 并动态渲染 
     options.positions = dynamicPos;
-    polygonEntity.polygon = $this.$graphics.DynamicPolygonEntity(options);
+    polygonEntity.polygon = this.DynamicPolygonEntity(options);
     polygonEntity.clampToS3M = true;
 
     const _dataSource = dataSource || this._graphicsLayer;
-    polyObj = _dataSource.entities.add(polygonEntity);
+    return _dataSource.entities.add(polygonEntity);
   };
 
   // 高级entity
