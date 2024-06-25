@@ -17,7 +17,7 @@ export default async function gifLoader(url, gifArr, slow, _url) {
         await parseGifImages(url, gifArr, slow)
     } catch (e) {
         console.error('Error loading GIF:', e);
-        gifArr = [_url]; //加载gif 就加载_url
+        gifArr = [_url]; //若加载gif报错 则加载_url
         return null;
     }
     const property = createImageCallback(url, gifArr, slow)

@@ -11,8 +11,6 @@ class TurfUser {
         this.$data = new DataPrepocesser(Cesium);
     }
 
-
-
     _createPoint(position) {
         return this.viewer.entities.add({
             position,
@@ -116,7 +114,7 @@ class TurfUser {
     // However, turf.polygon expects the input to be in a specific format, which is a nested array of coordinates.
     measureSimple(type, posArr) {
         let res, geojson;
-        switch (type) {
+        switch (type.toLowerCase()) {
             case 'point':
                 break;
             case 'line':
@@ -124,7 +122,7 @@ class TurfUser {
                 geojson = this.$data.convertToGeoJSON(posArr, 'LineString');
                 res = turf.length(geojson, { units: 'kilometers' }) || 0;
                 break;
-            case 'Polygon':
+            case 'polygon':
                 res = turf.area(turf.polygon([posArr])) || 0;
                 break;
             case 'height':
@@ -160,7 +158,7 @@ class TurfUser {
 
         return turf.booleanPointInPolygon(turfPoint, turfPolygon);
     }
-    
+
     /**
      * Performs a buffer analysis on a given point.
      *

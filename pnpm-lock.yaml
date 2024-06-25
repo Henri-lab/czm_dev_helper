@@ -17,6 +17,9 @@ importers:
       cesium:
         specifier: '1.97'
         version: 1.97.0
+      libgif:
+        specifier: ^0.0.3
+        version: 0.0.3
       pinia:
         specifier: ^2.1.7
         version: 2.1.7(vue@3.4.30)
@@ -711,6 +714,9 @@ packages:
 
   lerc@2.0.0:
     resolution: {integrity: sha512-7qo1Mq8ZNmaR4USHHm615nEW2lPeeWJ3bTyoqFbd35DLx0LUH7C6ptt5FDCTAlbIzs3+WKrk5SkJvw8AFDE2hg==}
+
+  libgif@0.0.3:
+    resolution: {integrity: sha512-4lJhyr5AQvHIs+Btdqvx0UgUAuZNJhcG6vZS0yYNrYm4B1k9Lo4NxezWR5AQ7EJrXkxmktrx1ZplWJVwRBz/ew==}
 
   lodash-es@4.17.21:
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
@@ -1609,6 +1615,8 @@ snapshots:
   ktx-parse@0.2.2: {}
 
   lerc@2.0.0: {}
+
+  libgif@0.0.3: {}
 
   lodash-es@4.17.21: {}
 

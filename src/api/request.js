@@ -1,11 +1,4 @@
-/*
- * @Description:
- * @Author: henrifox
- * @version:
- * @Date: 2024-06-20 21:40:00
- * @LastEditors: 
- * @LastEditTime: 
- */
+
 import axios from "axios";
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL, // 所有请求的公共地址部分

@@ -1,5 +1,6 @@
 /**
    * 函数继承
+   * ---更推荐extends
    * @param {Function} childCtor - 子函数
    * @param {Function} parentCtor - 父函数
    * @returns {Object} 返回继承后的原型对象

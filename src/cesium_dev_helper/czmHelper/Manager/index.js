@@ -6,6 +6,7 @@ import ViewManager from './ViewManager';
 import EventManager from './EventManager';
 import AnimationManager from './AnimationManager';
 import ControlsManager from './ControlsManager';
+import ConfigManager from './ConfigManager';
 
 
 export {
@@ -16,5 +17,6 @@ export {
     ViewManager,
     EventManager,
     AnimationManager,
-    ControlsManager
+    ControlsManager,
+    ConfigManager,
 }

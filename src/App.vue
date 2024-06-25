@@ -9,14 +9,16 @@
 <template>
   <v-scale-screen width="1920" height="1080" delay="200">
     <keep-alive>
-        <CesiumView/>
+      <CesiumView />
     </keep-alive>
   </v-scale-screen>
 </template>
-  
+
 <script setup>
-import CesiumView from './views/CesiumView.vue';
-import VScaleScreen from 'v-scale-screen'
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  console.log()
+});
 </script>
 <style></style>
-  

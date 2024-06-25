@@ -38,8 +38,7 @@ class MaterialCreator {
     // 添加新材质- wallMaterial
     wallMaterial(color) {
         Cesium.Material.WallGradientsType = "WallGradients";
-        Cesium.Material.WallGradientsImage =
-            "/src/assets/materialResources/wallgradients.png";
+        Cesium.Material.WallGradientsImage = "/src/assets/materialResources/wallgradients.png";
         Cesium.Material.WallGradientsSource = wallMapping_glsl;
         // 注册材质
         Cesium.Material._materialCache.addMaterial(Cesium.Material.WallGradientsType, {

@@ -1,5 +1,5 @@
 /**
- * @class DomUtil
+ * @class Dom
  * @classdesc Utility class for DOM manipulations.
  */
 export default class Dom {
