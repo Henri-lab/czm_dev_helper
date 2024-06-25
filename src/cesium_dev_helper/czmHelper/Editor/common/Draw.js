@@ -2,8 +2,8 @@ import { DrawingManager } from "../../Manager";
 import Graphics from "./Graphics";
 import { CoordTransformer } from "../../Compute";
 import { isValidCartesian3 } from "../../util/isValid";
-import * as Cesium from "cesium";
 import TurfUser from "../../Compute/TurfUser";
+import * as Cesium from "cesium";
 
 
 

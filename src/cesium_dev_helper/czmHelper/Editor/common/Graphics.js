@@ -3,8 +3,6 @@ import { gifLoader } from '../../Data';
 import { DrawingManager } from "../../Manager"
 import * as Cesium from 'cesium';
 
-let Cesium = null
-let dfSt = undefined
 
 /**
  * 图形模块
