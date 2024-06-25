@@ -1,6 +1,9 @@
-const providerKeys = ['imageryProvider', 'terrainProvider'];
-const defaultToken = '';//环境变量导入
+const providerKeys = ['ImageryProvider', 'TerrainProvider'];//限制的Provider类型
+
+const defaultToken = import.meta.env.VITE_CESIUM_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiMDk4NmM5OS03MmNlLTRiNWItOTUzNy1hYzhkMTUwYjgwNmQiLCJpZCI6MjE3MTc3LCJpYXQiOjE3MTcwNTUwMTh9.C3dvJjK0cBUhb87AI_EnpLPUwxD3ORI8sGcntlhCAmw';
+
 let Cesium = null;
+
 
 export default class ConfigManager {
     /**
@@ -37,14 +40,16 @@ export default class ConfigManager {
      * @param {Object} config - 配置对象
      * @param {string} config.containerId - 容器ID
      * @param {Object} config.viewerConfig - Viewer 配置
-     * @param {Object} config.extraConfig - 额外配置
-     * @param {Array} config.MapImageryList - 影像图层列表
-     * @param {Object} config.imageryProvider - 影像提供者配置
-     * @returns {Object} - 返回初始化后的 Viewer 对象
+     * @param {{AccessToken:string,logo:boolean,depthTest:boolean}} config.extraConfig - 额外配置 
+     * @param {Array<{type:string,option:Object}>} config.MapImageryList - 影像图层列表 
+     * @param {{ImageProvider:{type:string,option:Object}}} config.imageryProviderOpt - 影像提供者配置 
+     * @returns {Cesium.Viewer} - 返回初始化后的 Viewer 对象
      */
-    init({ containerId, viewerConfig, extraConfig, MapImageryList, imageryProvider }) {
+    init({ containerId, viewerConfig, extraConfig, MapImageryList, imageryProviderOpt }) {
         const mapID = containerId;
-        let vConfig = {
+
+        // viewer配置
+        let vConfig = /**@default*/{
             contextOptions: {
                 webgl: {
                     alpha: false
@@ -67,9 +72,11 @@ export default class ConfigManager {
             navigation: false,
             showRenderLoopErrors: true
         };
-        let providerConf = this.findCesiumProvider(imageryProvider);
-        Cesium.Ion.defaultAccessToken = extraConfig['AccessToken'] || defaultToken;
+
+        let providerConf = this.findCesiumProvider(imageryProviderOpt);
         vConfig = Object.assign(vConfig, viewerConfig);
+
+        Cesium.Ion.defaultAccessToken = extraConfig['AccessToken'] || defaultToken;
         const viewer = new Cesium.Viewer(mapID, { ...vConfig, ...providerConf });
 
         if (!extraConfig['logo']) {
@@ -111,7 +118,7 @@ export default class ConfigManager {
     findCesiumProvider(options) {
         const object = {};
         for (const key in options) {
-            if (providerKeys.includes(key) && options[key] && options[key].type) {
+            if (providerKeys.includes(key) && options[key]/*config*/ && options[key].type) {
                 object[key] = this.createCesiumProvider(options[key]);
             } else {
                 object[key] = options[key];
@@ -132,5 +139,7 @@ export default class ConfigManager {
         return new ProviderClass(config.option);
     }
 }
+
+
 
 
