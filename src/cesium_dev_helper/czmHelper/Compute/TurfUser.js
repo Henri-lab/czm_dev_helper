@@ -1,5 +1,5 @@
 import * as turf from '@turf/turf';
-import Cesium from 'cesium';
+import * as Cesium from 'cesium';
 import { typeOf } from "../util/type";
 import { DataPrepocesser } from "../Data";
 

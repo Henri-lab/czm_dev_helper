@@ -24,6 +24,7 @@
     "vite-plugin-static-copy": "^0.13.1"
   },
   "dependencies": {
+    "@turf/turf": "^7.0.0",
     "ant-design-vue": "^4.2.1",
     "axios": "^1.6.8",
     "cesium": "1.97",
