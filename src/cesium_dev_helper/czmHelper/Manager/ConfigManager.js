@@ -96,7 +96,7 @@ export default class ConfigManager extends Manager {
         // 加载影像图层列表 -通过 viewer.imageryLayers.addImageryProvider方法
         for (const type in this.pCMap.iMap) {
             const iConfig = this.pCMap.iMap[type];
-            this.addImageryProvider(viewer, iConfig);
+            this.addImageryProvider(viewer, { type, option: iConfig });
         }
 
         // 设置viewer
@@ -132,15 +132,20 @@ export default class ConfigManager extends Manager {
      * @param {Object} cfg.option - 提供者选项
      * @param {Object} cfg.customProvider - 自定义图源
      */
-    addImageryProvider(viewer, { type, option, customProvider }) {
 
+    addImageryProvider(viewer, { type, option }) {
         if (isValidImageryProviderType(type)) {
-            if (option && !customProvider) {
+            const _cip = option.customProvider;
+            // 没提供自定义 就创建对应的
+            if (!_cip) {
                 const _provider = this.createProvider({ type, option });
                 viewer.imageryLayers.addImageryProvider(_provider);
             }
-            else (customProvider)
-            viewer.imageryLayers.addImageryProvider(customProvider);
+            // 提供了自定义 就使用自定义
+            else if (_cip) {
+                console.log('loading custom imageryProvider')
+                viewer.imageryLayers.addImageryProvider(_cip);
+            }
         } else {
             console.warn(`${type} is not the valid imagery provider type`);
         }
