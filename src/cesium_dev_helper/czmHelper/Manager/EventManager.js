@@ -1,6 +1,10 @@
-class EventManager {
+import Manager from "./Manager";
+
+let Cesium = new Manager().Cesium;
+
+class EventManager extends Manager {
     constructor(viewer) {
-        this.viewer = viewer;
+        super(viewer);
         this.handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
         this.eventHandlers = new Map();
     }

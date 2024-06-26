@@ -1,6 +1,10 @@
-class LayerManager {
+import Manager from "./Manager";
+
+let Cesium = new Manager().Cesium;
+
+class LayerManager extends Manager {
     constructor(viewer) {
-        this.viewer = viewer;
+        super(viewer);
         this.layers = [];
     }
     addLayer(layer) { /* ... */

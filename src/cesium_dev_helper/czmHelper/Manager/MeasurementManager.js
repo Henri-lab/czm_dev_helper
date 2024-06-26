@@ -1,6 +1,10 @@
-class MeasurementManager {
+import Manager from "./Manager";
+
+let Cesium = new Manager().Cesium;
+
+class MeasurementManager extends Manager {
     constructor(viewer) {
-        this.viewer = viewer;
+        super(viewer);
         this.handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
         this.entities = [];
     }

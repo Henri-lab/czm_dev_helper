@@ -1,6 +1,10 @@
-class AnnotationManager {
+import Manager from "./Manager";
+
+let Cesium = new Manager().Cesium;
+
+class AnnotationManager extends Manager {
     constructor(viewer) {
-        this.viewer = viewer;
+        super(viewer);
         this.annotations = [];
     }
 

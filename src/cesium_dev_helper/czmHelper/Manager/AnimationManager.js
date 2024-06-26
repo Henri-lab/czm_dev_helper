@@ -1,6 +1,9 @@
-class AnimationManager {
+import Manager from "./Manager";
+
+let Cesium = new Manager().Cesium;
+class AnimationManager extends Manager {
     constructor(viewer) {
-        this.viewer = viewer;
+        super(viewer);
         this.clock = viewer.clock;
         this.timeline = viewer.timeline;
     }
@@ -25,7 +28,7 @@ class AnimationManager {
 
     goToTime(time) {
         const julianDate = Cesium.JulianDate.fromIso8601(time);
-        if (Cesium.JulianDate.greaterThan(julianDate, this.clock.startTime) && 
+        if (Cesium.JulianDate.greaterThan(julianDate, this.clock.startTime) &&
             Cesium.JulianDate.lessThan(julianDate, this.clock.stopTime)) {
             this.clock.currentTime = julianDate;
         }

@@ -1,6 +1,10 @@
-class ControlsManager {
+import Manager from "./Manager";
+
+let Cesium = new Manager().Cesium;
+
+class ControlsManager extends Manager {
     constructor(viewer) {
-        this.viewer = viewer;
+        super(viewer);
     }
     addScaleBar() { /* ... */ }
     addCompass() { /* ... */ }

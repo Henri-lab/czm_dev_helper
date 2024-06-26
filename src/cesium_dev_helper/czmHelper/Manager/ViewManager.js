@@ -1,8 +1,11 @@
 import { Cartesian3, HeadingPitchRoll, Math as CesiumMath } from 'cesium';
+import Manager from "./Manager";
 
-class ViewManager {
+let Cesium = new Manager().Cesium;
+
+class ViewManager extends Manager {
     constructor(viewer) {
-        this.viewer = viewer;
+        super(viewer);
         this.scene = viewer.scene;
         this.camera = viewer.camera;
         this.vehicleEntity = null;
