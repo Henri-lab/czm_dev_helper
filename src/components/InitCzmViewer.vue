@@ -43,9 +43,10 @@ const vcfg = {
     terrainProvider: [],
     imageryProvider: [
       {
-        type: 'ImageryLayer',
-        option: {},
-        customProvider: tCip,
+        type: 'UrlTemplateImageryProvider',
+        option: {
+          customProvider: tCip,
+        },
       },
     ],
   },
@@ -67,8 +68,10 @@ onMounted(async () => {
   app.config.globalProperties.$czmViewer = czmViewer;
   //   console.log('cesium viewer globalProperties loaded');
 
+  // czmViewer.imageryLayers.addImageryProvider(tCip);
+  console.log(tCip);
   const sM = new SceneManager(czmViewer);
-  sM.initScene();
+  // sM.initScene();
   // sM.loadTilesets();
 });
 </script>

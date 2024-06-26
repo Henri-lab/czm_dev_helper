@@ -5,6 +5,7 @@ import { CoordTransformer } from '../Compute'
  * 坐标转换器
  */
 const cT = new CoordTransformer();
+// cT.BD09ToGCJ02()
 /**
  * 底图拓展来源 github:cesium-map
  */

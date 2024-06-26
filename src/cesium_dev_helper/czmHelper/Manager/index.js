@@ -7,7 +7,7 @@ import EventManager from './EventManager';
 import AnimationManager from './AnimationManager';
 import ControlsManager from './ControlsManager';
 import ConfigManager from './ConfigManager';
-import SceneManager from './sceneManager';
+import SceneManager from './SceneManager';
 
 
 export {

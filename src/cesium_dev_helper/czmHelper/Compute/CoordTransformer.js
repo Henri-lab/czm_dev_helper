@@ -29,7 +29,7 @@ class CoordTransformer {
      * @returns {number[]}
      * @constructor
      */
-    static GCJ02ToBD09(lng, lat) {
+    GCJ02ToBD09(lng, lat) {
         lat = +lat;
         lng = +lng;
         let z =
@@ -46,7 +46,7 @@ class CoordTransformer {
      * @param lat
      * @returns {number[]}
      */
-    static WGS84ToGCJ02(lng, lat) {
+    WGS84ToGCJ02(lng, lat) {
         lat = +lat;
         lng = +lng;
         if (this.out_of_china(lng, lat)) {
@@ -64,7 +64,7 @@ class CoordTransformer {
      * @returns {number[]}
      * @constructor
      */
-    static GCJ02ToWGS84(lng, lat) {
+    GCJ02ToWGS84(lng, lat) {
         lat = +lat;
         lng = +lng;
         if (this.out_of_china(lng, lat)) {
@@ -83,7 +83,7 @@ class CoordTransformer {
      * @param lat
      * @returns {number[]}
      */
-    static delta(lng, lat) {
+    delta(lng, lat) {
         let dLng = this.transformLng(lng - 105, lat - 35);
         let dLat = this.transformLat(lng - 105, lat - 35);
         const radLat = (lat / 180) * this.PI;
@@ -101,7 +101,7 @@ class CoordTransformer {
      * @param lat
      * @returns {number}
      */
-    static transformLng(lng, lat) {
+    transformLng(lng, lat) {
         lat = +lat;
         lng = +lng;
         let ret =
@@ -132,7 +132,7 @@ class CoordTransformer {
      * @param lat
      * @returns {number}
      */
-    static transformLat(lng, lat) {
+    transformLat(lng, lat) {
         lat = +lat;
         lng = +lng;
         let ret =
@@ -163,7 +163,7 @@ class CoordTransformer {
      * @param lat
      * @returns {boolean}
      */
-    static out_of_china(lng, lat) {
+    out_of_china(lng, lat) {
         lat = +lat;
         lng = +lng;
         return !(lng > 73.66 && lng < 135.05 && lat > 3.86 && lat < 53.55);

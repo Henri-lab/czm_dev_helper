@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import InitCzmViewer from './views/InitCzmViewer.vue';
+import InitCzmViewer from './components/InitCzmViewer.vue';
 import { onMounted } from 'vue';
 
 onMounted(() => {
