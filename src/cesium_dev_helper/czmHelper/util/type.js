@@ -1,3 +1,4 @@
+
 /**
  * Checks if the type of an object matches the specified type.
  *
@@ -10,10 +11,21 @@
  * console.log(isTypeOf(myObject, 'Object')); // true
  * console.log(isTypeOf(myObject, 'Array')); // false
  */
+// return Object.prototype.toString.call(obj) === `[object ${type}]`;//只能用来判断 JavaScript 的内置类型
+// 对于 null 和 undefined，obj.constructor 会抛出错误，所以可以在判断前进行额外检查。
+// instance of方式中，确保 type 是一个构造函数
 export function isTypeOf(obj, type) {
-    return Object.prototype.toString.call(obj) === `[object ${type}]`;
+    // obj?
+    if (obj === null)
+        return type === 'null';
+    else if (obj === undefined)
+        return type === 'undefined';
+    // type?
+    else if (typeof type === 'string' && obj.constructor && obj.constructor.name)
+        return obj.constructor.name === type;
+    else if (typeof type === 'function')
+        return (obj instanceof type)
 }
-
 
 
 /**
@@ -79,5 +91,13 @@ export function isTypeOf(obj, type) {
 // You need to check for primitive types or objects not created by constructors.
 // You need precise type information that goes beyond constructor checks.
 export function typeOf(obj) {
-    return Object.prototype.toString.call(obj).slice(8, -1);
+    if (obj === null) {
+        return 'null';
+    } else if (obj === undefined) {
+        return 'undefined';
+    } else if (obj.constructor && obj.constructor.name) {
+        return obj.constructor.name;
+    } else {
+        return Object.prototype.toString.call(obj).slice(8, -1);
+    }
 }
