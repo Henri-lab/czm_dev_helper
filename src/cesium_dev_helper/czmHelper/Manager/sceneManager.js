@@ -16,7 +16,8 @@ export default class SceneManager extends Manager {
    *
    * @returns {undefined} This function does not return any value.
    */
-  initScene = (viewer) => {
+  initScene = () => {
+    let viewer = this.viewer;
     // 隐藏太阳
     viewer.scene.sun.show = false;
 

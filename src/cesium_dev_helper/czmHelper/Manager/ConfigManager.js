@@ -37,7 +37,7 @@ export default class ConfigManager extends Manager {
      * @param {{AccessToken,logo,depthTest,canvas}} config.extraConfig - 额外配置 
      * @returns {Cesium.Viewer} - 返回初始化后的 Viewer 对象
      */
-    initViewer({ containerId, viewerConfig, providerConfig, extraConfig }) {
+    async initViewer({ containerId, viewerConfig, providerConfig, extraConfig }) {
         // 配置token
         Cesium.Ion.defaultAccessToken = extraConfig['AccessToken'] || this.defaultToken;
 
@@ -90,7 +90,7 @@ export default class ConfigManager extends Manager {
             const option = this.pCMap.tMap[type];
             tConfig.terrainProvider = this.createProvider({ type, option })
         }
-        const viewer = new Cesium.Viewer(mapID, { ...vConfig, ...tConfig });
+        let viewer = new Cesium.Viewer(mapID, { ...vConfig, ...tConfig });
 
 
         // 加载影像图层列表 -通过 viewer.imageryLayers.addImageryProvider方法
@@ -119,9 +119,7 @@ export default class ConfigManager extends Manager {
 
             viewer.resize();
         }
-
         this.viewer = viewer;
-
         return viewer;
     }
 
@@ -143,7 +141,7 @@ export default class ConfigManager extends Manager {
             }
             // 提供了自定义 就使用自定义
             else if (_cip) {
-                console.log('loading custom imageryProvider')
+                // console.log('loading custom imageryProvider')
                 viewer.imageryLayers.addImageryProvider(_cip);
             }
         } else {

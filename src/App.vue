@@ -1,5 +1,5 @@
 <template>
-  <InitCzmViewer />
+  <test />
   <!-- <v-scale-screen width="1920" height="1080" delay="200">
     <keep-alive>
       <CesiumView />
@@ -8,11 +8,9 @@
 </template>
 
 <script setup>
-import InitCzmViewer from './components/InitCzmViewer.vue';
+import test from './components/test.vue';
 import { onMounted } from 'vue';
 
-onMounted(() => {
-  console.log();
-});
+onMounted(() => {});
 </script>
 <style></style>
