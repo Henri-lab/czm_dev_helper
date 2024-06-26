@@ -134,12 +134,13 @@ export default class ConfigManager extends Manager {
      */
     addImageryProvider(viewer, { type, option, customProvider }) {
 
-        if (isValidImageryProviderType(type) && option && !customProvider) {
-            const _provider = this.createProvider({ type, option });
-            viewer.imageryLayers.addImageryProvider(_provider);
-            if (customProvider) {
-                viewer.imageryLayers.addImageryProvider(customProvider);
+        if (isValidImageryProviderType(type)) {
+            if (option && !customProvider) {
+                const _provider = this.createProvider({ type, option });
+                viewer.imageryLayers.addImageryProvider(_provider);
             }
+            else (customProvider)
+            viewer.imageryLayers.addImageryProvider(customProvider);
         } else {
             console.warn(`${type} is not the valid imagery provider type`);
         }
