@@ -1,16 +1,17 @@
-import { Cartesian3, HeadingPitchRoll, Math as CesiumMath } from 'cesium';
+import { Cartesian3, HeadingPitchRoll, Math as CesiumMath, Matrix4, JulianDate } from 'cesium';
 import Manager from "./Manager";
 
 let Cesium = new Manager().Cesium;
 
-class ViewManager extends Manager {
+
+export default class CameraManager extends Manager {
     constructor(viewer) {
         super(viewer);
         this.scene = viewer.scene;
         this.camera = viewer.camera;
         this.vehicleEntity = null;
         this.isFirstPerson = false;
-        this.firstPersonOffset = new Cesium.Cartesian3(0, 0, 5); // 调整摄像头相对于车辆的位置
+        this.firstPersonOffset = new Cartesian3(0, 0, 5); // 调整摄像头相对于车辆的位置
     }
 
     // 缩放
@@ -113,26 +114,26 @@ class ViewManager extends Manager {
     // 更新第一人称视角
     _updateFirstPersonView() {
         if (this.isFirstPerson && this.vehicleEntity) {
-            const vehiclePosition = this.vehicleEntity.position.getValue(Cesium.JulianDate.now());
-            const vehicleOrientation = this.vehicleEntity.orientation.getValue(Cesium.JulianDate.now());
+            const vehiclePosition = this.vehicleEntity.position.getValue(JulianDate.now());
+            const vehicleOrientation = this.vehicleEntity.orientation.getValue(JulianDate.now());
 
-            const modelMatrix = Cesium.Matrix4.fromRotationTranslation(
+            const modelMatrix = Matrix4.fromRotationTranslation(
                 Cesium.Matrix3.fromQuaternion(vehicleOrientation/*旋转四元数*/),/*旋转矩阵*/
                 vehiclePosition/*平移向量*/
             );
 
-            const cameraOffset/*局部坐标系-vehicleModel*/ = new Cesium.Cartesian3(0, 0, 5); // 调整摄像头相对于车辆的位置
-            const cameraPosition/*世界坐标系*/ = Cesium.Matrix4.multiplyByPoint(
+            const cameraOffset/*局部坐标系-vehicleModel*/ = new Cartesian3(0, 0, 5); // 调整摄像头相对于车辆的位置
+            const cameraPosition/*世界坐标系*/ = Matrix4.multiplyByPoint(
                 modelMatrix,
                 cameraOffset,
-                new Cesium.Cartesian3()
+                new Cartesian3()
             );
 
             this.camera.setView({
                 destination: cameraPosition,
                 orientation: {
-                    heading: Cesium.Math.heading(vehicleOrientation),
-                    pitch: Cesium.Math.toRadians(0),
+                    heading: CesiumMath.heading(vehicleOrientation),
+                    pitch: CesiumMath.toRadians(0),
                     roll: 0
                 }
             });
@@ -140,4 +141,4 @@ class ViewManager extends Manager {
     }
 }
 
-export default ViewManager;
+

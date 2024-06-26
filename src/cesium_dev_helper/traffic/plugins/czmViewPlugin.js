@@ -9,6 +9,7 @@ import {
   SceneManager,
 } from '../../czmHelper/Manager';
 import { TencentImageryProvider } from '../../czmHelper/Map/mapPlugin';
+import { CameraManager } from '../../czmHelper/Manager';
 
 // 创建地图容器
 const cV = document.createElement('div');
@@ -56,6 +57,22 @@ const vcfg = {
   },
 };
 
+// wuhan
+const wuhan = {
+  longtitude: 113.95,
+  latitude: 30.19,
+  height: 34000,
+}
+const flyOpt = {
+  orientation: {
+    heading: Cesium.Math.toRadians(35.0),
+    pitch: Cesium.Math.toRadians(-37.0),
+    roll: 0.0,
+  },
+  duration: 2,
+}
+
+
 async function loadCzmViewerAt(app) {
   let _app = app;
   const czmViewer = await cfgM.initViewer(vcfg);
@@ -69,6 +86,11 @@ async function loadCzmViewerAt(app) {
   // console.log('cesium scene init completed');
 
   // sM.loadTilesets();
+
+
+  const cM = new CameraManager(czmViewer);
+  cM.flyTo(wuhan, flyOpt);
+  console.log('cesium camera setting completed');
 }
 let cvp = null;
 export default cvp = {
