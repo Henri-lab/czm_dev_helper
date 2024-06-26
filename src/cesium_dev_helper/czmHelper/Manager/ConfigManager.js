@@ -1,18 +1,21 @@
 import { isValidProvider, isValidTerrianProviderType, isValidImageryProviderType, isValidViewerProperty } from "../util/isValid";
+import Manager from "./Manager";
 
-// 必备
+let Cesium = new Manager().Cesium;
+// 必备 
 window.CESIUM_BASE_URL = 'node_modules/cesium/Build/CesiumUnminified';
 
 
-
-let Cesium = null;
-export default class ConfigManager {
+/**
+ * 管理生成cesium viewer的配置文件 并可以初始化viewer
+ */
+export default class ConfigManager extends Manager {
     /**
      * 初始化 ConfigManager 类
      * @param {Object} cesiumGlobal - Cesium 全局对象
     */
-    constructor(cesiumGlobal) {
-        Cesium = cesiumGlobal;
+    constructor() {
+        super();
         this.init_data();
     }
 
@@ -31,7 +34,7 @@ export default class ConfigManager {
      * @param {string} config.containerId - 容器ID
      * @param {Object} config.viewerConfig - Viewer 配置
      * @param {Object} config.providerConfig - 影像地形配置列表 
-     * @param {{AccessToken:string,logo:boolean,depthTest:boolean}} config.extraConfig - 额外配置 
+     * @param {{AccessToken,logo,depthTest,canvas}} config.extraConfig - 额外配置 
      * @returns {Cesium.Viewer} - 返回初始化后的 Viewer 对象
      */
     initViewer({ containerId, viewerConfig, providerConfig, extraConfig }) {
@@ -93,7 +96,7 @@ export default class ConfigManager {
         // 加载影像图层列表 -通过 viewer.imageryLayers.addImageryProvider方法
         for (const type in this.pCMap.iMap) {
             const iConfig = this.pCMap.iMap[type];
-            this.addImageryProvider(viewer, iConfig.type, iConfig.option);
+            this.addImageryProvider(viewer, iConfig);
         }
 
         // 设置viewer
@@ -106,6 +109,17 @@ export default class ConfigManager {
             viewer.scene.globe.depthTestAgainstTerrain = true;
         }
 
+        if (extraConfig['canvas']) {
+            // 访问 cesium-widget canvas 元素
+            let vcanvas = viewer.scene.canvas;
+
+            // 设置 cesium-widget canvas 的宽度和高度
+            vcanvas.style.width = extraConfig['canvas'].width + 'px';
+            vcanvas.style.height = extraConfig['canvas'].height + 'px';
+
+            viewer.resize();
+        }
+
         this.viewer = viewer;
 
         return viewer;
@@ -114,14 +128,18 @@ export default class ConfigManager {
     /**
      * 添加影像提供者
      * @param {Object} viewer - Viewer 实例
-     * @param {string} type - 提供者类型
-     * @param {Object} option - 提供者选项
+     * @param {string} cfg.type - 提供者类型
+     * @param {Object} cfg.option - 提供者选项
+     * @param {Object} cfg.customProvider - 自定义图源
      */
-    addImageryProvider(viewer, type, option) {
+    addImageryProvider(viewer, { type, option, customProvider }) {
 
-        if (isValidImageryProviderType(type)) {
+        if (isValidImageryProviderType(type) && option && !customProvider) {
             const _provider = this.createProvider({ type, option });
             viewer.imageryLayers.addImageryProvider(_provider);
+            if (customProvider) {
+                viewer.imageryLayers.addImageryProvider(customProvider);
+            }
         } else {
             console.warn(`${type} is not the valid imagery provider type`);
         }
