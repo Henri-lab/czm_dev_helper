@@ -7,6 +7,7 @@ import * as Cesium from 'cesium';
 import {
   ConfigManager,
   SceneManager,
+  CameraManager
 } from '../cesium_dev_helper/czmHelper/Manager';
 import { TencentImageryProvider } from '../cesium_dev_helper/czmHelper/Map/mapPlugin';
 
@@ -56,19 +57,38 @@ const vcfg = {
   },
 };
 
+// wuhan
+const wuhan = {
+  longitude: 113.95,
+  latitude: 30.19,
+  height: 34000,
+}
+const flyOpt = {
+  orientation: {
+    heading: Cesium.Math.toRadians(35.0),
+    pitch: Cesium.Math.toRadians(-90.0),
+    roll: 0.0,
+  },
+  duration: 2,
+}
+
 async function loadCzmViewerAt(app) {
   let _app = app;
   const czmViewer = await cfgM.initViewer(vcfg);
-  // console.log('cesium viewer init completed');
+  console.log('cesium viewer init completed');
 
   _app.config.globalProperties.$czmViewer = czmViewer;
-  // console.log('cesium viewer globalProperties loaded');
+  console.log('cesium viewer globalProperties loaded');
 
   const sM = new SceneManager(czmViewer);
   sM.initScene();
-  // console.log('cesium scene init completed');
+  console.log('cesium scene init completed');
 
   // sM.loadTilesets();
+
+  const cM = new CameraManager(czmViewer);
+  cM.flyTo(wuhan, flyOpt);
+  console.log('cesium camera setting completed');
 }
 let cvp = null;
 export default cvp = {

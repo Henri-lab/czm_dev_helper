@@ -59,7 +59,7 @@ const vcfg = {
 
 // wuhan
 const wuhan = {
-  longtitude: 113.95,
+  longitude: 113.95,
   latitude: 30.19,
   height: 34000,
 }
@@ -76,14 +76,14 @@ const flyOpt = {
 async function loadCzmViewerAt(app) {
   let _app = app;
   const czmViewer = await cfgM.initViewer(vcfg);
-  // console.log('cesium viewer init completed');
+  console.log('cesium viewer init completed');
 
   _app.config.globalProperties.$czmViewer = czmViewer;
-  // console.log('cesium viewer globalProperties loaded');
+  console.log('cesium viewer globalProperties loaded');
 
   const sM = new SceneManager(czmViewer);
   sM.initScene();
-  // console.log('cesium scene init completed');
+  console.log('cesium scene init completed');
 
   // sM.loadTilesets();
 
