@@ -2,11 +2,13 @@
 import Manager from "./Manager";
 
 import { TencentImageryProvider } from "../Map/mapPlugin";
+import { DataLoader } from "../Data";
 let Cesium = new Manager().Cesium;
 
 export default class SceneManager extends Manager {
   constructor(viewer) {
     super(viewer);
+    this.$dL = new DataLoader(viewer);
   }
 
   /**
@@ -93,31 +95,56 @@ export default class SceneManager extends Manager {
     viewer.scene.fog.enabled = false;
   };
 
-  /**
-   * Function to load multiple 3D tilesets into the Cesium viewer.
-   *
-   * @param {Cesium.Viewer} viewer - The Cesium viewer object to load the 3D tilesets into.
-   * @param {Array} urls - An array of objects containing the URL and options for each 3D tileset.
-   * @param {Function} [loadCb] - An optional callback function to be executed when all 3D tilesets are loaded.
-   *
-   * @returns {undefined} This function does not return any value.
-   */
-  loadTilesets = async (urls, loadCb) => {
-    const tilesets = urls.map((item) => {
-      const { url, options } = item;
-      let params = { url };
 
-      if (typeof options === "object") {
-        Object.assign(params, options);
-      }
-      const tile = this.viewer.scene.primitives.add(
-        new Cesium.Cesium3DTileset(params)
-      );
-      return tile.readyPromise;
-    });
-    let result = await Promise.all(tilesets);
-    loadCb && loadCb(result);
+  async add3DTiles(options, cb) {
+    let res = [];
+    // options 可以是数组也可以是一个普通对象
+    if (Array.isArray(options)) {
+      await $dL.load3DTiles(options);
+      options.forEach(opt => {
+        // 加载成功
+        opt.onSuccess(tile => {
+          if (tile) {
+            // 渲染
+            this.viewer.scene.primitives.add(tile);
+          }
+          // 返回加载进度条
+          opt.onProgress(progress => {
+            res.push({
+              loadTime: Date.now(),
+              tile,
+              progress,
+            })
+            // 暴露加载对象和相应的进度条
+            cb(res)
+          });
+        })
+        opt.onError(e => {
+          if (e) {
+            console.error(e, 'scene manager fail loading 3d tile ')
+          }
+        })
+      })
+    } else {
+      let _option = options
+      const tile = await this.load3DTiles(_option);
+      this.viewer.scene.primitives.add(tile);
+      _option.onSuccess(tile);
+      // 统一用数组回调
+      cb([{
+        loadTime: Date.now(),
+        tile,
+        progress: 100,
+      }]);
+      opt.onError(e => {
+        if (e) {
+          console.error(e, 'scene manager fail loading 3d tile ')
+        }
+      })
+    }
   };
+
+
 
   /**
    * Function to apply a default effect to a 3D tileset.
