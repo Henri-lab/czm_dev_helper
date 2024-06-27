@@ -1,33 +1,26 @@
+import { typeOf } from "../util/type";
+
 class DataLoader {
     constructor(viewer) {
         this.viewer = viewer;
         this.cache = new Map(); // 缓存机制
     }
 
-    async loadGeoJSON(url, options = {}) {
-        return this._loadDataWithProgress(url, 'geojson', options);
-    }
-
-    async loadKML(url, options = {}) {
-        return this._loadDataWithProgress(url, 'kml', options);
-    }
-
-    async loadCZML(url, options = {}) {
-        return this._loadDataWithProgress(url, 'czml', options);
-    }
-
-    async load3DTiles(url, options = {}) {
-        return this._loadDataWithProgress(url, '3dtiles', options);
-    }
-
-    async loadGPX(url, options = {}) {
-        return this._loadDataWithProgress(url, 'gpx', options);
-    }
-
-    async loadTopoJSON(url, options = {}) {
-        return this._loadDataWithProgress(url, 'topojson', options);
-    }
-
+    /**
+ * Private method to load data with progress feedback.
+ *
+ * @private
+ * @param {string} url - The URL of the data to load.
+ * @param {string} type - The type of the data to load.
+ * @param {object} [options] - Additional options for loading the data.
+ * @param {function} [options.onSuccess] - A callback function to be executed when the data is successfully loaded.
+ * @param {function} [options.onError] - A callback function to be executed if an error occurs during the loading process.
+ * @param {function} [options.onProgress] - A callback function to be executed to provide progress information during the loading process.
+ * @param {object} [options.headers] - Additional headers to be sent with the request.
+ * @param {string} [options.overrideMimeType] - A MIME type to override the default MIME type for the request.
+ *
+ * @returns {Promise<Cesium.DataSource|Cesium.Cesium3DTileset>} A promise that resolves to the loaded data source or 3DTileset;
+ * */
     async _loadDataWithProgress(url, type, options = {}) {
         // 检查缓存
         if (this.cache.has(url)) {
@@ -94,6 +87,81 @@ class DataLoader {
         return dataSourceOrTileset;
     }
 
+    /**
+     * Function to load multiple 3D tilesets into the Cesium viewer.
+     *
+     * @param {Cesium.Viewer} viewer - The Cesium viewer object to load the 3D tilesets into.
+     * @param {Object|Array} opt - Objects containing the URL and options for each 3D tileset.
+     *
+     * @returns {Object} This function return at the opt.onSuccess,opt.onError,opt.onProgress
+     */
+    async load3DTiles(opt) {
+        // 确保opt有三个可以返回数据的属性
+        let _finalOpt = {
+            onSuccess: () => { },
+            onError: () => { },
+            onProgress: () => { }
+        };
+        Object.assign(_finalOpt, opt);
+        // 解析参数
+        let _params = _finalOpt;
+        let _url = _params.url;
+        delete _params.url
+        let _other = _params;
+        // 加载一个url
+        if (!Array.isArray(opt) && typeOf(_url) == "string" && typeOf(_other) === "object")
+            return this._loadDataWithProgress(_url, '3dtiles', _other);
+        // 加载多个url
+        else if (Array.isArray(opt)) {
+            let _opts = opt;
+            // 数组元素返回的都是Promise建议使用Promise.all
+            // _opts.map(opt => {
+            //     this.load3DTiles(opt);
+            // });
+            return Promise.all(_opts.map(opt => this.load3DTiles(opt)));
+        }
+    }
+
+
+
+    async loadGeoJSON(url, options = {}) {
+        return this._loadDataWithProgress(url, 'geojson', options);
+    }
+
+    async loadKML(url, options = {}) {
+        return this._loadDataWithProgress(url, 'kml', options);
+    }
+
+    async loadCZML(url, options = {}) {
+        return this._loadDataWithProgress(url, 'czml', options);
+    }
+
+    async loadGPX(url, options = {}) {
+        return this._loadDataWithProgress(url, 'gpx', options);
+    }
+
+    async loadTopoJSON(url, options = {}) {
+        return this._loadDataWithProgress(url, 'topojson', options);
+    }
+
+
+
+    /**
+     * Load data of a specific type into the Cesium viewer.
+     *
+     * @param {string} url - The URL of the data to load.
+     * @param {string} type - The type of the data to load. Supported types are: 'geojson', 'kml', 'czml', '3dtiles', 'gpx', 'topojson'.
+     * @param {object} [options] - Additional options for loading the data.
+     * @param {function} [options.onSuccess] - A callback function to be executed when the data is successfully loaded.
+     * @param {function} [options.onError] - A callback function to be executed if an error occurs during the loading process.
+     * @param {function} [options.onProgress] - A callback function to be executed to provide progress information during the loading process.
+     * @param {object} [options.headers] - Additional headers to be sent with the request.
+     * @param {string} [options.overrideMimeType] - A MIME type to override the default MIME type for the request.
+     *
+     * @returns {Promise<Cesium.DataSource|Cesium.Cesium3DTileset>} A promise that resolves to the loaded data source or 3D tileset.
+     *
+     * @throws {Error} If an unsupported data type is specified.
+     */
     async loadData(url, type, options = {}) {
         switch (type.toLowerCase()) {
             case 'geojson':
@@ -102,8 +170,9 @@ class DataLoader {
                 return this.loadKML(url, options);
             case 'czml':
                 return this.loadCZML(url, options);
-            case '3dtiles':
-                return this.load3DTiles(url, options);
+            // 重写了加载方式 参数并不和其他数据源加载一致
+            // case '3dtiles':
+            //     return this.load3DTiles(url, options);
             case 'gpx':
                 return this.loadGPX(url, options);
             case 'topojson':
