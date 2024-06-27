@@ -9,7 +9,7 @@ import {
   SceneManager,
 } from '../../czmHelper/Manager';
 import { TencentImageryProvider } from '../../czmHelper/Map/mapPlugin';
-import { CameraManager } from '../../czmHelper/Manager';
+import { CameraManager, SceneManager } from '../../czmHelper/Manager';
 
 // 创建地图容器
 const cV = document.createElement('div');
@@ -73,6 +73,17 @@ const flyOpt = {
 }
 
 
+// 加载3dTile
+const modelOpt = {
+  url: "http://localhost:9003/model/Q6yR6vkj/tileset.json",
+  options: {
+    onSuccess: suc,
+    onError: err,
+    onProgress: process,
+  }
+}
+
+
 async function loadCzmViewerAt(app) {
   let _app = app;
   const czmViewer = await cfgM.initViewer(vcfg);
@@ -85,13 +96,24 @@ async function loadCzmViewerAt(app) {
   sM.initScene();
   console.log('cesium scene init completed');
 
-  // sM.loadTilesets();
+  sM.add3DTiles(modelOpt, (tiles) => {
+    const _loaded = tiles[0];
+    sM.handleDefaultModelEffect(_loaded)
+    _app.config.globalProperties.$czmLoaded3dTile = _loaded;
+  })
+
 
 
   const cM = new CameraManager(czmViewer);
   cM.flyTo(wuhan, flyOpt);
   console.log('cesium camera setting completed');
 }
+
+
+
+
+
+
 let cvp = null;
 export default cvp = {
   async install(app) {
