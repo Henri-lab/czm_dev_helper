@@ -1,26 +1,85 @@
+import * as Cesium from "cesium";
 import { typeOf } from "../util/type";
 
+
+// 本类调用者应习惯将回调cb放在options中 而不是通常的另起一个参数
 class DataLoader {
     constructor(viewer) {
         this.viewer = viewer;
         this.cache = new Map(); // 缓存机制
     }
 
+    // 使用 fetch 实现进度反馈的通用加载函数
     /**
- * Private method to load data with progress feedback.
- *
- * @private
- * @param {string} url - The URL of the data to load.
- * @param {string} type - The type of the data to load.
- * @param {object} [options] - Additional options for loading the data.
- * @param {function} [options.onSuccess] - A callback function to be executed when the data is successfully loaded.
- * @param {function} [options.onError] - A callback function to be executed if an error occurs during the loading process.
- * @param {function} [options.onProgress] - A callback function to be executed to provide progress information during the loading process.
- * @param {object} [options.headers] - Additional headers to be sent with the request.
- * @param {string} [options.overrideMimeType] - A MIME type to override the default MIME type for the request.
- *
- * @returns {Promise<Cesium.DataSource|Cesium.Cesium3DTileset>} A promise that resolves to the loaded data source or 3DTileset;
- * */
+     * Fetch data with progress feedback.
+     * @private
+     * @param {string} url - The URL to fetch.
+     * @param {Object} options - Additional options including progress callbacks.
+     * @returns {Promise<Response>} The fetch response.
+     */
+    async _fetchWithProgress(url, options) {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: options.headers || {}
+        });
+
+        const reader = response.body.getReader();
+
+        // 获取响应体的总长度
+        const contentLength = +response.headers.get('Content-Length');
+        // 初始化接收的长度和存储块的数组
+        let receivedLength = 0;
+        const chunks = [];
+
+        // 持续读取响应体的块数据
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            // 将读取到的块数据推入数组，并更新已接收的长度
+            chunks.push(value);
+            receivedLength += value.length;
+
+            if (options.onProgress) {
+                // 传递百分比到回调
+                const percentComplete = (receivedLength / contentLength) * 100;
+                options.onProgress(percentComplete);
+            }
+        }
+
+        // 创建一个新的 Uint8Array 来存储所有的块数据
+        const chunksAll = new Uint8Array(receivedLength);
+        let position = 0;
+        // 将所有块数据合并到一个单一的 Uint8Array 中
+        for (let chunk of chunks) {
+            chunksAll.set(chunk, position);
+            position += chunk.length;
+        }
+
+
+        // 直接解析为json格式并导出
+        // const jsonData = JSON.parse(new TextDecoder().decode(chunksAll));
+        // return jsonData; 
+
+        // 导出原始数据 可以在外部解析为json
+        return new Response(chunksAll, { headers: response.headers });
+    }
+
+    /**
+     * Private method to load data with progress feedback.
+     *
+     * @private
+     * @param {string} url - The URL of the data to load.
+     * @param {string} type - The type of the data to load.
+     * @param {object} [options] - Additional options for loading the data.
+     * @param {function} [options.onSuccess] - A callback function to be executed when the data is successfully loaded.
+     * @param {function} [options.onError] - A callback function to be executed if an error occurs during the loading process.
+     * @param {function} [options.onProgress] - A callback function to be executed to provide progress information during the loading process.
+     * @param {object} [options.headers] - Additional headers to be sent with the request.
+     * @param {string} [options.overrideMimeType] - A MIME type to override the default MIME type for the request.
+     *
+     * @returns {Promise<Cesium.DataSource|Cesium.Cesium3DTileset>} A promise that resolves to the loaded data source or 3DTileset;
+     * */
     async _loadDataWithProgress(url, type, options = {}) {
         // 检查缓存
         if (this.cache.has(url)) {
@@ -29,25 +88,31 @@ class DataLoader {
             return cachedData;
         }
 
-        // 使用 Cesium.loadWithXhr 实现进度反馈
-        const xhr = Cesium.loadWithXhr({
-            url,
-            responseType: 'json',
-            method: 'GET',
-            headers: options.headers || {},
-            overrideMimeType: options.overrideMimeType || '',
-            onProgress: (event) => {
-                if (event.lengthComputable && options.onProgress) {
-                    const percentComplete = (event.loaded / event.total) * 100;
-                    options.onProgress(percentComplete);
-                }
-            }
-        });
+        // // 使用 Cesium.loadWithXhr 实现进度反馈 (已被弃用？？)
+        // const xhr = Cesium.loadWithXhr({
+        //     url,
+        //     responseType: 'json',
+        //     method: 'GET',
+        //     headers: options.headers || {},
+        //     overrideMimeType: options.overrideMimeType || '',
+        //     onProgress: (event) => {
+        //         if (event.lengthComputable && options.onProgress) {
+        //             const percentComplete = (event.loaded / event.total) * 100;
+        //             options.onProgress(percentComplete);
+        //         }
+        //     }
+        // });
+
+
+        // progress percent 会传入在options.onProgress
+        const xhr = this._fetchWithProgress(url, options);
 
         let dataSourceOrTileset;
 
         try {
-            const data = await xhr;
+            const response = await xhr;
+            const data = await response.json();
+
             switch (type.toLowerCase()) {
                 case 'geojson':
                     dataSourceOrTileset = await Cesium.GeoJsonDataSource.load(data, options);
@@ -59,7 +124,11 @@ class DataLoader {
                     dataSourceOrTileset = await Cesium.CzmlDataSource.load(data, options);
                     break;
                 case '3dtiles':
-                    dataSourceOrTileset = await Cesium.Cesium3DTileset.fromUrl(url, options);
+                    dataSourceOrTileset = await new Cesium.Cesium3DTileset({ url, options });
+                    // dataSourceOrTileset = await Cesium.Cesium3DTileset.fromUrl(url, options);
+                    break;
+                case 'gltf':
+                    dataSourceOrTileset = await Cesium.Model.fromGltf({ url, ...options });
                     break;
                 case 'gpx':
                     // GPX 支持
@@ -88,38 +157,72 @@ class DataLoader {
     }
 
     /**
-     * Function to load multiple 3D tilesets into the Cesium viewer.
+     * Generic function to load a resource into the Cesium viewer.
      *
-     * @param {Cesium.Viewer} viewer - The Cesium viewer object to load the 3D tilesets into.
-     * @param {Object|Array} opt - Objects containing the URL and options for each 3D tileset.
+     * @param {Object|Array} opt - Objects containing the URL and options for each resource.
+     * @param {string} opt.url - The URL of the resource to load.
+     * @param {string} type - The type of resource to load ('3dtiles' or 'gltf').
+     * @param {Object} [opt.headers] - Additional headers to be sent with the request.
+     * @param {string} [opt.overrideMimeType] - A MIME type to override the default MIME type for the request.
+     * @param {function} [opt.onSuccess] - A callback function to be executed when the resource is successfully loaded.
+     * @param {function} [opt.onError] - A callback function to be executed if an error occurs during the loading process.
+     * @param {function} [opt.onProgress] - A callback function to be executed to provide progress information during the loading process.
      *
-     * @returns {Object} This function return at the opt.onSuccess,opt.onError,opt.onProgress
+     * @returns {Promise<any|Array<Promise<any>>>} 
+     * A promise that resolves to the loaded resource(s). If multiple URLs are provided, it returns an array of promises.
+     *
+     * @throws {Error} If the provided URL is not a string or if the provided options are not an object.
      */
-    async load3DTiles(opt) {
-        // 确保opt有三个可以返回数据的属性
+    async load3D(opt, type) {
+        // Ensure opt has three properties that can return data
         let _finalOpt = {
             onSuccess: () => { },
             onError: () => { },
             onProgress: () => { }
         };
         Object.assign(_finalOpt, opt);
-        // 解析参数
-        let _params = _finalOpt;
-        let _url = _params.url;
-        delete _params.url
-        let _other = _params;
-        // 加载一个url
-        if (!Array.isArray(opt) && typeOf(_url) == "string" && typeOf(_other) === "object")
-            return this._loadDataWithProgress(_url, '3dtiles', _other);
-        // 加载多个url
+
+        // Parse parameters
+        let __finalOptCopy = _finalOpt; // Cache to prevent data loss
+        let _url = _finalOpt.url;
+        delete _finalOpt.url;
+
+        // Load a single URL
+        if (!Array.isArray(opt) && typeOf(_url) === "String" && typeOf(_finalOpt) === "Object") {
+            // Data loaded will be passed back on _finalOpt's three 'on' properties
+            const modelLoaded = await this._loadDataWithProgress(_url, type, _finalOpt);
+            // Data loaded is bound to the passed-in opt.onSuccess callback
+            Object.assign(opt, _finalOpt);
+
+            return modelLoaded;
+        }
+        // Load multiple URLs
         else if (Array.isArray(opt)) {
             let _opts = opt;
-            // 数组元素返回的都是Promise建议使用Promise.all
-            // _opts.map(opt => {
-            //     this.load3DTiles(opt);
-            // });
-            return Promise.all(_opts.map(opt => this.load3DTiles(opt)));
+            return Promise.all(_opts.map(opt => this.load3D(opt, type)));
         }
+    }
+
+    /**
+     * Function to load multiple 3D tilesets into the Cesium viewer.
+     *
+     * @param {Object|Array} opt - Objects containing the URL and options for each 3D tileset.
+     * @returns {Promise<Cesium.Cesium3DTileset|Array<Promise<Cesium.Cesium3DTileset>>>} 
+     * A promise that resolves to the loaded 3D tileset(s). If multiple URLs are provided, it returns an array of promises.
+     */
+    async load3DTiles(opt) {
+        return this.load3D(opt, '3dtiles');
+    }
+
+    /**
+     * Function to load a GLTF model into the Cesium viewer.
+     *
+     * @param {Object|Array} opt - Objects containing the URL and options for each GLTF model.
+     * @returns {Promise<Cesium.Model|Array<Promise<Cesium.Model>>>} 
+     * A promise that resolves to the loaded GLTF model(s). If multiple URLs are provided, it returns an array of promises.
+     */
+    async loadGLTF(opt) {
+        return this.load3D(opt, 'gltf');
     }
 
 
@@ -158,7 +261,7 @@ class DataLoader {
      * @param {object} [options.headers] - Additional headers to be sent with the request.
      * @param {string} [options.overrideMimeType] - A MIME type to override the default MIME type for the request.
      *
-     * @returns {Promise<Cesium.DataSource|Cesium.Cesium3DTileset>} A promise that resolves to the loaded data source or 3D tileset.
+     * @returns {Promise<Cesium.DataSource} A promise that resolves to the loaded data source
      *
      * @throws {Error} If an unsupported data type is specified.
      */
@@ -170,15 +273,12 @@ class DataLoader {
                 return this.loadKML(url, options);
             case 'czml':
                 return this.loadCZML(url, options);
-            // 重写了加载方式 参数并不和其他数据源加载一致
-            // case '3dtiles':
-            //     return this.load3DTiles(url, options);
             case 'gpx':
                 return this.loadGPX(url, options);
             case 'topojson':
                 return this.loadTopoJSON(url, options);
             default:
-                throw new Error(`Unsupported data type: ${type}`);
+                throw new Error(`Unsupported data source type: ${type}`);
         }
     }
 

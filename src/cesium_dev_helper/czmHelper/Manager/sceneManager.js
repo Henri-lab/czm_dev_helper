@@ -95,24 +95,54 @@ export default class SceneManager extends Manager {
     viewer.scene.fog.enabled = false;
   };
 
+  /**
+   * Function to add a data source or 3D tileset to the Cesium viewer.
+   *
+   * @param {Cesium.Viewer} viewer - The Cesium viewer object to add the data source or 3D tileset to.
+   * @param {Cesium.DataSource|Cesium.Cesium3DTileset} dataSourceOrTileset - The data source or 3D tileset to be added.
+   * @param {string} type - The type of the data source or 3D tileset. It can be either '3dtiles' or 'gltf'.
+   *
+   * @returns {undefined} This function does not return any value.
+   */
+  addToScene(dataSourceOrTileset, type) {
+    let viewer = this.viewer;
+    if (type.toLowerCase() === '3dtiles' || type.toLowerCase() === 'gltf') {
+      viewer.scene.primitives.add(dataSourceOrTileset);
+    } else {
+      viewer.dataSources.add(dataSourceOrTileset);
+    }
+  }
 
-  async add3DTiles(options, cb) {
+  /**
+   * Function to add 3D tiles to the Cesium viewer.
+   *
+   * @param {Object|Array} options - The options for loading 3D tiles. It can be a single object or an array of objects.
+   * @param {Function} cb - The callback function to handle the loading progress and result.
+   *
+   * @returns {undefined} This function does not return any value.
+   */
+  async add3DModel(options, type, cb) {
+    const $dL = this.$dL;
+    const _type = type.toLowerCase();
+
     let res = [];
     // options 可以是数组也可以是一个普通对象
     if (Array.isArray(options)) {
-      await $dL.load3DTiles(options);
+      _type === '3dtiles' && await $dL.load3DTiles(options);
+      _type === 'gltf' && await $dL.loadGLTF(options);
+
       options.forEach(opt => {
         // 加载成功
-        opt.onSuccess(tile => {
-          if (tile) {
+        opt.onSuccess(model => {
+          if (model) {
             // 渲染
-            this.viewer.scene.primitives.add(tile);
+            this.addToScene(model, _type);
           }
           // 返回加载进度条
           opt.onProgress(progress => {
             res.push({
               loadTime: Date.now(),
-              tile,
+              model,
               progress,
             })
             // 暴露加载对象和相应的进度条
@@ -121,26 +151,39 @@ export default class SceneManager extends Manager {
         })
         opt.onError(e => {
           if (e) {
-            console.error(e, 'scene manager fail loading 3d tile ')
+            console.error(e, 'scene manager fail loading model ')
           }
         })
       })
     } else {
       let _option = options
-      const tile = await this.load3DTiles(_option);
-      this.viewer.scene.primitives.add(tile);
-      _option.onSuccess(tile);
-      // 统一用数组回调
-      cb([{
-        loadTime: Date.now(),
-        tile,
-        progress: 100,
-      }]);
-      opt.onError(e => {
-        if (e) {
-          console.error(e, 'scene manager fail loading 3d tile ')
-        }
-      })
+
+      if (_type === '3dtiles') {
+        const modelLoaded = await $dL.load3DTiles(_option);
+        cb([modelLoaded])
+      }
+      else if (_type === 'gltf')
+        await $dL.loadGLTF(_option);
+
+      // _option.onSuccess(model => {
+      //   // 统一用数组回调
+      //   cb([{
+      //     loadTime: Date.now(),
+      //     model,
+      //     progress: 100,
+      //   }])
+
+      //   this.addToScene(model, _type);
+
+      //   // 向上传递加载的数据
+      //   return model
+      // });
+
+      // _option.onError(e => {
+      //   if (e) {
+      //     return e
+      //   }
+      // })
     }
   };
 

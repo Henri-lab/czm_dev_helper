@@ -9,7 +9,7 @@ import './style.scss'
 
 // 初始化czm viewer
 import cvp from './plugins/czmViewPlugin'
-import { consolePlugin1 } from './plugins/consolePlugin'
+
 
 const app = createApp(App);
 
@@ -18,7 +18,6 @@ app.use(createPinia())
     .use(cvp)
     .use(Antd)
     .use(VScaleScreen)
-    .use(consolePlugin1)
     .mount('#app')
 
 export default app

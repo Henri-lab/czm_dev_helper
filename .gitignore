@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+*src/cesium_dev_helper/traffic/assets/model/
