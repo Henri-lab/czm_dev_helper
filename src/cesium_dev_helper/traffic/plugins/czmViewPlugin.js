@@ -13,7 +13,7 @@ import { CameraManager } from '../../czmHelper/Manager';
 
 // 创建地图容器
 const cV = document.createElement('div');
-cV.id = 'czm-viewer' + new Date().now;
+cV.id = 'czm-viewer' + Date.now;
 document.body.appendChild(cV)
 
 

@@ -12,7 +12,7 @@ class CoordTransformer {
      * @param lat
      * @returns {number[]}
      */
-    static BD09ToGCJ02(lng, lat) {
+    BD09ToGCJ02(lng, lat) {
         let x = +lng - 0.0065;
         let y = +lat - 0.006;
         let z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * this.BD_FACTOR);

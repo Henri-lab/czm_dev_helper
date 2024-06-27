@@ -11,6 +11,7 @@
 import test from './components/test.vue';
 import { onMounted } from 'vue';
 
-onMounted(() => {});
+onMounted(() => {
+});
 </script>
 <style></style>
