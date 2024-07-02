@@ -24,6 +24,7 @@
     "vite-plugin-static-copy": "^0.13.1"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^7.0.1",
     "@turf/turf": "^7.0.0",
     "@videojs-player/vue": "^1.0.0",
     "ant-design-vue": "^4.2.1",

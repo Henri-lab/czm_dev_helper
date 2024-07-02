@@ -1,5 +1,6 @@
 <template>
   <test />
+  <lay-out></lay-out>
   <!-- <v-scale-screen width="1920" height="1080" delay="200">
     <keep-alive>
       <CesiumView />
@@ -9,9 +10,9 @@
 
 <script setup>
 import test from './components/test.vue';
+import LayOut from './components/layout.vue';
 import { onMounted } from 'vue';
 
-onMounted(() => {
-});
+onMounted(() => {});
 </script>
 <style></style>

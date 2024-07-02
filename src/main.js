@@ -7,15 +7,15 @@ import router from './router'
 import VScaleScreen from 'v-scale-screen'
 import './style.scss'
 
-// 初始化czm viewer
-import { czmViewPlugin } from './plugins/czmViewPlugin'
+// import { czmViewPlugin } from './plugins/czmViewPlugin';
+
+
 
 
 const app = createApp(App);
 
 app.use(createPinia())
     .use(router)
-    .use(czmViewPlugin)
     .use(Antd)
     .use(VScaleScreen);
 

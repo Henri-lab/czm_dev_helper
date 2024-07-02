@@ -1,3 +1,6 @@
+// 备用方案
+
+
 /** 
  * @description
  * 为cesium项目初始化viewer 并加载需要的数据
@@ -17,8 +20,13 @@ import { TencentImageryProvider } from '../cesium_dev_helper/czmHelper/Map/mapPl
 
 // 创建地图容器
 const cV = document.createElement('div');
-cV.id = 'czm-viewer' + Date.now();
-document.body.appendChild(cV)
+// cV.id = 'czm-viewer' + Date.now();
+cV.id = 'czm-viewer';
+const cC = document.createElement('div');
+cC.id = 'czm-container';
+document.body.appendChild(cC);
+cC.appendChild(cV);
+
 
 //腾讯底图
 const txOpt = {
@@ -101,7 +109,6 @@ async function loadCzmViewerAt(app) {
   })
 
   const dP = new DataPrepocesser();
-  dP.update3dtilesMaxtrix(0, 0, tile);
 }
 
 let czmViewPlugin = {

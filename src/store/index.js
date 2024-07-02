@@ -124,7 +124,7 @@ export const useLineData = defineStore("lineData", {
 // 由于lineData的state是异步的，所以需要监听action来获取数据
 export const watchLineData = (actionName = "setData") => {
     return new Promise((resolve, reject) => {
-        // 监听
+        // 监听特定的action
         useLineData().$onAction(({ name, store, args, after, onError }) => {
             if (name === actionName) {
 
