@@ -9,6 +9,7 @@ import {
   SceneManager,
   CameraManager
 } from '../cesium_dev_helper/czmHelper/Manager';
+import { CoordTransformer } from '../cesium_dev_helper/czmHelper/Compute';
 import { DataPrepocesser } from '../cesium_dev_helper/czmHelper/Data';
 import { TencentImageryProvider } from '../cesium_dev_helper/czmHelper/Map/mapPlugin';
 
@@ -56,12 +57,7 @@ const vcfg = {
   },
 };
 
-// wuhan
-const wuhan = {
-  longitude: 113,
-  latitude: 30,
-  height: 20000,
-}
+// cameraFly configuration
 const flyOpt = {
   orientation: {
     heading: Cesium.Math.toRadians(35.0),
@@ -72,77 +68,50 @@ const flyOpt = {
 }
 
 // 3dtiles
-function suc(model) {
-  console.log('loaded model:', model);
-}
-function err(e) {
-  console.error('loading 3d model error:', e);
-}
-
-let percent;
-function pgs(progress) {
-  percent = progress
-  console.log('loading 3d model progress:', progress);
-}
 const modelOpt = {
   url: "http://localhost:8001/wuhan/tileset.json",
-  onSuccess: suc,
-  onError: err,
-  onProgress: pgs,
 }
 
 
 async function loadCzmViewerAt(app) {
-  let _app = app;
-
   const cfgM = new ConfigManager();
   const czmViewer = await cfgM.initViewer(vcfg);
-  console.log('cesium viewer init completed');
+  // console.log('cesium viewer init completed');
 
   const sM = new SceneManager(czmViewer);
   sM.initScene();
-  console.log('cesium scene init completed');
+  // console.log('cesium scene init completed');
 
-  const cM = new CameraManager(czmViewer);
-  cM.flyTo(wuhan, flyOpt);
-  console.log('cesium camera setting completed');
+
 
   sM.add3DModel(modelOpt, '3dtiles', async (tiles) => {
-    console.log('loading model...', tiles);
     const _loadedModel = await tiles[0];
-    console.log('loaded model', _loadedModel);
-    // sM.handleDefaultModelEffect(_loadedModel)
-    console.log(`3d model which _id is ${_loadedModel._id} init completed`);
+    sM.handleDefaultModelEffect(_loadedModel)
+    // console.log(`3d model which _id is ${_loadedModel._id} has been added to this viewer`);
+    
+    // fly to the new model
+    const cM = new CameraManager(czmViewer);
+    const center = CoordTransformer.getCenterFrom3dTiles(_loadedModel.model);
+    center.height = 40000;
+    cM.flyTo(
+      center,
+      flyOpt
+    );
+    // console.log('fly to the new model completed');
   })
 
-  // test
-  // let tile;
-  // try {
-  //   const res = await new Cesium.Cesium3DTileset({ url: "http://localhost:8001/wuhan/tileset.json" })
-  //   console.log(res, 'model')
-  //   tile = czmViewer.scene.primitives.add(res)
-  //   sM.handleDefaultModelEffect(tile)
-  // } catch (e) {
-  //   console.log('cesium 3dtiles load error1', e)
-  // }
-
-
-  // const dataHandler = new DataPrepocesser();
-  // dataHandler.update3dtilesMaxtrix(0, 0, tile);
-  return czmViewer;
-
+  // const dP = new DataPrepocesser();
+  // dP.update3dtilesMaxtrix(0, 0, tile);
 }
-let $viewer = { flag: 0 };
+
 let czmViewPlugin = {
   async install(app) {
-    const viewer = await loadCzmViewerAt(app);
-    // console.log('plugin')
-    $viewer.data = viewer;
-    $viewer.flag = 1;
+    await loadCzmViewerAt(app);
+
     //app不会等里面的异步操作
     // app.config.globalProperties.$viewer = viewer;
   }
 };
 
 
-export { czmViewPlugin, $viewer }
+export { czmViewPlugin }

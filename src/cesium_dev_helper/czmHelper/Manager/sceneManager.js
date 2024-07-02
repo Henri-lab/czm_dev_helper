@@ -107,7 +107,6 @@ export default class SceneManager extends Manager {
   addToScene(dataSourceOrTileset, type) {
     let viewer = this.viewer;
     if (type.toLowerCase() === '3dtiles' || type.toLowerCase() === 'gltf') {
-      console.log('sssss', dataSourceOrTileset)
       viewer.scene.primitives.add(dataSourceOrTileset);
     } else {
       viewer.dataSources.add(dataSourceOrTileset);
