@@ -1,8 +1,6 @@
-
+import * as Cesium from "cesium";
 class DataPrepocesser {
-	constructor(Cesium = {}) {
-		this.Cesium = Cesium
-	}
+	constructor() { }
 
 	/**
 	 * Corrects the offset of a white film on 3D tiles.
@@ -15,7 +13,7 @@ class DataPrepocesser {
 	update3dtilesMaxtrix = (tx, ty, tile) => {
 		const center = tile.boundingSphere.center
 		// Get the vertical coordinate system based on the current model as the origin
-		const m = this.Cesium.Transforms.eastNorthUpToFixedFrame(center);
+		const m = Cesium.Transforms.eastNorthUpToFixedFrame(center);
 		// Offset values in the x, y, and z directions
 		const _tx = tx ? tx : 0;
 		const _ty = ty ? ty : 0;

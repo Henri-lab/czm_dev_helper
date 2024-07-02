@@ -25,12 +25,15 @@
   },
   "dependencies": {
     "@turf/turf": "^7.0.0",
+    "@videojs-player/vue": "^1.0.0",
     "ant-design-vue": "^4.2.1",
     "axios": "^1.6.8",
     "cesium": "1.97",
+    "flv.js": "^1.6.2",
     "libgif": "^0.0.3",
     "pinia": "^2.1.7",
     "v-scale-screen": "^2.2.0",
+    "video.js": "^8.12.0",
     "vue": "^3.4.27",
     "vue-router": "^4.3.2"
   }

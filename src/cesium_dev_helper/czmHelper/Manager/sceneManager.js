@@ -107,6 +107,7 @@ export default class SceneManager extends Manager {
   addToScene(dataSourceOrTileset, type) {
     let viewer = this.viewer;
     if (type.toLowerCase() === '3dtiles' || type.toLowerCase() === 'gltf') {
+      console.log('sssss', dataSourceOrTileset)
       viewer.scene.primitives.add(dataSourceOrTileset);
     } else {
       viewer.dataSources.add(dataSourceOrTileset);
@@ -122,71 +123,43 @@ export default class SceneManager extends Manager {
    * @returns {undefined} This function does not return any value.
    */
   async add3DModel(options, type, cb) {
+    const that = this;
     const $dL = this.$dL;
     const _type = type.toLowerCase();
-
-    let res = [];
-    // options 可以是数组也可以是一个普通对象
+    let resArr = [];
+    //  two type options
     if (Array.isArray(options)) {
-      _type === '3dtiles' && await $dL.load3DTiles(options);
-      _type === 'gltf' && await $dL.loadGLTF(options);
-
-      options.forEach(opt => {
-        // 加载成功
-        opt.onSuccess(model => {
-          if (model) {
-            // 渲染
-            this.addToScene(model, _type);
-          }
-          // 返回加载进度条
-          opt.onProgress(progress => {
-            res.push({
-              loadTime: Date.now(),
-              model,
-              progress,
-            })
-            // 暴露加载对象和相应的进度条
-            cb(res)
-          });
-        })
-        opt.onError(e => {
-          if (e) {
-            console.error(e, 'scene manager fail loading model ')
-          }
-        })
-      })
-    } else {
-      let _option = options
-
-      if (_type === '3dtiles') {
-        const modelLoaded = await $dL.load3DTiles(_option);
-        cb([modelLoaded])
+      for (let option of options) {
+        await loadAndAddModelByOption(option);
       }
-      else if (_type === 'gltf')
-        await $dL.loadGLTF(_option);
-
-      // _option.onSuccess(model => {
-      //   // 统一用数组回调
-      //   cb([{
-      //     loadTime: Date.now(),
-      //     model,
-      //     progress: 100,
-      //   }])
-
-      //   this.addToScene(model, _type);
-
-      //   // 向上传递加载的数据
-      //   return model
-      // });
-
-      // _option.onError(e => {
-      //   if (e) {
-      //     return e
-      //   }
-      // })
+    } else {
+      let _singleOpt = options
+      await loadAndAddModelByOption(_singleOpt);
     }
-  };
 
+
+    // Helper function to load and add a 3d model by a single option
+    async function loadAndAddModelByOption(option) {
+      try {
+        let model;//加载后的model
+        if (_type === '3dtiles') {
+          // $dL.load3DTiles会把加载的model 执行的progress 和err 通过option的三个on属性回调出来
+          model = await $dL.load3DTiles(option);
+        } else if (_type === 'gltf') {
+          model = await $dL.loadGLTF(option);
+        }
+
+        if (model) {
+          that.addToScene(model, _type);//核心
+          resArr.push({ _id: Date.now(), model });//传入回调cb 并标记一个timestamp 作为_id
+          cb(resArr);
+        }
+      } catch (e) {
+        console.error('Scene manager failed loading model', e);
+        // throw new Error(e);
+      }
+    };
+  }
 
 
   /**

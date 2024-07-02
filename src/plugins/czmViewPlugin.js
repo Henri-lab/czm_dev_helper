@@ -9,27 +9,24 @@ import {
   SceneManager,
   CameraManager
 } from '../cesium_dev_helper/czmHelper/Manager';
+import { DataPrepocesser } from '../cesium_dev_helper/czmHelper/Data';
 import { TencentImageryProvider } from '../cesium_dev_helper/czmHelper/Map/mapPlugin';
 
-import json from '../cesium_dev_helper/traffic/assets/model/tileset.json'
+
 
 // 创建地图容器
 const cV = document.createElement('div');
-cV.id = 'czm-viewer' + new Date().now;
+cV.id = 'czm-viewer' + Date.now();
 document.body.appendChild(cV)
-
-
-
 
 //腾讯底图
 const txOpt = {
   style: 4, //style: img、1：经典
   crs: 'WGS84',
 };
-const tCip = new TencentImageryProvider(txOpt);
+const tcip = new TencentImageryProvider(txOpt);
 
 // 配置viewer
-const cfgM = new ConfigManager();
 const vcfg = {
   containerId: `${cV.id}`,
   viewerConfig: {
@@ -43,7 +40,7 @@ const vcfg = {
       {
         type: 'UrlTemplateImageryProvider',
         option: {
-          customProvider: tCip,
+          customProvider: tcip,
         },
       },
     ],
@@ -53,17 +50,17 @@ const vcfg = {
     logo: false,
     depthTest: true,
     canvas: {
-      width: 1000,
-      height: 600,
+      width: 1500,
+      height: 1000,
     },
   },
 };
 
 // wuhan
 const wuhan = {
-  longitude: 113.95,
-  latitude: 30.19,
-  height: 34000,
+  longitude: 113,
+  latitude: 30,
+  height: 20000,
 }
 const flyOpt = {
   orientation: {
@@ -76,29 +73,31 @@ const flyOpt = {
 
 // 3dtiles
 function suc(model) {
-  console.log('load 3d model success', model);
+  console.log('loaded model:', model);
 }
 function err(e) {
-  console.log('load 3d model error', e);
+  console.error('loading 3d model error:', e);
 }
 
+let percent;
 function pgs(progress) {
-  console.log('load 3d model progress', progress);
+  percent = progress
+  console.log('loading 3d model progress:', progress);
 }
 const modelOpt = {
-  url: "src/cesium_dev_helper/traffic/assets/model/tileset.json",
+  url: "http://localhost:8001/wuhan/tileset.json",
   onSuccess: suc,
   onError: err,
   onProgress: pgs,
 }
 
+
 async function loadCzmViewerAt(app) {
   let _app = app;
+
+  const cfgM = new ConfigManager();
   const czmViewer = await cfgM.initViewer(vcfg);
   console.log('cesium viewer init completed');
-
-  _app.config.globalProperties.$czmViewer = czmViewer;
-  console.log('cesium viewer globalProperties loaded');
 
   const sM = new SceneManager(czmViewer);
   sM.initScene();
@@ -108,37 +107,42 @@ async function loadCzmViewerAt(app) {
   cM.flyTo(wuhan, flyOpt);
   console.log('cesium camera setting completed');
 
-  sM.add3DModel(modelOpt, '3dtiles', (tiles) => {
-    const _loadedModel = tiles[0];
-    console.log(_loadedModel, 'loadedModle');
+  sM.add3DModel(modelOpt, '3dtiles', async (tiles) => {
+    console.log('loading model...', tiles);
+    const _loadedModel = await tiles[0];
+    console.log('loaded model', _loadedModel);
     // sM.handleDefaultModelEffect(_loadedModel)
-    _app.config.globalProperties.$czmLoaded3dTile = _loadedModel;
-    console.log('3d model init completed');
+    console.log(`3d model which _id is ${_loadedModel._id} init completed`);
   })
 
-
-
   // test
+  // let tile;
   // try {
-  //   const res = new Cesium.Cesium3DTileset({ url: "src/cesium_dev_helper/traffic/assets/model/tileset.json" })
+  //   const res = await new Cesium.Cesium3DTileset({ url: "http://localhost:8001/wuhan/tileset.json" })
   //   console.log(res, 'model')
-  //   czmViewer.scene.primitives.add(res)
+  //   tile = czmViewer.scene.primitives.add(res)
+  //   sM.handleDefaultModelEffect(tile)
   // } catch (e) {
   //   console.log('cesium 3dtiles load error1', e)
   // }
 
-  // try {
-  //   const tileset = await Cesium.Cesium3DTileset.fromUrl("src/cesium_dev_helper/traffic/assets/model/tileset.json");
-  //   czmViewer.scene.primitives.add(tileset);
-  // } catch (e) {
-  //   console.log('cesium 3dtiles load error2', e)
-  // }
 
+  // const dataHandler = new DataPrepocesser();
+  // dataHandler.update3dtilesMaxtrix(0, 0, tile);
+  return czmViewer;
 
 }
-let cvp = null;
-export default cvp = {
+let $viewer = { flag: 0 };
+let czmViewPlugin = {
   async install(app) {
-    await loadCzmViewerAt(app);
+    const viewer = await loadCzmViewerAt(app);
+    // console.log('plugin')
+    $viewer.data = viewer;
+    $viewer.flag = 1;
+    //app不会等里面的异步操作
+    // app.config.globalProperties.$viewer = viewer;
   }
-}
+};
+
+
+export { czmViewPlugin, $viewer }

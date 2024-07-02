@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp, inject, provide } from 'vue'
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
 import App from './App.vue'
@@ -8,16 +8,20 @@ import VScaleScreen from 'v-scale-screen'
 import './style.scss'
 
 // 初始化czm viewer
-import cvp from './plugins/czmViewPlugin'
+import { czmViewPlugin } from './plugins/czmViewPlugin'
 
 
 const app = createApp(App);
 
 app.use(createPinia())
     .use(router)
-    .use(cvp)
+    .use(czmViewPlugin)
     .use(Antd)
-    .use(VScaleScreen)
-    .mount('#app')
+    .use(VScaleScreen);
 
+app.mount('#app')
+
+
+// console.log('main')
 export default app
+

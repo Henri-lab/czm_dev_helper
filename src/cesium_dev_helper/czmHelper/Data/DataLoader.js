@@ -88,30 +88,20 @@ class DataLoader {
             return cachedData;
         }
 
-        // // 使用 Cesium.loadWithXhr 实现进度反馈 (已被弃用？？)
-        // const xhr = Cesium.loadWithXhr({
-        //     url,
-        //     responseType: 'json',
-        //     method: 'GET',
-        //     headers: options.headers || {},
-        //     overrideMimeType: options.overrideMimeType || '',
-        //     onProgress: (event) => {
-        //         if (event.lengthComputable && options.onProgress) {
-        //             const percentComplete = (event.loaded / event.total) * 100;
-        //             options.onProgress(percentComplete);
-        //         }
-        //     }
-        // });
-
-
-        // progress percent 会传入在options.onProgress
+        // 使用 Cesium.loadWithXhr 实现进度反馈 (已被弃用？？)
+        // 使用fetch的方式计算进度
         const xhr = this._fetchWithProgress(url, options);
+        // progress percent 会传入在options.onProgress
 
         let dataSourceOrTileset;
 
         try {
-            const response = await xhr;
-            const data = await response.json();
+            let data;
+            // 非3dmodel
+            if (!type.toLowerCase() === '3dtiles' || !type.toLowerCase() === 'gltf') {
+                const response = await xhr;
+                data = await response.json();
+            }
 
             switch (type.toLowerCase()) {
                 case 'geojson':
@@ -124,8 +114,9 @@ class DataLoader {
                     dataSourceOrTileset = await Cesium.CzmlDataSource.load(data, options);
                     break;
                 case '3dtiles':
-                    dataSourceOrTileset = await new Cesium.Cesium3DTileset({ url, options });
-                    // dataSourceOrTileset = await Cesium.Cesium3DTileset.fromUrl(url, options);
+                    // 新版api: Cesium.Cesium3DTileset.fromUrl(url, options);
+                    const tilesetPromise = await new Cesium.Cesium3DTileset({ url, options });
+                    dataSourceOrTileset = tilesetPromise;
                     break;
                 case 'gltf':
                     dataSourceOrTileset = await Cesium.Model.fromGltf({ url, ...options });
@@ -150,7 +141,7 @@ class DataLoader {
             if (options.onSuccess) options.onSuccess(dataSourceOrTileset);
         } catch (error) {
             if (options.onError) options.onError(error);
-            else console.error(`Error loading ${type}:`, error);
+            else console.error(`DataLoader loading ${type}:`, error);
         }
 
         return dataSourceOrTileset;
@@ -190,11 +181,16 @@ class DataLoader {
         // Load a single URL
         if (!Array.isArray(opt) && typeOf(_url) === "String" && typeOf(_finalOpt) === "Object") {
             // Data loaded will be passed back on _finalOpt's three 'on' properties
-            const modelLoaded = await this._loadDataWithProgress(_url, type, _finalOpt);
+            const tilesetPromise = await this._loadDataWithProgress(_url, type, _finalOpt);
+            // 加载3dtiles的时候要使用readyPromise 
+            const _3dtile = await tilesetPromise.readyPromise 
+            console.log('3d tileset loaded successfully',_3dtile);
+
             // Data loaded is bound to the passed-in opt.onSuccess callback
             Object.assign(opt, _finalOpt);
 
-            return modelLoaded;
+            return _3dtile;
+
         }
         // Load multiple URLs
         else if (Array.isArray(opt)) {
@@ -211,7 +207,7 @@ class DataLoader {
      * A promise that resolves to the loaded 3D tileset(s). If multiple URLs are provided, it returns an array of promises.
      */
     async load3DTiles(opt) {
-        return this.load3D(opt, '3dtiles');
+        return await this.load3D(opt, '3dtiles');
     }
 
     /**
@@ -222,7 +218,7 @@ class DataLoader {
      * A promise that resolves to the loaded GLTF model(s). If multiple URLs are provided, it returns an array of promises.
      */
     async loadGLTF(opt) {
-        return this.load3D(opt, 'gltf');
+        return await this.load3D(opt, 'gltf');
     }
 
 
@@ -265,7 +261,7 @@ class DataLoader {
      *
      * @throws {Error} If an unsupported data type is specified.
      */
-    async loadData(url, type, options = {}) {
+    async loadDataSource(url, type, options = {}) {
         switch (type.toLowerCase()) {
             case 'geojson':
                 return this.loadGeoJSON(url, options);
