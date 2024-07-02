@@ -1,3 +1,5 @@
+//纠正底图 https://www.yuque.com/xzd/xzbt0l/qo69dsyvz1h2frzx  pw:xkpf
+
 import * as Cesium from "cesium";
 import { CoordTransformer } from '../Compute'
 

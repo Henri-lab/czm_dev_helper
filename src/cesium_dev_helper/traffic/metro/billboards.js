@@ -1,3 +1,4 @@
+import * as Cesium from "cesium";
 import { findStationByName, _PopupLoader } from "./index.js";
 // 站点标牌 (billboard) 缩写 bb,BB
 //  const bb = {

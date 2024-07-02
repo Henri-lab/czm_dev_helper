@@ -88,7 +88,7 @@ async function loadCzmViewerAt(app) {
     const _loadedModel = await tiles[0];
     sM.handleDefaultModelEffect(_loadedModel)
     // console.log(`3d model which _id is ${_loadedModel._id} has been added to this viewer`);
-    
+
     // fly to the new model
     const cM = new CameraManager(czmViewer);
     const center = CoordTransformer.getCenterFrom3dTiles(_loadedModel.model);
@@ -100,8 +100,8 @@ async function loadCzmViewerAt(app) {
     // console.log('fly to the new model completed');
   })
 
-  // const dP = new DataPrepocesser();
-  // dP.update3dtilesMaxtrix(0, 0, tile);
+  const dP = new DataPrepocesser();
+  dP.update3dtilesMaxtrix(0, 0, tile);
 }
 
 let czmViewPlugin = {

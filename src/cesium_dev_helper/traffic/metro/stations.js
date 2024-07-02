@@ -6,7 +6,7 @@
 //         name
 //     };
 
-
+import * as Cesium from "cesium";
 import { GeometryCreater, EffectController, changeDisplayBillBoard } from './index.js';
 
 
@@ -55,7 +55,7 @@ export const renderStation = (viewer, options) => {
 // 删除站点
 // --删除单个站点，直接删除，而不是隐藏
 export const removeStationByName = (viewer, name) => {
-    const target = stations.find((item) => item.name === name);
+    const target = stations.find(item => item.name === name);
     if (target) {
         const { conePrimitve, bottomCircleEntity } = target;
         viewer.scene.primitives.remove(conePrimitve);
@@ -74,8 +74,8 @@ export const removeAllStations = (viewer) => {
 };
 
 // 站点的显示
-// 通过 站点牌名称-Array 控制站点显示隐藏
-export const hideStationByName = (names, isShow) => {
+// 通过 站点牌名称-Array 标记站点显示隐藏
+export const displayStationByName = (names, isShow) => {
     changeDisplayBillBoard(names, isShow);
     const targets = stations.filter((item) => names.indexOf(item.name) > -1);
     if (targets.length) {
@@ -101,7 +101,7 @@ export const findStationByName = (name, cacheData) => {
         const { stationEnts } = cacheData
         stationsData = stationEnts
     }
-    const stationEnt = stationsData.find((item) => item.name === name);
+    const stationEnt = stationsData.find(item => item.name === name);
     return stationEnt;
 
 }

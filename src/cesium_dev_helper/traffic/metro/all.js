@@ -1,5 +1,5 @@
-import { renderLines, removeAllLines, hideLineByName } from "./line";
-import { renderStation, removeAllStations, hideStationByName } from "../stations";
+import { renderLines, removeAllLines, displayLineByName } from "./line";
+import { renderStation, removeAllStations, displayStationByName } from "./stations";
 import { renderStationBill, removeAllBillboards } from "./billboards";
 
 
@@ -60,9 +60,9 @@ export const removeAll = (viewer) => {
 
 
 // 通过名称整体控制显示隐藏
-export const displayByName = (lineNames, stationNames, isShow) => {
-    hideLineByName(lineNames, isShow);
-    hideStationByName(stationNames, isShow);
+export const displayAllByName = (lineNames, stationNames, isShow) => {
+    displayLineByName(lineNames, isShow);
+    displayStationByName(stationNames, isShow);
 };
 
 // 按照缓存数据清除

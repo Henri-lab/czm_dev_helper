@@ -1,27 +1,26 @@
-// metroLine
+import * as Cesium from "cesium";
+// metroLine：name ;color ; positions
 
+// 缓存line
 let lines = [];
 export const renderLines = (viewer, options) => {
+    // 将line的地理坐标转为Cartesian
     const positions = Cesium.defaultValue(options.positions, [
         {
             lng: 0,
             lat: 0,
         },
     ]);
-    const positionsR = [];
-    positions.forEach((path) => {
-        positionsR.push(path.lng, path.lat);
+    const _pointsOfLine = [];
+    positions.forEach(pos => {
+        _pointsOfLine.push(pos.lng, pos.lat);
     });
-    const color = Cesium.defaultValue(options.color, '#e9a526');
-    const name = Cesium.defaultValue(options.name, "line");
-    // 是否缓存
-    const isCache = Cesium.defaultValue(options.isCache, true);
-
-    const positionRes = Cesium.Cartesian3.fromDegreesArray(positionsR);
+    const cartesianOfLine = Cesium.Cartesian3.fromDegreesArray(_pointsOfLine);
+    // 加入到viewer中
     const lineEnt = viewer.entities.add({
         name,
         polyline: {
-            positions: positionRes,
+            positions: cartesianOfLine,
             width: 20,
             //使用cesium默认的泛光线
             material: new Cesium.PolylineGlowMaterialProperty({
@@ -30,6 +29,11 @@ export const renderLines = (viewer, options) => {
             }),
         },
     });
+
+    const color = Cesium.defaultValue(options.color, '#e9a526');
+    const name = Cesium.defaultValue(options.name, "line");
+    // 是否缓存
+    const isCache = Cesium.defaultValue(options.isCache, true);
     isCache && lines.push(lineEnt);
 
     return lineEnt;
@@ -38,7 +42,7 @@ export const renderLines = (viewer, options) => {
 
 // 删除地铁线路，不是隐藏
 export const removeAllLines = (viewer) => {
-    lines.forEach((line) => {
+    lines.forEach(line => {
         line && viewer.entities.remove(line);
     });
 };
@@ -48,7 +52,7 @@ export const removeAllLines = (viewer) => {
 let timerBink;/*定时器*/
 let lastActiveRoute;/*最近高亮*/
 export const binkLineByName = (name /*selected*/, binkCount = 6 /*闪烁次数*/, timeBreak = 600 /*闪烁周期*/) => {
-    const targetEnt = lines.find((item) => item.name === name);
+    const targetEnt = lines.find(item => item.name === name);
     if (!targetEnt) {
         return;
     }
@@ -86,7 +90,7 @@ export const binkLineByName = (name /*selected*/, binkCount = 6 /*闪烁次数*/
 // 跳转
 // --根据名称视角跳转到对应线路
 export const flyToLine = (viewer, name) => {
-    const targetEnt = lines.find((item) => item.name === name);
+    const targetEnt = lines.find(item => item.name === name);
     if (!targetEnt) {
         return;
     }
@@ -104,9 +108,9 @@ export const flyToLineCenter = (viewer, lineName, linesData) => {
 }
 
 
-// 通过名称控制线路显示隐藏
-export const hideLineByName = (names, isShow) => {
-    lines.forEach((line) => {
+// 通过名称标记line的显隐
+export const displayLineByName = (names, isShow) => {
+    lines.forEach(line => {
         if (names.indexOf(line.name) > -1) {
             line.show = isShow;
         }
