@@ -1,3 +1,5 @@
+import * as Cesium from "cesium";
+
 class CoordTransformer {
     constructor() {
         this.BD_FACTOR = (3.14159265358979324 * 3000.0) / 180.0;
@@ -220,6 +222,52 @@ class CoordTransformer {
         const latitude = wgs84Position.latitude;
         const height = wgs84Position.height;
         return Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
+    }
+    /**
+     * Retrieves the center of a 3D Tiles tileset.
+     *
+     * @param {Object} tileset - The 3D Tiles tileset.
+     * @returns {Object} - The center of the tileset.
+     */
+    static getCenterFrom3dTiles(tileset) {
+
+        // 要获取 3D Tiles 的中心坐标，推荐的做法是通过 root 节点的 boundingVolume 获取。
+        // root 节点是 3D Tiles 集的根节点，它通常会包含 boundingVolume 属性。
+        // --获取 boundingVolume
+        const boundingVolume = tileset.root.boundingVolume;
+
+        // 如果是 BoundingSphere
+        if (boundingVolume.boundingVolume instanceof Cesium.BoundingSphere) {
+            const center = boundingVolume.boundingVolume.center;
+            const cartographic = Cesium.Cartographic.fromCartesian(center);
+            const latitude = Cesium.Math.toDegrees(cartographic.latitude);
+            const longitude = Cesium.Math.toDegrees(cartographic.longitude);
+            const height = cartographic.height;
+
+            return {
+                longitude,
+                latitude,
+                height,
+            }
+            // console.log('BoundingSphere Center:');
+            // console.log(`Latitude: ${latitude}, Longitude: ${longitude}, Height: ${height}`);
+        }
+        // 如果是 OrientedBoundingBox
+        else if (boundingVolume.boundingVolume instanceof Cesium.OrientedBoundingBox) {
+            const center = boundingVolume.boundingVolume.center;
+            const cartographic = Cesium.Cartographic.fromCartesian(center);
+            const latitude = Cesium.Math.toDegrees(cartographic.latitude);
+            const longitude = Cesium.Math.toDegrees(cartographic.longitude);
+            const height = cartographic.height;
+
+            // console.log('OrientedBoundingBox Center:');
+            // console.log(`Latitude: ${latitude}, Longitude: ${longitude}, Height: ${height}`);
+            return {
+                longitude,
+                latitude,
+                height,
+            }
+        }
     }
 }
 
