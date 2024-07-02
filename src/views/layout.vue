@@ -4,12 +4,14 @@
     <a-layout-header class="header">
       <div class="logo" />
       <!-- 顶部导航栏 -->
+      <!-- 双向绑定 -->
       <a-menu
         v-model:selectedKeys="naviHeadKeys"
         theme="dark"
         mode="horizontal"
         :style="{ lineHeight: '64px' }"
       >
+        <!-- 选项 -->
         <a-menu-item
           v-for="item in naviHeadItems"
           :key="item.key"
@@ -21,6 +23,7 @@
     </a-layout-header>
     <!-- 内容主体 -->
     <a-layout-content style="padding: 0 50px">
+      <!-- 面包屑 -->
       <a-breadcrumb style="margin: 16px 0">
         <a-breadcrumb-item>Home</a-breadcrumb-item>
         <a-breadcrumb-item>List</a-breadcrumb-item>
@@ -28,13 +31,14 @@
       </a-breadcrumb>
       <a-layout style="padding: 24px 0; background: #fff">
         <!-- 左侧菜单栏 -->
-        <a-layout-sider width="200" style="background: #fff">
+        <a-layout-sider width="200" style="background: #fff" v-if="isShow3DMap">
           <a-menu
             v-model:selectedKeys="naviSideKeys"
             v-model:openKeys="openKeys"
             mode="inline"
             style="height: 100%"
           >
+            <!-- 子菜单 -->
             <a-sub-menu v-for="submenu in subMenus" :key="submenu.key">
               <template #title>
                 <span>
@@ -42,14 +46,21 @@
                   {{ submenu.title }}
                 </span>
               </template>
+              <!-- 选项 -->
               <a-menu-item v-for="item in submenu.items" :key="item.key">{{
                 item.label
               }}</a-menu-item>
             </a-sub-menu>
           </a-menu>
         </a-layout-sider>
-        <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' }">
-          <CzmMap />
+        <!-- 地图容器 -->
+        <a-layout-content
+          :style="{ padding: '0 24px', minHeight: '280px' }"
+          v-if="isShow3DMap"
+        >
+          <template #default>
+            <CzmMap />
+          </template>
         </a-layout-content>
       </a-layout>
     </a-layout-content>
@@ -59,18 +70,27 @@
     </a-layout-footer>
   </a-layout>
 </template>
+
 <script setup>
 import { onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import {
   UserOutlined,
   LaptopOutlined,
   NotificationOutlined,
 } from '@ant-design/icons-vue';
-import CzmMap from './3DMap.vue';
+import CzmMap from '../components/3DMap.vue';
 
+// route
+const $router = useRouter();
+const $route = useRoute();
+// menu
 const naviHeadKeys = ref([]);
 const naviSideKeys = ref([]);
 const openKeys = ref([]);
+
+// 页面转换
+const isShow3DMap = ref(true);
 
 // 顶部导航栏
 const naviHeadItems = [
@@ -123,7 +143,34 @@ onMounted(() => {});
 
 watch(
   () => naviHeadKeys.value,
-  () => console.log(naviSideKeys.value)
+  (newValue) => {
+    switch (newValue[0]) {
+      case '1':
+        $router.push({ path: '/me', name: 'me' });
+        break;
+      case '2':
+        isShow3DMap.value = true;
+        break;
+      case '3':
+        isShow3DMap.value = false;
+        break;
+      case '4':
+        /* */
+        isShow3DMap.value = false;
+        break;
+      case '5':
+        /* */
+        isShow3DMap.value = false;
+        break;
+      case '6':
+        /* */
+        isShow3DMap.value = false;
+        break;
+      default:
+        isShow3DMap.value = true;
+        break;
+    }
+  }
 );
 </script>
 <style scoped>
