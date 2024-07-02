@@ -80,22 +80,34 @@ export default async function initViewer(el = { id: 'viewer' }) {
     // console.log('cesium scene init completed');
 
 
+    const cM = new CameraManager(czmViewer);
+    const wuhan = {
+        longitude: 114.2977,
+        latitude: 30.5961,
+        height: 40000,
+    }
+    cM.flyTo(
+        wuhan,
+        flyOpt
+    );
+    // console.log('cesium camera location completed');
 
-    sM.add3DModel(modelOpt, '3dtiles', async (tiles) => {
-        const _loadedModel = await tiles[0];
-        sM.handleDefaultModelEffect(_loadedModel)
-        // console.log(`3d model which _id is ${_loadedModel._id} has been added to this viewer`);
-
-        // fly to the new model
-        const cM = new CameraManager(czmViewer);
-        const center = CoordTransformer.getCenterFrom3dTiles(_loadedModel.model);
-        center.height = 40000;
-        cM.flyTo(
-            center,
-            flyOpt
-        );
-        // console.log('fly to the new model completed');
-    })
+    // 白膜加载
+    // sM.add3DModel(modelOpt, '3dtiles', async (tiles) => {
+    //     const _loadedModel = await tiles[0];
+    //     sM.handleDefaultModelEffect(_loadedModel)
+    //     // console.log(`3d model which _id is ${_loadedModel._id} has been added to this viewer`);
+    //     // fly to the new model
+    //     const cM = new CameraManager(czmViewer);
+    //     const center = CoordTransformer.getCenterFrom3dTiles(_loadedModel.model);
+    //     center.height = 40000;
+    //     const _center = center;
+    //     cM.flyTo(
+    //         _center,
+    //         flyOpt
+    //     );
+    //     // console.log('fly to the new model completed');
+    // })
 
     const dP = new DataPrepocesser();
 }

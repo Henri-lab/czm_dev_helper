@@ -155,7 +155,7 @@ export default class SceneManager extends Manager {
         }
       } catch (e) {
         console.error('Scene manager failed loading model', e);
-        // throw new Error(e);
+        throw new Error(e);
       }
     };
   }
