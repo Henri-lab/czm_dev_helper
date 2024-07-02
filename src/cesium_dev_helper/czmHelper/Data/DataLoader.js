@@ -133,7 +133,11 @@ class DataLoader {
                     throw new Error(`Unsupported data type: ${type}`);
             }
 
-            this.viewer.dataSources.add(dataSourceOrTileset);
+            // 🚨
+            // 不能将3dtiles放到dataSource里面:dataSource会被时钟监听,而model即primitive不受时钟控制
+            if (!type.toLowerCase() === '3dtiles' || !type.toLowerCase() === 'gltf')
+                this.viewer.dataSources.add(dataSourceOrTileset);
+
 
             // 添加到缓存
             this.cache.set(url, dataSourceOrTileset);
@@ -183,8 +187,8 @@ class DataLoader {
             // Data loaded will be passed back on _finalOpt's three 'on' properties
             const tilesetPromise = await this._loadDataWithProgress(_url, type, _finalOpt);
             // 加载3dtiles的时候要使用readyPromise 
-            const _3dtile = await tilesetPromise.readyPromise 
-            console.log('3d tileset loaded successfully',_3dtile);
+            const _3dtile = await tilesetPromise.readyPromise
+            console.log('3d tileset loaded successfully');
 
             // Data loaded is bound to the passed-in opt.onSuccess callback
             Object.assign(opt, _finalOpt);
