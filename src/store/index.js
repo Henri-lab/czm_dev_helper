@@ -181,7 +181,7 @@ export const useCommonStore = defineStore("commonData", {
     state: () => {
         return {
             viewer: null,
-            draw: null
+            editor: null
         };
     },
     //不要调用 getter，直接访问它
@@ -189,16 +189,16 @@ export const useCommonStore = defineStore("commonData", {
         Viewer() {
             return this.viewer;
         },
-        Draw() {
-            return this.draw;
+        Editor() {
+            return this.editor;
         }
     },
     actions: {
         setViewer(viewer) {
             this.viewer = viewer;
         },
-        setDraw(draw) {
-            this.draw = draw;
+        setEditor(editor) {
+            this.editor = editor;
         }
     }
 })

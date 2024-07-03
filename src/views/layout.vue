@@ -148,10 +148,10 @@ const subMenus = [
 onMounted(() => {});
 
 // watch pinia data
-let draw;
+let editor;
 watchEffect(() => {
-  const _draw = commonStore.Draw;
-  if (_draw) draw = _draw;
+  const _editorFromStore = commonStore.Editor;
+  if (_editorFromStore) editor = _editorFromStore;
 });
 
 //顶部导航的监听
@@ -192,9 +192,8 @@ watch(
   (newValue) => {
     switch (newValue[0]) {
       case '1':
-        if (draw) {
-          console.log(draw, 'draw');
-          draw.LineWithEvent(lineOpt0);
+        if (editor) {
+          editor.startLine(lineOpt0);
         }
         break;
 

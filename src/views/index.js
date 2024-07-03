@@ -8,12 +8,12 @@ import {
     NotificationOutlined,
 } from '@ant-design/icons-vue';
 import CzmMap from './map/CzmMap.vue';
-import Draw from '../cesium_dev_helper/czmHelper/Editor/pencil/Draw';
-import { lineOpt0 } from '../cesium_dev_helper/czmHelper/Editor';
+import { Editor, lineOpt0 } from '../cesium_dev_helper/czmHelper/Editor';
+
 
 
 export {
-    Draw,
+    Editor,
     UserOutlined,
     LaptopOutlined,
     NotificationOutlined,

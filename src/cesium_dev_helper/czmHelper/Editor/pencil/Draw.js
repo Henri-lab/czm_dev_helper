@@ -6,7 +6,6 @@ import TurfUser from "../../Compute/TurfUser";
 import * as Cesium from "cesium";
 
 
-
 /**
  * 画笔模块
  * @class
@@ -61,7 +60,7 @@ export default class Draw extends DrawingManager {
     }
 
     _getCartesian3FromPX/*pixel*/(position) {
-        return this.$coords.getCartesianFromScreenPosition(position,this.viewer);
+        return this.$coords.getCartesianFromScreenPosition(position, this.viewer);
     }
 
     // 展示测量结果
@@ -137,7 +136,7 @@ export default class Draw extends DrawingManager {
   * @param {Function} [options.callback] - The callback function to be called when the line is drawn.
   * @returns {undefined}
   */
-    LineWithEvent(options) {
+    LineWithEvent(options, pluginFunction) {
         if (!this.viewer || !options) return null;
 
         let $this = this
@@ -149,7 +148,7 @@ export default class Draw extends DrawingManager {
             // 获取handler
             _handlers = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
 
-        // left
+        // left + 使用当前事件处理程序
         _handlers.setInputAction(function (movement) {
             let cartesian = $this._getCartesian3FromPX(movement.position/*pixel*/);
             if (cartesian && isValidCartesian3(cartesian)) {
@@ -159,7 +158,7 @@ export default class Draw extends DrawingManager {
                 if (options.measure) {
                     // _addInfoPoint(cartesian);
                 }
-                // 绘制直线 两个点
+                // 只绘制直线(两个点)  + 销毁当前事件处理程序
                 if (positions.length == 2 && options.straight) {
                     _handlers.destroy();
                     _handlers = null;
@@ -182,8 +181,9 @@ export default class Draw extends DrawingManager {
             }
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-        // right
+        // right + 销毁当前事件处理程序
         _handlers.setInputAction(function (movement) {
+
             _handlers.destroy();
             _handlers = null;
 
@@ -203,6 +203,15 @@ export default class Draw extends DrawingManager {
             if (typeof options.callback === "function") {
                 options.callback($this.transformCartesianToWGS84(positions), lineObj);
             }
+
+            // 执行额外的程序 -来自Editor的命令✨
+            if (typeof pluginFunction === "function") {
+                // 交给Editor处理的数据
+                const _currentLine = lineObj;//当前线实体
+
+                pluginFunction(_currentLine, positions/*需要被Editor重置*/);
+            }
+
         }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 
         _line.polyline.positions = new Cesium.CallbackProperty(function () {

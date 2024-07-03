@@ -5,10 +5,10 @@
 </template>
 
 <script setup>
-import { useCommonStore, initViewerAt, onMounted, Draw } from '../index';
+import { useCommonStore, initViewerAt, onMounted, Editor } from '../index';
 
 // 画笔(挂载map时创建)
-let $draw;
+let $editor;
 
 const commonStore = useCommonStore();
 onMounted(() => {
@@ -18,10 +18,10 @@ onMounted(() => {
 
     //  全局共享viewer
     commonStore.setViewer($viewer);
-    //  全局共享draw (draw needs canvas)
+    //  全局共享editor (draw needs canvas)
     if ($viewer.canvas) {
-      $draw = new Draw($viewer);
-      commonStore.setDraw($draw);
+      $editor = new Editor($viewer);
+      commonStore.setEditor($editor);
     }
   });
 });
