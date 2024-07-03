@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { useCommonStore, initViewer, onMounted, Draw } from '../index';
+import { useCommonStore, initViewerAt, onMounted, Draw } from '../index';
 import { DrawingManager } from '../../cesium_dev_helper/czmHelper/Manager';
 
 // 画笔(挂载map时创建)
@@ -14,7 +14,7 @@ let $draw;
 const commonStore = useCommonStore();
 onMounted(() => {
   const el = { id: 'czm-container' };
-  initViewer(el).then(async ($viewer) => {
+  initViewerAt(el).then(async ($viewer) => {
     // ~<layout/> 已經開始挂載
 
     //  全局共享viewer

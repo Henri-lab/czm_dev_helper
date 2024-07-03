@@ -1,4 +1,4 @@
-import initViewer from '../util/initViewer';
+import initViewerAt from '../util/initViewerAt';
 import { useCommonStore } from '../store';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -19,7 +19,7 @@ export {
     NotificationOutlined,
     CzmMap,
     useCommonStore,
-    initViewer,
+    initViewerAt,
     useRoute,
     useRouter,
     onMounted,

@@ -13,7 +13,7 @@ import { CoordTransformer } from '../cesium_dev_helper/czmHelper/Compute';
 import { TencentImageryProvider } from '../cesium_dev_helper/czmHelper/Map/mapPlugin';
 
 
-export default async function initViewer(el = { id: 'viewer' }) {
+export default async function initViewerAt(el = { id: 'viewer' }) {
 
     // config
     //腾讯底图
