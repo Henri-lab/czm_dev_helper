@@ -6,7 +6,6 @@
 
 <script setup>
 import { useCommonStore, initViewerAt, onMounted, Draw } from '../index';
-import { DrawingManager } from '../../cesium_dev_helper/czmHelper/Manager';
 
 // 画笔(挂载map时创建)
 let $draw;
@@ -21,8 +20,7 @@ onMounted(() => {
     commonStore.setViewer($viewer);
     //  全局共享draw (draw needs canvas)
     if ($viewer.canvas) {
-      // $draw = new Draw($viewer);
-      $draw = new DrawingManager($viewer);
+      $draw = new Draw($viewer);
       commonStore.setDraw($draw);
     }
   });

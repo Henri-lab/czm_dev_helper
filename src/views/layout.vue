@@ -85,6 +85,7 @@ import {
   onMounted,
   ref,
   watch,
+  lineOpt0,
 } from './index';
 
 // pinia
@@ -193,7 +194,7 @@ watch(
       case '1':
         if (draw) {
           console.log(draw, 'draw');
-          draw.drawLine();
+          draw.LineWithEvent(lineOpt0);
         }
         break;
 

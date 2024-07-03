@@ -1,6 +1,6 @@
 // 其实喜欢compositionAPI更多 但是选择option API风格，为了更好的兼容vuex习惯;
 import { defineStore } from 'pinia'
-import { displayAllByName } from '../cesium_dev_helper/traffic/metro';
+import { displayAllByName } from '../cesium_dev_helper/metro/data';
 
 export const useLineData = defineStore("lineData", {
     state: () => {

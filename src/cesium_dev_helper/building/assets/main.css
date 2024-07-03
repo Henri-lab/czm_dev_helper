@@ -1,0 +1,23 @@
+/*
+ * @Description: 
+ * @Author: your name
+ * @version: 
+ * @Date: 2024-06-24 09:10:00
+ * @LastEditors: your name
+ * @LastEditTime: 2024-06-24 11:06:54
+ */
+@import './base.css';
+
+.marker-draw {
+  position: absolute;
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #fff;
+  background-color: rgba(0, 0, 0, .5);
+  padding: 4px;
+  font-size: 12px;
+  pointer-events: none;
+  border-radius: 4px;
+}

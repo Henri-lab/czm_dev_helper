@@ -19,7 +19,6 @@ const app = getCurrentInstance();
 
 onMounted(() => {
   // sleep(0);
-  
 });
 
 

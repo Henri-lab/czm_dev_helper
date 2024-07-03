@@ -9,8 +9,8 @@ import {
 } from '@ant-design/icons-vue';
 import CzmMap from './map/CzmMap.vue';
 import Draw from '../cesium_dev_helper/czmHelper/Editor/pencil/Draw';
+import { lineOpt0 } from '../cesium_dev_helper/czmHelper/Editor';
 
-// const commonStore = useCommonStore();需要在組件中創建
 
 export {
     Draw,
@@ -19,6 +19,7 @@ export {
     NotificationOutlined,
     CzmMap,
     useCommonStore,
+    lineOpt0,
     initViewerAt,
     useRoute,
     useRouter,

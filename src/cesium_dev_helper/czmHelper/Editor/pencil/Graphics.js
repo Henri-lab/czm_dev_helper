@@ -451,7 +451,6 @@ export default class Graphics extends DrawingManager {
      * @param {object} options.material - 配置线段材质
      * @param {number} options.width - 线宽
      * @param {boolean} options.clampToGround - 是否贴地
-     * @param {object} options.label - 绘制label图形的参数
      * @returns {PolylineGraphics} 返回PolylineGraphics实例
      */
   LineEntity(options) {

@@ -16,13 +16,13 @@ import * as Cesium from "cesium";
  * @param {Map} params.defaultStatic - 静态资源
  * @exports Drawer
  */
-
+let datasource = new Cesium.CustomDataSource('graphicsLayer')
 export default class Draw extends DrawingManager {
     constructor(viewer, StaticMap = {}) {
         super(viewer);
         this.dfSt = StaticMap || undefined;//图片资源path
         this._drawLayer = new Cesium.CustomDataSource("drawLayer");
-        this.$graphics = new Graphics(viewer, Cesium, this._drawLayer);
+        this.$graphics = new Graphics(viewer, datasource, this._drawLayer);
         this.$coords = new CoordTransformer();
         this.$turfer = new TurfUser(viewer);
         this.viewer && this.viewer.dataSources.add(this._drawLayer);
@@ -61,7 +61,7 @@ export default class Draw extends DrawingManager {
     }
 
     _getCartesian3FromPX/*pixel*/(position) {
-        return this.$coords.getCartesianFromScreenPosition(position);
+        return this.$coords.getCartesianFromScreenPosition(position,this.viewer);
     }
 
     // 展示测量结果
@@ -133,7 +133,7 @@ export default class Draw extends DrawingManager {
   * @param {Boolean} [options.clampToGround=false] - Whether the line should be clamped to the ground.
   * @param {Boolean} [options.clampToS3M=false] - Whether the line should be clamped to 3D Tiles.
   * @param {Boolean} [options.measure=false] - Whether the line should be measured.
-  * @param {String} [options.type='straightLine'] - The type of the line.
+  * @param {Boolean} [options.straight] - The type of the line.
   * @param {Function} [options.callback] - The callback function to be called when the line is drawn.
   * @returns {undefined}
   */
@@ -146,9 +146,9 @@ export default class Draw extends DrawingManager {
         let positions = [],
             _line = $this.$graphics.LineEntity(options),
             lineObj,
+            // 获取handler
             _handlers = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-        // 获取handler
-        drawHandler = _handlers;
+
         // left
         _handlers.setInputAction(function (movement) {
             let cartesian = $this._getCartesian3FromPX(movement.position/*pixel*/);
@@ -157,10 +157,10 @@ export default class Draw extends DrawingManager {
                     positions.push(cartesian.clone());
                 }
                 if (options.measure) {
-                    _addInfoPoint(cartesian);
+                    // _addInfoPoint(cartesian);
                 }
                 // 绘制直线 两个点
-                if (positions.length == 2 && options.type === "straightLine") {
+                if (positions.length == 2 && options.straight) {
                     _handlers.destroy();
                     _handlers = null;
                     if (typeof options.callback === "function") {
@@ -173,9 +173,9 @@ export default class Draw extends DrawingManager {
 
         // mouse movement 更新坐标 使得坐标数字保持两个点 且 新点永远处于endPos
         _handlers.setInputAction(function (movement) {
-            let cartesian = $this.getCatesian3FromPX(movement.endPosition);
+            let cartesian = $this._getCartesian3FromPX(movement.endPosition);
             if (positions.length >= 2) {
-                if (cartesian && _isValidCartesian3(cartesian)) {
+                if (cartesian && isValidCartesian3(cartesian)) {
                     positions.pop();
                     positions.push(cartesian);
                 }
