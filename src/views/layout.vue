@@ -73,14 +73,13 @@
 </template>
 
 <script setup>
+import { watchEffect } from 'vue';
 import {
-  Draw,
   UserOutlined,
   LaptopOutlined,
   NotificationOutlined,
   CzmMap,
   useCommonStore,
-  initViewer,
   useRoute,
   useRouter,
   onMounted,
@@ -144,13 +143,14 @@ const subMenus = [
     ],
   },
 ];
-// 画笔(挂载时创建)
-let draw;
 
-onMounted(() => {
-  const viewer = commonStore.Viewer;
-  //czm editor
-  draw = new Draw(viewer);
+onMounted(() => {});
+
+// watch pinia data
+let draw;
+watchEffect(() => {
+  const _draw = commonStore.Draw;
+  if (_draw) draw = _draw;
 });
 
 //顶部导航的监听
@@ -191,7 +191,10 @@ watch(
   (newValue) => {
     switch (newValue[0]) {
       case '1':
-        if (draw) draw.drawLine();
+        if (draw) {
+          console.log(draw, 'draw');
+          draw.drawLine();
+        }
         break;
 
       default:
