@@ -109,6 +109,8 @@ export default async function initViewer(el = { id: 'viewer' }) {
     //     // console.log('fly to the new model completed');
     // })
 
+    // 确保 viewer 初始化完成
+    await czmViewer.readyPromise;
 
     return czmViewer;
 }
