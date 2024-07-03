@@ -18,7 +18,7 @@ export default class Editor {
         if (!this.viewer || !this.options) return;
         const pluginFunction = (currentLine, positions) => {
             // 将当前绘制完成的线添加到 lines 数组中
-            that.lines.push($this.currentLine);
+            that.lines.push(currentLine);
             // 重置 positions 数组，为下一条线做准备
             positions = [];
         }
