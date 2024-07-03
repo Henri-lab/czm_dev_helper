@@ -10,7 +10,6 @@ import {
     CameraManager
 } from '../cesium_dev_helper/czmHelper/Manager';
 import { CoordTransformer } from '../cesium_dev_helper/czmHelper/Compute';
-import { DataPrepocesser } from '../cesium_dev_helper/czmHelper/Data';
 import { TencentImageryProvider } from '../cesium_dev_helper/czmHelper/Map/mapPlugin';
 
 
@@ -80,6 +79,7 @@ export default async function initViewer(el = { id: 'viewer' }) {
     // console.log('cesium scene init completed');
 
 
+
     const cM = new CameraManager(czmViewer);
     const wuhan = {
         longitude: 114.2977,
@@ -109,5 +109,6 @@ export default async function initViewer(el = { id: 'viewer' }) {
     //     // console.log('fly to the new model completed');
     // })
 
-    const dP = new DataPrepocesser();
+
+    return czmViewer;
 }

@@ -5,12 +5,15 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import initViewer from '../util/initViewer';
+import { useCommonStore, initViewer, onMounted } from '../index';
 
+const commonStore = useCommonStore();
 onMounted(() => {
   const el = { id: 'czm-container' };
-  initViewer(el);
+  initViewer(el).then((viewer) => {
+    //  全局共享viewer
+    commonStore.setViewer(viewer);
+  });
 });
 </script>
 

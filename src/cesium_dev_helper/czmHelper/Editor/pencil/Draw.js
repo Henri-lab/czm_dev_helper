@@ -18,9 +18,9 @@ import * as Cesium from "cesium";
  */
 
 export default class Draw extends DrawingManager {
-    constructor(viewer) {
+    constructor(viewer, StaticMap = {}) {
         super(viewer);
-        this.dfSt = defaultStatic || undefined;
+        this.dfSt = StaticMap || undefined;//图片资源path
         this._drawLayer = new Cesium.CustomDataSource("drawLayer");
         this.$graphics = new Graphics(viewer, Cesium, this._drawLayer);
         this.$coords = new CoordTransformer();
@@ -230,11 +230,10 @@ export default class Draw extends DrawingManager {
      * @param {boolean} options.clampToGround - 是否贴地
      * @param {function} options.callback - 回调函数
     */
-    PolygonWithEvent(options) {
+    PolygonWithEvent(options = {}) {
         if (!this.viewer || !options) return null;
 
         let $this = this;
-        let options = options || {};
 
         // Default edge style
         const defaultStyle = {
@@ -331,11 +330,11 @@ export default class Draw extends DrawingManager {
     * @param {function} options.callback - The callback function to be called when the rectangle is drawn.
     * @returns {undefined}
     */
-    RectangleWithEvent(options) {
+    RectangleWithEvent(options = {}) {
         if (!this.viewer || !options) return null;
 
         let $this = this;
-        let options = options || {};
+
 
         // Default edge style
         const defaultStyle = {
@@ -421,11 +420,10 @@ export default class Draw extends DrawingManager {
      * @param {function} options.callback - The callback function to be called when the circle is drawn.
      * @returns {undefined}
      */
-    CircleWithEvent(options) {
+    CircleWithEvent(options = {}) {
         if (!this.viewer || !options) return null;
 
         let $this = this;
-        let options = options || {};
 
         // Default edge style
         const defaultStyle = {

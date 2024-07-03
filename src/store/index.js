@@ -176,3 +176,22 @@ export const useMeasureData = defineStore('measureData', {
         }
     },
 })
+
+export const useCommonStore = defineStore("commonData", {
+    state: () => {
+        return {
+            viewer: null,
+        };
+    },
+    //不要调用 getter，直接访问它
+    getters: {
+        Viewer() {
+            return this.viewer;
+        },
+    },
+    actions: {
+        setViewer(viewer) {
+            this.viewer = viewer;
+        },
+    }
+})

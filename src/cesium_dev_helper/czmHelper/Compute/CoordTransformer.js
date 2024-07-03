@@ -200,7 +200,7 @@ class CoordTransformer {
      * @param {Cartesian3} cartesianPosition - The Cartesian position to transform.
      * @returns {Cartesian3} The WGS84 coordinates.
      */
-    transformCartesianToWGS84(cartesianPosition) {
+    static transformCartesianToWGS84(cartesianPosition) {
         const cartographic = Cesium.Cartographic.fromCartesian(cartesianPosition);
         const longitude = Cesium.Math.toDegrees(cartographic.longitude);
         const latitude = Cesium.Math.toDegrees(cartographic.latitude);
@@ -217,7 +217,7 @@ class CoordTransformer {
      * @param {number} wgs84Position.height - The height in meters.
      * @returns {Cartesian3} The Cartesian coordinates.
      */
-    transformWGS84ToCartesian(wgs84Position) {
+    static transformWGS84ToCartesian(wgs84Position) {
         const longitude = wgs84Position.longitude;
         const latitude = wgs84Position.latitude;
         const height = wgs84Position.height;

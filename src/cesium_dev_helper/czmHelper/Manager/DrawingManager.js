@@ -135,7 +135,7 @@ class DrawingManager extends Manager {
    */
     transformCartesianToWGS84(cartesianPosition) {
         if (!Array.isArray(cartesianPosition))
-            return new CoordTransformer().transformCartesianToWGS84(cartesianPosition);
+            return CoordTransformer.transformCartesianToWGS84(cartesianPosition);
         else {
             let result = []
             cartesianPosition.forEach(cartesian => result.push(this.transformCartesianToWGS84(cartesian)))
@@ -152,7 +152,7 @@ class DrawingManager extends Manager {
     */
     transformWGS84ToCartesian(wgs84Position) {
         if (!Array.isArray(wgs84Position))
-            return new CoordTransformer().transformWGS84ToCartesian(wgs84Position);
+            return CoordTransformer.transformWGS84ToCartesian(wgs84Position);
         else {
             let result = []
             wgs84Position.forEach(wgs84 => result.push(this.transformWGS84ToCartesian(wgs84)))

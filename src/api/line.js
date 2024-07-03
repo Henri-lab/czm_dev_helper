@@ -1,7 +1,7 @@
 import api from "./request";
 import { lineColors } from "@/store/staticData";
-import DataPrepocesser from "../cesiumTools/myFramwork/Data/DataPrepocesser";
-import { CoordTransform } from '@/cesiumTools/mapPlugin.js'
+import { DataPrepocesser } from "../cesium_dev_helper/czmHelper/Data";
+import { CoordTransformer } from '../cesium_dev_helper/czmHelper/Compute'
 
 export const getLine = async (params) => {
     try {
@@ -20,7 +20,7 @@ export const getLine = async (params) => {
                     metroLine.stationsList = stationsList.map(station => {
                         const { xy_coords, ...rest } = station
                         const [lng, lat] = xy_coords.split(";").map(Number)
-                        const [lngWgs84, latWgs84] = CoordTransform.GCJ02ToWGS84(
+                        const [lngWgs84, latWgs84] = new CoordTransformer().GCJ02ToWGS84(
                             lng,
                             lat
                         );

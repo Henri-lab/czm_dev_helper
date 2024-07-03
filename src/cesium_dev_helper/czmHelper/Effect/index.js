@@ -8,7 +8,7 @@ import WallGradientsMaterialProperty from "../Custom/Property/WallGradientsMater
 
 // 需要相关的 vitePlugin 进行glsl加载
 import Ripple_glsl from './glsl/ripple.glsl';
-import circleMapping_glsl from './glsl/circleMapping_glsl';
+import circleMapping_glsl from './glsl/circleMapping.glsl';
 import wallMapping_glsl from './glsl/wallMapping.glsl';
 
 export {

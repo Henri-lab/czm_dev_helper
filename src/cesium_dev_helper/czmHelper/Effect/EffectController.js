@@ -27,7 +27,7 @@ class EffectController {
             }, false));
 
         }
-        const material = material || getMaterial();
+        const _material = material || getMaterial();
 
         const rippleEntity = this.viewer.entities.add({
             position: position,
@@ -43,7 +43,7 @@ class EffectController {
                     const radius = (elapsedTime / duration) * 500.0; // Adjust the ripple size
                     return radius;
                 }, false),
-                material: getMaterial(),
+                material: _material,
             },
         });
 

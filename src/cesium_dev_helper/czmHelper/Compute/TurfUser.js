@@ -5,6 +5,7 @@ import { DataPrepocesser } from "../Data";
 
 class TurfUser {
     constructor(viewer) {
+        if (!viewer) return;
         this.viewer = viewer;
         this.handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
         this.entities = [];

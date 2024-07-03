@@ -1,3 +1,4 @@
+<!-- 挂载时间在czm-map之后 -->
 <template>
   <a-layout>
     <!-- 头部 -->
@@ -72,15 +73,23 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 import {
+  Draw,
   UserOutlined,
   LaptopOutlined,
   NotificationOutlined,
-} from '@ant-design/icons-vue';
-import CzmMap from '../components/3DMap.vue';
+  CzmMap,
+  useCommonStore,
+  initViewer,
+  useRoute,
+  useRouter,
+  onMounted,
+  ref,
+  watch,
+} from './index';
 
+// pinia
+const commonStore = useCommonStore();
 // route
 const $router = useRouter();
 const $route = useRoute();
@@ -88,10 +97,8 @@ const $route = useRoute();
 const naviHeadKeys = ref([]);
 const naviSideKeys = ref([]);
 const openKeys = ref([]);
-
 // 页面转换
 const isShow3DMap = ref(true);
-
 // 顶部导航栏
 const naviHeadItems = [
   { key: '1', label: '主页' },
@@ -101,7 +108,6 @@ const naviHeadItems = [
   { key: '5', label: '其他' },
   { key: '6', label: '其他2' },
 ];
-
 // 侧边导航栏
 const subMenus = [
   {
@@ -109,7 +115,7 @@ const subMenus = [
     title: '绘制图形',
     icon: UserOutlined,
     items: [
-      { key: '1', label: '圆形' },
+      { key: '1', label: '线' },
       { key: '2', label: 'option2' },
       { key: '3', label: 'option3' },
       { key: '4', label: 'option4' },
@@ -138,9 +144,16 @@ const subMenus = [
     ],
   },
 ];
+// 画笔(挂载时创建)
+let draw;
 
-onMounted(() => {});
+onMounted(() => {
+  const viewer = commonStore.Viewer;
+  //czm editor
+  draw = new Draw(viewer);
+});
 
+//顶部导航的监听
 watch(
   () => naviHeadKeys.value,
   (newValue) => {
@@ -172,7 +185,22 @@ watch(
     }
   }
 );
+// 侧边导航的监听
+watch(
+  () => naviSideKeys.value,
+  (newValue) => {
+    switch (newValue[0]) {
+      case '1':
+        if (draw) draw.drawLine();
+        break;
+
+      default:
+        break;
+    }
+  }
+);
 </script>
+
 <style scoped>
 #components-layout-demo-top-side .logo {
   float: left;
