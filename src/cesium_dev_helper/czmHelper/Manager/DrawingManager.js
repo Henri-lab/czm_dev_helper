@@ -37,6 +37,7 @@ class DrawingManager extends Manager {
 
     /**
     * 创建一个实体
+    * 函数名起的不恰当,后续再改
     * @returns {Object} 实体空对象（带签名）
     */
     createGraphics() {

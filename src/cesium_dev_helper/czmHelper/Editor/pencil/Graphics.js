@@ -243,12 +243,12 @@ export default class Graphics extends DrawingManager {
    * @param {boolean} options.height - 高度
    * @returns {EllipseGraphics}   返回EllipseGraphics实例
    */
-  EllipseGraphics(options) {
-    options = options || {}
+  EllipseGraphics(options = {}) {
+
     if (options) {
       return new Cesium.EllipseGraphics({
-        semiMajorAxis: options.semiMajorAxis || 1000000.0,
-        semiMinorAxis: options.semiMinorAxis || 1000000.0,
+        semiMajorAxis: options.semiMajorAxis || 1000.0,
+        semiMinorAxis: options.semiMinorAxis || 1000.0,
         outlineColor: this._objHasOwnProperty(
           options,
           'outlineColor',
@@ -633,7 +633,6 @@ export default class Graphics extends DrawingManager {
     }
   }
 
-  // xxx
   /**
    * Creates a dynamic rectangle entity that updates based on provided positions.
    *
@@ -655,7 +654,7 @@ export default class Graphics extends DrawingManager {
           return Cesium.Rectangle.fromCartesianArray(positions);
         }, false),
         material: options.material || Cesium.Color.BLUE.withAlpha(0.5),
-        outline: true,
+        outline: options.outline || true,
         outlineColor: options.outlineColor || Cesium.Color.BLUE.withAlpha(0.5),
       };
       return this._graphicsLayer.entities.add(entity);
@@ -1032,7 +1031,7 @@ export default class Graphics extends DrawingManager {
  *
  * @returns {undefined} - This function does not return a value.
  */
-  DynamicPolygonWithBorder(polygonEntity, style, dynamicPos, dataSource) {
+  DynamicPolygonWithBorder(polygonEntity, dynamicPos, style, dataSource) {
     // Including the polyline property when drawing a polygon in Cesium can enhance the visual clarity during the drawing process
     // 给面实体一个边缘线 并动态渲染 
     const lineOpt = null;

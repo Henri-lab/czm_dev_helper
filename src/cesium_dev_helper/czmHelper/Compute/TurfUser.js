@@ -118,7 +118,7 @@ class TurfUser {
         switch (type.toLowerCase()) {
             case 'point':
                 break;
-            case 'line':
+            case 'polyline':
                 // turf.LineString also works
                 geojson = this.$data.convertToGeoJSON(posArr, 'LineString');
                 res = turf.length(geojson, { units: 'kilometers' }) || 0;

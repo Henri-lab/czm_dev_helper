@@ -11,9 +11,9 @@ const lineOpt0 = {
     straight: true, //直线模式
     scaleByDistance: new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e7, 0.5),//缩放
     distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e7),//可视距离
-    //
-    callback: (_, o) => {
-        console.log(o, 'polyline')
+    //绘制结束后
+    after: (entity, pos) => {
+        console.log(entity, 'polyline')
     },
 }
 export {
