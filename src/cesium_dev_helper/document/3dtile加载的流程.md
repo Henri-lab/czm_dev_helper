@@ -1,4 +1,5 @@
 cesium_dev_helper 的 3D 瓦片加载流程
+老版 但是思路一致
 
 ```javascript
 let viewer;

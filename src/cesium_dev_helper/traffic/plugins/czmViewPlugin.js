@@ -11,10 +11,10 @@ import {
   ConfigManager,
   SceneManager,
   CameraManager
-} from '../cesium_dev_helper/czmHelper/Manager';
-import { CoordTransformer } from '../cesium_dev_helper/czmHelper/Compute';
-import { DataPrepocesser } from '../cesium_dev_helper/czmHelper/Data';
-import { TencentImageryProvider } from '../cesium_dev_helper/czmHelper/Map/mapPlugin';
+} from '../../czmHelper/Manager';
+import { CoordTransformer } from '../../czmHelper/Compute';
+import { DataPrepocesser } from '../../czmHelper/Data';
+import { TencentImageryProvider } from '../../czmHelper/Map/mapPlugin';
 
 
 
