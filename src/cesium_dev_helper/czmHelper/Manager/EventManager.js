@@ -5,7 +5,14 @@ let Cesium = new Manager().Cesium;
 class EventManager extends Manager {
     constructor(viewer) {
         super(viewer);
-        this.handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+        // In most cases, 
+        // viewer.canvas and viewer.scene.canvas refer to the same <canvas> -'HTML canvas element'. 
+        // Therefore, both lines of code are effectively doing the same thing, 
+        // which is setting up a ScreenSpaceEventHandler on the viewer's canvas.
+        const handlerOfViewer = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+        // const handlerOfScene = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+        this.handler = handlerOfViewer;  // Use the one that is more common in most cases.
+
         this.eventHandlers = new Map();
     }
 
@@ -15,7 +22,7 @@ class EventManager extends Manager {
             this.handler.setInputAction((event) => {
                 const position = this.viewer.scene.pickPosition(event.position || event.endPosition);
                 const handlers = this.eventHandlers.get(eventType);
-                // 优先度越大 先执行
+                // 优先度越大 越先执行
                 handlers.sort((a, b) => b.priority - a.priority);
                 handlers.forEach(({ callback }) => {
                     callback(position, event);

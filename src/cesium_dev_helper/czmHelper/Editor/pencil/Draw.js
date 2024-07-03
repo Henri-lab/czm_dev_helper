@@ -1,4 +1,4 @@
-import { DrawingManager } from "../../Manager";
+import { DrawingManager, EventManager } from "../../Manager";
 import Graphics from "./Graphics";
 import { CoordTransformer } from "../../Compute";
 import { isValidCartesian3 } from "../../util/isValid";
@@ -26,6 +26,7 @@ export default class Draw extends DrawingManager {
         this.$turfer = new TurfUser(viewer);
         this.viewer && this.viewer.dataSources.add(this._drawLayer);
         this.defaultImageUrl = '';
+        this.currentHandler = null;//方便在removeEventHandler剔除
 
         // this.handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
         // 为什么放弃创建一个总handler？
@@ -67,6 +68,193 @@ export default class Draw extends DrawingManager {
     measureResult(res) {
         console.log(res);
     }
+
+    drawWithEvent(Type, options, pluginFunction) {
+        if (!this.viewer || !options) return null;
+
+        const type = Type.toLowerCase()
+        // --数据准备--
+        let eM = new EventManager($this.viewer),
+            $this = this,
+            // 收集click处的坐标
+            positions = [],
+            // 初始化实体
+            _entity = $this.createGraphics(),
+            currentEntity = this._drawLayer.entities.add(_entity),//添加到此datasource,等待更新后reRender
+            // 获取 ~新~ 事件handler程序 ,防止事件绑定间的冲突
+            _handlers = eM.handler,
+            // 实体边缘线
+            // Default border edge style
+            defaultStyle = {
+                width: 3,
+                material: Cesium.Color.BLUE.withAlpha(0.8),
+                clampToGround: true,
+            };
+        // refister the handlers
+        $this.currentHandler = _handlers;
+
+        // --辅助函数--
+        // 更新用于绘制实体的坐标数据
+        function update() {
+            options.positions = positions;
+        }
+        // 设置边缘线样式
+        options.style = options.style || defaultStyle;
+
+        // 特殊情况的额外处理
+        function extra() {
+            //特殊处理:绘制带border的多边形
+            if (options.border && type === 'polygon' && positions.length >= 2) {
+                let borderStyle = options.style,
+                    dynamicPos = positions,
+                    datasource = $this.dataSources;
+                /*增加了动态属性callbackProperty~*/
+                currentEntity = $this.$graphics.DynamicPolygonWithBorder(_entity, dynamicPos, borderStyle, datasource);
+            }
+
+            // 特殊处理:绘制两点直线
+            if (options.straight && type === 'polyline' && positions.length == 2) {
+                // 销毁事件处理程序 结束绘制
+                _handlers.destroy();
+                _handlers = null;
+                // 绘制后的回调 
+                if (typeof options.after === "function") {
+                    options.after(currentEntity, $this.transformCartesianToWGS84(positions),);
+                }
+            }
+
+            //特殊处理:绘制动态矩形
+            if (type === 'rectangle' && positions.length === 2) {
+                options.positions = positions;
+                /*增加了动态属性callbackProperty~*/
+                currentEntity = $this.$graphics.DynamicRectangleEntity(options);
+            }
+
+            // 特殊处理:绘制静态圆
+            if (type === 'circle' && positions.length === 1) {
+                // 创建一个静态圆
+                currentEntity = $this.$graphics.EllipseGraphics(options);
+            }
+            return;
+        }
+        //根据类型type获得Graphics的方法名
+        function getMethodNameByType(type) {
+            const _type = type.toLowerCase();
+            switch (_type) {
+                case 'point':
+                    return 'PointEntities';
+                case 'polyline':
+                    return 'LineEntity';
+                case 'polygon':
+                    return ' PolygonEntity';
+                case 'circle':
+                    return 'DynamicCircleEntity';
+                default:
+                    return 'point';
+            }
+        }
+
+        // --EVENT--
+        // left click
+        const afterLeftClick = (movement) => {
+            // 点击处的地理坐标
+            let cartesian = $this._getCartesian3FromPX(movement.position /*pixel*/);
+            // 检查格式
+            if (!cartesian || !isValidCartesian3(cartesian)) return;
+            // 收集 点击处的地理坐标
+            positions.push(cartesian);
+            update();
+
+            // 动态测量
+            if (options.measure) {
+                console.log('measure')
+            }
+            // 特殊处理
+            extra();
+
+            // 更新实体
+            const methodName = getMethodNameByType(type);
+            currentEntity = $this.$graphics[methodName](options);
+
+        }
+        eM.onMouseClick(afterLeftClick); // 添加事件
+
+        // mouse movement 
+        const afterMouseMove = (movement) => {
+            let cartesian = $this._getCartesian3FromPX(movement.endPosition);
+
+            if (!cartesian || !isValidCartesian3(cartesian)) return;
+
+            // 线段 
+            if (type === 'polyline' && positions.length >= 2) {
+                // 端点更新
+                positions.pop();
+                positions.push(cartesian);
+                update();
+            }
+            // 矩形
+            if (type === 'rectangle') {
+                if (positions.length === 1) {
+                    // 矩形 端点更新(增加)
+                    positions.push(cartesian);
+                    update();
+                } else {
+                    // 矩形 端点更新(替换已有点)
+                    positions[1] = cartesian;
+                    update();
+                }
+            }
+        }
+        eM.onMouseMove(afterMouseMove) // 添加事件
+
+        // right click 
+        const afterRightClick = (movement) => {
+
+            // 闭合图形
+            if (!type === 'point' || !type === 'polyline') {
+                positions.push(positions[0]);
+                update();
+            }
+            // 多边形拉伸高度
+            if (type === 'polygon') {
+                currentEntity[type].extrudedHeight = options.extrudeHeight
+            }
+
+            let endPos/*右键点击处地理坐标*/ = $this._getCartesian3FromPX(movement.position);
+
+            if (options.measure) {
+                //添加测量功能
+                const res /*测量结果*/ = $this.$turfer.measureSimple(type, positions);
+                $this.measureResult({
+                    /*...*/
+                    type: `${type}`,
+                    value: res,
+                });
+            }
+
+
+            // 结束绘制
+            _handlers.destroy();
+            _handlers = null;
+
+            // callback with Entity and Positions
+            if (typeof options.after === "function") {
+                options.after(currentEntity, $this.transformCartesianToWGS84(positions));
+            }
+
+            // 执行额外的程序
+            const _currentEntity = currentEntity;//当前绘制的实体
+            const _currentPosArr = positions
+            if (typeof pluginFunction === "function") {
+                // 交给pluginFunction处理数据
+                pluginFunction(_currentEntity, _currentPosArr);
+            }
+        }
+        eM.onMouseRightClick(afterRightClick); // 添加事件
+
+
+    }
+
 
     // 公共方法
     /**
@@ -137,90 +325,7 @@ export default class Draw extends DrawingManager {
   * @returns {undefined}
   */
     LineWithEvent(options, pluginFunction) {
-        if (!this.viewer || !options) return null;
-
-        let $this = this
-        options = options || {};
-
-        let positions = [],
-            _line = $this.$graphics.LineEntity(options),
-            lineObj,
-            // 获取handler
-            _handlers = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-
-        // left + 使用当前事件处理程序
-        _handlers.setInputAction(function (movement) {
-            let cartesian = $this._getCartesian3FromPX(movement.position/*pixel*/);
-            if (cartesian && isValidCartesian3(cartesian)) {
-                if (positions.length == 0) {
-                    positions.push(cartesian.clone());
-                }
-                if (options.measure) {
-                    // _addInfoPoint(cartesian);
-                }
-                // 只绘制直线(两个点)  + 销毁当前事件处理程序
-                if (positions.length == 2 && options.straight) {
-                    _handlers.destroy();
-                    _handlers = null;
-                    if (typeof options.callback === "function") {
-                        options.callback($this.transformCartesianToWGS84(positions), lineObj);
-                    }
-                }
-                positions.push(cartesian);
-            }
-        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-        // mouse movement 更新坐标 使得坐标数字保持两个点 且 新点永远处于endPos
-        _handlers.setInputAction(function (movement) {
-            let cartesian = $this._getCartesian3FromPX(movement.endPosition);
-            if (positions.length >= 2) {
-                if (cartesian && isValidCartesian3(cartesian)) {
-                    positions.pop();
-                    positions.push(cartesian);
-                }
-            }
-        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-
-        // right + 销毁当前事件处理程序
-        _handlers.setInputAction(function (movement) {
-
-            _handlers.destroy();
-            _handlers = null;
-
-            let cartesian = $this._getCartesian3FromPX(movement.position);
-            if (options.measure) {
-                //添加测量功能
-
-                const len = $this.$turfer.measureSimple('line', positions);
-                $this.measureResult(
-                    {
-                        draw: 'LineWithEvent',
-                        measureResult: len,
-                        pickPos: cartesian
-                    }
-                )
-            }
-            if (typeof options.callback === "function") {
-                options.callback($this.transformCartesianToWGS84(positions), lineObj);
-            }
-
-            // 执行额外的程序 -来自Editor的命令✨
-            if (typeof pluginFunction === "function") {
-                // 交给Editor处理的数据
-                const _currentLine = lineObj;//当前线实体
-
-                pluginFunction(_currentLine, positions/*需要被Editor重置*/);
-            }
-
-        }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-
-        _line.polyline.positions = new Cesium.CallbackProperty(function () {
-            return positions;
-        }, false);
-
-        lineObj = this._drawLayer.entities.add(_line);
-
-
+        this.drawWithEvent('polyline', options, pluginFunction);
     }
 
     /**
@@ -532,14 +637,15 @@ export default class Draw extends DrawingManager {
         this._drawLayer.entities.removeAll();
     }
     /**
-     * 移除所以handler 监听
+     * 移除监听事件
      * @function
      */
     removeEventHandler() {
-        if (drawHandler && !drawHandler.isDestroyed()) {
-            drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-            drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-            drawHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK); //移除事件
+        const _handler = this.currentHandler;
+        if (_handler && !_handler.isDestroyed()) {
+            _handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+            _handler.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+            _handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
         }
     }
 
