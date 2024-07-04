@@ -312,8 +312,9 @@ class CoordTransformer {
      * @param {Array.<Cartesian3>} positions - The array of Cartesian positions.
      * @returns {Rectangle} The bounding rectangle in longitude, latitude coordinates.
      */
-    // 从 positions 数组中提取边界值
-    getRectangleFromPositions(positions) {
+    // 从 positions 数组中提取边界值 west south east north
+    static getRectangleFromPositions(positions) {
+        // 与 Cesium.Rectangle.fromCartesianArray 功能基本一致
         let west = Number.POSITIVE_INFINITY;
         let south = Number.POSITIVE_INFINITY;
         let east = Number.NEGATIVE_INFINITY;
@@ -331,6 +332,29 @@ class CoordTransformer {
         });
 
         return new Cesium.Rectangle(west, south, east, north);
+    }
+
+    /**
+     * Extracts the bounding rectangle from a diagonal of Cartesian positions.
+     *
+     * @param {Array.<Cartesian3>} positions - The array of Cartesian positions. It must contain exactly 2 positions.
+     * @returns {Rectangle} The bounding rectangle in longitude, latitude coordinates.
+     * @throws {Error} If the positions array does not contain exactly 2 positions.
+     */
+    static getRectangleFromDiagonal(positions) {
+        if (positions.length !== 2) {
+            throw new Error("The positions array must contain exactly 2 positions.");
+        }
+
+        const southwest = Cesium.Cartographic.fromCartesian(positions[0]);
+        const northeast = Cesium.Cartographic.fromCartesian(positions[1]);
+
+        return new Cesium.Rectangle(
+            southwest.longitude,
+            southwest.latitude,
+            northeast.longitude,
+            northeast.latitude
+        );
     }
 }
 

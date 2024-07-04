@@ -1,9 +1,9 @@
 import * as Cesium from "cesium";
 import { objHasOwnProperty, setProperties, createGraphics } from "./index";
-export function BillboardGraphics(options) {
-    options = options || {}
+export function BillboardGraphics(options = {}) {
     if (options && options.img) {
         return new Cesium.BillboardGraphics({
+            ...options,
             image: options.img,
             width: options.width || 35,
             height: options.height || 35,

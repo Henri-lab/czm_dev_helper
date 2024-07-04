@@ -1,9 +1,12 @@
 import * as Cesium from "cesium";
 import { objHasOwnProperty, setProperties } from "./index";
-export function PointGraphics(options = {}) {
+export function RectangleGraphics(options = {}) {
     if (options) {
-        return new Cesium.PointGraphics({
+        const w_s_e_n = new Cesium.Rectangle.fromCartesianArray(options.positions)
+        return new Cesium.RectangleGraphics({
+            // 后面的属性会覆盖前面的属性值
             ...options,
+            coordinates: w_s_e_n,
             color: options.color || Cesium.Color.GREEN,
             pixelSize: options.pixelSize || 5,
             outlineColor: options.outlineColor || Cesium.Color.WHITE,

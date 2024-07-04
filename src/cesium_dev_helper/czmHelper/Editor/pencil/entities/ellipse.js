@@ -3,7 +3,7 @@ import { objHasOwnProperty, setProperties, createGraphics } from "./index";
 import { EllipseGraphics } from "../graphics/index";
 export function EllipseEntity(extraOption = {}, options = {}, datasource = {}) {
     // 创建实体
-    let entity = this.createGraphics()
+    let entity = createGraphics()
     entity.ellipse = EllipseGraphics(options)
     const finalEntity = {
         ...extraOption,

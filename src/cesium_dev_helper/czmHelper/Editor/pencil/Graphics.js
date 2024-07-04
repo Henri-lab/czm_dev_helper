@@ -173,7 +173,7 @@ export default class Graphics extends DrawingManager {
    *
    * @returns {Object} The created dynamic entity.
    */
-  createDynamicEntity(extraOption = {}, options = {}, getNewPosition, pickPosCollection = []) {
+  createDynamicEntity(type, { extraOption, options, getNewPosition, pickPosCollection }) {
     if (typeof getNewPosition !== 'function') throw new Error('cannot get new position')
 
     let _newPosition = getNewPosition();
@@ -185,31 +185,31 @@ export default class Graphics extends DrawingManager {
       cartesian3 = _newPosition
     }
 
-    let entity = this.createEntities(extraOption = {}, options = {})
+    let entity = this.createEntities(extraOption = {}, options)
 
-    const type = extraOption.type.toLowerCase();
-    if (type === 'polygon') {
+    const _type = type.toLowerCase();
+    if (_type === 'polygon') {
       const Hierarchy = (pos) => {
         return new Cesium.PolygonHierarchy(pos);
       }
       entity.polygon.hierarchy = this.updatePerFrame(Hierarchy(cartesian3))// 核心
     }
 
-    else if (type === 'rectangle') {
+    else if (_type === 'rectangle') {
       const Rectangle = (posArr) => {
         // rectangle 至少需要两个点
         if (posArr.length < 2) throw new Error('Invalid positions when creating rectangle');
-        return Cesium.Rectangle.fromCartesianArray(posArr);
+        return Cesium.Rectangle.fromCartesianArray(posArr);//西南东北 w s e n
       }
       entity.rectangle.coordinates = this.updatePerFrame(Rectangle(pickPosCollection))//核心
     }
 
     else {
-      entity[type].positions = this.updatePerFrame(cartesian3) // 核心
+      entity[_type].positions = this.updatePerFrame(cartesian3) // 核心
     }
     return entity//dynamic entity
   }
-  
+
   //高级entity-------------------------------------------------
 
 

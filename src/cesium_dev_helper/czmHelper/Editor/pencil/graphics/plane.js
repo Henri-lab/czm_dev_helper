@@ -3,6 +3,7 @@ import { objHasOwnProperty, setProperties } from "./index";
 export function PlaneGraphics(options = {}) {
     if (options) {
         return new Cesium.PlaneGraphics({
+            ...options,
             plane: options.plane || new Cesium.Plane(Cesium.Cartesian3.UNIT_Y, 0.0), // PlaneGraphics 的一个属性是 Plane 
             dimensions: options.dimensions || new Cesium.Cartesian2(100.0, 100.0),
             material: options.material || Cesium.Color.RED.withAlpha(0.5), // 走廊的颜色和透明度

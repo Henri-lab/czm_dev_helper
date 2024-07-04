@@ -2,6 +2,7 @@ import * as Cesium from "cesium";
 export function CylinderGraphics(options) {
     if (options) {
         return new Cesium.CylinderGraphics({
+            ...options,
             HeightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
             length: options.length || 500 / 2,
             topRadius: options.topRadius || 0,

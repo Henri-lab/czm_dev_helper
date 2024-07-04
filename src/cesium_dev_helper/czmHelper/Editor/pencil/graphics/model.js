@@ -4,6 +4,7 @@ export function ModelGraphics(options) {
     options = options || {}
     if (options) {
         return new Cesium.ModelGraphics({
+            ...options,
             uri: options.m_url || options.url,
             scale: options.m_scale || options.scale || 10,
             clampAnimations: true

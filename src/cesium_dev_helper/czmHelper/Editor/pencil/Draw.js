@@ -38,7 +38,7 @@ export default class Draw extends DrawingManager {
     measureResult(res) {
         console.log(res);
     }
-    
+
     drawWithEvent(Type, options, pluginFunction) {
         if (!this.viewer || !options) return null;
 
@@ -60,7 +60,7 @@ export default class Draw extends DrawingManager {
                 material: Cesium.Color.BLUE.withAlpha(0.8),
                 clampToGround: true,
             };
-        // refister the handlers
+        // refister the handlers 
         $this.currentHandler = _handlers;
 
         // --辅助函数--
@@ -73,15 +73,6 @@ export default class Draw extends DrawingManager {
 
         // 特殊情况的额外处理
         function extra() {
-            //特殊处理:绘制带border的多边形
-            if (options.border && type === 'polygon' && positions.length >= 2) {
-                let borderStyle = options.style,
-                    dynamicPos = positions,
-                    datasource = $this.dataSources;
-                /*增加了动态属性callbackProperty~*/
-                currentEntity = $this.$graphics.DynamicPolygonWithBorder(_entity, dynamicPos, borderStyle, datasource);
-            }
-
             // 特殊处理:绘制两点直线
             if (options.straight && type === 'polyline' && positions.length == 2) {
                 // 销毁事件处理程序 结束绘制
@@ -97,13 +88,13 @@ export default class Draw extends DrawingManager {
             if (type === 'rectangle' && positions.length === 2) {
                 options.positions = positions;
                 /*增加了动态属性callbackProperty~*/
-                currentEntity = $this.$graphics.DynamicRectangleEntity(options);
+                currentEntity.rectangle = $this.$graphics.RectangleEntity(options);
             }
 
             // 特殊处理:绘制静态圆
             if (type === 'circle' && positions.length === 1) {
-                // 创建一个静态圆
-                currentEntity = $this.$graphics.EllipseGraphics(options);
+
+                currentEntity.ellipse = $this.$graphics.EllipseGraphics(options);
             }
             return;
         }

@@ -1,11 +1,11 @@
 import * as Cesium from "cesium";
 import { objHasOwnProperty, setProperties } from "./index";
 
-export function EllipsoidGraphics(options) {
-    options = options || {}
+export function EllipsoidGraphics(options = {}) {
     if (options) {
         let r = options.radii || 1000000.0 //默认100公里
         return new Cesium.EllipsoidGraphics({
+            ...options,
             radii: new Cesium.Cartesian3(r, r, r), //单位 米
             innerRadii: objHasOwnProperty(
                 options,

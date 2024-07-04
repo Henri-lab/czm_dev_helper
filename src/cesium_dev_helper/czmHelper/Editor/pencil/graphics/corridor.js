@@ -1,7 +1,8 @@
 import * as Cesium from "cesium";
-export function CorridorGraphics(options={}) {
+export function CorridorGraphics(options = {}) {
     if (options) {
         return new Cesium.CorridorGraphics({
+            ...options,
             positions: options.positions,
             width: options.width || 200000.0, // 走廊宽度（米）
             material: options.material || Cesium.Color.RED.withAlpha(0.5), // 走廊的颜色和透明度
