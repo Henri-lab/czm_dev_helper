@@ -1,6 +1,5 @@
 import { CoordTransformer } from '../../Compute';
-import { gifLoader } from '../../Data';
-import { DrawingManager } from "../../Manager"
+import { DrawingManager, LayerManager } from "../../Manager"
 import * as Cesium from 'cesium';
 import { isValidCartesian3, isValidCartographic } from "../../util/isValid";
 import {
@@ -44,7 +43,7 @@ export default class Graphics extends DrawingManager {
   constructor(viewer, dataSource) {
     if (viewer)
       super(viewer);
-    this._graphicsLayer = dataSource || new Cesium.CustomDataSource('graphicsLayer')
+    this._graphicsLayer = new LayerManager(viewer).getOrCreateDatasourceByName('graphicsLayer@henriFox');//保证图层的唯一性
     this.viewer && this.viewer.dataSources.add(this._graphicsLayer)
     // method for initing the graphics 
     this.PointGraphics = PointGraphics
@@ -61,7 +60,7 @@ export default class Graphics extends DrawingManager {
 
 
   //  创建一个czm帧刷新属性
-  updatePerFrame(data, isConst = false) {
+  _updatePerFrame(data, isConst = false) {
     return new Cesium.CallbackProperty(function () {
       return data
     }, isConst)
@@ -192,7 +191,7 @@ export default class Graphics extends DrawingManager {
       const Hierarchy = (pos) => {
         return new Cesium.PolygonHierarchy(pos);
       }
-      entity.polygon.hierarchy = this.updatePerFrame(Hierarchy(cartesian3))// 核心
+      entity.polygon.hierarchy = this._updatePerFrame(Hierarchy(cartesian3))// 核心
     }
 
     else if (_type === 'rectangle') {
@@ -201,11 +200,11 @@ export default class Graphics extends DrawingManager {
         if (posArr.length < 2) throw new TypeError('Invalid positions when creating rectangle');
         return Cesium.Rectangle.fromCartesianArray(posArr);//西南东北 w s e n
       }
-      entity.rectangle.coordinates = this.updatePerFrame(Rectangle(pickPosCollection))//核心
+      entity.rectangle.coordinates = this._updatePerFrame(Rectangle(pickPosCollection))//核心
     }
 
     else {
-      entity[_type].positions = this.updatePerFrame(cartesian3) // 核心
+      entity[_type].positions = this._updatePerFrame(cartesian3) // 核心
     }
     return entity//dynamic entity
   }

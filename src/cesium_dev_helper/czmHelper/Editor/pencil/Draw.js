@@ -1,4 +1,4 @@
-import { DrawingManager, EventManager } from "../../Manager";
+import { DrawingManager, EventManager, LayerManager } from "../../Manager";
 import Graphics from "./Graphics";
 import { CoordTransformer } from "../../Compute";
 import { isValidCartesian3 } from "../../util/isValid";
@@ -20,7 +20,7 @@ export default class Draw extends DrawingManager {
     constructor(viewer, StaticMap = {}) {
         super(viewer);
         this.dfSt = StaticMap || undefined;//图片资源path
-        this._drawLayer = new Cesium.CustomDataSource("drawLayer");
+        this._drawLayer = new LayerManager(viewer).getOrCreateDatasourceByName('drawLayer@henriFox');//保证图层的唯一性
         this.$graphics = new Graphics(viewer, datasource, this._drawLayer);
         this.$coords = new CoordTransformer();
         this.$turfer = new TurfUser(viewer);
@@ -33,10 +33,10 @@ export default class Draw extends DrawingManager {
     _getCartesian3FromPX/*pixel*/ = (position) => {
         return this.$coords.getCartesianFromScreenPosition(position, this.viewer);
     }
-    // 给坐标设置动态属性
-    _setDynamic(pos) {
+    // 给data设置动态属性
+    _setDynamic(data) {
         return new Cesium.CallbackProperty(() => {
-            return pos;
+            return data;
         })
     }
 
@@ -45,7 +45,7 @@ export default class Draw extends DrawingManager {
         console.log(res);
     }
 
-    // 绘制动态实体-位置坐标为callbackProperty
+    // 绘制动态实体(限制在本图层)-位置坐标为callbackProperty
     _startDynamicEntity = (typeOfEntity, config) => {
 
         try {
@@ -58,7 +58,7 @@ export default class Draw extends DrawingManager {
                     description,
                 },
                 options: rest,
-                datasource,
+                datasource: this._drawLayer,//指定特定图层
             }
             // 静态
             Entity = this.$graphics.createStaticEntity(typeOfEntity, entityConfig);
@@ -75,30 +75,7 @@ export default class Draw extends DrawingManager {
     _updatePos(options) {
         options.positions = positions;
     }
-    _updatePosByType(type, pickPosCollection = [], newPos = new Cesium.Cartesian3(0, 0, 0), entityOptions = {}, isClose = true) {
-
-        // 线段 
-        if (type === 'polyline' && pickPosCollection.length >= 2) {
-            // 端点更新
-            pickPosCollection.pop();
-            pickPosCollection.push(newPos);
-            this._updatePos(entityOptions);
-        }
-        // 矩形
-        else if (type === 'rectangle') {
-            if (pickPosCollection.length === 1) {
-                // 矩形 端点更新(增加)
-                pickPosCollection.push(newPos);
-                this._updatePos(entityOptions);
-            } else {
-                // 矩形 端点更新(替换已有点)
-                pickPosCollection[1] = newPos;
-                this._updatePos(entityOptions);
-            }
-        } else {
-
-        }
-
+    _updatePosByType(type, pickPosCollection = [], newPickPos = new Cesium.Cartesian3(0, 0, 0), entityOptions = {}, isClose = true) {
         // 多边形闭合
         if (isClose) {
             if (!type === 'point' || !type === 'polyline') {
@@ -106,12 +83,46 @@ export default class Draw extends DrawingManager {
                 pickPosCollection.push(pickPosCollection[0]);
                 this._updatePos(entityOptions);
             }
+            return;
         }
 
-
-
+        // 多边形编辑
+        // 线段 
+        if (type === 'polyline' && pickPosCollection.length >= 2) {
+            // 端点更新
+            pickPosCollection.pop();
+            pickPosCollection.push(newPickPos);
+            this._updatePos(entityOptions);
+            return;
+        }
+        // 矩形
+        else if (type === 'rectangle') {
+            if (pickPosCollection.length === 1) {
+                // 矩形 端点更新(增加)
+                pickPosCollection.push(newPickPos);
+                this._updatePos(entityOptions);
+            } else {
+                // 矩形 端点更新(替换已有点)
+                pickPosCollection[1] = newPickPos;
+                this._updatePos(entityOptions);
+            }
+            return;
+        }
+        // 圆形
+        else if (type === 'ellipse') {
+            // 检测到还没有创建圆的圆心
+            if (pickPosCollection.length === 0) return;
+            // 缩放半径
+            if (pickPosCollection.length === 1) {
+                const _center = pickPosCollection[0];
+                const _radius = Cesium.Cartesian3.distance(_center, newPickPos);
+                const dynamicRadius = this._setDynamic(_radius);//每帧都调用
+                entityOptions.semiMajorAxis = dynamicRadius
+                entityOptions.semiMinorAxis = dynamicRadius
+            }
+            return;
+        }
     }
-
 
     /**
      * Draw an entity with event handling.
@@ -122,8 +133,6 @@ export default class Draw extends DrawingManager {
      */
     drawWithEvent(Type, options, pluginFunction) {
         if (!this.viewer || !options) return null;
-
-
 
         function extra() { // 特殊情况的额外处理
             // 特殊处理:绘制两点直线
@@ -223,380 +232,21 @@ export default class Draw extends DrawingManager {
         eM.onMouseRightClick(afterRightClick);
 
     }
-
-
-
-    /**
-    * Draws a point on the map.
-    * @function
-    * @param {object} options - The options for drawing the point entity.
-    * @param {function} options.callback - The callback function to be called after drawing the point. 并且把实体回调出去
-    * @returns {Entity} - The entity
-    */
-    PointWithEvent(options) {
-        if (!this.viewer || !options) return null;
-
-        let $this = this //解决非箭头函数的this问题
-        options = options || {};
-        /** @default */
-        options.style = options.style || {
-            image: this._getDfSt(["drawPointGraphics"]),
-            width: 35,
-            height: 40,
-            clampToGround: true,
-            scale: 1,
-            pixelOffset: new Cesium.Cartesian2(0, -20),
-        };
-
-        let _point = $this.$graphics.PointEntities(options),
-            position,
-            positions = [],
-            poiObj,
-            _handlers = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-        // Get handler
-        drawHandler = _handlers;
-        // Left click event handler
-        _handlers.setInputAction(function (movement) {
-            let cartesian = $this.viewer.scene.camera.pickEllipsoid(movement.position, $this.viewer.scene.globe.ellipsoid);
-            if (cartesian && isValidCartesian3(cartesian)) {
-                position = cartesian;
-                positions.push(cartesian);
-            }
-        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-        // Right click event handler
-        _handlers.setInputAction(function (movement) {
-            _handlers.destroy();
-            _handlers = null;
-
-            if (typeof options.callback === "function") {
-                options.callback($this.transformCartesianToWGS84(positions), poiObj/*把实体回调出去*/);
-            }
-        }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-
-        _point.position = new Cesium.CallbackProperty(function () {
-            return position;
-        }, false);
-
-        poiObj = this._drawLayer.entities.add(_point);
-
+    PointWithEvent(options, pluginFunction) {
+        this.drawWithEvent('point', options, pluginFunction)
     }
-
-    /**
-    * Draws a line on the map.
-    * @param {Object} options - The options for drawing the line.
-    * @param {Number} [options.width=5] - The width of the line.
-    * @param {Cesium.Color} [options.material=Cesium.Color.BLUE.withAlpha(0.8)] - The material of the line.
-    * @param {Boolean} [options.clampToGround=false] - Whether the line should be clamped to the ground.
-    * @param {Boolean} [options.clampToS3M=false] - Whether the line should be clamped to 3D Tiles.
-    * @param {Boolean} [options.measure=false] - Whether the line should be measured.
-    * @param {Boolean} [options.straight] - The type of the line.
-    * @param {Function} [options.callback] - The callback function to be called when the line is drawn.
-    * @returns {undefined}
-    */
     LineWithEvent(options, pluginFunction) {
         this.drawWithEvent('polyline', options, pluginFunction);
     }
-
-    /**
-     * Draws a polygon on the map.
-     * 
-     * LEFT_CLICK: Adds vertices to the polygon.
-     * 
-     * MOUSE_MOVE: Updates the polygon dynamically as the mouse moves.
-     * 
-     * RIGHT_CLICK: Finalizes the polygon by closing it and executing the callback,IF you measure is true,will return area to this entity.
-     * @function
-     * @param {object} options
-     * @param {boolean} options.style - 边缘线样式
-     * @param {boolean} options.measure - 是否为量测
-     * @param {number} options.height - 拉伸高度
-     * @param {boolean} options.clampToGround - 是否贴地
-     * @param {function} options.callback - 回调函数
-    */
-    PolygonWithEvent(options = {}) {
-        if (!this.viewer || !options) return null;
-
-        let $this = this;
-
-        // Default edge style
-        const defaultStyle = {
-            width: 3,
-            material: Cesium.Color.BLUE.withAlpha(0.8),
-            clampToGround: true,
-        };
-        options.style = options.style || defaultStyle;
-
-        let _positions = [], // Click coordinates collection
-            _polygonEntity = $this.createGraphics(),
-            polyObj = null, // Callback entity
-            _handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-
-        // Register the handler
-        drawHandler = _handler;
-
-        $this._drawLayer.entities.add(_polygonEntity);
-
-        // Left-click to add vertices
-        _handler.setInputAction(function (movement) {
-            let cartesian = $this._getCartesian3FromPX(movement.position);
-            if (cartesian && isValidCartesian3(cartesian)) {
-                _positions.push(cartesian.clone());
-
-                if (!polyObj) {
-                    polyObj = $this.$graphics.DynamicPolygonWithBorder(_polygonEntity, options.style, _positions);
-                }
-            }
-        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-        // Mouse move to dynamically update the polygon
-        _handler.setInputAction(function (movement) {
-            let cartesian = $this._getCartesian3FromPX(movement.endPosition);
-            // Three+ points make a surface
-            if (_positions.length >= 2 && cartesian && isValidCartesian3(cartesian)) {
-                _positions.pop();
-                _positions.push(cartesian);
-            }
-        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-
-        // Right-click to finalize the polygon
-        _handler.setInputAction(function () {
-            _handler.destroy();
-
-            _polygonEntity.polygon.material = options.material || Cesium.Color.BLUE.withAlpha(0.5);
-            _polygonEntity.polygon.clampToGround = options.clampToGround || true;
-
-            // Closing the polygon
-            _positions.push(_positions[0]);
-
-            // Specify extruded height
-            if (options.height) {
-                _polygonEntity.polygon.extrudedHeight = options.height;
-            }
-
-            // Enable measurement functionality
-            if (options.measure) {
-                let cartesian = $this._getCartesian3FromPX(movement.position);
-                const area = $this.$turfer.measureSimple('polygon', _positions);
-                if (area) {
-                    _polygonEntity.area = area;
-                    $this.measureResult(
-                        {
-                            draw: 'PolygonWithEvent',
-                            measureResult: area,
-                            pickPos: cartesian
-                        }
-                    )
-                }
-            }
-
-            // Trigger right-click callback
-            if (typeof options.callback === "function") {
-                options.callback($this.transformCartesianToWGS84(_positions), polyObj);
-            }
-        }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+    PolygonWithEvent(options, pluginFunction) {
+        this.drawWithEvent('polygon', options, pluginFunction)
     }
-
-    /**
-    * Draws a rectangle on the map.
-    * 
-    * LEFT_CLICK: Adds vertices to the rectangle.
-    * 
-    * MOUSE_MOVE: Updates the rectangle dynamically as the mouse moves.
-    * 
-    * RIGHT_CLICK: Finalizes the rectangle by closing it and executing the callback,IF you measure is true,will return area to this entity.
-    * @function
-    * @param {object} options
-    * @param {object} options.style - The style of the rectangle's edge.
-    * @param {boolean} options.measure - Whether the rectangle should be measured.
-    * @param {number} options.height - The extruded height of the rectangle.
-    * @param {boolean} options.clampToGround - Whether the rectangle should be clamped to the ground.
-    * @param {function} options.callback - The callback function to be called when the rectangle is drawn.
-    * @returns {undefined}
-    */
-    RectangleWithEvent(options = {}) {
-        if (!this.viewer || !options) return null;
-
-        let $this = this;
-
-
-        // Default edge style
-        const defaultStyle = {
-            width: 3,
-            material: Cesium.Color.BLUE.withAlpha(0.8),
-            clampToGround: true,
-        };
-        options.style = options.style || defaultStyle;
-
-        let _positions = [], // Click coordinates collection
-            _rectangleEntity = $this.createGraphics(),
-            rectObj = null, // Callback entity
-            _handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-
-        // Register the handler
-        drawHandler = _handler;
-
-        $this._drawLayer.entities.add(_rectangleEntity);
-
-        // Left-click to add vertices
-        _handler.setInputAction(function (movement) {
-            let cartesian = $this._getCartesian3FromPX(movement.position);
-            if (cartesian && isValidCartesian3(cartesian)) {
-                _positions.push(cartesian.clone());
-
-                // A rectangle in Cesium can be defined by specifying the coordinates of two opposite corners
-                if (_positions.length === 2 && !rectObj) {
-                    options.position = _positions;
-                    rectObj = $this.$graphics.DynamicRectangleEntity(options);
-                }
-            }
-        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-        // Mouse move to dynamically update the rectangle
-        _handler.setInputAction(function (movement) {
-            if (_positions.length < 1) return;
-
-            let cartesian = $this._getCartesian3FromPX(movement.endPosition);
-            if (cartesian && isValidCartesian3(cartesian)) {
-                if (_positions.length === 1) {
-                    _positions.push(cartesian);
-                } else {
-                    _positions[1] = cartesian;
-                }
-
-                // 实体创建后进行更新
-                if (rectObj) {
-                    rectObj.rectangle.coordinates = new Cesium.CallbackProperty(function () {
-                        const rect = Cesium.Rectangle.fromCartesianArray(_positions);
-                        return rect;
-                    }, false);
-                }
-            }
-        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-
-        // Right-click to finalize the rectangle
-        _handler.setInputAction(function () {
-            _handler.destroy();
-
-            // Trigger right-click callback
-            if (typeof options.callback === "function") {
-                options.callback($this.transformCartesianToWGS84(_positions), rectObj);
-            }
-        }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+    RectangleWithEvent(options, pluginFunction) {
+        this.drawWithEvent('rectangle', options, pluginFunction)
     }
-
-    // circle-is-Ellipse
-    /**
-     * Draws a circle on the map.
-     * 
-     * LEFT_CLICK: Adds the center point of the circle.
-     * 
-     * MOUSE_MOVE: Updates the circle dynamically as the mouse moves.
-     * 
-     * RIGHT_CLICK: Finalizes the circle by closing it and executes the callback.
-     * 
-     * @function
-     * @param {object} options
-     * @param {object} options.style - The style of the circle's edge.
-     * @param {boolean} options.measure - Whether the circle should be measured.
-     * @param {number} options.height - The extruded height of the circle.
-     * @param {boolean} options.clampToGround - Whether the circle should be clamped to the ground.
-     * @param {function} options.callback - The callback function to be called when the circle is drawn.
-     * @returns {undefined}
-     */
-    CircleWithEvent(options = {}) {
-        if (!this.viewer || !options) return null;
-
-        let $this = this;
-
-        // Default edge style
-        const defaultStyle = {
-            width: 3,
-            material: Cesium.Color.BLUE.withAlpha(0.8),
-            clampToGround: true,
-        };
-        options.style = options.style || defaultStyle;
-
-        let _positions = [], // Click coordinates collection
-            _circleEntity = $this.createGraphics(),
-            circleObj = null, // Callback entity
-            _handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-
-        // Register the handler
-        drawHandler = _handler;
-
-        $this._drawLayer.entities.add(_circleEntity);
-
-        // Left-click to add center point
-        _handler.setInputAction(function (movement) {
-            let cartesian = $this._getCartesian3FromPX(movement.position);
-            if (cartesian && isValidCartesian3(cartesian)) {
-                _positions.push(cartesian.clone());
-
-                if (_positions.length === 1 && !circleObj) {
-                    // 创建一个静态圆
-                    circleObj = $this.$graphics.EllipseGraphics(options);
-                }
-            }
-        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-        // Mouse move to dynamically update the circle
-        _handler.setInputAction(function (movement) {
-            if (_positions.length < 1) return;
-
-            let cartesian = $this._getCartesian3FromPX(movement.endPosition);
-            if (cartesian && isValidCartesian3(cartesian)) {
-                const center = _positions[0];
-                const radius = Cesium.Cartesian3.distance(center, cartesian);
-
-                // 动态更新圆实体
-                if (circleObj) {
-                    circleObj.ellipse.semiMajorAxis = new Cesium.CallbackProperty(function () {
-                        return radius;
-                    }, false);
-                    circleObj.ellipse.semiMinorAxis = new Cesium.CallbackProperty(function () {
-                        return radius;
-                    }, false);
-                }
-            }
-        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-
-        // Right-click to finalize the circle
-        _handler.setInputAction(function () {
-            _handler.destroy();
-
-            // Trigger right-click callback
-            if (typeof options.callback === "function") {
-                options.callback($this.transformCartesianToWGS84(_positions), circleObj);
-            }
-        }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+    CircleWithEvent(options, pluginFunction) {
+        this.drawWithEvent('ellipse', options, pluginFunction)
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * 移除所有实体
