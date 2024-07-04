@@ -1,4 +1,4 @@
-
+import * as Cesium from "cesium";
 export function CorridorGraphics(options={}) {
     if (options) {
         return new Cesium.CorridorGraphics({

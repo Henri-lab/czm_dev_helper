@@ -127,23 +127,23 @@ export default class Graphics extends DrawingManager {
   }
 
   // 创建静态实体--------------------------------------------------------
-  createStaticEntityByType(type, options) {
+  createStaticEntity(type, { extraOption, options, datasource }) {
     const _type = type.toLowerCase();
-    switch (_type, options) {
+    switch (_type) {
       case 'point':
-        return PointEntities(options);
+        return PointEntities(extraOption, options, datasource);
       case 'line':
-        return LineEntity(options);
+        return LineEntity(extraOption, options, datasource);
       case 'polygon':
-        return PolygonEntity(options);
+        return PolygonEntity(extraOption, options, datasource);
       case 'box':
-        return BoxEntity(options);
+        return BoxEntity(extraOption, options, datasource);
       case 'corridor':
-        return CorridorEntity(options);
+        return CorridorEntity(extraOption, options, datasource);
       case 'ellipse':
-        return EllipseEntity(options);
+        return EllipseEntity(extraOption, options, datasource);
       case 'model':
-        return ModelEntity(options);
+        return ModelEntity(extraOption, options, datasource);
       default:
         throw new Error(`Unsupported entity type: ${type}`);
     }
