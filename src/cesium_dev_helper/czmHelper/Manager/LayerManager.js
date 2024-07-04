@@ -1,11 +1,12 @@
 import Manager from "./Manager";
 
 let Cesium = new Manager().Cesium;
-
+//管理imageryLayers,datasource
 class LayerManager extends Manager {
     constructor(viewer) {
         super(viewer);
         this.layers = [];
+        this.datesources = [];
     }
     addLayer(layer) { /* ... */
         this.layers.push(layer);
@@ -29,6 +30,17 @@ class LayerManager extends Manager {
         if (index !== -1) {
             this.viewer.imageryLayers.get(index).show = false;
         }
+    }
+
+    getOrCreateDatasourceByName(name) {
+        if (!typeof name === 'string') return null;
+        const _viewer = this.viewer
+        let dataSource = _viewer.dataSources.getByName(name)[0];
+        if (!dataSource) {
+            dataSource = new Cesium.CustomDataSource(name);
+            _viewer.dataSources.add(dataSource);
+        }
+        return dataSource;
     }
 }
 
