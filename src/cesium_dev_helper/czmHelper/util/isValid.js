@@ -22,6 +22,29 @@ export function isValidCartesian3(cartesian) {
 }
 
 /**
+ * 判断对象是否为Cesium地理坐标
+ * @param {object} coord - 要检查的对象
+ * @returns {boolean} 如果对象是Cesium地理坐标则返回true，否则返回false
+ */
+export function isValidCartographic(coord) {
+    if (typeof coord !== 'object' || coord === null) {
+        return false;
+    }
+
+    const hasLongitude = typeof coord.longitude === 'number';
+    const hasLatitude = typeof coord.latitude === 'number';
+    const hasOptionalHeight = typeof coord.height === 'undefined' || typeof coord.height === 'number';
+
+    return hasLongitude && hasLatitude && hasOptionalHeight;
+}
+
+
+
+
+
+
+
+/**
  * Validates if the given input is a valid Cesium provider.
  *
  * @param {Object} provider - The Cesium provider to be validated.

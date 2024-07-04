@@ -3,6 +3,29 @@ class DataPrepocesser {
 	constructor() { }
 
 	/**
+	  * 获取指定名称的静态资源的URL数组
+	  * @param {string[]} nameArray - 名称数组
+	  * @returns {string[]} - 静态资源的URL数组
+	  */
+	getImgUrls(nameArray) {
+		let imgUrls = [];
+		nameArray.forEach(name => {
+			// If the dfSt object exists and contains the specified name,
+			// push the corresponding URL to the imgUrls array.
+			if (this.dfSt && this.dfSt[name]) {
+				imgUrls.push(this.dfSt[name]);
+			} else {
+				// If the dfSt object does not exist or does not contain the specified name,
+				// push the default image URL to the imgUrls array.
+				imgUrls.push(this.defaultImageUrl);
+			}
+		});
+		// Return the array of URLs.
+		return imgUrls;
+	}
+
+
+	/**
 	 * Corrects the offset of a white film on 3D tiles.
 	 * Updates the model matrix of the 3D tiles.
 	 * @param {number} tx - The x-coordinate offset.

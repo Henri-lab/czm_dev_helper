@@ -1,16 +1,7 @@
+import * as Cesium from "cesium";
+import { objHasOwnProperty, setProperties, createGraphics } from "./index";
+import { CylinderGraphics } from "../graphics/index";
 
-/**
-* 创建面实体
-* @function
-* @param {object} options
-* @param {Cartesian3} options.positions - 坐标数组
-* @param {object} options.material - 配置线段材质
-* @param {boolean} options.clampToGround - 是否贴地
-* @param {boolean} options.clampToS3M - 是否贴s3m模型
-* @param {Object} options.distanceDisplayCondition -可视距离
-* @param {Object} options.scaleByDistance - 缩放
-* @returns {PolygonGraphics} 返回PolygonGraphics实例
-*/
 export function PolygonEntity(options) {
     options = options || {}
     if (options) {

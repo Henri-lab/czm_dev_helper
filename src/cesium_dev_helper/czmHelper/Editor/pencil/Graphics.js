@@ -2,6 +2,7 @@ import { CoordTransformer } from '../../Compute';
 import { gifLoader } from '../../Data';
 import { DrawingManager } from "../../Manager"
 import * as Cesium from 'cesium';
+import { isValidCartesian3, isValidCartographic } from "../../util/isValid";
 import {
   BillboardGraphics,
   BoxGraphics,
@@ -18,6 +19,15 @@ import {
   PolygonGraphics,
 } from './graphics/index'
 
+import {
+  BoxEntity,
+  CorridorEntity,
+  EllipseEntity,
+  LineEntity,
+  ModelEntity,
+  PointEntities,
+  PolygonEntity,
+} from './entities'
 
 /**
  * 图形模块
@@ -31,39 +41,31 @@ import {
  * @exports  Graphics
  */
 export default class Graphics extends DrawingManager {
-  constructor(viewer, dataSource, defaultStatic) {
-    super(viewer);
-    this.dfSt = defaultStatic
+  constructor(viewer, dataSource) {
+    if (viewer)
+      super(viewer);
     this._graphicsLayer = dataSource || new Cesium.CustomDataSource('graphicsLayer')
     this.viewer && this.viewer.dataSources.add(this._graphicsLayer)
-  }
-
-  // 公共方法--------------------------------------------------------
-  /**
-    * 获取指定名称的静态资源的URL数组
-    * @param {string[]} nameArray - 名称数组
-    * @returns {string[]} - 静态资源的URL数组
-    */
-  getDfSt(nameArray) {
-    let imgUrls = [];
-    nameArray.forEach(name => {
-      // If the dfSt object exists and contains the specified name,
-      // push the corresponding URL to the imgUrls array.
-      if (this.dfSt && this.dfSt[name]) {
-        imgUrls.push(this.dfSt[name]);
-      } else {
-        // If the dfSt object does not exist or does not contain the specified name,
-        // push the default image URL to the imgUrls array.
-        imgUrls.push(this.defaultImageUrl);
-      }
-    });
-    // Return the array of URLs.
-    return imgUrls;
+    // method for initing the graphics 
+    this.PointGraphics = PointGraphics
+    this.LineGraphics = LineGraphics
+    this.PolygonGraphics = PolygonGraphics
+    this.LabelGraphics = LabelGraphics
+    this.BillboardGraphics = BillboardGraphics
+    this.PathGraphics = PathGraphics
+    this.ModelGraphics = ModelGraphics
+    this.EllipseGraphics = EllipseGraphics
+    this.EllipsoidGraphics = EllipsoidGraphics
   }
 
 
 
-
+  //  创建一个czm帧刷新属性
+  updatePerFrame(data, isConst = false) {
+    return new Cesium.CallbackProperty(function () {
+      return data
+    }, isConst)
+  }
 
   //  生成图形------------------------------------------------------------------------
   createGraphicsByType(type, options) {
@@ -100,212 +102,121 @@ export default class Graphics extends DrawingManager {
     }
 
   }
-  // 创建实体--------------------------------------------------------
-
-  createEntity(type, options) {
-    
-  }
-
-
-
-
-
-
-
-
-
-
 
   /**
-    * 构建动态线实体
-    * @function
-    * @param {object} options
-    * @param {Cartesian3} options.positions - 坐标数组 (时间)
-    * @param {object} options.material - 材质
-    * @param {number} options.width - 宽度
-    * @param {boolean} options.clampToGround - 是否贴地
-    * @returns {polyline} 返回polyline实例
-    */
-  DynamicPolyLineEntity(options) {
-    if (options && options.positions) {
-      let entity = this.createGraphics()
-      entity.name = options.name || ''
-      entity.polyline = this.LineEntity(options)
-      entity.polyline.positions = new Cesium.CallbackProperty(function () {
-        return options.positions
-      }, false)
-
-      return this._graphicsLayer.entities.add(entity)
-    }
-  }
-
-  /**
-   * Creates a dynamic polygon entity that updates based on provided positions.
-   *
-   * @param {Object} options - The options for creating the polygon entity.
-   * @param {Array<Cesium.Cartesian3>} options.positions - An array of Cartesian3 positions that define the polygon.
-   * @param {string} [options.name] - The name of the polygon entity.
-   * @param {Cesium.Material} [options.material] - The material to be used for the polygon.
-   * @param {boolean} [options.clampToGround] - Whether the polygon should be clamped to the ground.
-   * @returns {Cesium.Entity} The created polygon entity.
+   * 创建复合实体 
+   * @param {object} extraOption - 实体非主体属性
+   * @param {object} options - 实体主体属性
+   * @returns {Entity} 返回Entity实例
    */
-  DynamicPolygonEntity(options) {
-    if (options && options.positions) {
-      let entity = this.createGraphics();
-      entity.name = options.name || '';
+  createEntities(extraOption = {}, options = {}) {
+    let entity = this._graphicsLayer.entities.add({
+      ...extraOption,
+      point: options.point && this.PointGraphics(options.point),
+      polyline: options.line && this.LineGraphics(options.line),
+      polygon: options.polygon && this.PolygonGraphics(options.polygon),
+      label: options.label && this.LabelGraphics(options.label),
+      billboard: options.billboard && this.BillboardGraphics(options.billboard),
+      path: options.path && this.PathGraphics(options.path),
+      model: options.model && this.ModelGraphics(options.model),
+      ellipse: options.ellipse && this.EllipseGraphics(options.ellipse),
+      ellipsoid: options.ellipsoid && this.EllipsoidGraphics(options.ellipsoid),
+    });
 
-      entity.polygon = {
-        hierarchy: new Cesium.CallbackProperty(function () {
-          return new Cesium.PolygonHierarchy(options.positions);
-        }, false),
-        material: options.material || Cesium.Color.BLUE.withAlpha(0.8),
-        clampToGround: options.clampToGround || true,
-        extrudedHeight: options.extrudedHeight || undefined
-      };
-
-      return this._graphicsLayer.entities.add(entity);
-    }
+    return entity;
   }
 
+  // 创建静态实体--------------------------------------------------------
+  createStaticEntityByType(type, options) {
+    const _type = type.toLowerCase();
+    switch (_type, options) {
+      case 'point':
+        return PointEntities(options);
+      case 'line':
+        return LineEntity(options);
+      case 'polygon':
+        return PolygonEntity(options);
+      case 'box':
+        return BoxEntity(options);
+      case 'corridor':
+        return CorridorEntity(options);
+      case 'ellipse':
+        return EllipseEntity(options);
+      case 'model':
+        return ModelEntity(options);
+      default:
+        throw new Error(`Unsupported entity type: ${type}`);
+    }
+  }
+  // 创建动态实体--------------------------------------------------------
+
   /**
-   * Creates a dynamic rectangle entity that updates based on provided positions.
+   * Creates a dynamic entity with the specified options.
    *
-   * @param {Object} options - The options for creating the rectangle entity.
-   * @param {Array<Cesium.Cartesian3>} options.positions - An array of Cartesian3 positions that define the rectangle.
-   * @param {string} [options.name] - The name of the rectangle entity.
-   * @param {Cesium.Material} [options.material] - The material to be used for the rectangle.
-   * @returns {Cesium.Entity} The created rectangle entity.
+   * @param {Object} [extraOption={}] - Options for the entity.
+   * @param {Object} [options={}] - Options for the dynamic entity.
+   * @param {Function} getNewPosition - Function to get new position for the dynamic entity.
+   * @param {Array} [pickPosCollection=[]] - Collection of pick positions for the dynamic entity.
+   *
+   * @throws {Error} If getNewPosition is not a function.
+   *
+   * @returns {Object} The created dynamic entity.
    */
-  DynamicRectangleEntity(options) {
-    if (options && options.positions) {
-      let entity = this.createGraphics();
-      let positions = options.positions;
-      entity.name = options.name || '';
+  createDynamicEntity(extraOption = {}, options = {}, getNewPosition, pickPosCollection = []) {
+    if (typeof getNewPosition !== 'function') throw new Error('cannot get new position')
 
-      entity.rectangle = {
-        coordinates: new Cesium.CallbackProperty(function () {
-          if (positions.length < 2) return undefined;
-          return Cesium.Rectangle.fromCartesianArray(positions);
-        }, false),
-        material: options.material || Cesium.Color.BLUE.withAlpha(0.5),
-        outline: options.outline || true,
-        outlineColor: options.outlineColor || Cesium.Color.BLUE.withAlpha(0.5),
-      };
-      return this._graphicsLayer.entities.add(entity);
+    let _newPosition = getNewPosition();
+
+    let cartesian3;
+    if (isValidCartographic(_newPosition)) {
+      cartesian3 = CoordTransformer.transformWGS84ToCartesian(_newPosition)
+    } else if (isValidCartesian3(_newPosition)) {
+      cartesian3 = _newPosition
     }
-  }
-  /**
-     * 构建动态椎体
-     * @function
-     * @param {object} options
-     * @param {CylinderGraphics} options.cylinder - 椎体对象
-     * @param {entity} options.entity - entity实体
-     * @param {number} options.width - 宽度
-     * @param {boolean} options.clampToGround - 是否贴地
-     * @returns {cylinder} 返回cylinder实例
-     */
-  DynamicCylinderEntity(options) {
-    let entity = this.createGraphics();
-    if (options && options.cylinder) {
-      let entity = options.entity
-      let cylinder = options.cylinder
-      let $this = this
-      entity.name = options.name || ''
-      entity.cylinder = this.CylinderGraphics(cylinder)
-      entity.position = new Cesium.CallbackProperty(function () {
-        let positions = entity.position.getValue(
-          $this.viewer.clock.currentTime
-        )
-        let cartographic = $this.viewer.scene.globe.ellipsoid.cartesianToCartographic(
-          positions
-        )
-        let lat = Cesium.Math.toDegrees(cartographic.latitude)
-        let lng = Cesium.Math.toDegrees(cartographic.longitude)
-        // hei = parseFloat(cartographic.height / 4)
-        return Cesium.Cartesian3.fromDegrees(lng, lat, 0)
-      }, false)
 
-      entity.cylinder.length = new Cesium.CallbackProperty(function () {
-        let positions = entity.position.getValue(
-          $this.viewer.clock.currentTime
-        )
-        let cartographic = $this.viewer.scene.globe.ellipsoid.cartesianToCartographic(
-          positions
-        )
-        return cartographic.height * 2
-      }, false)
+    let entity = this.createEntities(extraOption = {}, options = {})
 
-      return this._graphicsLayer.entities.add(entity)
+    const type = extraOption.type.toLowerCase();
+    if (type === 'polygon') {
+      const Hierarchy = (pos) => {
+        return new Cesium.PolygonHierarchy(pos);
+      }
+      entity.polygon.hierarchy = this.updatePerFrame(Hierarchy(cartesian3))// 核心
     }
+
+    else if (type === 'rectangle') {
+      const Rectangle = (posArr) => {
+        // rectangle 至少需要两个点
+        if (posArr.length < 2) throw new Error('Invalid positions when creating rectangle');
+        return Cesium.Rectangle.fromCartesianArray(posArr);
+      }
+      entity.rectangle.coordinates = this.updatePerFrame(Rectangle(pickPosCollection))//核心
+    }
+
+    else {
+      entity[type].positions = this.updatePerFrame(cartesian3) // 核心
+    }
+    return entity//dynamic entity
   }
 
-  /**
-  * 创建渐变锥体
-  * @function
-  * @param {object} options
-  * @param {Cartesian3} options.position - 坐标数组
-  * @param {string} options.color - 颜色
-  * @param {number} options.duration - 持续时长
-  * @param {number} options.length - 长度
-  * @param {number} options.topRadius - 顶部半径
-  * @param {number} options.bottomRadius - 底部半径
-  * @param {number} options.slices - 垂直分段数量
-  * @returns {cylinder} 返回cylinder实例
-  */
-  FadeCylinderEntity(options) {
-    options = options || {}
-    if (options && options.position) {
-      let entity = this.createGraphics()
-      entity.name = options.name || ''
-      entity.position = options.position
-      options.material = new Cesium.Scene.CircleFadeMaterialProperty({
-        color: options.color || Cesium.Color.fromCssColorString('#02ff00'),
-        duration: options.duration || 2000
-      })
-      entity.cylinder = this.CylinderGraphics(options)
 
-      return this._graphicsLayer.entities.add(entity)
-    }
-  }
 
-  /**
-  *  创建旋转圆柱
-  * @function
-  * @param {object} options
-  * @param {Cartesian3} options.position - 坐标数组
-  * @param {number} options.length - 长度
-  * @param {number} options.topRadius - 顶部半径
-  * @param {number} options.bottomRadius - 底部半径
-  * @param {number} options.slices - 垂直分段数量
-  * @param {string} options.img - 材质图片
-  * @param {object} options.material - 材质(与图片二选一)
-  * @returns {cylinder} 返回cylinder实例
-  */
-  RotateCylinderEntity(options) {
-    if (options && options.position) {
-      let entity = this.createGraphics()
-      entity.name = options.name || ''
-      options.material = options.material ||
-        new Cesium.ImageMaterialProperty({
-          image: options.img || '',//后续更新：可以加载默认的静态资源
-          transparent: true,
-          repeat: {
-            x: 1,
-            y: -1
-          }
-        })
-      entity.cylinder = this.CylinderGraphics(options)
-      entity.position = options.position
 
-      this.setGraphicsRotate({
-        entity,
-        position: this.transformCartesianToWGS84(options.position),
-        rotateAmount: 4
-      })
-      return this._graphicsLayer.entities.add(entity)
-    }
-  }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //高级entity-------------------------------------------------
   /**
   *  创建闪烁圆
   * @function
@@ -318,7 +229,7 @@ export default class Graphics extends DrawingManager {
   * @param {number} options.semiMajorAxis - 长半轴
   * @returns {ellipse} 返回ellipse实例
   */
-  DynamicBlinkCircleEntity(options) {
+  BlinkCircleEntity(options) {
     if (options && options.position) {
       let entity = this.createGraphics(),
         alp = options.alp || 1,
@@ -555,34 +466,7 @@ export default class Graphics extends DrawingManager {
     }
   }
 
-  /**
- * Creates a dynamic polygon with a border, and adds it to the data source.
- *
- * @param {Object} polygonEntity - The entity object to be added to the data source.
- * @param {Object} style - The style options for the border line.
- * @param {Array} dynamicPos - The dynamic positions for the border line.
- * @param {Object} dataSource - The data source to which the polygon and border line will be added ,if null then defaultLayer.
- *
- * @returns {undefined} - This function does not return a value.
- */
-  DynamicPolygonWithBorder(polygonEntity, dynamicPos, style, dataSource) {
-    // Including the polyline property when drawing a polygon in Cesium can enhance the visual clarity during the drawing process
-    // 给面实体一个边缘线 并动态渲染 
-    const lineOpt = null;
-    Object.assign(lineOpt, style);
-    lineOpt.positions = dynamicPos;//动态加载边缘线数据点位置
-    polygonEntity.polyline = this.DynamicPolyLineEntity(lineOpt);
 
-    // 面实体 并动态渲染 
-    options.positions = dynamicPos;
-    polygonEntity.polygon = this.DynamicPolygonEntity(options);
-    polygonEntity.clampToS3M = true;
-
-    const _dataSource = dataSource || this._graphicsLayer;
-    return _dataSource.entities.add(polygonEntity);
-  };
-
-  // 高级entity
   /**
    * 视频面板
    * @function

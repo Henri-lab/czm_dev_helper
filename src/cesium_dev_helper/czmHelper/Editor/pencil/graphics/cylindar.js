@@ -10,7 +10,6 @@
   * @returns {CylinderGraphics} 返回CylinderGraphics实例
   */
 export function CylinderGraphics(options) {
-    options = options || {}
     if (options) {
         return new Cesium.CylinderGraphics({
             HeightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,

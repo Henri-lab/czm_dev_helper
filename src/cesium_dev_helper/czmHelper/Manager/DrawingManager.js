@@ -2,37 +2,47 @@
 import { CoordTransformer } from "../Compute";
 import Manager from "./Manager";
 
+
 let Cesium = new Manager().Cesium;
 class DrawingManager extends Manager {
     constructor(viewer) {
-        super(viewer);
+        if (viewer)
+            super(viewer);
     }
 
     // 公共方法--------------------------------------------------------
     /**
-      * 判断对象是否有某个属性
-      * @private
-      * @param {object} obj 对象
-      * @param {string} field  属性字段
-      * @param {string} defVal  默认返回
-      * @returns {string}
-      */
-    _objHasOwnProperty(obj, field, defVal) {
-        return obj.hasOwnProperty(field) ? obj.field : defVal
+     * 将Cartesian3位置转换为WGS84坐标
+     * 可以输入数组
+     * @function
+     * @param {Array|Cesium.Cartesian3} cartesianPosition - Cartesian3位置
+     * @returns {Array|Cesium.Cartesian3} WGS84坐标
+     */
+    transformCartesianToWGS84(cartesianPosition) {
+        if (!Array.isArray(cartesianPosition))
+            return CoordTransformer.transformCartesianToWGS84(cartesianPosition);
+        else {
+            let result = []
+            cartesianPosition.forEach(cartesian => result.push(this.transformCartesianToWGS84(cartesian)))
+            return result
+        }
     }
 
     /**
-     * 批量设置对象属性
-     * @private
-     * @param {object} obj -需要改造的对象
-     * @param {Array<Object>} properties - 属性图数组
-     * @returns {Object} -修改后属性的对象
-     */
-    _setProperties(obj, properties) {
-        properties.forEach(property => {
-            obj[property.key] = this._objHasOwnProperty(options, property.key, property.defaultValue);
-        });
-        return obj;
+    * 将WGS84坐标转换Cartesian3位置
+    * 可以输入数组
+    * @function
+    * @param {Array|Cesium.Cartesian3} wgs84Position - WGS84坐标
+    * @returns {Array|Cesium.Cartesian3} Cartesian3位置
+    */
+    transformWGS84ToCartesian(wgs84Position) {
+        if (!Array.isArray(wgs84Position))
+            return CoordTransformer.transformWGS84ToCartesian(wgs84Position);
+        else {
+            let result = []
+            wgs84Position.forEach(wgs84 => result.push(this.transformWGS84ToCartesian(wgs84)))
+            return result
+        }
     }
 
     /**
@@ -40,7 +50,7 @@ class DrawingManager extends Manager {
     * 函数名起的不恰当,后续再改
     * @returns {Object} 实体空对象（带签名）
     */
-    createGraphics() {
+    static createGraphics() {
         let entity = new Cesium.Entity();
 
         // author sign
@@ -127,39 +137,6 @@ class DrawingManager extends Manager {
         }
     }
 
-    /**
-   * 将Cartesian3位置转换为WGS84坐标
-   * 可以输入数组
-   * @function
-   * @param {Array|Cesium.Cartesian3} cartesianPosition - Cartesian3位置
-   * @returns {Array|Cesium.Cartesian3} WGS84坐标
-   */
-    transformCartesianToWGS84(cartesianPosition) {
-        if (!Array.isArray(cartesianPosition))
-            return CoordTransformer.transformCartesianToWGS84(cartesianPosition);
-        else {
-            let result = []
-            cartesianPosition.forEach(cartesian => result.push(this.transformCartesianToWGS84(cartesian)))
-            return result
-        }
-    }
-
-    /**
-    * 将WGS84坐标转换Cartesian3位置
-    * 可以输入数组
-    * @function
-    * @param {Array|Cesium.Cartesian3} wgs84Position - WGS84坐标
-    * @returns {Array|Cesium.Cartesian3} Cartesian3位置
-    */
-    transformWGS84ToCartesian(wgs84Position) {
-        if (!Array.isArray(wgs84Position))
-            return CoordTransformer.transformWGS84ToCartesian(wgs84Position);
-        else {
-            let result = []
-            wgs84Position.forEach(wgs84 => result.push(this.transformWGS84ToCartesian(wgs84)))
-            return result
-        }
-    }
 
 
     // 基本绘图功能
