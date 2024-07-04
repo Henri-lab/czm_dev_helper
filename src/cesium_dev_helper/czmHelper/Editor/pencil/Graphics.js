@@ -108,7 +108,7 @@ export default class Graphics extends DrawingManager {
       case 'model':
         return ModelGraphics(options);
       default:
-        throw new Error(`Unsupported graphic type: ${type}`);
+        throw new TypeError(`Unsupported graphic type: ${type}`);
     }
 
   }
@@ -156,7 +156,7 @@ export default class Graphics extends DrawingManager {
       case 'model':
         return ModelEntity(extraOption, options, datasource);
       default:
-        throw new Error(`Unsupported entity type: ${type}`);
+        throw new TypeError(`Unsupported entity type: ${type}`);
     }
   }
 
@@ -198,7 +198,7 @@ export default class Graphics extends DrawingManager {
     else if (_type === 'rectangle') {
       const Rectangle = (posArr) => {
         // rectangle 至少需要两个点
-        if (posArr.length < 2) throw new Error('Invalid positions when creating rectangle');
+        if (posArr.length < 2) throw new TypeError('Invalid positions when creating rectangle');
         return Cesium.Rectangle.fromCartesianArray(posArr);//西南东北 w s e n
       }
       entity.rectangle.coordinates = this.updatePerFrame(Rectangle(pickPosCollection))//核心

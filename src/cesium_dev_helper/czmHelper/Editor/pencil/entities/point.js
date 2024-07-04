@@ -9,13 +9,14 @@ export function PointEntities(extraOption = {}, options = {}, datasource = {}) {
         for (let i in options.positions) {
             let posItem = options.positions[i]
             let entity = createGraphics()
-            if (options.point) entity.point = PointGraphics(options.point)
+            if (options.point) entity.point = PointGraphics(options)
             if (options.billboard)
                 entity.billboard = BillboardGraphics(options.billboard)
             if (options.label) entity.label = LabelGraphics(options.label)
             const finalEntity = {
                 ...extraOption,
                 ...entity,
+                position: posItem,
             }
             const point = datasource.entities.add(finalEntity)
             points.push(point)

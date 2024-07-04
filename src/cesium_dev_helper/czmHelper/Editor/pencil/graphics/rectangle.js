@@ -2,6 +2,7 @@ import * as Cesium from "cesium";
 import { objHasOwnProperty, setProperties } from "./index";
 export function RectangleGraphics(options = {}) {
     if (options) {
+        if (!Array.isArray(options.positions)) throw new TypeError("arg.positions must be an array")
         const w_s_e_n = new Cesium.Rectangle.fromCartesianArray(options.positions)
         return new Cesium.RectangleGraphics({
             // 后面的属性会覆盖前面的属性值
