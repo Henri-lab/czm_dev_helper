@@ -223,6 +223,42 @@ class CoordTransformer {
         const height = wgs84Position.height;
         return Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
     }
+
+    /**
+     * 将Cartesian3位置转换为WGS84坐标
+     * 可以输入数组
+     * @function
+     * @param {Array|Cesium.Cartesian3} cartesianPosition - Cartesian3位置
+     * @returns {Array|Cesium.Cartesian3} WGS84坐标
+     */
+    static transformCartesian3ToCartographic(cartesianPosition) {
+        if (!Array.isArray(cartesianPosition))
+            return CoordTransformer.transformCartesianToWGS84(cartesianPosition);
+        else {
+            let result = []
+            cartesianPosition.forEach(cartesian => result.push(this.transformCartesianToWGS84(cartesian)))
+            return result
+        }
+    }
+
+
+    /**
+    * 将WGS84坐标转换Cartesian3位置
+    * 可以输入数组
+    * @function
+    * @param {Array|Cesium.Cartesian3} wgs84Position - WGS84坐标
+    * @returns {Array|Cesium.Cartesian3} Cartesian3位置
+    */
+    static transformCartographicToCartesian3(wgs84Position) {
+        if (!Array.isArray(wgs84Position))
+            return CoordTransformer.transformWGS84ToCartesian(wgs84Position);
+        else {
+            let result = []
+            wgs84Position.forEach(wgs84 => result.push(this.transformWGS84ToCartesian(wgs84)))
+            return result
+        }
+    }
+
     /**
      * Retrieves the center of a 3D Tiles tileset.
      *

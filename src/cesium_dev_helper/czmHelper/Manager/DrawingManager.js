@@ -10,40 +10,6 @@ class DrawingManager extends Manager {
             super(viewer);
     }
 
-    // 公共方法--------------------------------------------------------
-    /**
-     * 将Cartesian3位置转换为WGS84坐标
-     * 可以输入数组
-     * @function
-     * @param {Array|Cesium.Cartesian3} cartesianPosition - Cartesian3位置
-     * @returns {Array|Cesium.Cartesian3} WGS84坐标
-     */
-    transformCartesianToWGS84(cartesianPosition) {
-        if (!Array.isArray(cartesianPosition))
-            return CoordTransformer.transformCartesianToWGS84(cartesianPosition);
-        else {
-            let result = []
-            cartesianPosition.forEach(cartesian => result.push(this.transformCartesianToWGS84(cartesian)))
-            return result
-        }
-    }
-
-    /**
-    * 将WGS84坐标转换Cartesian3位置
-    * 可以输入数组
-    * @function
-    * @param {Array|Cesium.Cartesian3} wgs84Position - WGS84坐标
-    * @returns {Array|Cesium.Cartesian3} Cartesian3位置
-    */
-    transformWGS84ToCartesian(wgs84Position) {
-        if (!Array.isArray(wgs84Position))
-            return CoordTransformer.transformWGS84ToCartesian(wgs84Position);
-        else {
-            let result = []
-            wgs84Position.forEach(wgs84 => result.push(this.transformWGS84ToCartesian(wgs84)))
-            return result
-        }
-    }
 
     /**
     * 创建一个实体
@@ -63,6 +29,17 @@ class DrawingManager extends Manager {
         return entity;
     }
 
+
+    // private方法--------------------------------------------------------
+    // Cartesian3 WGS84坐标  可以输入数组
+    _transformCartesianToWGS84(cartesianPosition) {
+        return CoordTransformer.transformCartesian3ToCartographic(cartesianPosition);
+    }
+    _transformWGS84ToCartesian(wgs84Position) {
+        return CoordTransformer.transformCartographicToCartesian3(wgs84Position);
+    }
+
+
     /**
    * 设置实体的旋转属性
    * @function
@@ -73,7 +50,7 @@ class DrawingManager extends Manager {
    */
     setGraphicsRotate({ entity, position, rotateAmount }) {
         // 将位置转换为WGS84坐标
-        const wgs84Position = transformCartesianToWGS84(position);
+        const wgs84Position = _transformCartesianToWGS84(position);
 
         // 创建旋转矩阵
         const rotateAmountRadians = Cesium.Math.toRadians(rotateAmount);
@@ -116,7 +93,7 @@ class DrawingManager extends Manager {
                         $this = this
 
                     entity.positions = new Cesium.CallbackProperty(function () {
-                        let positions = $this.transformCartesianToWGS84(startPos)
+                        let positions = $this._transformCartesianToWGS84(startPos)
 
                         for (let i in positions) {
                             let position = positions[i]
@@ -128,7 +105,7 @@ class DrawingManager extends Manager {
                             position.alt = minHeiht
                         }
 
-                        return $this.transformWGS84ToCartesian(positions)
+                        return $this._transformWGS84ToCartesian(positions)
                     }, false)
                 } else console.log('Invalid startPos')
             } catch (error) {
@@ -209,7 +186,7 @@ class DrawingManager extends Manager {
         };
         _labelEntity.label = {
             text:
-                (this.getPositionDistance(this.transformCartesianToWGS84(positions)) / 1000).toFixed(4) + "公里",
+                (this.getPositionDistance(this._transformCartesianToWGS84(positions)) / 1000).toFixed(4) + "公里",
             show: true,
             showBackground: true,
             font: "14px monospace",
