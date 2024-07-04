@@ -23,3 +23,25 @@ export function setProperties(obj, properties) {
     });
     return obj;
 }
+
+/**
+ * Creates a Cesium CallbackProperty for updating a property per frame.
+ *
+ * @param {Array} data - The initial value of the property array.
+ * @param {boolean} [isConst=false] - If true, the property will not change after creation.
+ * @returns {Cesium.CallbackProperty} - A new CallbackProperty instance.
+ *
+ * @example
+ * // Example usage:
+ * const position = updatePerFrame(new Cesium.Cartesian3(0, 0, 0));
+ * entity.position = position;
+ */
+// 设置 czm帧刷新 属性
+export function setPropertiesUpdatedPerFrame(dataArr, isConst = false) {
+    let resArr = dataArr.map(data => {
+        return new Cesium.CallbackProperty(function () {
+            return data
+        }, isConst)
+    })
+    return resArr
+}
