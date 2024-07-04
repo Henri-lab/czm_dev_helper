@@ -33,11 +33,11 @@ export default class Draw extends DrawingManager {
     _getCartesian3FromPX/*pixel*/ = (position) => {
         return this.$coords.getCartesianFromScreenPosition(position, this.viewer);
     }
-    // 给data设置动态属性
+    // 给data设置动态属性 则实体options更改时重新render实体
     _setDynamic(data) {
         return new Cesium.CallbackProperty(() => {
             return data;
-        })
+        }, false)
     }
 
     // 处理(展示)测量结果
@@ -72,41 +72,38 @@ export default class Draw extends DrawingManager {
     }
 
     // 更新 用于绘制实体的 配置选项的 坐标选项 
-    _updatePos(options) {
-        options.positions = positions;
+    _updatePos(options, newPos) {
+        options.positions = newPos;
     }
     _updatePosByType(type, pickPosCollection = [], newPickPos = new Cesium.Cartesian3(0, 0, 0), entityOptions = {}, isClose = true) {
-        // 多边形闭合
+        // --多边形闭合--
         if (isClose) {
             if (!type === 'point' || !type === 'polyline') {
                 // 首尾相连
                 pickPosCollection.push(pickPosCollection[0]);
-                this._updatePos(entityOptions);
+                this._updatePos(entityOptions, pickPosCollection);
             }
-            return;
+            // 只是为了闭合图形更新 提前返回
+            return true;
         }
 
-        // 多边形编辑
+        // --多边形编辑--
         // 线段 
         if (type === 'polyline' && pickPosCollection.length >= 2) {
             // 端点更新
             pickPosCollection.pop();
             pickPosCollection.push(newPickPos);
-            this._updatePos(entityOptions);
-            return;
+
         }
-        // 矩形
+        // 矩形(保持2个点)
         else if (type === 'rectangle') {
             if (pickPosCollection.length === 1) {
                 // 矩形 端点更新(增加)
                 pickPosCollection.push(newPickPos);
-                this._updatePos(entityOptions);
             } else {
                 // 矩形 端点更新(替换已有点)
                 pickPosCollection[1] = newPickPos;
-                this._updatePos(entityOptions);
             }
-            return;
         }
         // 圆形
         else if (type === 'ellipse') {
@@ -120,10 +117,17 @@ export default class Draw extends DrawingManager {
                 entityOptions.semiMajorAxis = dynamicRadius
                 entityOptions.semiMinorAxis = dynamicRadius
             }
-            return;
         }
+        // 其他 直接添加数据点
+        else {
+            pickPosCollection.push(newPickPos);
+        }
+        // 更新实体的配置选项点坐标 
+        this._updatePos(entityOptions, pickPosCollection);
+        return true;
     }
 
+    // 核心
     /**
      * Draw an entity with event handling.
      * @param {String} Type - The type of the entity.
@@ -177,7 +181,7 @@ export default class Draw extends DrawingManager {
             if (!cartesian || !isValidCartesian3(cartesian)) return;
             // 收集 点击处的地理坐标
             positions.push(cartesian);
-            update();
+            this._updatePos(options);
         }
         const afterMouseMove = (movement) => { // mouse movement 
             let cartesian = $this._getCartesian3FromPX(movement.endPosition);
@@ -187,17 +191,13 @@ export default class Draw extends DrawingManager {
         }
         const afterRightClick = (movement) => { // right click 
 
-            // 更新图形 --闭合
-            $this._updatePosByType(type, positions, cartesian, options, true)
-            // 多边形拉伸高度
-            if (type === 'polygon') {
-                currentEntity[type].extrudedHeight = options.extrudeHeight
-            }
+            // 更新图形 truetrue
+            const isClose = true;
+            $this._updatePosByType(type, positions, cartesian, options, isClose);
 
-            let endPos/*右键点击处地理坐标*/ = $this._getCartesian3FromPX(movement.position);
-
+            //开启测量功能
             if (options.measure) {
-                //开启测量功能
+                let endPos/*右键点击处地理坐标*/ = $this._getCartesian3FromPX(movement.position);
                 const res /*测量结果*/ = $this.$turfer.measureSimple(type, positions);
                 $this._measureResultHandle({
                     /*...*/
@@ -232,6 +232,7 @@ export default class Draw extends DrawingManager {
         eM.onMouseRightClick(afterRightClick);
 
     }
+    // 非核心
     PointWithEvent(options, pluginFunction) {
         this.drawWithEvent('point', options, pluginFunction)
     }
