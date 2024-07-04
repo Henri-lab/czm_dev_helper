@@ -27,39 +27,9 @@ export default class Draw extends DrawingManager {
         this.viewer && this.viewer.dataSources.add(this._drawLayer);
         this.defaultImageUrl = '';
         this.currentHandler = null;//方便在removeEventHandler剔除
-
-        // this.handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-        // 为什么放弃创建一个总handler？
-        // -在 Cesium 中，ScreenSpaceEventHandler 允许你为不同的鼠标和触摸事件设置回调函数。
-        // --如果你在同一个 ScreenSpaceEventHandler 对象上为同一个事件类型（如 LEFT_CLICK、LEFT_DOUBLE_CLICK 等）设置多个回调函数，这些回调函数不会相互干扰，但后一个会覆盖前一个。
-        // --也就是说，同一个事件类型只能有一个回调函数，因此如果你需要对同一个事件类型执行多个操作，你需要在一个回调函数中处理所有逻辑。
-        // -或者! 仍然创建一个公共handler,但是调用之前先清空添加的事件
     }
 
     // 私有方法--------------------------------------------------------
-    /**
-      * 获取指定名称的静态资源的URL数组
-      * @param {string[]} nameArray - 名称数组
-      * @returns {string[]} - 静态资源的URL数组
-      * @private
-      */
-    _getDfSt(nameArray) {
-        let imgUrls = [];
-        nameArray.forEach(name => {
-            // If the dfSt object exists and contains the specified name,
-            // push the corresponding URL to the imgUrls array.
-            if (this.dfSt && this.dfSt[name]) {
-                imgUrls.push(this.dfSt[name]);
-            } else {
-                // If the dfSt object does not exist or does not contain the specified name,
-                // push the default image URL to the imgUrls array.
-                imgUrls.push(this.defaultImageUrl);
-            }
-        });
-        // Return the array of URLs.
-        return imgUrls;
-    }
-
     _getCartesian3FromPX/*pixel*/(position) {
         return this.$coords.getCartesianFromScreenPosition(position, this.viewer);
     }
@@ -68,7 +38,7 @@ export default class Draw extends DrawingManager {
     measureResult(res) {
         console.log(res);
     }
-
+    
     drawWithEvent(Type, options, pluginFunction) {
         if (!this.viewer || !options) return null;
 
@@ -652,3 +622,11 @@ export default class Draw extends DrawingManager {
 
 
 }
+
+
+// this.handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+// 为什么放弃创建一个总handler？
+// -在 Cesium 中，ScreenSpaceEventHandler 允许你为不同的鼠标和触摸事件设置回调函数。
+// --如果你在同一个 ScreenSpaceEventHandler 对象上为同一个事件类型（如 LEFT_CLICK、LEFT_DOUBLE_CLICK 等）设置多个回调函数，这些回调函数不会相互干扰，但后一个会覆盖前一个。
+// --也就是说，同一个事件类型只能有一个回调函数，因此如果你需要对同一个事件类型执行多个操作，你需要在一个回调函数中处理所有逻辑。
+// -或者! 仍然创建一个公共handler,但是调用之前先清空添加的事件
