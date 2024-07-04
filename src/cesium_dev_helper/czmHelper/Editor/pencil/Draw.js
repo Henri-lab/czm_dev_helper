@@ -150,11 +150,12 @@ export default class Draw extends DrawingManager {
                 case 'circle':
                     return 'DynamicCircleEntity';
                 default:
-                    return 'point';
+                    throw new Error(`Unsupported type: ${type}`);
             }
         }
 
         // --EVENT--
+        // set callback function
         // left click
         const afterLeftClick = (movement) => {
             // 点击处的地理坐标
@@ -177,8 +178,6 @@ export default class Draw extends DrawingManager {
             currentEntity = $this.$graphics[methodName](options);
 
         }
-        eM.onMouseClick(afterLeftClick); // 添加事件
-
         // mouse movement 
         const afterMouseMove = (movement) => {
             let cartesian = $this._getCartesian3FromPX(movement.endPosition);
@@ -205,8 +204,6 @@ export default class Draw extends DrawingManager {
                 }
             }
         }
-        eM.onMouseMove(afterMouseMove) // 添加事件
-
         // right click 
         const afterRightClick = (movement) => {
 
@@ -250,9 +247,12 @@ export default class Draw extends DrawingManager {
                 pluginFunction(_currentEntity, _currentPosArr);
             }
         }
-        eM.onMouseRightClick(afterRightClick); // 添加事件
+        // bind events
+        eM.onMouseClick(afterLeftClick);
+        eM.onMouseMove(afterMouseMove);
+        eM.onMouseRightClick(afterRightClick);
 
-
+        // 
     }
 
 
