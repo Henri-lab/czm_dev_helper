@@ -2,7 +2,7 @@ import * as Cesium from "cesium";
 import { CoordTransformer } from "../../../../Compute";
 import { objHasOwnProperty, setProperties, createGraphics } from "./index";
 
-export function ShadeWallEntity(options) {
+export function ShadeWallEntity(extraOption, options, datasource) {
     if (options && options.positions) {
         let alp = options.alp || 1,
             num = options.num || 20,
@@ -31,7 +31,13 @@ export function ShadeWallEntity(options) {
                 }, false)
             })
         }
-        return this._graphicsLayer.entities.add(wallEntity)
+
+
+        const finalEntity = {
+            ...extraOption,
+            ...wallEntity,
+        };
+        return datasource.entities.add(finalEntity)
     }
 }
 
