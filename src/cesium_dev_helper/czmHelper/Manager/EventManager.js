@@ -16,6 +16,7 @@ class EventManager extends Manager {
         this.eventHandlers = new Map();
     }
 
+    // 核心
     _addEvent(eventType, callback, priority = 0) {
         if (!this.eventHandlers.has(eventType)) {
             this.eventHandlers.set(eventType, []);

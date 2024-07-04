@@ -232,22 +232,7 @@ export default class Draw extends DrawingManager {
         eM.onMouseRightClick(afterRightClick);
 
     }
-    // 非核心
-    PointWithEvent(options, pluginFunction) {
-        this.drawWithEvent('point', options, pluginFunction)
-    }
-    LineWithEvent(options, pluginFunction) {
-        this.drawWithEvent('polyline', options, pluginFunction);
-    }
-    PolygonWithEvent(options, pluginFunction) {
-        this.drawWithEvent('polygon', options, pluginFunction)
-    }
-    RectangleWithEvent(options, pluginFunction) {
-        this.drawWithEvent('rectangle', options, pluginFunction)
-    }
-    CircleWithEvent(options, pluginFunction) {
-        this.drawWithEvent('ellipse', options, pluginFunction)
-    }
+
 
     /**
      * 移除所有实体
@@ -280,3 +265,22 @@ export default class Draw extends DrawingManager {
 // --如果你在同一个 ScreenSpaceEventHandler 对象上为同一个事件类型（如 LEFT_CLICK、LEFT_DOUBLE_CLICK 等）设置多个回调函数，这些回调函数不会相互干扰，但后一个会覆盖前一个。
 // --也就是说，同一个事件类型只能有一个回调函数，因此如果你需要对同一个事件类型执行多个操作，你需要在一个回调函数中处理所有逻辑。
 // -或者! 仍然创建一个公共handler,但是调用之前先清空添加的事件
+
+
+
+// test
+// PointWithEvent(options, pluginFunction) {
+//     this.drawWithEvent('point', options, pluginFunction)
+// }
+// LineWithEvent(options, pluginFunction) {
+//     this.drawWithEvent('polyline', options, pluginFunction);
+// }
+// PolygonWithEvent(options, pluginFunction) {
+//     this.drawWithEvent('polygon', options, pluginFunction)
+// }
+// RectangleWithEvent(options, pluginFunction) {
+//     this.drawWithEvent('rectangle', options, pluginFunction)
+// }
+// CircleWithEvent(options, pluginFunction) {
+//     this.drawWithEvent('ellipse', options, pluginFunction)
+// }

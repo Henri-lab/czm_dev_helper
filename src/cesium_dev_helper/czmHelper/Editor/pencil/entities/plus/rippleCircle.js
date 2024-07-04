@@ -3,8 +3,7 @@ import { CoordTransformer } from "../../../../Compute";
 import { objHasOwnProperty, setProperties, createGraphics } from "./index";
 export function RippleCircleEntity(extraOption, options, datasource) {
   if (options && options.center) {
-    let entity = createGraphics(),
-      $this = this;
+    let entity = createGraphics()
 
     // Default options
     const defaultOptions = {
@@ -80,7 +79,7 @@ export function RippleCircleEntity(extraOption, options, datasource) {
     // Entity orientation
     entity.orientation = new Cesium.CallbackProperty(function () {
       return Cesium.Transforms.headingPitchRollQuaternion(
-        $this.transformWGS84ToCartesian(_center),
+        CoordTransformer.transformWGS84ToCartesian(_center),//origin pointPos
         new Cesium.HeadingPitchRoll(
           Cesium.Math.toRadians(heading),
           Cesium.Math.toRadians(pitch),
@@ -92,7 +91,11 @@ export function RippleCircleEntity(extraOption, options, datasource) {
     // Define ellipse graphics for the entity
     entity.ellipse = this.EllipseGraphics(dynamicOpt);
 
+    const finalEntity = {
+      ...extraOption,
+      ...entity,
+    };
     // Add entity to the graphics layer
-    return this._graphicsLayer.entities.add(entity);
+    return datasource.entities.add(finalEntity);
   }
 }
