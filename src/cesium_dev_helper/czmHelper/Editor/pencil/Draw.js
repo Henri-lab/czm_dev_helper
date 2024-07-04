@@ -28,22 +28,118 @@ export default class Draw extends DrawingManager {
         this.defaultImageUrl = '';
         this.currentHandler = null;//方便在removeEventHandler剔除
     }
-
-    // 私有方法--------------------------------------------------------
-    _getCartesian3FromPX/*pixel*/(position) {
+    // --辅助函数-----------------------------------------
+    // 获得屏幕位置的cartesian
+    _getCartesian3FromPX/*pixel*/ = (position) => {
         return this.$coords.getCartesianFromScreenPosition(position, this.viewer);
     }
+    // 给坐标设置动态属性
+    _setDynamic(pos) {
+        return new Cesium.CallbackProperty(() => {
+            return pos;
+        })
+    }
 
-    // 展示测量结果
-    measureResult(res) {
+    // 处理(展示)测量结果
+    _measureResultHandle = (res) => {
         console.log(res);
     }
 
+    // 绘制动态实体-位置坐标为callbackProperty
+    _startDynamicEntity = (typeOfEntity, config) => {
+
+        try {
+            let Entity = null;
+            const { oid, name, description/*可随意添加*/, datasource, ...rest } = config;
+            const entityConfig = {
+                extraOptionL: {
+                    oid,
+                    name,
+                    description,
+                },
+                options: rest,
+                datasource,
+            }
+            // 静态
+            Entity = this.$graphics.createStaticEntity(typeOfEntity, entityConfig);
+            // 为位置添加动态
+            Entity.positions = this._setDynamic(positions)
+            return Entity;
+        } catch (e) {
+            console.error('sth is wrong after mouse left click :', e)
+            return;
+        };
+    }
+
+    // 更新 用于绘制实体的 配置选项的 坐标选项 
+    _updatePos(options) {
+        options.positions = positions;
+    }
+    _updatePosByType(type, pickPosCollection = [], newPos = new Cesium.Cartesian3(0, 0, 0), entityOptions = {}, isClose = true) {
+
+        // 线段 
+        if (type === 'polyline' && pickPosCollection.length >= 2) {
+            // 端点更新
+            pickPosCollection.pop();
+            pickPosCollection.push(newPos);
+            this._updatePos(entityOptions);
+        }
+        // 矩形
+        else if (type === 'rectangle') {
+            if (pickPosCollection.length === 1) {
+                // 矩形 端点更新(增加)
+                pickPosCollection.push(newPos);
+                this._updatePos(entityOptions);
+            } else {
+                // 矩形 端点更新(替换已有点)
+                pickPosCollection[1] = newPos;
+                this._updatePos(entityOptions);
+            }
+        } else {
+
+        }
+
+        // 多边形闭合
+        if (isClose) {
+            if (!type === 'point' || !type === 'polyline') {
+                // 首尾相连
+                pickPosCollection.push(pickPosCollection[0]);
+                this._updatePos(entityOptions);
+            }
+        }
+
+
+
+    }
+
+
+    /**
+     * Draw an entity with event handling.
+     * @param {String} Type - The type of the entity.
+     * @param {Object} options - The options for the entity.
+     * @param {Function} pluginFunction - Optional plugin function for additional processing.
+     * @returns {Cesium.Entity|null} - The created entity or null if viewer or options are not provided.
+     */
     drawWithEvent(Type, options, pluginFunction) {
         if (!this.viewer || !options) return null;
 
-        const type = Type.toLowerCase()
+
+
+        function extra() { // 特殊情况的额外处理
+            // 特殊处理:绘制两点直线
+            if (options.straight && type === 'polyline' && positions.length == 2) {
+                // 销毁事件处理程序 结束绘制
+                _handlers.destroy();
+                _handlers = null;
+                // 绘制后的回调 
+                if (typeof options.after === "function") {
+                    options.after(currentEntity, $this._transformCartesianToWGS84(positions),);
+                }
+            }
+        }
+
         // --数据准备--
+        const type = Type.toLowerCase()
         let eM = new EventManager($this.viewer),
             $this = this,
             // 收集click处的坐标
@@ -52,73 +148,20 @@ export default class Draw extends DrawingManager {
             _entity = $this.createGraphics(),
             currentEntity = this._drawLayer.entities.add(_entity),//添加到此datasource,等待更新后reRender
             // 获取 ~新~ 事件handler程序 ,防止事件绑定间的冲突
-            _handlers = eM.handler,
-            // 实体边缘线
-            // Default border edge style
-            defaultStyle = {
-                width: 3,
-                material: Cesium.Color.BLUE.withAlpha(0.8),
-                clampToGround: true,
-            };
-        // refister the handlers 
+            _handlers = eM.handler
+
+        // register the handlers which is working 
         $this.currentHandler = _handlers;
 
-        // --辅助函数--
-        // 更新用于绘制实体的坐标数据
-        function update() {
-            options.positions = positions;
-        }
-        // 设置边缘线样式
-        options.style = options.style || defaultStyle;
-
-        // 特殊情况的额外处理
-        function extra() {
-            // 特殊处理:绘制两点直线
-            if (options.straight && type === 'polyline' && positions.length == 2) {
-                // 销毁事件处理程序 结束绘制
-                _handlers.destroy();
-                _handlers = null;
-                // 绘制后的回调 
-                if (typeof options.after === "function") {
-                    options.after(currentEntity, $this.transformCartesianToWGS84(positions),);
-                }
-            }
-
-            //特殊处理:绘制动态矩形
-            if (type === 'rectangle' && positions.length === 2) {
-                options.positions = positions;
-                /*增加了动态属性callbackProperty~*/
-                currentEntity.rectangle = $this.$graphics.RectangleEntity(options);
-            }
-
-            // 特殊处理:绘制静态圆
-            if (type === 'circle' && positions.length === 1) {
-
-                currentEntity.ellipse = $this.$graphics.EllipseGraphics(options);
-            }
-            return;
-        }
-        //根据类型type获得Graphics的方法名
-        function getMethodNameByType(type) {
-            const _type = type.toLowerCase();
-            switch (_type) {
-                case 'point':
-                    return 'PointEntities';
-                case 'polyline':
-                    return 'LineEntity';
-                case 'polygon':
-                    return ' PolygonEntity';
-                case 'circle':
-                    return 'DynamicCircleEntity';
-                default:
-                    throw new Error(`Unsupported type: ${type}`);
-            }
-        }
+        // --创建动态实体--
+        if (!options.datasource) options.datasource = this._drawLayer // 确认准备添至的图层
+        currentEntity = $this._startDynamicEntity(type, options)
+        // 特殊处理 
+        extra();
 
         // --EVENT--
         // set callback function
-        // left click
-        const afterLeftClick = (movement) => {
+        const afterLeftClick = (movement) => {   // left click
             // 点击处的地理坐标
             let cartesian = $this._getCartesian3FromPX(movement.position /*pixel*/);
             // 检查格式
@@ -126,53 +169,17 @@ export default class Draw extends DrawingManager {
             // 收集 点击处的地理坐标
             positions.push(cartesian);
             update();
-
-            // 动态测量
-            if (options.measure) {
-                console.log('measure')
-            }
-            // 特殊处理
-            extra();
-
-            // 更新实体
-            const methodName = getMethodNameByType(type);
-            currentEntity = $this.$graphics[methodName](options);
-
         }
-        // mouse movement 
-        const afterMouseMove = (movement) => {
+        const afterMouseMove = (movement) => { // mouse movement 
             let cartesian = $this._getCartesian3FromPX(movement.endPosition);
-
+            // 持续更新坐标选项 动态实体会每帧读取
             if (!cartesian || !isValidCartesian3(cartesian)) return;
-
-            // 线段 
-            if (type === 'polyline' && positions.length >= 2) {
-                // 端点更新
-                positions.pop();
-                positions.push(cartesian);
-                update();
-            }
-            // 矩形
-            if (type === 'rectangle') {
-                if (positions.length === 1) {
-                    // 矩形 端点更新(增加)
-                    positions.push(cartesian);
-                    update();
-                } else {
-                    // 矩形 端点更新(替换已有点)
-                    positions[1] = cartesian;
-                    update();
-                }
-            }
+            $this._updatePosByType(type, positions, cartesian, options)
         }
-        // right click 
-        const afterRightClick = (movement) => {
+        const afterRightClick = (movement) => { // right click 
 
-            // 闭合图形
-            if (!type === 'point' || !type === 'polyline') {
-                positions.push(positions[0]);
-                update();
-            }
+            // 更新图形 --闭合
+            $this._updatePosByType(type, positions, cartesian, options, true)
             // 多边形拉伸高度
             if (type === 'polygon') {
                 currentEntity[type].extrudedHeight = options.extrudeHeight
@@ -181,12 +188,14 @@ export default class Draw extends DrawingManager {
             let endPos/*右键点击处地理坐标*/ = $this._getCartesian3FromPX(movement.position);
 
             if (options.measure) {
-                //添加测量功能
+                //开启测量功能
                 const res /*测量结果*/ = $this.$turfer.measureSimple(type, positions);
-                $this.measureResult({
+                $this._measureResultHandle({
                     /*...*/
-                    type: `${type}`,
+                    entity: currentEntity,
                     value: res,
+                    screenXY: movement.position,
+                    cartoXY: endPos,
                 });
             }
 
@@ -197,7 +206,7 @@ export default class Draw extends DrawingManager {
 
             // callback with Entity and Positions
             if (typeof options.after === "function") {
-                options.after(currentEntity, $this.transformCartesianToWGS84(positions));
+                options.after(currentEntity, $this._transformCartesianToWGS84(positions));
             }
 
             // 执行额外的程序
@@ -213,18 +222,17 @@ export default class Draw extends DrawingManager {
         eM.onMouseMove(afterMouseMove);
         eM.onMouseRightClick(afterRightClick);
 
-        // 
     }
 
 
-    // 公共方法
+
     /**
-   * Draws a point on the map.
-   * @function
-   * @param {object} options - The options for drawing the point entity.
-   * @param {function} options.callback - The callback function to be called after drawing the point. 并且把实体回调出去
-   * @returns {Entity} - The entity
-   */
+    * Draws a point on the map.
+    * @function
+    * @param {object} options - The options for drawing the point entity.
+    * @param {function} options.callback - The callback function to be called after drawing the point. 并且把实体回调出去
+    * @returns {Entity} - The entity
+    */
     PointWithEvent(options) {
         if (!this.viewer || !options) return null;
 
@@ -274,17 +282,17 @@ export default class Draw extends DrawingManager {
     }
 
     /**
-  * Draws a line on the map.
-  * @param {Object} options - The options for drawing the line.
-  * @param {Number} [options.width=5] - The width of the line.
-  * @param {Cesium.Color} [options.material=Cesium.Color.BLUE.withAlpha(0.8)] - The material of the line.
-  * @param {Boolean} [options.clampToGround=false] - Whether the line should be clamped to the ground.
-  * @param {Boolean} [options.clampToS3M=false] - Whether the line should be clamped to 3D Tiles.
-  * @param {Boolean} [options.measure=false] - Whether the line should be measured.
-  * @param {Boolean} [options.straight] - The type of the line.
-  * @param {Function} [options.callback] - The callback function to be called when the line is drawn.
-  * @returns {undefined}
-  */
+    * Draws a line on the map.
+    * @param {Object} options - The options for drawing the line.
+    * @param {Number} [options.width=5] - The width of the line.
+    * @param {Cesium.Color} [options.material=Cesium.Color.BLUE.withAlpha(0.8)] - The material of the line.
+    * @param {Boolean} [options.clampToGround=false] - Whether the line should be clamped to the ground.
+    * @param {Boolean} [options.clampToS3M=false] - Whether the line should be clamped to 3D Tiles.
+    * @param {Boolean} [options.measure=false] - Whether the line should be measured.
+    * @param {Boolean} [options.straight] - The type of the line.
+    * @param {Function} [options.callback] - The callback function to be called when the line is drawn.
+    * @returns {undefined}
+    */
     LineWithEvent(options, pluginFunction) {
         this.drawWithEvent('polyline', options, pluginFunction);
     }
