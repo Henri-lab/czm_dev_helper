@@ -1,12 +1,19 @@
 import { render, createVNode } from "vue";
 import * as Cesium from "cesium";
 
+
 // 示例
 // const pathOfVueComponentMap = {
 //     marker: () => import("./MakerTemplate.vue"),
 //     carPopup: () => import("./PopupCar.vue"),
 //     queryPopup: () => import("./PopupQuery.vue"),
 // };
+
+/**
+ * A class for creating and managing custom object popups in a Cesium application.
+ * @class
+ */
+
 class PopupCreator {
     constructor(viewer, options, pathOfVueComponentMap, clickHandler) {
         this.viewer = viewer;
@@ -149,3 +156,5 @@ class PopupCreator {
 }
 
 export default PopupCreator;
+
+
