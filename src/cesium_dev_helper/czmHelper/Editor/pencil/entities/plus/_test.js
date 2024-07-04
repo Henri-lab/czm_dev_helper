@@ -1,6 +1,6 @@
 // 未完成
 
-
+import { gifLoader } from '../../Data';
 //   /**
 //   *  动态渐变墙
 //   * @function
