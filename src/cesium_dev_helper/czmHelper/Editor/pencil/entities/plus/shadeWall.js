@@ -1,6 +1,12 @@
-import * as Cesium from "cesium";
-import { CoordTransformer } from "../../../../Compute";
-import { objHasOwnProperty, setProperties, createGraphics } from "./index";
+import {
+    gifLoader,
+    Cesium,
+    CoordTransformer,
+    objHasOwnProperty,
+    setProperties,
+    createGraphics,
+} from './index';
+
 
 export function ShadeWallEntity(extraOption, options, datasource) {
     if (options && options.positions) {

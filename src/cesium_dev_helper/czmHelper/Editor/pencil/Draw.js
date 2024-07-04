@@ -5,17 +5,10 @@ import { isValidCartesian3 } from "../../util/isValid";
 import TurfUser from "../../Compute/TurfUser";
 import * as Cesium from "cesium";
 
-
 /**
- * 画笔模块
+ * Draw class for drawing entities with events on a Cesium viewer with event handling.
  * @class
- * @param {object} params
- * @param {object} params.viewer - cesium 实例
- * @param {object} params.cesiumGlobal - cesium 全局对象
- * @param {Map} params.defaultStatic - 静态资源
- * @exports Drawer
  */
-let datasource = new Cesium.CustomDataSource('graphicsLayer')
 export default class Draw extends DrawingManager {
     constructor(viewer, StaticMap = {}) {
         super(viewer);

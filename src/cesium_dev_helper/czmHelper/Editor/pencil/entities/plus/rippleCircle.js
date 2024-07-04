@@ -1,6 +1,31 @@
-import * as Cesium from "cesium";
-import { CoordTransformer } from "../../../../Compute";
-import { objHasOwnProperty, setProperties, createGraphics } from "./index";
+import {
+    gifLoader,
+    Cesium,
+    CoordTransformer,
+    objHasOwnProperty,
+    setProperties,
+    createGraphics,
+} from './index';
+
+
+/**
+ * Creates a ripple circle entity with dynamic properties.
+ *
+ * @param {Object} extraOption - Additional options to be merged with the final entity.
+ * @param {Object} options - Options for the ripple circle entity.
+ * @param {Array} options.center - The center of the ripple circle in WGS84 coordinates.
+ * @param {number} [options.radius=800] - The initial radius of the ripple circle.
+ * @param {number} [options.rotateAmount=0.05] - The rotation speed of the ripple circle.
+ * @param {number} [options.height=1] - The height of the ripple circle.
+ * @param {string} [options.image=""] - The image URL for the ripple circle material.
+ * @param {Cesium.MaterialProperty} [options.material] - The material property for the ripple circle.
+ * @param {number} [options.maxR] - The maximum radius of the ripple circle.
+ * @param {number} [options.minR] - The minimum radius of the ripple circle.
+ * @param {Cesium.DataSource} datasource - The Cesium data source to add the entity to.
+ *
+ * @returns {Cesium.Entity} The created ripple circle entity.
+ */
+
 export function RippleCircleEntity(extraOption, options, datasource) {
   if (options && options.center) {
     let entity = createGraphics()

@@ -1,7 +1,12 @@
-import * as Cesium from "cesium";
-import { CoordTransformer } from "../../../../Compute";
-import { objHasOwnProperty, setProperties, createGraphics } from "./index";
-import { PlaneGraphics } from '../../graphics/index';
+import {
+    gifLoader,
+    Cesium,
+    CoordTransformer,
+    objHasOwnProperty,
+    setProperties,
+    createGraphics,
+} from './index';
+
 
 export function RotatedPlaneEntity(extraOption, options, datasource) {
     if (options && options.center && options.positions) {
@@ -39,7 +44,7 @@ export function RotatedPlaneEntity(extraOption, options, datasource) {
             })
         };
         entity.plane = PlaneGraphics(planeOpt)
-        
+
         const finalEntity = {
             ...extraOption,
             ...entity

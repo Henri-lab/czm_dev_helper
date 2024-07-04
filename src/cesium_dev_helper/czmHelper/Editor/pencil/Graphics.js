@@ -29,16 +29,13 @@ import {
 } from './entities'
 
 /**
- * 图形模块
- * 用于向地图加载各种实体对象*16
+ * A class for managing and creating graphics and entities in a Cesium viewer.
+ *
  * @class
- * @augments  module:Base
- * @param {object} params
- * @param {object} params.viewer - cesium 实例
- * @param {Array} params.dataSource - 想要添加实体的图层
- * @param {Array} params.defaultStatic - 静态资源
- * @exports  Graphics
+ * @param {Cesium.Viewer} viewer - The Cesium viewer instance.
+ * @param {Cesium.DataSource} dataSource - The data source for the graphics.
  */
+
 export default class Graphics extends DrawingManager {
   constructor(viewer, dataSource) {
     if (viewer)
@@ -216,3 +213,5 @@ export default class Graphics extends DrawingManager {
 
 
 }
+
+

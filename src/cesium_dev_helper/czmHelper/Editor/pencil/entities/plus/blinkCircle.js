@@ -1,7 +1,25 @@
-import * as Cesium from "cesium";
-import { objHasOwnProperty, setProperties } from "./index";
-import { EllipseGraphics } from "../../graphics/index";
+import {
+    gifLoader,
+    Cesium,
+    CoordTransformer,
+    objHasOwnProperty,
+    setProperties,
+    createGraphics,
+} from './index';
 
+/**
+ * Creates a blinking circle entity in Cesium.
+ *
+ * @param {Object} extraOption - Additional options to be merged with the final entity.
+ * @param {Object} options - Options for the circle entity.
+ * @param {Cesium.Cartesian3} options.position - The position of the circle.
+ * @param {Number} [options.alp=1] - Initial alpha value for the circle.
+ * @param {Boolean} [options.flog=true] - Flag to control the blinking behavior.
+ * @param {Cesium.MaterialProperty} [options.material] - Material property for the circle.
+ * @param {Object} datasource - The Cesium datasource to add the entity to.
+ *
+ * @returns {Cesium.Entity} The created circle entity.
+ */
 export function BlinkCircleEntity(extraOption, options, datasource) {
     if (options && options.position) {
         let entity = createGraphics(),
