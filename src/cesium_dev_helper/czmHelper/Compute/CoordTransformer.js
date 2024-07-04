@@ -305,6 +305,33 @@ class CoordTransformer {
             }
         }
     }
+
+    /**
+     * Extracts the bounding rectangle from an array of Cartesian positions.
+     *
+     * @param {Array.<Cartesian3>} positions - The array of Cartesian positions.
+     * @returns {Rectangle} The bounding rectangle in longitude, latitude coordinates.
+     */
+    // 从 positions 数组中提取边界值
+    getRectangleFromPositions(positions) {
+        let west = Number.POSITIVE_INFINITY;
+        let south = Number.POSITIVE_INFINITY;
+        let east = Number.NEGATIVE_INFINITY;
+        let north = Number.NEGATIVE_INFINITY;
+
+        positions.forEach(position => {
+            const cartographic = Cesium.Cartographic.fromCartesian(position);
+            const longitude = cartographic.longitude;
+            const latitude = cartographic.latitude;
+
+            west = Math.min(west, longitude);
+            south = Math.min(south, latitude);
+            east = Math.max(east, longitude);
+            north = Math.max(north, latitude);
+        });
+
+        return new Cesium.Rectangle(west, south, east, north);
+    }
 }
 
 export default CoordTransformer;
