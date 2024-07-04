@@ -9,60 +9,70 @@ class DataLoader {
         this.cache = new Map(); // 缓存机制
     }
 
-    // 使用 fetch 实现进度反馈的通用加载函数
     /**
-     * Fetch data with progress feedback.
+     * Private method to listen for tile load progress and call a progress callback.
+     *
      * @private
-     * @param {string} url - The URL to fetch.
-     * @param {Object} options - Additional options including progress callbacks.
-     * @returns {Promise<Response>} The fetch response.
+     * @param {Cesium.Cesium3DTileset} tileset - The 3D tileset to listen for progress events.
+     * @param {function} progressCallback - A callback function to be called with progress information.
+     *
+     * @returns {undefined}
      */
-    async _fetchWithProgress(url, options) {
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: options.headers || {}
+    async _check3DTilesetLoadProgress(tileset, progressCallback) {
+        let totalTiles = 0;
+        let loadedTiles = 0;
+
+        // Event listener for when a tile is requested
+        tileset.tileLoadProgress.addEventListener(function (event) {
+            totalTiles = event.total; // Total tiles to be loaded
+            loadedTiles = event.current; // Tiles currently loaded
+
+            if (progressCallback) {
+                const progress = loadedTiles / totalTiles;
+                progressCallback(progress);
+            }
         });
 
-        const reader = response.body.getReader();
-
-        // 获取响应体的总长度
-        const contentLength = +response.headers.get('Content-Length');
-        // 初始化接收的长度和存储块的数组
-        let receivedLength = 0;
-        const chunks = [];
-
-        // 持续读取响应体的块数据
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            // 将读取到的块数据推入数组，并更新已接收的长度
-            chunks.push(value);
-            receivedLength += value.length;
-
-            if (options.onProgress) {
-                // 传递百分比到回调
-                const percentComplete = (receivedLength / contentLength) * 100;
-                options.onProgress(percentComplete);
+        // Event listener for when all tiles have finished loading
+        tileset.allTilesLoaded.addEventListener(function () {
+            if (progressCallback) {
+                progressCallback(1); // Loading complete
             }
+        });
+    }
+
+    /**
+      * Private method to listen for model load progress and call a progress callback.
+      *
+      * @private
+      * @param {Cesium.Model} model - The model to listen for progress events.
+      * @param {function} progressCallback - A callback function to be called with progress information.
+      *
+      * @returns {undefined}
+      */
+    async _checkModelLoadingProgress(model, progressCallback) {
+        if (model.ready) {
+            // Model is fully loaded
+            if (progressCallback) {
+                progressCallback(1); // 100% loaded
+            }
+            return; //递归结束
         }
 
-        // 创建一个新的 Uint8Array 来存储所有的块数据
-        const chunksAll = new Uint8Array(receivedLength);
-        let position = 0;
-        // 将所有块数据合并到一个单一的 Uint8Array 中
-        for (let chunk of chunks) {
-            chunksAll.set(chunk, position);
-            position += chunk.length;
-        }
+        const stats = model._resource.fetchImage().then(() => {
+            const loadedBytes = model._resource.getBytesLoaded();
+            const totalBytes = model._resource.getTotalBytes();
+            const progress = loadedBytes / totalBytes;
 
+            if (progressCallback && loadedBytes !== previousLoadedBytes) {
+                previousLoadedBytes = loadedBytes;
+                progressCallback(progress);
+            }
 
-        // 直接解析为json格式并导出
-        // const jsonData = JSON.parse(new TextDecoder().decode(chunksAll));
-        // return jsonData; 
-
-        // 导出原始数据 可以在外部解析为json
-        return new Response(chunksAll, { headers: response.headers });
+            // 递归循环监听
+            // Continue checking the loading progress
+            setTimeout(_checkModelLoadingProgress(model, progressCallback), 100);
+        });
     }
 
     /**
@@ -87,13 +97,7 @@ class DataLoader {
             if (options.onSuccess) options.onSuccess(cachedData);
             return cachedData;
         }
-
-        // 使用 Cesium.loadWithXhr 实现进度反馈 (已被弃用？？)
-        // 使用fetch的方式计算进度
-        const xhr = this._fetchWithProgress(url, options);
-        // progress percent 会传入在options.onProgress
-
-        let dataSourceOrTileset;
+        let loaded;
 
         try {
             let data;
@@ -105,50 +109,57 @@ class DataLoader {
 
             switch (type.toLowerCase()) {
                 case 'geojson':
-                    dataSourceOrTileset = await Cesium.GeoJsonDataSource.load(data, options);
+                    loaded = await Cesium.GeoJsonDataSource.load(data, options);
                     break;
                 case 'kml':
-                    dataSourceOrTileset = await Cesium.KmlDataSource.load(data, options);
+                    loaded = await Cesium.KmlDataSource.load(data, options);
                     break;
                 case 'czml':
-                    dataSourceOrTileset = await Cesium.CzmlDataSource.load(data, options);
+                    loaded = await Cesium.CzmlDataSource.load(data, options);
                     break;
                 case '3dtiles':
                     // 新版api: Cesium.Cesium3DTileset.fromUrl(url, options);
-                    const tilesetPromise = await new Cesium.Cesium3DTileset({ url, options });
-                    dataSourceOrTileset = tilesetPromise;
+                    loaded = await new Cesium.Cesium3DTileset({ url, options });
                     break;
                 case 'gltf':
-                    dataSourceOrTileset = await Cesium.Model.fromGltf({ url, ...options });
+                    loaded = await Cesium.Model.fromGltf({ url, ...options });
                     break;
                 case 'gpx':
-                    // GPX 支持
-                    dataSourceOrTileset = await Cesium.GpxDataSource.load(data, options);
+                    loaded = await Cesium.GpxDataSource.load(data, options);
                     break;
-                case 'topojson':
-                    // TopoJSON 支持
-                    dataSourceOrTileset = await Cesium.TopoJsonDataSource.load(data, options);
-                    break;
+                // case 'topojson':
+                // TopoJSON 不支持??
+                // loaded = await Cesium.TopoJsonDataSource.load(data, options);
+                // break;
                 default:
-                    throw new Error(`Unsupported data type: ${type}`);
+                    throw new TypeError(`Unsupported data type: ${type}`);
             }
 
             // 🚨
             // 不能将3dtiles放到dataSource里面:dataSource会被时钟监听,而model即primitive不受时钟控制
             if (!type.toLowerCase() === '3dtiles' || !type.toLowerCase() === 'gltf')
-                this.viewer.dataSources.add(dataSourceOrTileset);
-
+                this.viewer.dataSources.add(loaded/* 此时仅仅是datasource*/);
 
             // 添加到缓存
-            this.cache.set(url, dataSourceOrTileset);
+            this.cache.set(url, loaded);
 
-            if (options.onSuccess) options.onSuccess(dataSourceOrTileset);
+            // 回掉加载对象
+            if (options.onSuccess) options.onSuccess(loaded);
         } catch (error) {
+            // 回掉加载错误
             if (options.onError) options.onError(error);
             else console.error(`DataLoader loading ${type}:`, error);
         }
 
-        return dataSourceOrTileset;
+        // 监听3d元素的加载进度  回掉加载进度
+        if (type === '3dtiles' && loaded) {
+            this._check3DTilesetLoadProgress(loaded, options.onProgress);
+        }
+        if (type === 'gltf' && loaded) {
+            this._checkModelLoadingProgress(loaded, options.onProgress);
+        }
+
+        return loaded;
     }
 
     /**
@@ -168,6 +179,9 @@ class DataLoader {
      *
      * @throws {Error} If the provided URL is not a string or if the provided options are not an object.
      */
+    // 3D Tiles and GLTF are both used in 3D graphics and GIS applications, 
+    // but they serve different purposes and have different structures. 
+    // they can't be simply categorized under the same "model" concept.
     async load3D(opt, type) {
         // Ensure opt has three properties that can return data
         let _finalOpt = {
@@ -185,15 +199,26 @@ class DataLoader {
         // Load a single URL
         if (!Array.isArray(opt) && typeOf(_url) === "String" && typeOf(_finalOpt) === "Object") {
             // Data loaded will be passed back on _finalOpt's three 'on' properties
-            const tilesetPromise = await this._loadDataWithProgress(_url, type, _finalOpt);
+            const res = await this._loadDataWithProgress(_url, type, _finalOpt);
             // 加载3dtiles的时候要使用readyPromise 
-            const _3dtile = await tilesetPromise.readyPromise
-            console.log('3d tileset loaded successfully');
 
-            // Data loaded is bound to the passed-in opt.onSuccess callback
-            Object.assign(opt, _finalOpt);
+            if (type === '3dtiles' && res) {
+                const _3dtile = await res.readyPromise
+                console.log('3d tileset loaded successfully');
 
-            return _3dtile;
+                // Data loaded is bound to the passed-in opt.onSuccess callback
+                Object.assign(opt, _finalOpt);
+
+                return _3dtile;
+            } else if (type === 'gltf') {
+                const _gltf = await res.readyPromise
+                console.log('GLTF loaded successfully');
+
+                // Data loaded is bound to the passed-in opt.onSuccess callback
+                Object.assign(opt, _finalOpt);
+
+                return _gltf;
+            }
 
         }
         // Load multiple URLs
@@ -224,8 +249,6 @@ class DataLoader {
     async loadGLTF(opt) {
         return await this.load3D(opt, 'gltf');
     }
-
-
 
     async loadGeoJSON(url, options = {}) {
         return this._loadDataWithProgress(url, 'geojson', options);
@@ -265,7 +288,7 @@ class DataLoader {
      *
      * @throws {Error} If an unsupported data type is specified.
      */
-    async loadDataSource(url, type, options = {}) {
+    async loadData(url, type, options = {}) {
         switch (type.toLowerCase()) {
             case 'geojson':
                 return this.loadGeoJSON(url, options);
@@ -275,10 +298,14 @@ class DataLoader {
                 return this.loadCZML(url, options);
             case 'gpx':
                 return this.loadGPX(url, options);
-            case 'topojson':
-                return this.loadTopoJSON(url, options);
+            case '3dtiles':
+                return this.load3DTiles(url, options);
+            case 'gltf':
+                return this.loadGLTF(url, options);
+            // case 'topojson':
+            //     return this.loadTopoJSON(url, options);
             default:
-                throw new Error(`Unsupported data source type: ${type}`);
+                throw new TypeError(`Unsupported data source type: ${type}`);
         }
     }
 
@@ -288,3 +315,26 @@ class DataLoader {
 }
 
 export default DataLoader;
+
+
+// GLTF (GL Transmission Format)--小模型
+// Purpose: GLTF is a file format for transmitting 3D models, including geometry, textures, and animations. It's designed to be efficient and easy to use, making it suitable for transmitting 3D models over the web.
+// Structure: A GLTF file contains a description of a 3D model, including its meshes, materials, textures, and animations. It can be thought of as a complete representation of a single 3D object or a small collection of objects.
+// Usage: GLTF is commonly used for individual models, such as characters, objects, or small scenes. It's widely supported in various 3D applications and libraries, including Cesium, Babylon.js, and three.js.
+// Loading in Cesium: In Cesium, GLTF models are loaded using Cesium.Model.fromGltf.
+
+// 3D Tiles--大场面
+// Purpose: 3D Tiles is an open specification for streaming massive heterogeneous 3D geospatial datasets. It enables efficient streaming and visualization of large-scale 3D data, such as city models, terrain, point clouds, and building interiors.
+// Structure: A 3D Tiles dataset is a spatial hierarchy of tiles, where each tile can contain different types of 3D content (e.g., batched 3D models, point clouds, vector data). The tiles are organized in a quadtree or octree structure to support efficient level-of-detail (LOD) streaming and rendering.
+// Usage: 3D Tiles is used for large-scale geospatial datasets, enabling applications like virtual city models, global terrain visualization, and dynamic point cloud rendering. It is designed to handle datasets that are too large to be loaded into memory all at once.
+// Loading in Cesium: In Cesium, 3D Tiles datasets are loaded using Cesium.Cesium3DTileset.
+
+// Why They Can't Be Categorized Under the Same "Model" Concept--
+// Different Use Cases: GLTF is used for individual models or small scenes, while 3D Tiles is designed for large-scale, tiled geospatial datasets.
+// Different Structures: GLTF is a single file (or a small set of files) representing a model, while 3D Tiles is a hierarchical structure of tiles that can contain various types of 3D content.
+// Different Loading Mechanisms: Cesium provides different classes and methods for loading GLTF models (Cesium.Model) and 3D Tilesets (Cesium.Cesium3DTileset) because they are fundamentally different in how they are structured and used.
+
+// Summary--
+// While both GLTF and 3D Tiles can represent 3D content,
+// their purposes, structures, and use cases are different enough that they cannot be simply categorized under the same "model" concept. Instead, they are complementary technologies that serve different needs in the realm of 3D graphics and geospatial visualization.
+// In Cesium, they are handled by different classes and have different loading and rendering mechanisms to accommodate their unique characteristics.
