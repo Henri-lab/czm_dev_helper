@@ -1,16 +1,4 @@
-/**
-  *获取广告牌图形
-  * @function
-  * @param {object} options
-  * @param {string} options.b_img - 背景图地址
-  * @param {number} options.b_width - 宽度
-  * @param {number} options.b_height - 高度
-  * @param {boolean} options.b_clampToGround - 贴地
-  * @param {number} options.b_scale - 缩放比例
-  * @param {string} options.b_scaleByDistance - 缩放远近距离
-  * @param {object} options.b_pixelOffset - 偏移
-  * @returns {BillboardGraphics}   返回BillboardGraphics实例
-  */
+
 export function BillboardGraphics(options) {
     options = options || {}
     if (options && options.b_img) {

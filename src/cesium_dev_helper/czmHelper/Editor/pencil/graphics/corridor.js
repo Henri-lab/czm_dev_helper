@@ -1,14 +1,4 @@
-/**
-* 获取走廊图形
-* @function
-* @param {object} options
-* @param {number} options.length - 走廊长度
-* @param {number} options.width - 走廊宽度
-* @param {Object} options.material - 材质
-* @param {boolean} options.outline - 轮廓线显示
-* @param {Object} options.outlineColor - 轮廓线颜色
-* @returns {CorriderGraphics} 返回CorriderGraphics实例
-*/
+
 export function CorridorGraphics(options={}) {
     if (options) {
         return new Cesium.CorridorGraphics({

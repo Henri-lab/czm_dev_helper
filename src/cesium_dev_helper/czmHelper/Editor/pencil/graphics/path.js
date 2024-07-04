@@ -1,13 +1,5 @@
-/**
-   * 获取路径
-   * @function
-   * @param {object} options
-   * @param {number} options.resolution - 采样频率
-   * @param {number} options.glowPower - 发光强度
-   * @param {object} options.color - 颜色
-   * @param {number} options.width - 宽度
-   * @returns {PathGraphics}   返回PathGraphics实例
-   */
+import * as Cesium from "cesium";
+import { objHasOwnProperty, setProperties } from "./index";
 export function PathGraphics(options) {
     options = options || {}
     if (options) {

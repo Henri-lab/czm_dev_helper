@@ -1,13 +1,5 @@
-/**
-  * 获取模型
-  * @function
-  * @param {object} options
-  * @param {string} options.m_url - 模型url
-  * @param {string} options.url - 模型url
-  * @param {number} options.m_scale - 缩放比例
-  * @param {number} options.scale - 缩放比例
-  * @returns {ModelGraphics}   返回ModelGraphics实例
-  */
+import * as Cesium from "cesium";
+import { objHasOwnProperty, setProperties } from "./index";
 export function ModelGraphics(options) {
     options = options || {}
     if (options) {

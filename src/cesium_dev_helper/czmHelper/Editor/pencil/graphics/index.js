@@ -11,6 +11,7 @@ import { PathGraphics } from './path';
 import { PlaneGraphics } from './plane';
 import { PointGraphics } from './point';
 import { PolygonGraphics } from "./polygon";
+import { objHasOwnProperty, setProperties } from "../../../util/properties";
 
 export {
     BillboardGraphics,
@@ -26,4 +27,6 @@ export {
     PlaneGraphics,
     PointGraphics,
     PolygonGraphics,
+    objHasOwnProperty,
+    setProperties,
 };
