@@ -10,7 +10,7 @@ import {
     CameraManager
 } from '../cesium_dev_helper/czmHelper/Manager';
 import { CoordTransformer } from '../cesium_dev_helper/czmHelper/Compute';
-import { TencentImageryProvider } from '../cesium_dev_helper/czmHelper/Map/mapPlugin';
+import { TencentImageryProvider } from '../cesium_dev_helper/czmHelper/Plugin/mapPlugin';
 
 
 export default async function initViewerAt(el = { id: 'viewer' }) {

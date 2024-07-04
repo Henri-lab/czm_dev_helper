@@ -1,7 +1,7 @@
 
 import Manager from "./Manager";
 
-import { TencentImageryProvider } from "../Map/mapPlugin";
+import { TencentImageryProvider } from "../Plugin/mapPlugin";
 import { DataLoader } from "../Data";
 let Cesium = new Manager().Cesium;
 
