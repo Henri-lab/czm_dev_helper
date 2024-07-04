@@ -9,8 +9,7 @@
 * @param {Object} options.outlineColor - 轮廓线颜色
 * @returns {CorriderGraphics} 返回CorriderGraphics实例
 */
-export function CorridorGraphics(options) {
-    options = options || {}
+export function CorridorGraphics(options={}) {
     if (options) {
         return new Cesium.CorridorGraphics({
             positions: options.positions,

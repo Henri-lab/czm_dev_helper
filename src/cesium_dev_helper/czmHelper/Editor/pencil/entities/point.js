@@ -13,14 +13,11 @@ export function PointEntities(extraOption = {}, options = {}, datasource = {}) {
             if (options.billboard)
                 entity.billboard = BillboardGraphics(options.billboard)
             if (options.label) entity.label = LabelGraphics(options.label)
-
-            const point = datasource.entities.add({
+            const finalEntity = {
                 ...extraOption,
-                point: entity.point,
-                billboard: entity.billboard,
-                label: entity.label,
-                position: Cesium.Cartesian3.fromDegrees(posItem)
-            })
+                ...entity,
+            }
+            const point = datasource.entities.add(finalEntity)
             points.push(point)
         }
         return points

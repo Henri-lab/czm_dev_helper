@@ -19,12 +19,12 @@ export function CylinderEntity(extraOption = {}, options = {}, datasource = {}) 
     setProperties(options, properties);
 
     // 创建圆柱几何体
-    entity.cylinder = CylinderGraphics(options.cylinder)
+    entity.cylinder = CylinderGraphics(options)
 
     // 将实体添加到图层
     return datasource.entities.add({
         ...extraOption,
-        cylinder: entity.cylinder,
+        ...entity
     });
 
 }
