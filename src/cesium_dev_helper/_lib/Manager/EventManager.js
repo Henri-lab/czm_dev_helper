@@ -16,17 +16,18 @@ class EventManager extends Manager {
         this.eventHandlers = new Map();
     }
 
-    // 核心
+    // 核心 事件执行后回调 event, pick的位置 ,pick的对象
     _addEvent(eventType, callback, priority = 0) {
         if (!this.eventHandlers.has(eventType)) {
             this.eventHandlers.set(eventType, []);
             this.handler.setInputAction((event) => {
-                const position = this.viewer.scene.pickPosition(event.position || event.endPosition);
+                const pickedPos = this.viewer.scene.pickPosition(event.position || event.endPosition);
+                const pickedObj = this.viewer.scene.pick(event.position || event.endPosition);
                 const handlers = this.eventHandlers.get(eventType);
                 // 优先度越大 越先执行
                 handlers.sort((a, b) => b.priority - a.priority);
                 handlers.forEach(({ callback }) => {
-                    callback(position, event);
+                    callback(event, pickedPos, pickedObj);
                 });
             }, eventType);
         }
@@ -34,14 +35,21 @@ class EventManager extends Manager {
         this.eventHandlers.get(eventType).push({ callback, priority });
     }
 
+    /** 
+    *  @callback参数 -(event, pick的位置 ,pick的对象)
+    */
     onMouseClick(callback, priority = 0) {
         this._addEvent(Cesium.ScreenSpaceEventType.LEFT_CLICK, callback, priority);
     }
-
+    /** 
+    *  @callback参数 -(event, pick的位置 ,pick的对象)
+    */
     onMouseRightClick(callback, priority = 0) {
         this._addEvent(Cesium.ScreenSpaceEventType.RIGHT_CLICK, callback, priority);
     }
-
+    /** 
+    *  @callback参数 -(event, pick的位置 ,pick的对象)
+    */
     onMouseDoubleClick(callback, priority = 0) {
         this._addEvent(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK, callback, priority);
     }
@@ -53,7 +61,9 @@ class EventManager extends Manager {
     onMouseUp(callback, priority = 0) {
         this._addEvent(Cesium.ScreenSpaceEventType.LEFT_UP, callback, priority);
     }
-
+    /** 
+    *  @callback参数 -(event, pick的位置 ,pick的对象)
+    */
     onMouseMove(callback, priority = 0) {
         this._addEvent(Cesium.ScreenSpaceEventType.MOUSE_MOVE, callback, priority);
     }
