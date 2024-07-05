@@ -1,3 +1,5 @@
+<!-- 测试用 -->
+
 <!-- 挂载时间在czm-map之后 -->
 <template>
   <a-layout>
@@ -193,7 +195,7 @@ watch(
     switch (newValue[0]) {
       case '1':
         if (editor) {
-          editor.startLine(lineOpt0);
+          console.log('testing');
         }
         break;
 
