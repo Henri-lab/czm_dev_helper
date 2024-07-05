@@ -104,20 +104,38 @@ export default class SceneManager extends Manager {
    *
    * @returns {undefined} This function does not return any value.
    */
-  addToScene(dataSourceOrTileset, type) {
+  async addToScene(loaded = {}, Type) {
     let viewer = this.viewer;
-    if (type.toLowerCase() === '3dtiles' || type.toLowerCase() === 'gltf') {
-      viewer.scene.primitives.add(dataSourceOrTileset);
-    } else {
-      viewer.dataSources.add(dataSourceOrTileset);
+    let scene = viewer.scene;
+    const type = Type.toLowerCase();
+    // 直接添加(核心)
+    if (type === '3dtiles' || type === 'gltf' || type === 'primitive') {
+      return scene.primitives.add(loaded);
+    } else if (!type.includes('url')) {
+      return viewer.dataSources.add(loaded);
     }
+
+    // 👽(扩展)
+    // 搜索资源并添加---和add3DModel具备类似功能,但不能批量处理 不能自动添加t_id
+    if (type === '3dtilesurl' || type === 'gltfurl') {
+      const options = loaded
+
+      const res = (type === '3dtilesurl') ?
+        await this.$dL.load3DTiles(options)
+        : await this.$dL.loadGLTF(options);
+
+      res.readyPromise.then((primitive) => {
+        return scene.primitives.add(primitive)
+      })
+    }
+
   }
 
   /**
    * Function to add 3D tiles to the Cesium viewer.
    *
    * @param {Object|Array} options - The options for loading 3D tiles. It can be a single object or an array of objects.
-   * @param {Function} cb - The callback function to handle the loading progress and result.
+   * @param {Function} cb - The callback function to handle the loading progress and result with timestamp.
    *
    * @returns {undefined} This function does not return any value.
    */
@@ -149,10 +167,13 @@ export default class SceneManager extends Manager {
         }
 
         if (model) {
-          that.addToScene(model, _type);//核心
-          resArr.push({ _id: Date.now(), model });//传入回调cb 并标记一个timestamp 作为_id
-          cb(resArr);
+          model.readyPromise.then(() => {
+            that.addToScene(model, _type);//核心
+            resArr.push({ t_id: Date.now(), model });
+            cb(resArr);//传入回调cb 并标记一个timestamp 作为 t_id
+          });
         }
+
       } catch (e) {
         console.error('Scene manager failed loading model', e);
         throw new Error(e);
