@@ -1,5 +1,3 @@
-import * as Cesium from 'cesium';
-
 import {
     CoordTransformer,
     TurfUser,
@@ -38,9 +36,6 @@ import {
     TextureCreator,
     ConeGlowBottomCircleMaterialProperty,
     WallGradientsMaterialProperty,
-    Ripple_glsl,
-    circleMapping_glsl,
-    wallMapping_glsl,
     Cesium,
 } from './Effect'
 
@@ -48,15 +43,19 @@ import {
     Draw,
     Graphics,
     Editor,
-    lineOpt0,
 } from './Editor'
 
 import {
     DataLoader,
     DataPrepocesser,
     gifLoader,
+    defaultHierachyCache,
+    hierarchyNavigate,
 } from './Data'
-export {
+
+
+// module
+const ComputeModule = {
     CoordTransformer,
     TurfUser,
     generateCirclePoints,
@@ -65,10 +64,16 @@ export {
     flattenPositions,
     getPositions,
     getSiteTimes,
-    spaceDistance,
-    ConeGlowBottomCircleMaterialProperty,
-    CustomMaterialProperty,
-    WallGradientsMaterialProperty,
+    spaceDistance
+}
+const DataModule = {
+    DataLoader,
+    DataPrepocesser,
+    gifLoader,
+    defaultHierachyCache,
+    hierarchyNavigate,
+}
+const ManagerModule = {
     LayerManager,
     DrawingManager,
     MeasurementManager,
@@ -79,21 +84,26 @@ export {
     ControlsManager,
     ConfigManager,
     SceneManager,
+}
+const EffectModule = {
     EffectController,
     GeometryCreater,
     MaterialCreator,
     TextureCreator,
     ConeGlowBottomCircleMaterialProperty,
     WallGradientsMaterialProperty,
-    Ripple_glsl,
-    circleMapping_glsl,
-    wallMapping_glsl,
-    Cesium,
+}
+
+const EditorModule = {
     Draw,
     Graphics,
     Editor,
-    lineOpt0,
-    DataLoader,
-    DataPrepocesser,
-    gifLoader,
+}
+
+export default {
+    ComputeModule,
+    DataModule,
+    ManagerModule,
+    EffectModule,
+    EditorModule,
 }

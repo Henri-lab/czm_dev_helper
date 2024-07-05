@@ -97,8 +97,4 @@ function getNextLevelUrl(currentKey, urlMap) {
 export {
     defaultHierachyCache,
     hierarchyNavigate,
-    jumpTo,
-    switchTo,
-    getNextLevelKey,
-    getNextLevelUrl
 }
