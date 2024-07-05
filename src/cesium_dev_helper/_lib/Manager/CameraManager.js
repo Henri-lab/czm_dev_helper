@@ -13,7 +13,35 @@ export default class CameraManager extends Manager {
         this.isFirstPerson = false;
         this.firstPersonOffset = new Cartesian3(0, 0, 5); // 调整摄像头相对于车辆的位置
     }
+    // 更新第一人称视角
+    _updateFirstPersonView() {
+        if (this.isFirstPerson && this.vehicleEntity) {
+            const vehiclePosition = this.vehicleEntity.position.getValue(JulianDate.now());
+            const vehicleOrientation = this.vehicleEntity.orientation.getValue(JulianDate.now());
 
+            const modelMatrix = Matrix4.fromRotationTranslation(
+                Cesium.Matrix3.fromQuaternion(vehicleOrientation/*旋转四元数*/),/*旋转矩阵*/
+                vehiclePosition/*平移向量*/
+            );
+
+            const cameraOffset/*局部坐标系-vehicleModel*/ = new Cartesian3(0, 0, 5); // 调整摄像头相对于车辆的位置
+            const cameraPosition/*世界坐标系*/ = Matrix4.multiplyByPoint(
+                modelMatrix,
+                cameraOffset,
+                new Cartesian3()
+            );
+
+            this.camera.setView({
+                destination: cameraPosition,
+                orientation: {
+                    heading: CesiumMath.heading(vehicleOrientation),
+                    pitch: CesiumMath.toRadians(0),
+                    roll: 0
+                }
+            });
+        }
+    }
+    
     // 缩放
     zoomIn() {
         this.camera.zoomIn();
@@ -111,34 +139,7 @@ export default class CameraManager extends Manager {
         this.scene.preRender.removeEventListener(this._updateFirstPersonView, this);
     }
 
-    // 更新第一人称视角
-    _updateFirstPersonView() {
-        if (this.isFirstPerson && this.vehicleEntity) {
-            const vehiclePosition = this.vehicleEntity.position.getValue(JulianDate.now());
-            const vehicleOrientation = this.vehicleEntity.orientation.getValue(JulianDate.now());
 
-            const modelMatrix = Matrix4.fromRotationTranslation(
-                Cesium.Matrix3.fromQuaternion(vehicleOrientation/*旋转四元数*/),/*旋转矩阵*/
-                vehiclePosition/*平移向量*/
-            );
-
-            const cameraOffset/*局部坐标系-vehicleModel*/ = new Cartesian3(0, 0, 5); // 调整摄像头相对于车辆的位置
-            const cameraPosition/*世界坐标系*/ = Matrix4.multiplyByPoint(
-                modelMatrix,
-                cameraOffset,
-                new Cartesian3()
-            );
-
-            this.camera.setView({
-                destination: cameraPosition,
-                orientation: {
-                    heading: CesiumMath.heading(vehicleOrientation),
-                    pitch: CesiumMath.toRadians(0),
-                    roll: 0
-                }
-            });
-        }
-    }
 }
 
 
