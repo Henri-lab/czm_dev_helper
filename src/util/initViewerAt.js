@@ -65,6 +65,7 @@ export default async function initViewerAt(el = { id: 'viewer' }) {
 
     // 3dtiles
     const modelOpt = {
+        // port 8001
         url: "http://localhost:8001/wuhan/tileset.json",
     }
 
@@ -72,6 +73,9 @@ export default async function initViewerAt(el = { id: 'viewer' }) {
 
     const cfgM = new ConfigManager();
     const czmViewer = await cfgM.initViewer(vcfg);
+
+    // 确保 viewer 初始化完成
+    // await czmViewer.readyPromise;
     // console.log('cesium viewer init completed');
 
     const sM = new SceneManager(czmViewer);
@@ -109,8 +113,7 @@ export default async function initViewerAt(el = { id: 'viewer' }) {
     //     // console.log('fly to the new model completed');
     // })
 
-    // 确保 viewer 初始化完成
-    await czmViewer.readyPromise;
+
 
     return czmViewer;
 }

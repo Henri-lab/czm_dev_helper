@@ -7,7 +7,7 @@ import getCesiumHeat from "../type/heatMap";
  * @param {Array<{lng,lat,value}>} dataSource 
  * @returns {Function} destroyHeat;
  */
-export const drawHeatMap = (viewer, dataSource) => {
+export const renderHeatMap = (viewer, dataSource) => {
     // 获得CesiumHeat类
     const CesiumHeat = getCesiumHeat(Cesium);
     let heat = new CesiumHeat(

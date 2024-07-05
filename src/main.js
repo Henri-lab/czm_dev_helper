@@ -7,11 +7,6 @@ import router from './router'
 import VScaleScreen from 'v-scale-screen'
 import './style.scss'
 
-// import { czmViewPlugin } from './plugins/czmViewPlugin';
-
-
-
-
 const app = createApp(App);
 
 app.use(createPinia())
