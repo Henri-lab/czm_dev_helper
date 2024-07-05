@@ -36,7 +36,6 @@ import {
     TextureCreator,
     ConeGlowBottomCircleMaterialProperty,
     WallGradientsMaterialProperty,
-    Cesium,
 } from './Effect'
 
 import {
