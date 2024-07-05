@@ -73,6 +73,11 @@ function switchTo(pickedPrimitive, nextPrimitive) {
     pickedPrimitive.show = false
     // 显示下一层级模型
     nextPrimitive.show = true
+    // -摄像机设置
+    viewer.scene.camera.flyTo({
+        destination: nextPrimitive.boundingSphere.center,
+        duration: 2
+    })
 }
 
 function getNextLevelKey(currentKey, levelMap) {
