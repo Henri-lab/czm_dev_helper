@@ -1,5 +1,4 @@
 import EffectController from "./EffectController";
-import GeometryCreater from "./GeometryCreater";
 import MaterialCreator from "./MaterialCreator";
 import TextureCreator from "./TextureCreator";
 import * as Cesium from "cesium";
@@ -13,7 +12,6 @@ import wallMapping_glsl from './glsl/shader2.glsl';
 
 export {
     EffectController,
-    GeometryCreater,
     MaterialCreator,
     TextureCreator,
     ConeGlowBottomCircleMaterialProperty,

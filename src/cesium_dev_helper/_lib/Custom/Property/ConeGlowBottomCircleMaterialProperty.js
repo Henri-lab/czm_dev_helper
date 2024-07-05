@@ -18,7 +18,8 @@ Object.defineProperties(ConeGlowBottomCircleMaterialProperty.prototype, {
             return this._definitionChanged;
         }
     },
-    color: Cesium.createPropertyDescriptor('color')
+    // color: Cesium.createPropertyDescriptor('color') 新版api
+    
 });
 ConeGlowBottomCircleMaterialProperty.prototype.getType = function (time) {
     // Cesium 会根据 getType 方法返回的字符串来从材质缓存中取出对应的材质类型

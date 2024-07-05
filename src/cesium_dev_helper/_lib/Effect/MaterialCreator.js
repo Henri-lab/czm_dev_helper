@@ -13,8 +13,29 @@ import {
  */
 class MaterialCreator {
     constructor() { }
+
+    register(materialName, options) {
+        if (typeof materialName !== 'string') return
+        const type = materialName.toLowerCase();
+        switch (type) {
+            case 'coneglowbottomcircle':
+                (function () {
+                    let { color } = options
+                    return this._ConeGlowBottomCircle(color);
+                })()
+            case 'wallgradients': {
+                (function () {
+                    let { color } = options
+                    return this._wallMaterial(color);
+                })()
+            }
+            default:
+                throw new Error(`Unsupported material type: ${materialName}`);
+        }
+    }
+
     // 添加新材质- ConeGlowBottomCircle
-    ConeGlowBottomCircle(color) {
+    _ConeGlowBottomCircle(color) {
         Cesium.Material.ConeGlowBottomCircleType = 'ConeGlowBottomCircle';
         Cesium.Material.ConeGlowBottomCircleImage = new TextureCreator().gradientTexture({});
         Cesium.Material.ConeGlowBottomCircleSource = circleMapping_glsl;
@@ -36,7 +57,7 @@ class MaterialCreator {
         return new ConeGlowBottomCircleMaterialProperty(color);
     }
     // 添加新材质- wallMaterial
-    wallMaterial(color) {
+    _wallMaterial(color) {
         Cesium.Material.WallGradientsType = "WallGradients";
         Cesium.Material.WallGradientsImage = "/src/assets/materialResources/wallgradients.png";
         Cesium.Material.WallGradientsSource = wallMapping_glsl;

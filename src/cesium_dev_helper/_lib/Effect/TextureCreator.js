@@ -1,4 +1,4 @@
-import { Cesium } from "./index.js";
+import * as Cesium from "cesium";
 
 
 class TextureCreator {

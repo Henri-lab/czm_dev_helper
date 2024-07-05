@@ -31,7 +31,6 @@ import {
 
 import {
     EffectController,
-    GeometryCreater,
     MaterialCreator,
     TextureCreator,
     ConeGlowBottomCircleMaterialProperty,
@@ -86,7 +85,6 @@ const ManagerModule = {
 }
 const EffectModule = {
     EffectController,
-    GeometryCreater,
     MaterialCreator,
     TextureCreator,
     ConeGlowBottomCircleMaterialProperty,
