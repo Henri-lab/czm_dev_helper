@@ -58,9 +58,9 @@ export default class Graphics extends DrawingManager {
 
 
   //  创建一个czm帧刷新属性
-  czm_callbackProperty(data, isConst = false) {
-    return new Cesium.CallbackProperty(function () {
-      return data
+  czm_callbackProperty(fn, isConst = false) {
+    return new Cesium.CallbackProperty(() => {
+      fn;
     }, isConst)
   }
 
@@ -184,33 +184,47 @@ export default class Graphics extends DrawingManager {
    * @returns {Object} The created dynamic entity.
    */
   // 每一帧 执行 return curPosArr <-- _newPositions <-- getNewPosition()
-  createDynamicEntity(type, { extraOption, options, getNewPosition, datasource }) {
+  createDynamicEntity(type, { extraOption, options, datasource, getNewPosition }) {
     if (typeof getNewPosition !== 'function') throw new Error('cannot get new position')
 
     let _newPositions = getNewPosition();
 
+    const _type = type.toLowerCase();
+    // bug 
+    // if (_type === 'polyline') {
+    //   if (_newPositions.length < 2) return;
+    // }
+
     /** 
-     * @pickPosCollection  type is Cartesian3[ ] 
+     * get pickPosCollection which type is Cartesian3[ ] 
     */
-    let curPosArr;
-    if (isValidCartographic(_newPositions)) {
-      curPosArr = CoordTransformer.transformWGS84ToCartesian(_newPositions)
-    } else if (isValidCartesian3(_newPositions)) {
-      curPosArr = _newPositions
+    const curPosArr = () => {
+      let curPosArr;
+      if (isValidCartographic(_newPositions)) {
+        curPosArr = CoordTransformer.transformCartographicToCartesian3(_newPositions)
+      }
+      else if (isValidCartesian3(_newPositions)) {
+        curPosArr = _newPositions
+      }
+      else {
+        console.error('Invalid positions when creating dynamic entity');
+      }
+      return curPosArr
     }
+
 
     /**@normalObj */
     let entity = {};
 
+
     // bind graphics👻
     entity[_type] = this.createGraphicsByType(_type, options);
 
-    const _type = type.toLowerCase();
     if (_type === 'polygon') {
       const Hierarchy = (pos) => {
         return new Cesium.PolygonHierarchy(pos);
       }
-      entity.polygon.hierarchy = this.czm_callbackProperty(Hierarchy(curPosArr))// 核心
+      entity.polygon.hierarchy = this.czm_callbackProperty(Hierarchy(curPosArr()))// 核心
     }
 
     else if (_type === 'rectangle') {
@@ -219,22 +233,22 @@ export default class Graphics extends DrawingManager {
         if (posArr.length < 2) throw new TypeError('Invalid positions when creating rectangle');
         return Cesium.Rectangle.fromCartesianArray(posArr);//西南东北 w s e n
       }
-      entity.rectangle.coordinates = this.czm_callbackProperty(Rectangle(curPosArr))//核心
+      entity.rectangle.coordinates = this.czm_callbackProperty(Rectangle(curPosArr()))//核心
     }
 
     else if (_type === 'polyline') {
-      entity.polyline.positions = this.czm_callbackProperty(curPosArr) // 核心
+      entity.polyline.positions = this.czm_callbackProperty(curPosArr()) // 核心
+      console.log('create a dynamic polyline, -positions:', entity.polyline.positions);
     }
 
     else {
-      entity.positions = this.czm_callbackProperty(curPosArr)// 核心
+      entity.positions = this.czm_callbackProperty(curPosArr())// 核心
     }
 
     const finalEntity = {
       ...extraOption,
       ...entity,// 已经绑定graphics 并且将坐标数据设置为动态
     }
-
     return datasource.entities.add(finalEntity)//dynamic entity
   }
 

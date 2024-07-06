@@ -7,7 +7,7 @@ class LayerManager extends Manager {
     constructor(viewer) {
         super(viewer);
         this.layers = [];
-        this.datesources = [];
+        this.datasources = [];
     }
     addLayer(layer) { /* ... */
         this.layers.push(layer);
@@ -33,15 +33,32 @@ class LayerManager extends Manager {
         }
     }
 
+    // Cesium 中的 DataSource 提供了一种管理和组织实体的方式，使得对实体的批量操作和管理更加方便。
+    // 通常使用 CustomDataSource 来创建自定义的数据源，然后将实体添加到这个数据源中。
     getOrCreateDatasourceByName(name) {
         if (!typeof name === 'string') return null;
         const _viewer = this.viewer
+        // find
         let dataSource = _viewer.dataSources.getByName(name)[0];
         if (!dataSource) {
             dataSource = new Cesium.CustomDataSource(name);
-            _viewer.dataSources.add(dataSource);
+            this.datasources.push(dataSource);
         }
         return dataSource;
+    }
+
+    addDatasourceByName(name) {
+        if (!typeof name === 'string') return null;
+        let _viewer = this.viewer
+        let _datasources = this.datasources
+        const existedSourceOrNew = this.getOrCreateDatasourceByName(name);
+        if (!existedSourceOrNew) {//图源未在viewer中
+            _datasources.push(existedSourceOrNew)
+            return null;
+        }
+        _datasources.forEach(ds => {
+            _viewer.dataSources.add(ds);
+        });
     }
 }
 

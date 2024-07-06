@@ -113,7 +113,7 @@ const subMenus = [
     title: '绘制图形',
     icon: UserOutlined,
     items: [
-      { key: '1', label: 'test1' },
+      { key: '1', label: 'test1-polyline' },
       { key: '2', label: 'test2' },
       { key: '3', label: 'test3' },
       { key: '4', label: 'test4' },

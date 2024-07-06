@@ -13,15 +13,29 @@ export default class Draw extends DrawingManager {
     constructor(viewer, StaticMap = {}) {
         super(viewer);
         this.dfSt = StaticMap || undefined;//图片资源path
-        this._drawLayer = new LayerManager(viewer).getOrCreateDatasourceByName('drawLayer@henriFox');//保证图层的唯一性
         this.$graphics = new Graphics(viewer, this._drawLayer);
         this.$coords = new CoordTransformer();
         this.$turfer = new TurfUser(viewer);
         this.viewer && this.viewer.dataSources.add(this._drawLayer);
         this.defaultImageUrl = '';
         this.currentHandler = null;//方便在removeEventHandler剔除
+
+        // 画家自己管理图源
+        this.$layerM = null;
+        this._drawLayer = null;
+        this._loadLayer();
+
+
     }
     // --辅助函数-----------------------------------------
+
+    // 添加图源
+    _loadLayer() {
+        this.$layerM = new LayerManager(viewer)
+        this._drawLayer = this.$layerM.getOrCreateDatasourceByName('drawLayer@henriFox');//保证图层的唯一性
+        this.$layerM.addDatasourceByName('drawLayer@henriFox');
+    }
+
     // 获得屏幕位置的cartesian
     _getCartesian3FromPX/*pixel*/ = (position) => {
         return this.$coords.getCartesianFromScreenPosition(position, this.viewer);
@@ -35,7 +49,7 @@ export default class Draw extends DrawingManager {
 
     // 处理(展示)测量结果
     _measureResultHandle = (res) => {
-        console.log(res);
+        console.log('the measure result:', res.value, 'km');
     }
 
     // 绘制动态实体(限制在本图层)-位置坐标为callbackProperty
@@ -134,7 +148,7 @@ export default class Draw extends DrawingManager {
     /**
      * Draw an entity with event handling.
      * @param {String} Type - The type of the entity.
-     * @param {Object} options - The options for the entity.
+     * @param {Object} options - The options include extraOption and entityOptions.
      * @param {Function} pluginFunction - Optional plugin function for additional processing.
      * @returns {Cesium.Entity|null} - The created entity or null if viewer or options are not provided.
      */
@@ -171,17 +185,17 @@ export default class Draw extends DrawingManager {
         // register the handlers which is working 
         $this.currentHandler = _handlers;
 
-        // --创建动态实体--
+        // 准备动态实体的数据
         options.positions = pickPosCollection;
-        if (!options.datasource) options.datasource = this._drawLayer // 确认准备添至的图层
-        
-        
+        if (!options.datasource) options.datasource = this._drawLayer // 默认添至的图层
         const getNewPosition = () => {
-            console.log('getNewPosition')
             // return pickPosCollection[pickPosCollection.length - 1];最后位置
             return pickPosCollection//整体坐标
         }
+        // --创建动态实体--
         currentEntity = $this._startDynamicEntity(type, options, getNewPosition)
+
+
 
         // 特殊处理 
         extra();
@@ -199,9 +213,10 @@ export default class Draw extends DrawingManager {
 
 
             // test
-            console.log('cur-entity', currentEntity);
-            console.log('pickPosCollection-length', pickPosCollection.length);
-            console.log('cur-entity-line', currentEntity.polyline);
+            // console.log('cur-entity', currentEntity);
+            // console.log('pickPosCollection-length', pickPosCollection.length);
+            // console.log('cur-entity-line', currentEntity.polyline);
+            console.log('datasource-entities', this._drawLayer.entities.values)
 
         }
         const afterMouseMove = (movement) => { // mouse movement 
@@ -209,12 +224,15 @@ export default class Draw extends DrawingManager {
             // 持续更新坐标选项 动态实体会每帧读取
             if (!cartesian || !isValidCartesian3(cartesian)) return;
             $this._updatePosByType(type, pickPosCollection, cartesian, options)
+
+            // test
+            // console.log('mouse moving', cartesian)
         }
         const afterRightClick = (movement) => { // right click 
 
-            // 更新图形 truetrue
+            // 更新图形
             const isClose = true;
-            $this._updatePosByType(type, pickPosCollection, cartesian, options, isClose);
+            $this._updatePosByType(type, pickPosCollection, {}, options, isClose);
 
             //开启测量功能
             if (options.measure) {

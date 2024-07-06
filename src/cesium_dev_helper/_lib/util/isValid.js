@@ -17,8 +17,11 @@ const _imageryProviderTypes = new Set(imageryProviderTypes);
  * @throws Will throw an error if any of the elements in the array are not numbers.
  *
  */
-export function isValidCartesian3(cartesian) {
-    return typeof cartesian.x === 'number' && typeof cartesian.y === 'number' && typeof cartesian.z === 'number';
+export function isValidCartesian3(coord) {
+    if (!Array.isArray(coord))
+        return typeof coord.x === 'number' && typeof coord.y === 'number' && typeof coord.z === 'number';
+    else
+        return coord.every(item => isValidCartesian3(item));
 }
 
 /**
@@ -30,12 +33,17 @@ export function isValidCartographic(coord) {
     if (typeof coord !== 'object' || coord === null) {
         return false;
     }
+    if (!Array.isArray(coord)) {
+        const hasLongitude = typeof coord.longitude === 'number';
+        const hasLatitude = typeof coord.latitude === 'number';
+        const hasOptionalHeight = typeof coord.height === 'undefined' || typeof coord.height === 'number';
 
-    const hasLongitude = typeof coord.longitude === 'number';
-    const hasLatitude = typeof coord.latitude === 'number';
-    const hasOptionalHeight = typeof coord.height === 'undefined' || typeof coord.height === 'number';
-
-    return hasLongitude && hasLatitude && hasOptionalHeight;
+        return hasLongitude && hasLatitude && hasOptionalHeight;
+    } else {
+        // --stack 溢出了🤣--
+        // coord.every(item => isValidCartographic(item) === true) ? true : false;
+        return coord.every(item => isValidCartographic(item));
+    }
 }
 
 
