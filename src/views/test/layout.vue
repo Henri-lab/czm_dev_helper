@@ -219,20 +219,4 @@ watch(
 }
 </style>
 
-<!--出现bug的代码~🚨
-// 初始化czm viewer
-// --为app安装插件的时机放在组件挂载的时期 而非在main立马执行
-// import app from '../main';
-// import { czmViewPlugin } from '../plugins/czmViewPlugin';
-  // const cesiumContainer = ref(null);
-  // app.use(czmViewPlugin);
-  // let el = cesiumContainer.value;
-  // if (el) {
-  //   // 将生成的DOM元素移动到Vue模板中的cesiumContainer中
-  //   const cV = document.getElementById('czm-viewer');
-  //   const cC = document.getElementById('czm-container');
-  //   if (cC && cV) {
-  //     // el.appendChild(cC);
-  //     // cC.appendChild(cV);
-  //   }
-  // } -->
+
