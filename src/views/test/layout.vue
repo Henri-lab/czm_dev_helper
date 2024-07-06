@@ -75,7 +75,8 @@
 </template>
 
 <script setup>
-import { watchEffect, useRoute, useRouter, onMounted, ref, watch } from 'vue';
+import { watchEffect, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import {
   UserOutlined,
   LaptopOutlined,
@@ -218,5 +219,3 @@ watch(
   background: #fff;
 }
 </style>
-
-

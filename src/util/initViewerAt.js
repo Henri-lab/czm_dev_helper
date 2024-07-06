@@ -8,9 +8,9 @@ import {
     ConfigManager,
     SceneManager,
     CameraManager
-} from '../cesium_dev_helper/czmHelper/Manager';
-import { CoordTransformer } from '../cesium_dev_helper/czmHelper/Compute';
-import { TencentImageryProvider } from '../cesium_dev_helper/czmHelper/Plugin/mapPlugin';
+} from '../cesium_dev_helper/_lib/Manager';
+import { CoordTransformer } from '../cesium_dev_helper/_lib/Compute';
+import { TencentImageryProvider } from '../cesium_dev_helper/_lib/Plugin/mapPlugin';
 
 
 export default async function initViewerAt(el = { id: 'viewer' }) {

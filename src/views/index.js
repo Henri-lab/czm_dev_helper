@@ -5,7 +5,7 @@ import {
     LaptopOutlined,
     NotificationOutlined,
 } from '@ant-design/icons-vue';
-import CzmMap from './map/CzmMap';
+import CzmMap from './map/CzmMap.vue';
 import { Editor } from '../cesium_dev_helper/_lib/Editor';
 
 
