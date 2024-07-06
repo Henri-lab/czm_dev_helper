@@ -1,8 +1,5 @@
 import EffectController from "./EffectController";
-import MaterialCreator from "./MaterialCreator";
-import TextureCreator from "./TextureCreator";
-import * as Cesium from "cesium";
-import ConeGlowBottomCircleMaterialProperty from "../Custom/Property/ConeGlowBottomCircleMaterialProperty";
+import TextureCreator from "../Creator/TextureCreator";
 import WallGradientsMaterialProperty from "../Custom/Property/WallGradientsMaterialProperty";
 
 // 需要相关的 vitePlugin 进行glsl加载
@@ -12,14 +9,11 @@ import wallMapping_glsl from './glsl/shader2.glsl';
 
 export {
     EffectController,
-    MaterialCreator,
     TextureCreator,
-    ConeGlowBottomCircleMaterialProperty,
     WallGradientsMaterialProperty,
     Ripple_glsl,
     circleMapping_glsl,
     wallMapping_glsl,
-    Cesium,
 }
 
 
