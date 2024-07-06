@@ -39,25 +39,39 @@ export default class MaterialCreator {
     // 添加自定义材质 可以在Cesium.Material的属性中查找
     add_CustomMaterial(options) {
         if (!options.type) return;
-        let _type = options.type || 'customMaterial' + Date.now(),
-            _shaderSource = options.shaderSource || '',
-            _image = options.image || '',
-            _uniforms = options.uniforms || {};
-        // 在Cesium.Material的属性中储存
-        Cesium.Material[_type + 'Type'] = _type;
-        Cesium.Material[_type + 'Source'] = _shaderSource
-        Cesium.Material[_type + 'Image'] = _image
+
+        // 遍历options的属性
+        for (let key in options) {
+            if (options.hasOwnProperty(key)) {
+                // 存储在 Cesium.Material的属性
+                Cesium.Material[key + '@henriFox'] = options[key];
+            }
+        }
+
         // 注册材质
+        // 保证类型的唯一性
+        const _type = options.type || 'customMaterial' + Date.now(),
+            _uniforms = options.uniforms || {},
+            _source = options.source || '',
+            _translucent = options.translucent || true
+
+        // 新版api?
         Cesium.Material._materialCache.addMaterial(_type, {
             fabric: {
                 type: _type,
                 uniforms: _uniforms,
-                image: _image,
+                source: _source,
+                translucent: function () {
+                    return _translucent;
+                }
             },
-            source: _shaderSource,
-            translucent: function () {
-                return true;
-            }
+            // fabric 对象定义了材质的基本属性和行为,包括
+            // -type: 自定义材质类型名称。
+            // -uniforms: 包含颜色、图像和时间等 uniform 变量。
+            // -components: 定义了材质的 diffuse, specular 和 normal 组件。
+            // -source: 自定义 GLSL 着色器代码，用于生成材质效果。
+            // -translucent: 使用函数动态控制材质的透明度。
+            // -minificationFilter 和 magnificationFilter: 设置纹理的缩小和放大过滤方式。
         });
     }
 

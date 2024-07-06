@@ -1,4 +1,5 @@
 import * as Cesium from "cesium";
+import CreateCMP from "./CreateCMP";
 
 /** 
  * 自定义材质属性
@@ -14,8 +15,9 @@ export default class CustomMaterialProperty {
     }
 
     // 新类型
-    create(definitionChanged, type) {
-        return new CustomMaterialProperty(definitionChanged, type);
+    create(type, options, definition) {
+        // 返回一个子类 重写了getValue
+        return new CreateCMP(type, options, definition);
     }
 
     // 核心
