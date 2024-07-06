@@ -238,7 +238,7 @@ export default class Graphics extends DrawingManager {
 
     else if (_type === 'polyline') {
       entity.polyline.positions = this.czm_callbackProperty(curPosArr()) // 核心
-      console.log('create a dynamic polyline, -positions:', entity.polyline.positions);
+      // console.log('create a dynamic polyline, -positions:', entity.polyline.positions);
     }
 
     else {

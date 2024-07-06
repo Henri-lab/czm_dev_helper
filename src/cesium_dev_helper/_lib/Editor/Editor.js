@@ -11,12 +11,12 @@ export default class Editor {
         this.$options = $options || {};
         this.currentLine = null;
         this.lines = [];//cache
+        this.index = 0;
     }
 
     //可以把配置单独传给startLine
     //也可以传给 Editor 
     startLine(options = this.$options) {
-        console.log('starLine')
         let that = this;
         let $draw = that.$draw;
         if (!that.viewer || !that.$options) return;
@@ -28,5 +28,7 @@ export default class Editor {
             cb_curPosCollection = [];
         }
         $draw.drawWithEvent('polyline', options, pluginFunction)
+        // TEST
+        console.log('start a Line' + that.index++);
     }
 }
