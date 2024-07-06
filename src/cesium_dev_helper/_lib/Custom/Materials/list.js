@@ -1,7 +1,7 @@
 import MaterialCreator from "../../Creator/MaterialCreator";
 import TextureCreator from "../../Creator/TextureCreator";
 
-import { circleMapping_glsl, wallMapping_glsl } from "../../Effect";
+import { glsl_circleMapping, glsl_wallMapping } from "../../Effect";
 
 const mC = new MaterialCreator();
 const tC = new TextureCreator();
@@ -11,7 +11,7 @@ const tC = new TextureCreator();
 function add_ConeGlowBottomCircle(color) {
     const type = 'ConeGlowBottomCircle',
         texture = tC.gradientTexture({}),
-        source = circleMapping_glsl;
+        source = glsl_circleMapping;
     mC.add_CustomMaterial(type, {
         type,
         color,
@@ -23,7 +23,7 @@ function add_ConeGlowBottomCircle(color) {
 function add_wallMaterial(color) {
     const type = "WallGradients",
         texture = "url?",
-        source = wallMapping_glsl;
+        source = glsl_wallMapping;
     mC.add_CustomMaterial(type, {
         type,
         color,
