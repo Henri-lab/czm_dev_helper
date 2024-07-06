@@ -1,4 +1,5 @@
-import { Cesium, MaterialCreator } from "./index.js";
+import * as Cesium from 'cesium';
+import { add_ConeGlowBottomCircle, add_wallMaterial } from '../Custom/Materials/list';
 
 class EffectController {
     constructor(viewer) {
@@ -119,34 +120,6 @@ class EffectController {
                 }
             });
         }, data.eachInterval)
-    }
-
-    /**
-     * Adds a cone-shaped entity with a glowing bottom circle effect to the viewer.
-     *
-     * @param {Object} options - An object containing the following properties:
-     * @param {Cesium.Cartesian3} [options.position=Cesium.Cartesian3.ZERO] - The position of the entity.
-     * @param {Cesium.Color} [options.color=Cesium.Color.AQUA] - The color of the glowing bottom circle.
-     * @param {number} [options.bottomRadius=100] - The radius of the bottom circle.
-     *
-     * @returns {Cesium.Entity} - The added entity.
-     */
-    addConeGlowBottomCircle(options) {
-        const position = Cesium.defaultValue(
-            options.position,
-            Cesium.Cartesian3.ZERO
-        );
-        const color = Cesium.defaultValue(options.color, Cesium.Color.AQUA);
-        const bottomRadius = Cesium.defaultValue(options.bottomRadius, 100);
-        return this.viewer.entities.add({
-            position,
-            ellipse: {
-                semiMinorAxis: bottomRadius * 2,
-                semiMajorAxis: bottomRadius * 2,
-                height: 0.0,
-                material: new MaterialCreator().ConeGlowBottomCircle(color)
-            },
-        });
     }
 }
 

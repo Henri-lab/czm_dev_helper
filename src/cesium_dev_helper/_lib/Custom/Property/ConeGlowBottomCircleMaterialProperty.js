@@ -3,8 +3,8 @@ import MaterialCreator from '../../Creator/MaterialCreator'
 import CustomMaterialProperty from "./CustomMaterialProperty";
 
 
-class ConeGlowBottomCircleMaterialProperty extends CustomMaterialProperty {
-    constructor(color, definition, type) {
+export default class ConeGlowBottomCircleMaterialProperty extends CustomMaterialProperty {
+    constructor(type,options, definition) {
         // 自动注册的类型
         const _type = type || 'ConeGlowBottomCircle'
         // @override
@@ -18,6 +18,9 @@ class ConeGlowBottomCircleMaterialProperty extends CustomMaterialProperty {
 
         super(_definition, _type);
         this.$register = new MaterialCreator();
+
+        // 注册
+        this._register();
     }
 
     // @override
@@ -37,6 +40,12 @@ class ConeGlowBottomCircleMaterialProperty extends CustomMaterialProperty {
     }
 
     _register() {
-        this.$register.addMaterial(this._type, { color })
+        const opt = {
+            type,
+            source,
+            image,
+            uniforms
+        }
+        this.$register.addMaterial('custom', opt);
     }
 };

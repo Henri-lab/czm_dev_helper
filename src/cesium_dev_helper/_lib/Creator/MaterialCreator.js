@@ -2,9 +2,10 @@ import * as Cesium from "cesium";
 
 
 /**
- * 注册材质并返回材质
+ * 注册材质
  */
-class MaterialCreator {
+
+export default class MaterialCreator {
     constructor() { }
 
     addMaterial(materialName, options) {
@@ -41,7 +42,7 @@ class MaterialCreator {
         let _type = options.type || 'customMaterial' + Date.now(),
             _shaderSource = options.shaderSource || '',
             _image = options.image || '',
-            _uniforms = options.uniform || {};
+            _uniforms = options.uniforms || {};
         // 在Cesium.Material的属性中储存
         Cesium.Material[_type + 'Type'] = _type;
         Cesium.Material[_type + 'Source'] = _shaderSource
@@ -51,8 +52,9 @@ class MaterialCreator {
             fabric: {
                 type: _type,
                 uniforms: _uniforms,
-                source: _shaderSource
+                image: _image,
             },
+            source: _shaderSource,
             translucent: function () {
                 return true;
             }
@@ -65,9 +67,7 @@ class MaterialCreator {
 
 
 
-    
-   
+
+
 }
 
-
-export default MaterialCreator;

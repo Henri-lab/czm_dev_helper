@@ -11,7 +11,7 @@ export function PathGraphics(options) {
                 glowPower: options.glowPower || 0.1,
                 color: options.color || Cesium.Color.YELLOW
             }),
-            width: options.width || 30
+            width: options.width || 10
         })
     }
 }

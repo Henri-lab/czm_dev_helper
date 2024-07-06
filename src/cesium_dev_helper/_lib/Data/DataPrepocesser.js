@@ -33,6 +33,7 @@ class DataPrepocesser {
 	 * @param {Object} tile - The 3D tile to be updated.
 	 * @static
 	 */
+	
 	update3dtilesMaxtrix = (tx, ty, tile) => {
 		const center = tile.boundingSphere.center
 		// Get the vertical coordinate system based on the current model as the origin

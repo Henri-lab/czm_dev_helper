@@ -5,6 +5,7 @@ import { LineEntity } from "./line";
 import { ModelEntity } from "./model";
 import { PointEntities } from "./point";
 import { PolygonEntity } from "./polygon";
+import { SampleEntity } from './advanced/sample'
 import { objHasOwnProperty, setProperties } from "../../../util/properties";
 
 import Graphics from "../Graphics";
@@ -22,6 +23,7 @@ export {
     ModelEntity,
     PointEntities,
     PolygonEntity,
+    SampleEntity, 
     objHasOwnProperty,
     setProperties,
     createGraphics,//method in drawing manager

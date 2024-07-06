@@ -26,6 +26,7 @@ import {
   ModelEntity,
   PointEntities,
   PolygonEntity,
+  SampleEntity
 } from './entities'
 
 /**
@@ -109,6 +110,7 @@ export default class Graphics extends DrawingManager {
 
   }
 
+  // 生成实体---------------------------------------------------------------------
   // 创建复合实体 
   /**
    * 创建复合实体 
@@ -133,6 +135,18 @@ export default class Graphics extends DrawingManager {
     return entity;
   }
 
+  /**
+   * Creates a static entity with the specified options.
+   *
+   * @param {string} type - The type of entity to create.
+   * @param {object} options - The options for the static entity.
+   * @param {object} extraOption - Additional options for the entity.
+   * @param {Cesium.DataSource} datasource - The data source for the entity.
+   *
+   * @throws {TypeError} If an unsupported entity type is provided.
+   *
+   * @returns {Cesium.Entity} The created static entity.
+   */
   // 创建静态实体--------------------------------------------------------
   createStaticEntity(type, { extraOption, options, datasource }) {
     const _type = type.toLowerCase();
@@ -206,12 +220,20 @@ export default class Graphics extends DrawingManager {
     return entity//dynamic entity
   }
 
-  //高级entity-------------------------------------------------
+  //创建高级entity-------------------------------------------------
+  createAdvancedEntity(type, { extraOption, options, datasource }) {
+    const _type = type.toLowerCase();
+    switch (_type) {
+      case 'sample':
+        return SampleEntity(extraOption, options, datasource, this.viewer);
+      default:
+        throw new TypeError(`Unsupported advanced entity type: ${type}`);
+    }
 
 
 
 
-
+  }
 }
 
 

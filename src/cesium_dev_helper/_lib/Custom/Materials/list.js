@@ -8,26 +8,31 @@ const tC = new TextureCreator();
 
 
 // 常用材质 - ConeGlowBottomCircle
-add_ConeGlowBottomCircle(color) {
+function add_ConeGlowBottomCircle(color) {
     const type = 'ConeGlowBottomCircle',
         texture = tC.gradientTexture({}),
-        shaderSource = circleMapping_glsl;
+        source = circleMapping_glsl;
     mC.add_CustomMaterial(type, {
         type,
         color,
         image: texture,
-        source: shaderSource,
+        source,
     })
 }
 // 常用材质 - wallGradients
-add_wallMaterial(color) {
+function add_wallMaterial(color) {
     const type = "WallGradients",
-        texture = "/src/assets/materialResources/wallgradients.png",
-        shaderSource = wallMapping_glsl;
+        texture = "url?",
+        source = wallMapping_glsl;
     mC.add_CustomMaterial(type, {
         type,
         color,
         image: texture,
-        source: shaderSource,
+        source,
     })
+}
+
+export {
+    add_ConeGlowBottomCircle,
+    add_wallMaterial,
 }
