@@ -101,7 +101,7 @@ const naviHeadItems = [
   { key: '2', label: '三维地球' },
   { key: '3', label: '二维地图' },
   { key: '4', label: '单体化' },
-  { key: '5', label: '其他' },
+  { key: '5', label: '其他1' },
   { key: '6', label: '其他2' },
 ];
 // 侧边导航栏
@@ -189,7 +189,7 @@ watch(
     switch (newValue[0]) {
       case '1':
         if (editor) {
-          console.log('testing');
+          console.log('testing test1-option');
         }
         break;
 
