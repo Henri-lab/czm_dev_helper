@@ -16,6 +16,7 @@ import { PlaneGraphics } from './plane';
 import { PointGraphics } from './point';
 import { PolygonGraphics } from "./polygon";
 import { objHasOwnProperty, setProperties } from "../../../util/properties";
+import { createGraphics } from "../entities";
 
 
 //根据类型type获得Graphics的方法名
@@ -35,6 +36,7 @@ function getMethodNameByType(type) {
     }
 }
 export {
+    createGraphics,
     BillboardGraphics,
     BoxGraphics,
     CorridorGraphics,

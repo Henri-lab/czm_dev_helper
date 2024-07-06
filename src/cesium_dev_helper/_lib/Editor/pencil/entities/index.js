@@ -12,7 +12,7 @@ import Graphics from "../Graphics";
 import { DrawingManager } from "../../../Manager";
 
 
-const createGraphics = DrawingManager.createGraphics();
+const createGraphics = DrawingManager.createGraphics;
 
 // 生成实体的坐标要采用Cartesian3
 export {
