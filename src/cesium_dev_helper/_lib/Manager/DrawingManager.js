@@ -35,12 +35,14 @@ class DrawingManager extends Manager {
     MyEntity() {
         let entity = new Cesium.Entity();
 
-        // author sign
+        // author sign ~~好像不管用？？
         Object.defineProperty(entity, 'Auther', {
             value: 'henriFox',
             writable: false,    // 不可写
             configurable: false // 不可配置
         });
+
+
 
         return entity;
     }

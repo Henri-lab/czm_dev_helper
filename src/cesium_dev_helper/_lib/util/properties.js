@@ -3,11 +3,12 @@
 * @private
 * @param {object} obj 对象
 * @param {string} field  属性字段
-* @param {string} defVal  默认返回
+* @param {string} defVal  默认返回 
 * @returns {string}
 */
 export function objHasOwnProperty(obj, field, defVal) {
-    return obj.hasOwnProperty(field) ? obj.field : defVal
+    // return obj.hasOwnProperty(field) ? obj.field : defVal   // 哪里错误？🎃
+    return Object.prototype.hasOwnProperty.call(obj, field) ? obj[field] : defVal;
 }
 
 /**

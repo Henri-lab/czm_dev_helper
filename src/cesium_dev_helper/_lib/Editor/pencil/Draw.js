@@ -39,24 +39,24 @@ export default class Draw extends DrawingManager {
     }
 
     // 绘制动态实体(限制在本图层)-位置坐标为callbackProperty
-    _startDynamicEntity = (typeOfEntity, config) => {
+    _startDynamicEntity = (typeOfEntity, config, curPosArr) => {
 
         try {
             let Entity = null;
-            const { oid, name, description/*可随意添加*/, datasource, ...rest } = config;
+            const { t_id, name, description/*可随意添加*/, datasource, ...rest } = config;
             const entityConfig = {
                 extraOption: {
-                    oid,
+                    t_id,
                     name,
                     description,
                 },
-                options: { ...rest },
+                options: rest,
                 datasource: this._drawLayer,//指定特定图层
             }
             // 静态
             Entity = this.$graphics.createStaticEntity(typeOfEntity, entityConfig);
-            // 为位置添加动态
-            Entity.positions = this._setDynamic(positions)
+            // 为位置添加动态 - 返回 当前~点击收集点~的坐标数组
+            Entity.positions = this._setDynamic(curPosArr)
             return Entity;
         } catch (e) {
             console.error('sth is wrong after mouse left click :', e)
@@ -132,6 +132,7 @@ export default class Draw extends DrawingManager {
         console.log('drawWithEvent')
         if (!this.viewer || !options) return null;
 
+        // 辅助
         function extra() { // 特殊情况的额外处理
             // 特殊处理:绘制两点直线
             if (options.straight && type === 'polyline' && pickPosCollection.length == 2) {
@@ -161,8 +162,9 @@ export default class Draw extends DrawingManager {
         $this.currentHandler = _handlers;
 
         // --创建动态实体--
+        options.positions = pickPosCollection;
         if (!options.datasource) options.datasource = this._drawLayer // 确认准备添至的图层
-        currentEntity = $this._startDynamicEntity(type, options)
+        currentEntity = $this._startDynamicEntity(type, options, pickPosCollection)
         // 特殊处理 
         extra();
 
@@ -176,6 +178,8 @@ export default class Draw extends DrawingManager {
             // 收集 点击处的地理坐标
             pickPosCollection.push(cartesian);
             this._updatePos(options);
+            console.log('pickPosCollection-length', pickPosCollection.length);
+            console.log('cur-entity-line', currentEntity.polyline);
         }
         const afterMouseMove = (movement) => { // mouse movement 
             let cartesian = $this._getCartesian3FromPX(movement.endPosition);
