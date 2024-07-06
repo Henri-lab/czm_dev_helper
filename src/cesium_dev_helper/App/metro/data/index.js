@@ -3,13 +3,10 @@ import { renderAll, removeAll, displayAllByName } from "./all";
 import { renderLines, removeAllLines, displayLineByName } from "./line";
 import { renderStation, removeAllStations, displayStationByName } from "./stations";
 import { renderStationBill, removeAllBillboards } from "./billboards";
-import _PopupLoader /*类名和实例名重复的处理*/ from "../../czmHelper/Bubble/PopupLoader";
+import _PopupLoader /*类名和实例名重复的处理*/ from "../../../_lib/Bubble/PopupLoader";
 import { findStationByName } from "./stations";
-import {
-    MaterialCreator,
-    GeometryCreater,
-    EffectController
-} from '../../czmHelper/Effect'
+import { EffectController } from '../../../_lib/Effect'
+import { MaterialCreator } from '../../../_lib/Creator'
 import { changeDisplayBillBoard } from './billboards';
 
 

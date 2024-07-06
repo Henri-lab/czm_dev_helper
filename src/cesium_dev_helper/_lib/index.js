@@ -11,12 +11,6 @@ import {
 } from './Compute'
 
 import {
-    ConeGlowBottomCircleMaterialProperty,
-    CustomMaterialProperty,
-    WallGradientsMaterialProperty,
-} from './Custom/Property'
-
-import {
     LayerManager,
     DrawingManager,
     MeasurementManager,
@@ -31,10 +25,6 @@ import {
 
 import {
     EffectController,
-    MaterialCreator,
-    TextureCreator,
-    ConeGlowBottomCircleMaterialProperty,
-    WallGradientsMaterialProperty,
 } from './Effect'
 
 import {
@@ -50,6 +40,18 @@ import {
     defaultHierachyCache,
     hierarchyNavigate,
 } from './Data'
+
+import {
+    MaterialCreator,
+    TextureCreator,
+    PopupCreator
+} from './Creator'
+
+
+import {
+    CustomMaterialProperty,
+    CreateCMP,
+} from './Custom'
 
 
 // module
@@ -67,8 +69,8 @@ const ComputeModule = {
 const DataModule = {
     DataLoader,
     DataPrepocesser,
-    gifLoader,
     defaultHierachyCache,
+    gifLoader,
     hierarchyNavigate,
 }
 const ManagerModule = {
@@ -85,10 +87,6 @@ const ManagerModule = {
 }
 const EffectModule = {
     EffectController,
-    MaterialCreator,
-    TextureCreator,
-    ConeGlowBottomCircleMaterialProperty,
-    WallGradientsMaterialProperty,
 }
 
 const EditorModule = {
@@ -97,10 +95,23 @@ const EditorModule = {
     Editor,
 }
 
+const CustomModule = {
+    CustomMaterialProperty,
+    CreateCMP,
+}
+
+const CreatorModule = {
+    MaterialCreator,
+    TextureCreator,
+    PopupCreator,
+}
+
 export default {
     ComputeModule,
     DataModule,
     ManagerModule,
     EffectModule,
     EditorModule,
+    CustomModule,
+    CreatorModule,
 }
