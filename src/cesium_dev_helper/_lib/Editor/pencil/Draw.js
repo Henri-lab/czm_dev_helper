@@ -39,6 +39,7 @@ export default class Draw extends DrawingManager {
     }
 
     // 绘制动态实体(限制在本图层)-位置坐标为callbackProperty
+    // 自定义事件raise 则更新 curPosArr
     _startDynamicEntity = (typeOfEntity, config, curPosArr) => {
 
         try {
@@ -52,11 +53,21 @@ export default class Draw extends DrawingManager {
                 },
                 options: rest,
                 datasource: this._drawLayer,//指定特定图层
+                getNewPosition: () => curPosArr,
+                pickPosCollection: curPosArr,
             }
-            // 静态
-            Entity = this.$graphics.createStaticEntity(typeOfEntity, entityConfig);
-            // 为位置添加动态 - 返回 当前~点击收集点~的坐标数组
-            Entity.positions = this._setDynamic(curPosArr)
+            // 这种方法不成立 因为czm_Entity 的polyline被记录为_polyline;
+            // 尝试在其添加polyline属性 结果是失败的
+            // 而调用_polyline这种czm的私有属性是不合适的，有可能产生风险
+            // ——————————————————————————————————————————————————————————-------------
+            // // 静态
+            // Entity = this.$graphics.createStaticEntity(typeOfEntity, entityConfig);
+            // // 为位置添加动态 - 返回 当前~点击收集点~的坐标数组
+            // Entity.positions = this._setDynamic(curPosArr)
+            // ——————————————————————————————————————————————————————————-------------
+
+            // 换一种方法：直接用czm提供的api 创建 动态属性 的实体
+            Entity = this.$graphics.createDynamicEntity(typeOfEntity,)
             return Entity;
         } catch (e) {
             console.error('sth is wrong after mouse left click :', e)

@@ -16,8 +16,8 @@ export function LineGraphics(options = {}) {
 
     return new Cesium.PolylineGraphics({
         ...options,
-        show: true,
-        positions: options.positions,
+        show: options.show || true,
+        positions: options.positions || [],
         material: options.material || Cesium.Color.YELLOW,
         width: options.width || 1,
         clampToGround: objHasOwnProperty(options, 'clampToGround', false)
