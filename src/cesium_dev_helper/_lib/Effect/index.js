@@ -1,19 +1,19 @@
 import EffectController from "./EffectController";
 import TextureCreator from "../Creator/TextureCreator";
-import WallGradientsMaterialProperty from "../Custom/Property/WallGradientsMaterialProperty";
 
 // 需要相关的 vitePlugin 进行glsl加载
-import Ripple_glsl from './glsl/ripple.glsl';
-import circleMapping_glsl from './glsl/shader0.glsl';
-import wallMapping_glsl from './glsl/shader2.glsl';
+import glsl_Ripple from './glsl/ripple.glsl';
+import glsl_circleMapping from './glsl/shader0.glsl';
+import glsl_wallMapping from './glsl/shader2.glsl';
 
 export {
     EffectController,
     TextureCreator,
-    WallGradientsMaterialProperty,
-    Ripple_glsl,
-    circleMapping_glsl,
-    wallMapping_glsl,
+
+    // string - shader source
+    glsl_Ripple,
+    glsl_circleMapping,
+    glsl_wallMapping,
 }
 
 
