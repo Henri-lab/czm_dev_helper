@@ -16,7 +16,6 @@ export function LineEntity(extraOption = {}, options = {}, datasource = {}) {
             ...entity,
         };
 
-        console.log('datasorce', datasource)
         return datasource.entities.add(finalEntity)
         //这个finalEntity 必须是一个普通对象
     }

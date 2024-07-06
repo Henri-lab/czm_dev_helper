@@ -129,7 +129,7 @@ export default class Draw extends DrawingManager {
      * @returns {Cesium.Entity|null} - The created entity or null if viewer or options are not provided.
      */
     drawWithEvent(Type, options, pluginFunction) {
-        console.log('drawWithEvent')
+        console.log('drawWithEvent-type:', Type)
         if (!this.viewer || !options) return null;
 
         // 辅助
@@ -165,6 +165,7 @@ export default class Draw extends DrawingManager {
         options.positions = pickPosCollection;
         if (!options.datasource) options.datasource = this._drawLayer // 确认准备添至的图层
         currentEntity = $this._startDynamicEntity(type, options, pickPosCollection)
+
         // 特殊处理 
         extra();
 
@@ -178,8 +179,13 @@ export default class Draw extends DrawingManager {
             // 收集 点击处的地理坐标
             pickPosCollection.push(cartesian);
             this._updatePos(options);
+
+
+            // test
+            console.log('cur-entity', currentEntity);
             console.log('pickPosCollection-length', pickPosCollection.length);
             console.log('cur-entity-line', currentEntity.polyline);
+
         }
         const afterMouseMove = (movement) => { // mouse movement 
             let cartesian = $this._getCartesian3FromPX(movement.endPosition);
