@@ -75,20 +75,14 @@
 </template>
 
 <script setup>
-import { watchEffect } from 'vue';
+import { watchEffect, useRoute, useRouter, onMounted, ref, watch } from 'vue';
 import {
   UserOutlined,
   LaptopOutlined,
   NotificationOutlined,
   CzmMap,
   useCommonStore,
-  useRoute,
-  useRouter,
-  onMounted,
-  ref,
-  watch,
-  lineOpt0,
-} from './index';
+} from '../index';
 
 // pinia
 const commonStore = useCommonStore();
@@ -117,10 +111,10 @@ const subMenus = [
     title: '绘制图形',
     icon: UserOutlined,
     items: [
-      { key: '1', label: '线' },
-      { key: '2', label: 'option2' },
-      { key: '3', label: 'option3' },
-      { key: '4', label: 'option4' },
+      { key: '1', label: 'test1' },
+      { key: '2', label: 'test2' },
+      { key: '3', label: 'test3' },
+      { key: '4', label: 'test4' },
     ],
   },
   {
@@ -128,10 +122,10 @@ const subMenus = [
     title: '高级材质',
     icon: LaptopOutlined,
     items: [
-      { key: '5', label: 'option5' },
-      { key: '6', label: 'option6' },
-      { key: '7', label: 'option7' },
-      { key: '8', label: 'option8' },
+      { key: '5', label: 'test5' },
+      { key: '6', label: 'test6' },
+      { key: '7', label: 'test7' },
+      { key: '8', label: 'test8' },
     ],
   },
   {
@@ -139,10 +133,10 @@ const subMenus = [
     title: 'Three集成',
     icon: NotificationOutlined,
     items: [
-      { key: '9', label: 'option9' },
-      { key: '10', label: 'option10' },
-      { key: '11', label: 'option11' },
-      { key: '12', label: 'option12' },
+      { key: '9', label: 'test9' },
+      { key: '10', label: 'test10' },
+      { key: '11', label: 'test11' },
+      { key: '12', label: 'test12' },
     ],
   },
 ];

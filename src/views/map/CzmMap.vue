@@ -5,7 +5,8 @@
 </template>
 
 <script setup>
-import { useCommonStore, initViewerAt, onMounted, Editor } from '../index';
+import { onMounted } from 'vue';
+import { useCommonStore, initViewerAt, Editor } from '../index';
 
 // 画笔(挂载map时创建)
 let $editor;

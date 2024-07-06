@@ -1,20 +1,20 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import Me from '@/views/me.vue';
-import LayOut from '@/views/layout.vue';
+import MeTest from '@/views/test/me.vue';
+import LayOutTest from '@/views/test/layout.vue';
 
 
 const routes = [
   {
     // 打算放个人简历
-    path: "/work",
-    name: "work",
-    component: LayOut,
+    path: "/",
+    name: "layout-test",
+    component: LayOutTest,
   },
   {
     // 打算放个人简历
     path: "/me",
-    name: "me",
-    component: Me,
+    name: "me-test",
+    component: MeTest,
   }
 ];
 
