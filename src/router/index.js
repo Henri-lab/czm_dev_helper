@@ -6,12 +6,6 @@ import LayOutTest from '@/views/test/layout.vue';
 const routes = [
   {
     // 打算放个人简历
-    path: "/",
-    name: "layout-test",
-    component: LayOutTest,
-  },
-  {
-    // 打算放个人简历
     path: "/me",
     name: "me-test",
     component: MeTest,

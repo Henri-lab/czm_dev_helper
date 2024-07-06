@@ -29,7 +29,7 @@ class DrawingManager extends Manager {
 
 
     // private方法--------------------------------------------------------
-    // Cartesian3 WGS84坐标  可以输入数组
+    // Cartesian3 WGS84坐标  可以输入数
     _transformCartesianToWGS84(cartesianPosition) {
         return CoordTransformer.transformCartesian3ToCartographic(cartesianPosition);
     }

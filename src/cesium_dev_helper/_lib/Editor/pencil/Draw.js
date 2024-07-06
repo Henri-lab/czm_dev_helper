@@ -45,7 +45,7 @@ export default class Draw extends DrawingManager {
             let Entity = null;
             const { oid, name, description/*可随意添加*/, datasource, ...rest } = config;
             const entityConfig = {
-                extraOptionL: {
+                extraOption: {
                     oid,
                     name,
                     description,
@@ -133,13 +133,13 @@ export default class Draw extends DrawingManager {
 
         function extra() { // 特殊情况的额外处理
             // 特殊处理:绘制两点直线
-            if (options.straight && type === 'polyline' && positions.length == 2) {
+            if (options.straight && type === 'polyline' && pickPosCollection.length == 2) {
                 // 销毁事件处理程序 结束绘制
                 _handlers.destroy();
                 _handlers = null;
                 // 绘制后的回调 
                 if (typeof options.after === "function") {
-                    options.after(currentEntity, $this._transformCartesianToWGS84(positions),);
+                    options.after(currentEntity, $this._transformCartesianToWGS84(pickPosCollection),);
                 }
             }
         }
@@ -149,7 +149,7 @@ export default class Draw extends DrawingManager {
         let eM = new EventManager($this.viewer),
             $this = this,
             // 收集click处的坐标
-            positions = [],
+            pickPosCollection = [],
             // 初始化实体
             _entity = $this.createGraphics(),
             currentEntity = this._drawLayer.entities.add(_entity),//添加到此datasource,等待更新后reRender
@@ -173,25 +173,25 @@ export default class Draw extends DrawingManager {
             // 检查格式
             if (!cartesian || !isValidCartesian3(cartesian)) return;
             // 收集 点击处的地理坐标
-            positions.push(cartesian);
+            pickPosCollection.push(cartesian);
             this._updatePos(options);
         }
         const afterMouseMove = (movement) => { // mouse movement 
             let cartesian = $this._getCartesian3FromPX(movement.endPosition);
             // 持续更新坐标选项 动态实体会每帧读取
             if (!cartesian || !isValidCartesian3(cartesian)) return;
-            $this._updatePosByType(type, positions, cartesian, options)
+            $this._updatePosByType(type, pickPosCollection, cartesian, options)
         }
         const afterRightClick = (movement) => { // right click 
 
             // 更新图形 truetrue
             const isClose = true;
-            $this._updatePosByType(type, positions, cartesian, options, isClose);
+            $this._updatePosByType(type, pickPosCollection, cartesian, options, isClose);
 
             //开启测量功能
             if (options.measure) {
                 let endPos/*右键点击处地理坐标*/ = $this._getCartesian3FromPX(movement.position);
-                const res /*测量结果*/ = $this.$turfer.measureSimple(type, positions);
+                const res /*测量结果*/ = $this.$turfer.measureSimple(type, pickPosCollection);
                 $this._measureResultHandle({
                     /*...*/
                     entity: currentEntity,
@@ -208,12 +208,12 @@ export default class Draw extends DrawingManager {
 
             // callback with Entity and Positions
             if (typeof options.after === "function") {
-                options.after(currentEntity, $this._transformCartesianToWGS84(positions));
+                options.after(currentEntity, $this._transformCartesianToWGS84(pickPosCollection));
             }
 
             // 执行额外的程序
             const _currentEntity = currentEntity;//当前绘制的实体
-            const _currentPosArr = positions
+            const _currentPosArr = pickPosCollection
             if (typeof pluginFunction === "function") {
                 // 交给pluginFunction处理数据
                 pluginFunction(_currentEntity, _currentPosArr);

@@ -153,7 +153,7 @@ export default class Graphics extends DrawingManager {
     switch (_type) {
       case 'point':
         return PointEntities(extraOption, options, datasource);
-      case 'line':
+      case 'polyline':
         return LineEntity(extraOption, options, datasource);
       case 'polygon':
         return PolygonEntity(extraOption, options, datasource);

@@ -1,6 +1,5 @@
 <template>
   <test />
-
   <!-- <router-view></router-view> -->
   <!-- <v-scale-screen width="1920" height="1080" delay="200">
     <keep-alive>

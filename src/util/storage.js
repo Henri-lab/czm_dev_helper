@@ -66,7 +66,11 @@ const getLocalStorageItemsByPrefix = (prefix, resultArr = []) => {
     return resultArr; // 返回结果数组  
 };
 
-export { setLocalStorageItems, getLocalStorageItemsByPrefix ,removeLocalStorageItemsByPrefix}
+export {
+    setLocalStorageItems,
+    getLocalStorageItemsByPrefix,
+    removeLocalStorageItemsByPrefix
+}
 
 
 

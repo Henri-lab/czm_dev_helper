@@ -85,6 +85,7 @@ import {
   useCommonStore,
 } from '../index';
 
+import { lineConfig } from '../../cesium_dev_helper/_lib/Editor';
 // pinia
 const commonStore = useCommonStore();
 // route
@@ -191,6 +192,7 @@ watch(
       case '1':
         if (editor) {
           console.log('testing test1-option');
+          editor.startLine(lineConfig);
         }
         break;
 
