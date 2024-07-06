@@ -1,9 +1,10 @@
 // 提供最基本的绘画功能
 import { CoordTransformer } from "../Compute";
 import Manager from "./Manager";
+import * as Cesium from "cesium";
 
 
-let Cesium = new Manager().Cesium;
+// let Cesium = new Manager().Cesium;
 class DrawingManager extends Manager {
     constructor(viewer) {
         if (viewer)

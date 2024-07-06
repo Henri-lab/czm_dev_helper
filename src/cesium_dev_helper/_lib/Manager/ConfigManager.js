@@ -1,7 +1,8 @@
 import { isValidProvider, isValidTerrianProviderType, isValidImageryProviderType, isValidViewerProperty } from "../util/isValid";
 import Manager from "./Manager";
+import * as Cesium from "cesium";
 
-let Cesium = new Manager().Cesium;
+// let Cesium = new Manager().Cesium;
 // 必备 
 window.CESIUM_BASE_URL = 'node_modules/cesium/Build/CesiumUnminified';
 

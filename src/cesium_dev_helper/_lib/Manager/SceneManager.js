@@ -1,9 +1,10 @@
 
 import Manager from "./Manager";
+import * as Cesium from "cesium";
 
 import { defaultStyle, defaultShader } from "../Effect/tileStyle/default";
 import { DataLoader } from "../Data";
-let Cesium = new Manager().Cesium;
+// let Cesium = new Manager().Cesium;
 
 export default class SceneManager extends Manager {
   constructor(viewer) {

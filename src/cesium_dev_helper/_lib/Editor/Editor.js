@@ -26,6 +26,7 @@ export default class Editor {
             // 重置 curPosCollection 数组，为下一条线做准备
             cb_curPosCollection = [];
         }
+        console.log('starLine')
         $draw.drawWithEvent('polyline', options, pluginFunction)
     }
 }

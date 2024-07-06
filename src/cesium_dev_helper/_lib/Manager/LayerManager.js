@@ -1,6 +1,7 @@
 import Manager from "./Manager";
+import * as Cesium from "cesium";
 
-let Cesium = new Manager().Cesium;
+// let Cesium = new Manager().Cesium;
 //管理imageryLayers,datasource
 class LayerManager extends Manager {
     constructor(viewer) {

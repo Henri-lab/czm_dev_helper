@@ -129,6 +129,7 @@ export default class Draw extends DrawingManager {
      * @returns {Cesium.Entity|null} - The created entity or null if viewer or options are not provided.
      */
     drawWithEvent(Type, options, pluginFunction) {
+        console.log('drawWithEvent')
         if (!this.viewer || !options) return null;
 
         function extra() { // 特殊情况的额外处理
@@ -224,6 +225,7 @@ export default class Draw extends DrawingManager {
         eM.onMouseMove(afterMouseMove);
         eM.onMouseRightClick(afterRightClick);
 
+        
     }
 
 

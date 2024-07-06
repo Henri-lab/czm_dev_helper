@@ -1,7 +1,7 @@
 import { Cartesian3, HeadingPitchRoll, Math as CesiumMath, Matrix4, JulianDate } from 'cesium';
 import Manager from "./Manager";
-
-let Cesium = new Manager().Cesium;
+import * as Cesium from "cesium";
+// let Cesium = new Manager().Cesium;
 
 
 export default class CameraManager extends Manager {

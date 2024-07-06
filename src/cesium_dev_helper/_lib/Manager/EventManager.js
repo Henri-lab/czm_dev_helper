@@ -1,6 +1,7 @@
 import Manager from "./Manager";
 
-let Cesium = new Manager().Cesium;
+import * as Cesium from "cesium";
+// let Cesium = new Manager().Cesium;
 
 class EventManager extends Manager {
     constructor(viewer) {
