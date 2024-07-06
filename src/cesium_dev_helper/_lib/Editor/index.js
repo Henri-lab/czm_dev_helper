@@ -8,5 +8,4 @@ export {
     Graphics,
     Editor,
     lineConfig
-    lineConfig
 };
