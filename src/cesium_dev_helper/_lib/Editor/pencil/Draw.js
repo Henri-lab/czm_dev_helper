@@ -39,8 +39,8 @@ export default class Draw extends DrawingManager {
     }
 
     // 绘制动态实体(限制在本图层)-位置坐标为callbackProperty
-    // 自定义事件raise 则更新 curPosArr
-    _startDynamicEntity = (typeOfEntity, config, curPosArr) => {
+    _startDynamicEntity = (typeOfEntity, config, getNewPosition) => {
+        if (typeof getNewPosition !== 'function') throw new Error('cannot get new position')
 
         try {
             let Entity = null;
@@ -52,9 +52,8 @@ export default class Draw extends DrawingManager {
                     description,
                 },
                 options: rest,
+                getNewPosition, // 每一帧 执行 getNewPosition
                 datasource: this._drawLayer,//指定特定图层
-                getNewPosition: () => curPosArr,
-                pickPosCollection: curPosArr,
             }
             // 这种方法不成立 因为czm_Entity 的polyline被记录为_polyline;
             // 尝试在其添加polyline属性 结果是失败的
@@ -67,7 +66,7 @@ export default class Draw extends DrawingManager {
             // ——————————————————————————————————————————————————————————-------------
 
             // 换一种方法：直接用czm提供的api 创建 动态属性 的实体
-            Entity = this.$graphics.createDynamicEntity(typeOfEntity,)
+            Entity = this.$graphics.createDynamicEntity(typeOfEntity, entityConfig)
             return Entity;
         } catch (e) {
             console.error('sth is wrong after mouse left click :', e)
@@ -175,7 +174,14 @@ export default class Draw extends DrawingManager {
         // --创建动态实体--
         options.positions = pickPosCollection;
         if (!options.datasource) options.datasource = this._drawLayer // 确认准备添至的图层
-        currentEntity = $this._startDynamicEntity(type, options, pickPosCollection)
+        
+        
+        const getNewPosition = () => {
+            console.log('getNewPosition')
+            // return pickPosCollection[pickPosCollection.length - 1];最后位置
+            return pickPosCollection//整体坐标
+        }
+        currentEntity = $this._startDynamicEntity(type, options, getNewPosition)
 
         // 特殊处理 
         extra();

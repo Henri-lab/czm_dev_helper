@@ -183,13 +183,14 @@ export default class Graphics extends DrawingManager {
    *
    * @returns {Object} The created dynamic entity.
    */
-  createDynamicEntity(type, { extraOption, options, getNewPosition, pickPosCollection, datasource }) {
+  // 每一帧 执行 return curPosArr <-- _newPositions <-- getNewPosition()
+  createDynamicEntity(type, { extraOption, options, getNewPosition, datasource }) {
     if (typeof getNewPosition !== 'function') throw new Error('cannot get new position')
 
     let _newPositions = getNewPosition();
 
     /** 
-     * @pickPosCollection {Cartesian3}
+     * @pickPosCollection  type is Cartesian3[ ] 
     */
     let curPosArr;
     if (isValidCartographic(_newPositions)) {
@@ -218,7 +219,7 @@ export default class Graphics extends DrawingManager {
         if (posArr.length < 2) throw new TypeError('Invalid positions when creating rectangle');
         return Cesium.Rectangle.fromCartesianArray(posArr);//西南东北 w s e n
       }
-      entity.rectangle.coordinates = this.czm_callbackProperty(Rectangle(pickPosCollection))//核心
+      entity.rectangle.coordinates = this.czm_callbackProperty(Rectangle(curPosArr))//核心
     }
 
     else if (_type === 'polyline') {
