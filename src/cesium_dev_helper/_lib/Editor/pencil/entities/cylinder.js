@@ -5,7 +5,7 @@ import { CylinderGraphics } from "../graphics/index";
 
 export function CylinderEntity(extraOption = {}, options = {}, datasource = {}) {
 
-    let entity = createGraphics();
+    let entity = {}
 
     // 设置属性的默认值和传入的值
     const properties = [

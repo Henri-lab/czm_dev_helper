@@ -1,10 +1,10 @@
 import {
-    gifLoader,
-    Cesium,
-    CoordTransformer,
-    objHasOwnProperty,
-    setProperties,
-    createGraphics,
+  gifLoader,
+  Cesium,
+  CoordTransformer,
+  objHasOwnProperty,
+  setProperties,
+  createGraphics,
 } from './index';
 
 
@@ -28,7 +28,7 @@ import {
 
 export function RippleCircleEntity(extraOption, options, datasource) {
   if (options && options.center) {
-    let entity = createGraphics()
+    let entity = {}
 
     // Default options
     const defaultOptions = {

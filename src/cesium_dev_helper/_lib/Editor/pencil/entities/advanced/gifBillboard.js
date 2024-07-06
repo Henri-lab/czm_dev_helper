@@ -24,7 +24,7 @@ export function GifBillboardEntity(extraOption, options, datasource) {
             url = options.url,
             slow = 6
         const imageProperty = gifLoader(url, gif, slow, '')
-        let entity = createGraphics()
+        let entity = {}
         entity.position = options.position
         entity.billboard = {
             verticalOrigin: Cesium.VerticalOrigin.BASELINE,

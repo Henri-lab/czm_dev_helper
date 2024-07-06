@@ -3,7 +3,7 @@ import { objHasOwnProperty, setProperties, createGraphics } from "./index";
 import { ModelGraphics } from "../graphics/index";
 export function ModelEntity(extraOption = {}, options = {}, datasource = {}) {
     if (options && options.position) {
-        let entity = createGraphics()
+        let entity = {}
 
         entity.position = options.position
         entity.model = ModelGraphics(options)

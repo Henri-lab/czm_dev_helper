@@ -3,7 +3,7 @@ import { objHasOwnProperty, setProperties, createGraphics } from "./index";
 import { CorridorGraphics } from "../graphics/index";
 export function CorridorEntity(extraOption = {}, options = {}, datasource = {}) {
   if (options && options.positions) {
-    let entity = createGraphics();
+    let entity = {}
 
     const properties = [
       { key: 'height', defaultValue: 10 },
@@ -22,7 +22,7 @@ export function CorridorEntity(extraOption = {}, options = {}, datasource = {}) 
     ];
     setProperties(options, properties);
     entity.corridor = CorridorGraphics(options);
-    
+
     const finalEntity = {
       ...extraOption,
       ...entity,

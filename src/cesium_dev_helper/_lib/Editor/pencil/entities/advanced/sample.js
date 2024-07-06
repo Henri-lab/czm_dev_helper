@@ -22,7 +22,7 @@ export function SampleEntity(extraOption, options, datasource, viewer) {
     }
 
     // 空实体
-    let entity = createGraphics();
+    let entity = {}
     // 绑定必备属性
     entity.position = property
     // 自动计算基于速度的方向

@@ -10,7 +10,7 @@ import {
 
 export function RotatedPlaneEntity(extraOption, options, datasource) {
     if (options && options.center && options.positions) {
-        let entity = createGraphics(),
+        let entity = {},
             index = 0,
             positions = options.positions,
             _position = positions[0],

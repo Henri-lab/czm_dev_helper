@@ -8,7 +8,7 @@ export function PointEntities(extraOption = {}, options = {}, datasource = {}) {
         let points = []
         for (let i in options.positions) {
             let posItem = options.positions[i]
-            let entity = createGraphics()
+            let entity = {}
             if (options.point) entity.point = PointGraphics(options)
             if (options.billboard)
                 entity.billboard = BillboardGraphics(options.billboard)

@@ -22,7 +22,7 @@ import {
  */
 export function BlinkCircleEntity(extraOption, options, datasource) {
     if (options && options.position) {
-        let entity = createGraphics(),
+        let entity = {},
             alp = options.alp || 1,
             flog = objHasOwnProperty(options, 'flog', true)
         entity.position = options.position

@@ -15,7 +15,7 @@ export function ShadeWallEntity(extraOption, options, datasource) {
             color = options.color || Cesium.Color.RED,
             speed = options.speed || 0.003
 
-        let wallEntity = createGraphics()
+        let wallEntity = {}
         wallEntity.wall = {
             positions: options.positions,
             material: new Cesium.ImageMaterialProperty({

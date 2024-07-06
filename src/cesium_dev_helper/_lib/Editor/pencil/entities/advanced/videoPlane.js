@@ -9,7 +9,7 @@ import {
 
 export function VideoPlaneEntity(extraOption, options, datasource) {
     if (options && options.position) {
-        let entity = createGraphics()
+        let entity = {}
         entity.position = options.position
         entity.plane = {
             plane: new Cesium.Plane(
