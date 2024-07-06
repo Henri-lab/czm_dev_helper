@@ -50,7 +50,7 @@ export default class Draw extends DrawingManager {
                     name,
                     description,
                 },
-                options: rest,
+                options: { ...rest },
                 datasource: this._drawLayer,//指定特定图层
             }
             // 静态
@@ -147,12 +147,12 @@ export default class Draw extends DrawingManager {
 
         // --数据准备--
         const type = Type.toLowerCase()
+        let $this = this
         let eM = new EventManager($this.viewer),
-            $this = this,
             // 收集click处的坐标
             pickPosCollection = [],
             // 初始化实体
-            _entity = $this.createGraphics(),
+            _entity = $this.MyEntity(),
             currentEntity = this._drawLayer.entities.add(_entity),//添加到此datasource,等待更新后reRender
             // 获取 ~新~ 事件handler程序 ,防止事件绑定间的冲突
             _handlers = eM.handler
@@ -225,7 +225,7 @@ export default class Draw extends DrawingManager {
         eM.onMouseMove(afterMouseMove);
         eM.onMouseRightClick(afterRightClick);
 
-        
+
     }
 
 

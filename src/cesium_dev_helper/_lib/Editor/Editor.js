@@ -16,17 +16,17 @@ export default class Editor {
     //可以把配置单独传给startLine
     //也可以传给 Editor 
     startLine(options = this.$options) {
+        console.log('starLine')
         let that = this;
-        let $draw = this.$draw;
-        if (!this.viewer || !this.options) return;
+        let $draw = that.$draw;
+        if (!that.viewer || !that.$options) return;
         const pluginFunction = (cb_currentLine, cb_curPosCollection) => {
-            this.currentLine = cb_currentLine
+            that.currentLine = cb_currentLine
             // 将当前绘制完成的线添加到 lines 数组中
             that.lines.push(cb_currentLine);
             // 重置 curPosCollection 数组，为下一条线做准备
             cb_curPosCollection = [];
         }
-        console.log('starLine')
         $draw.drawWithEvent('polyline', options, pluginFunction)
     }
 }

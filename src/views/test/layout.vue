@@ -192,7 +192,6 @@ watch(
       case '1':
         if (editor) {
           console.log('testing test1-option');
-          console.log('editor', editor)
           editor.startLine(lineConfig);
         }
         break;
