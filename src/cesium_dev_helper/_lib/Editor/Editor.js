@@ -5,7 +5,7 @@ import Draw from "./pencil/Draw";
 
 
 export default class Editor {
-    constructor(viewer) {
+    constructor(viewer,options) {
         this.viewer = viewer;
         this.$draw = new Draw(viewer);
         this.options = options || {};

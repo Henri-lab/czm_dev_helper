@@ -15,7 +15,7 @@ const commonStore = useCommonStore();
 onMounted(() => {
   const el = { id: 'czm-container' };
   initViewerAt(el).then(async ($viewer) => {
-    // ~<layout/> 已經開始挂載
+    // ~test-<layout/> 已經開始挂載🩸
 
     //  全局共享viewer
     commonStore.setViewer($viewer);

@@ -14,7 +14,7 @@ export default class Draw extends DrawingManager {
         super(viewer);
         this.dfSt = StaticMap || undefined;//图片资源path
         this._drawLayer = new LayerManager(viewer).getOrCreateDatasourceByName('drawLayer@henriFox');//保证图层的唯一性
-        this.$graphics = new Graphics(viewer, datasource, this._drawLayer);
+        this.$graphics = new Graphics(viewer, this._drawLayer);
         this.$coords = new CoordTransformer();
         this.$turfer = new TurfUser(viewer);
         this.viewer && this.viewer.dataSources.add(this._drawLayer);
