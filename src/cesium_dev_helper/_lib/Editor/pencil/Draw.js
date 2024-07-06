@@ -16,7 +16,6 @@ export default class Draw extends DrawingManager {
         this.$graphics = new Graphics(viewer, this._drawLayer);
         this.$coords = new CoordTransformer();
         this.$turfer = new TurfUser(viewer);
-        this.viewer && this.viewer.dataSources.add(this._drawLayer);
         this.defaultImageUrl = '';
         this.currentHandler = null;//方便在removeEventHandler剔除
 
@@ -31,7 +30,7 @@ export default class Draw extends DrawingManager {
 
     // 添加图源
     _loadLayer() {
-        this.$layerM = new LayerManager(viewer)
+        this.$layerM = new LayerManager(this.viewer)
         this._drawLayer = this.$layerM.getOrCreateDatasourceByName('drawLayer@henriFox');//保证图层的唯一性
         this.$layerM.addDatasourceByName('drawLayer@henriFox');
     }
@@ -188,6 +187,7 @@ export default class Draw extends DrawingManager {
         // 准备动态实体的数据
         options.positions = pickPosCollection;
         if (!options.datasource) options.datasource = this._drawLayer // 默认添至的图层
+
         const getNewPosition = () => {
             // return pickPosCollection[pickPosCollection.length - 1];最后位置
             return pickPosCollection//整体坐标
@@ -210,7 +210,6 @@ export default class Draw extends DrawingManager {
             // 收集 点击处的地理坐标
             pickPosCollection.push(cartesian);
             this._updatePos(options);
-
 
             // test
             // console.log('cur-entity', currentEntity);
