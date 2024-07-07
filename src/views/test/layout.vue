@@ -62,7 +62,7 @@
           v-if="isShow3DMap"
         >
           <template #default>
-            <CzmMap />
+            <czm-map></czm-map>
           </template>
         </a-layout-content>
       </a-layout>

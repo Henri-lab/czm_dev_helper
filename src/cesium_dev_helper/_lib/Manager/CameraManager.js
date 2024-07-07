@@ -41,7 +41,7 @@ export default class CameraManager extends Manager {
             });
         }
     }
-    
+
     // 缩放
     zoomIn() {
         this.camera.zoomIn();
@@ -87,9 +87,9 @@ export default class CameraManager extends Manager {
     }
 
     // 设置视角
-    setView(position, heading = 0, pitch = -30, roll = 0) {
+    setView({ destination, heading = 0, pitch = -30, roll = 0 }) {
         this.camera.setView({
-            destination: Cartesian3.fromDegrees(position.longitude, position.latitude, position.height),
+            destination: Cartesian3.fromDegrees(destination.longitude, destination.latitude, destination.height),
             orientation: {
                 heading: CesiumMath.toRadians(heading),
                 pitch: CesiumMath.toRadians(pitch),
@@ -139,7 +139,34 @@ export default class CameraManager extends Manager {
         this.scene.preRender.removeEventListener(this._updateFirstPersonView, this);
     }
 
+    // 地球旋转
+    // 可以转特定角度,默认为自动循环旋转
+    rotateEarth(angle) {
+        function _rotate() {
+            if (angle)
+                this.scene.globe.rotation = CesiumMath.toRadians(angle);
+            else {
+                // 设置旋转参数
+                const initialPosition = this.viewer.camera.position.clone();
+                const center = new Cesium.Cartesian3(0, 0, 0); // 地球中心点
+                const axis = new Cesium.Cartesian3(0, 0, 1); // 旋转轴，Z 轴
 
+                let angle = 0;
+
+                // 更新角度
+                angle += Cesium.Math.toRadians(0.1); // 每帧旋转0.1度
+
+                // 计算旋转后的相机位置
+                const rotationMatrix = Cesium.Matrix3.fromRotationZ(angle);
+                const rotatedPosition = Cesium.Matrix3.multiplyByVector(rotationMatrix, initialPosition, new Cesium.Cartesian3());
+
+                // 设置相机的新位置
+                this.viewer.camera.lookAt(center, rotatedPosition);
+            }
+            // 请求下一帧
+            requestAnimationFrame(_rotate);
+        }
+    }
 }
 
 

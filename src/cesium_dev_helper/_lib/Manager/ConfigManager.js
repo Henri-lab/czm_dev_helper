@@ -91,6 +91,8 @@ export default class ConfigManager extends Manager {
             const option = this.pCMap.tMap[type];
             tConfig.terrainProvider = this.createProvider({ type, option })
         }
+
+        // 核心
         let viewer = new Cesium.Viewer(mapID, { ...vConfig, ...tConfig });
 
 

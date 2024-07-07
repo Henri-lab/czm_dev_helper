@@ -12,9 +12,20 @@ import {
 import { CoordTransformer } from '../cesium_dev_helper/_lib/Compute';
 import { TencentImageryProvider } from '../cesium_dev_helper/_lib/Plugin/mapPlugin';
 
+export default async function initViewerAt(el = { id: 'viewer' }, type) {
+    const _type = type.toLowerCase();
+    if (_type === 'global') {
+        toGlobal(el);
+    } else if (_type === 'wuhan') {
+        toWuhan(el);
+    }
+}
 
-export default async function initViewerAt(el = { id: 'viewer' }) {
 
+
+
+
+const toWuhan = async (el) => {
     // config
     //腾讯底图
     const txOpt = {
@@ -48,7 +59,7 @@ export default async function initViewerAt(el = { id: 'viewer' }) {
             depthTest: true,
             canvas: {
                 // width: 2000,
-                height: 1000,
+                height: 1500,
             },
         },
     };
@@ -62,6 +73,11 @@ export default async function initViewerAt(el = { id: 'viewer' }) {
         },
         duration: 2,
     }
+    const wuhan = {
+        longitude: 114.2977,
+        latitude: 30.5961,
+        height: 40000,
+    }
 
     // 3dtiles
     const modelOpt = {
@@ -74,9 +90,8 @@ export default async function initViewerAt(el = { id: 'viewer' }) {
     const cfgM = new ConfigManager();
     const czmViewer = await cfgM.initViewer(vcfg);
 
-    // 确保 viewer 初始化完成
-    // await czmViewer.readyPromise;
-    // console.log('cesium viewer init completed');
+    // czmViewer 没有 readyPromise ！👹
+    // 如何确保 viewer 初始化完成 ？🎃
 
     const sM = new SceneManager(czmViewer);
     sM.initScene();
@@ -85,11 +100,6 @@ export default async function initViewerAt(el = { id: 'viewer' }) {
 
 
     const cM = new CameraManager(czmViewer);
-    const wuhan = {
-        longitude: 114.2977,
-        latitude: 30.5961,
-        height: 40000,
-    }
     cM.flyTo(
         wuhan,
         flyOpt
@@ -117,3 +127,46 @@ export default async function initViewerAt(el = { id: 'viewer' }) {
 
     return czmViewer;
 }
+
+const toGlobal = async (el) => {
+    // 世界地图
+    const vcfg = {
+        containerId: `${el.id}`,
+        viewerConfig: {
+            navigationHelpButton: true,
+            navigationInstructionsInitiallyVisible: true,
+            // skyAtmosphere: new Cesium.SkyAtmosphere(),
+        },
+        providerConfig: {
+            terrainProvider: [],
+            imageryProvider: [],
+        },
+        extraConfig: {
+            AccessToken: import.meta.env.VITE_CESIUM_KEY,
+            logo: false,
+            depthTest: true,
+            canvas: {
+                // width: 2000,
+                height: 1500,
+            },
+        },
+    };
+    const viewConfig = {
+        destination: {
+            longitude: 130,
+            latitude: 35,
+            height: 1000000
+        }
+    }
+    const cfgM = new ConfigManager();
+    const czmViewer = await cfgM.initViewer(vcfg);
+    // console.log('cesium viewer init completed', czmViewer);
+    const sM = new SceneManager(czmViewer);
+    sM.initScene();
+    const cM = new CameraManager(czmViewer);
+    cM.setView(viewConfig)
+    // cM.rotateEarth();
+
+    return czmViewer;
+}
+

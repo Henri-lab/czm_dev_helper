@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import MeTest from '@/views/test/me.vue';
-import LayOutTest from '@/views/test/layout.vue';
+// import LayOutTest from '@/views/test/layout.vue';
+import CzmMap from '../views/map/CzmMap.vue';
 
 
 const routes = [
@@ -9,7 +10,13 @@ const routes = [
     path: "/me",
     name: "me-test",
     component: MeTest,
-  }
+  },
+  {
+    // 默认地图
+    path: "/",
+    name: "default-map",
+    component: CzmMap,
+  },
 ];
 
 

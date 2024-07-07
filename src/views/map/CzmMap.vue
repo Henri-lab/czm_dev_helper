@@ -14,13 +14,14 @@ let $editor;
 const commonStore = useCommonStore();
 onMounted(() => {
   const el = { id: 'czm-container' };
-  initViewerAt(el).then(async ($viewer) => {
+  initViewerAt(el, 'global').then(($viewer) => {
     // ~test-<layout/> 已經開始挂載🩸
-
-    //  全局共享viewer
-    commonStore.setViewer($viewer);
-    //  全局共享editor (draw needs canvas)
-    if ($viewer.canvas) {
+    if ($viewer) {
+      console.log($viewer, 'ssss');
+      //  全局共享viewer
+      commonStore.setViewer($viewer);
+      //  全局共享editor (draw needs canvas)
+      console.log($viewer.canvas, 'pppp');
       $editor = new Editor($viewer);
       commonStore.setEditor($editor);
     }
