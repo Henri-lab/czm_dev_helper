@@ -11,13 +11,19 @@
 // }
 
 import * as Cesium from "cesium";
-import { createCMP,get_ConeGlowBottomCircle } from "./index.js";
+import { createCMP, get_wallGradients } from "./index.js";
 
 
 let cones = [];
+/**
+ * 
+ * @param {Object} viewer 
+ * @param {Object} options 
+ * @param {String} options.color - like: options.color = "#FFFFFF";
+ */
 export const addGradientCone = (viewer, options) => {
-    // add material type
-const material_ConeGlowBottomCircle=get_ConeGlowBottomCircle()
+    // 获得自定义材质配置信息
+    const Opt_wallMaterial = get_wallGradients(options.color)
 
     // 圆柱颜色
     const wallColor = Cesium.defaultValue(
@@ -55,7 +61,13 @@ const material_ConeGlowBottomCircle=get_ConeGlowBottomCircle()
             positions: wallPositions,
             minimumHeights: minimumHeights,
             maximumHeights: maximumHeights,
-            material: new createCMP('coneglowbottomcircle',),
+            material: new createCMP('WallGradients',
+                Opt_wallMaterial,
+                (time) => {
+                    return {
+                        color: Cesium.Color.fromCssColorString(options.color)
+                    }
+                }),
         },
     });
     cones.push(cone);

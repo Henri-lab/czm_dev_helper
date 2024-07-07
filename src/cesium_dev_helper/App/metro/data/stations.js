@@ -7,10 +7,12 @@
 //     };
 
 import * as Cesium from "cesium";
-import { GeometryCreater, EffectController, changeDisplayBillBoard } from './index.js';
+import { createCMP, get_ConeGlowBottomCircle, EffectController, changeDisplayBillBoard } from './index.js';
 
 
 let stations = [];
+// 获得自定义材质配置信息
+const Opt_ConeGlowBottomCircle = get_ConeGlowBottomCircle(options.color)
 
 // 渲染站点
 export const renderStation = (viewer, options) => {

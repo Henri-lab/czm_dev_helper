@@ -1,3 +1,4 @@
+uniform vec3 color;
 uniform sampler2D image;
 
 czm_material czm_getMaterial(czm_materialInput materialInput) {

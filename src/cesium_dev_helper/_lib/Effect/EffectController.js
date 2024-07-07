@@ -1,5 +1,5 @@
 import * as Cesium from 'cesium';
-import { add_ConeGlowBottomCircle, add_wallMaterial } from '../Custom/Materials/list';
+import { get_ConeGlowBottomCircle, get_wallGradients } from '../Custom/Materials/list';
 
 class EffectController {
     constructor(viewer) {
@@ -8,60 +8,9 @@ class EffectController {
         this.camera = viewer.camera;
     }
 
-    /**
-      * Adds a single circle ripple effect to the viewer.
-      *
-      * @param {Cesium.Cartesian3} position - The position where the ripple will appear.
-      * @param {Cesium.MaterialProperty} [material] - The material to use for the ripple. If not provided, a default gradient white material will be used.
-      *
-      * @returns {undefined}
-      */
-    addSingleCircleRipple(position, material) {
-        const startTime = Cesium.JulianDate.now();
-        const duration = 2000; // Duration of the ripple effect in milliseconds
-        // 默认材料是一个渐变淡白色椭圆
-        function getMaterial() {
-            return new Cesium.ColorMaterialProperty(new Cesium.CallbackProperty((time) => {
-                const elapsedTime = Cesium.JulianDate.secondsDifference(time, startTime);
-                const alpha = 1.0 - (elapsedTime / duration); // Fade out over time
-                return Cesium.Color.WHITE.withAlpha(alpha);
-            }, false));
 
-        }
-        const _material = material || getMaterial();
-
-        const rippleEntity = this.viewer.entities.add({
-            position: position,
-            ellipse: {
-                semiMajorAxis: new Cesium.CallbackProperty(function (time) {
-                    const elapsedTime = Cesium.JulianDate.secondsDifference(time, startTime);
-                    //  一个周期内 长轴半径随时间增大
-                    const radius = (elapsedTime / duration) * 500.0; // Adjust the ripple size
-                    return radius;
-                }, false),
-                semiMinorAxis: new Cesium.CallbackProperty(function (time) {
-                    const elapsedTime = Cesium.JulianDate.secondsDifference(time, startTime);
-                    const radius = (elapsedTime / duration) * 500.0; // Adjust the ripple size
-                    return radius;
-                }, false),
-                material: _material,
-            },
-        });
-
-        setTimeout(() => {
-            viewer.entities.remove(rippleEntity);
-        }, duration);
-    }
-
-    /**
-     * 创建两个圆扩散纹理效果
-     * @param {Object} data - 参数对象
-     * @param {number} data.deviationR - 半径增长速度（每帧增长量）
-     * @param {number} data.eachInterval - 两个圆的运行时间间隔
-     * @param {number} data.maxR - 两个圆的最大半径
-     * @param {string} data.imageUrl - 两个圆的图片地址
-     * @param {Array} data.position - 两个圆的中心位置
-     */
+    
+   
     addDoubleCircleRipple(data) {
         // 根据不同类的圆生成不同的动态颜色
         function getColor(circleType) {

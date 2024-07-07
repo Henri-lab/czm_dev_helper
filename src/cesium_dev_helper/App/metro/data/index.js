@@ -10,7 +10,7 @@ import { MaterialCreator } from '../../../_lib/Creator'
 import { changeDisplayBillBoard } from './billboards';
 // return a custom-material-property 
 import createCMP from '../../../_lib/Custom/Property/CreateCMP'
-import { get_ConeGlowBottomCircle, get_wallMaterial } from '../../../_lib/Custom/Materials/list'
+import { get_ConeGlowBottomCircle, get_wallGradients } from '../../../_lib/Custom/Materials/list'
 
 
 export {
@@ -32,5 +32,5 @@ export {
     removeAll,
     displayAllByName,
     get_ConeGlowBottomCircle,
-    get_wallMaterial,
+    get_wallGradients,
 }

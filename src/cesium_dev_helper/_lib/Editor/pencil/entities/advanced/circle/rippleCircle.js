@@ -1,12 +1,5 @@
-import {
-  gifLoader,
-  Cesium,
-  CoordTransformer,
-  objHasOwnProperty,
-  setProperties,
-  createGraphics,
-} from './index';
-
+// 仅支持一个动态圆形实体
+import { CoordTransformer} from '../index';
 
 /**
  * Creates a ripple circle entity with dynamic properties.
@@ -124,3 +117,13 @@ export function RippleCircleEntity(extraOption, options, datasource) {
     return datasource.entities.add(finalEntity);
   }
 }
+
+
+
+// 优点：
+// 简单直观：代码结构清晰，功能单一，易于理解和维护。
+// 动态变化控制：通过回调函数控制半径和旋转角度的动态变化，简单有效。
+// 可扩展性：可以通过 extraOption 轻松扩展实体的其他属性。
+// 缺点：
+// 功能单一：当前实现仅支持一个动态圆形实体，如果需要添加多个实体，需要额外的逻辑处理。
+// 材料属性单一：材质属性由外部提供，内部不支持多样化的材质设置（如颜色渐变）。

@@ -1,11 +1,4 @@
-import {
-    gifLoader,
-    Cesium,
-    CoordTransformer,
-    objHasOwnProperty,
-    setProperties,
-    createGraphics,
-} from './index';
+import { objHasOwnProperty } from '../index';
 
 /**
  * Creates a blinking circle entity in Cesium.

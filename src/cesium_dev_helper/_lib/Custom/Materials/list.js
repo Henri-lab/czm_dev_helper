@@ -9,7 +9,6 @@ import { glsl_circleMapping, glsl_wallMapping } from "../../Effect";
 const mC = new MaterialCreator();
 const tC = new TextureCreator();
 
-
 // 常用材质 - ConeGlowBottomCircle
 function get_ConeGlowBottomCircle(color) {
     const options = {
@@ -26,12 +25,12 @@ function get_ConeGlowBottomCircle(color) {
     return options//💫
 }
 // 常用材质 - wallGradients
-function get_wallMaterial(color) {
+function get_wallGradients(color) {
     const options = {
         type: "WallGradients",
         uniforms: {
             color,
-            image: "img-url",
+            image: tC.gradientTexture({}),
         },
         source: glsl_wallMapping,
     }
@@ -43,5 +42,5 @@ function get_wallMaterial(color) {
 
 export {
     get_ConeGlowBottomCircle,
-    get_wallMaterial,
+    get_wallGradients,
 }
