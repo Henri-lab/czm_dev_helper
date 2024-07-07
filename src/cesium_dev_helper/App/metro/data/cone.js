@@ -2,16 +2,16 @@
 // 材质是自定义WallGradientsMaterialProperty
 
 // options: {
-    //   position: {lng,lat,height},
-    //   height: 1000,
-    //   baseHeight: 0, // 圆柱底部高度
-    //   radius: 100, // 圆柱半径
-    //   color: "#ff0000", // 圆柱颜色
-    //   name: "活动圆柱" // 圆柱名称
-    // }
-    
+//   position: {lng,lat,height},
+//   height: 1000,
+//   baseHeight: 0, // 圆柱底部高度
+//   radius: 100, // 圆柱半径
+//   color: "#ff0000", // 圆柱颜色
+//   name: "活动圆柱" // 圆柱名称
+// }
+
 import * as Cesium from "cesium";
-import MaterialCreator from "./index.js";
+import { MaterialCreator } from "./index.js";
 
 let cones = [];
 export const addGradientCone = (viewer, options) => {
@@ -51,7 +51,7 @@ export const addGradientCone = (viewer, options) => {
             positions: wallPositions,
             minimumHeights: minimumHeights,
             maximumHeights: maximumHeights,
-            material: new MaterialCreator().wallMaterial(wallColor),
+            material: new MaterialCreator(),
         },
     });
     cones.push(cone);

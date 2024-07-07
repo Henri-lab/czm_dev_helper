@@ -53,7 +53,8 @@ export default class MaterialCreator {
         const _type = options.type || 'customMaterial' + Date.now(),
             _uniforms = options.uniforms || {},
             _source = options.source || '',
-            _translucent = options.translucent || true
+            _translucent = options.translucent || true,
+            _texture = options.texture || '';
 
         // 新版api?
         Cesium.Material._materialCache.addMaterial(_type, {

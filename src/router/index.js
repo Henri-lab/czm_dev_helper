@@ -8,7 +8,7 @@ const routes = [
   {
     // 打算放个人简历
     path: "/me",
-    name: "me-test",
+    name: "me",
     component: MeTest,
   },
   {

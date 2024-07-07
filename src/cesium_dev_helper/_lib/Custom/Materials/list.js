@@ -15,19 +15,19 @@ function add_ConeGlowBottomCircle(color) {
     mC.add_CustomMaterial(type, {
         type,
         color,
-        image: texture,
+        texture,
         source,
     })
 }
 // 常用材质 - wallGradients
 function add_wallMaterial(color) {
     const type = "WallGradients",
-        texture = "url?",
+        texture = "img-url",
         source = glsl_wallMapping;
     mC.add_CustomMaterial(type, {
         type,
         color,
-        image: texture,
+        texture,
         source,
     })
 }
