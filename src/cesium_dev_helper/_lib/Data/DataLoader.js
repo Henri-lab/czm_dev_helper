@@ -182,7 +182,7 @@ class DataLoader {
     // 3D Tiles and GLTF are both used in 3D graphics and GIS applications, 
     // but they serve different purposes and have different structures. 
     // they can't be simply categorized under the same "model" concept.
-    async load3D(opt, type) {
+    async load3D(opt, type) {//将扁平的opt分为url和options两个部分🎃
         // Ensure opt has three properties that can return data
         let _finalOpt = {
             onSuccess: () => { },

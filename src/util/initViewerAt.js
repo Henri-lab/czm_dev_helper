@@ -61,7 +61,7 @@ const toWuhan = async (el) => {
     // 配置viewer
     const vcfg = {
         containerId: `${el.id}`,
-        viewerConfig: {
+        baseConfig: {
             navigationHelpButton: true,
             navigationInstructionsInitiallyVisible: true,
             // skyAtmosphere: new Cesium.SkyAtmosphere(),
@@ -91,6 +91,11 @@ const toWuhan = async (el) => {
 
     // cameraFly configuration
     const flyOpt = {
+        position: {//wuhan
+            longitude: 114.2977,
+            latitude: 30.5961,
+            height: 40000,
+        },
         orientation: {
             heading: Cesium.Math.toRadians(35.0),
             pitch: Cesium.Math.toRadians(-90.0),
@@ -98,12 +103,6 @@ const toWuhan = async (el) => {
         },
         duration: 2,
     }
-    const wuhan = {
-        longitude: 114.2977,
-        latitude: 30.5961,
-        height: 40000,
-    }
-
     // 3dtiles
     const modelOpt = {
         // port 8001
@@ -125,10 +124,7 @@ const toWuhan = async (el) => {
 
 
     const cM = new CameraManager(czmViewer);
-    cM.flyTo(
-        wuhan,
-        flyOpt
-    );
+    cM.flyTo(flyOpt);
     // console.log('cesium camera location completed');
 
     // 白膜加载
@@ -159,7 +155,7 @@ const toGlobal = async (el) => {
     // 世界地图
     const vcfg = {
         containerId: `${el.id}`,
-        viewerConfig: {
+        baseConfig: {
             navigationHelpButton: true,
             navigationInstructionsInitiallyVisible: true,
             // skyAtmosphere: new Cesium.SkyAtmosphere(),

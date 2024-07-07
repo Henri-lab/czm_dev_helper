@@ -69,7 +69,7 @@ export default class CameraManager extends Manager {
     }
 
     // 飞行到指定位置
-    flyTo(position, options = {}) {
+    flyTo({ position, effectOptions = {} }) {
         const defaultOptions = {
             duration: 3,
             orientation: {
@@ -78,7 +78,7 @@ export default class CameraManager extends Manager {
                 roll: 0
             }
         };
-        const finalOptions = { ...defaultOptions, ...options };
+        const finalOptions = { ...defaultOptions, ...effectOptions };
         this.camera.flyTo({
             destination: Cartesian3.fromDegrees(position.longitude, position.latitude, position.height),
             orientation: finalOptions.orientation,
@@ -90,7 +90,6 @@ export default class CameraManager extends Manager {
     setView({ destination, heading = 0, pitch = -30, roll = 0 }) {
         let _destination;
         if (typeof destination === 'object') {
-            console.log('ss')
             const { longitude, latitude, height } = destination;
             _destination = Cartesian3.fromDegrees(longitude, latitude, height)
         }

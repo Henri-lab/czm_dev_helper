@@ -33,12 +33,12 @@ export default class ConfigManager extends Manager {
      * 初始化 Viewer
      * @param {Object} config - 配置对象
      * @param {string} config.containerId - 容器ID
-     * @param {Object} config.viewerConfig - Viewer 配置
+     * @param {Object} config.baseConfig - Viewer 基础配置
      * @param {Object} config.providerConfig - 影像地形配置列表 
      * @param {{AccessToken,logo,depthTest,canvas}} config.extraConfig - 额外配置 
      * @returns {Cesium.Viewer} - 返回初始化后的 Viewer 对象
      */
-    async initViewer({ containerId, viewerConfig, providerConfig, extraConfig }) {
+    async initViewer({ containerId, baseConfig, providerConfig, extraConfig }) {
         // 配置token
         Cesium.Ion.defaultAccessToken = extraConfig['AccessToken'] || this.defaultToken;
 
@@ -70,11 +70,11 @@ export default class ConfigManager extends Manager {
             showRenderLoopErrors: true
         };
         // 过滤无效配置
-        for (const key in viewerConfig) {
-            if (viewerConfig[key] === undefined || !isValidViewerProperty(viewerConfig[key]))
-                delete viewerConfig[key];
+        for (const key in baseConfig) {
+            if (baseConfig[key] === undefined || !isValidViewerProperty(baseConfig[key]))
+                delete baseConfig[key];
         }
-        vConfig = Object.assign(vConfig, viewerConfig);
+        vConfig = Object.assign(vConfig, baseConfig);
 
 
 

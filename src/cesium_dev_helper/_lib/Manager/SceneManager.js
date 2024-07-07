@@ -12,90 +12,112 @@ export default class SceneManager extends Manager {
     this.$dL = new DataLoader(viewer);
   }
 
-  /**
-   * Function to set the scene properties of the Cesium viewer.
-   *
-   * @param {Cesium.Viewer} viewer - The Cesium viewer object to control the scene.
-   *
-   * @returns {undefined} This function does not return any value.
-   */
-  initScene = () => {
+
+  initScene = (options) => {
     let viewer = this.viewer;
-    // 隐藏太阳
-    viewer.scene.sun.show = false;
 
-    // 隐藏月亮
-    viewer.scene.moon.show = false;
+    // 设置默认值
+    const defaultOptions = {
+      sun: {
+        show: false
+      },
+      moon: {
+        show: false
+      },
+      globe: {
+        enableLighting: true,
+        depthTestAgainstTerrain: true,
+        showGroundAtmosphere: false
+      },
+      postProcessStages: {
+        bloom: {
+          enabled: true,
+          contrast: 255,
+          brightness: 0.02,
+          glowOnly: false,
+          delta: 3.1,
+          sigma: 5,
+          stepSize: 0.6,
+          isSelected: false,
+          selectedBloom: 10,
+          bloomColor: Cesium.Color.fromCssColorString("#fafafa")
+        },
+        brightness: {
+          enabled: true,
+          brightness: 1.2
+        },
+        fxaa: {
+          enabled: true
+        }
+      },
+      shadows: {
+        enabled: false,
+        darkness: 0.8
+      },
+      undergroundMode: false,
+      terrainProvider: {
+        isCreateSkirt: false
+      },
+      fog: {
+        enabled: false
+      },
+      creditContainer: {
+        display: "none"
+      },
+      highDynamicRange: true
+    };
 
-    // 开启全球光照
-    viewer.scene.globe.enableLighting = true;
+    // 合并默认配置和传入的配置
+    const config = { ...defaultOptions, ...options };
 
-    // 关闭泛光
+    // 设置场景属性
+    viewer.scene.sun.show = config.sun.show;
+    viewer.scene.moon.show = config.moon.show;
+    viewer.scene.globe.enableLighting = config.globe.enableLighting;
+    viewer.scene.globe.depthTestAgainstTerrain = config.globe.depthTestAgainstTerrain;
+    viewer.scene.globe.showGroundAtmosphere = config.globe.showGroundAtmosphere;
+
+    // 设置泛光效果
     const bloom = viewer.scene.postProcessStages.bloom;
-    bloom.enabled = false;
+    bloom.enabled = config.postProcessStages.bloom.enabled;
+    bloom.uniforms.contrast = config.postProcessStages.bloom.contrast;
+    bloom.uniforms.brightness = config.postProcessStages.bloom.brightness;
+    bloom.uniforms.glowOnly = config.postProcessStages.bloom.glowOnly;
+    bloom.uniforms.delta = config.postProcessStages.bloom.delta;
+    bloom.uniforms.sigma = config.postProcessStages.bloom.sigma;
+    bloom.uniforms.stepSize = config.postProcessStages.bloom.stepSize;
+    bloom.uniforms.isSelected = config.postProcessStages.bloom.isSelected;
+    bloom.uniforms.selectedBloom = config.postProcessStages.bloom.selectedBloom;
+    bloom.uniforms.bloomColor = config.postProcessStages.bloom.bloomColor;
 
-    // 亮度设置
+    // 设置亮度调整
     var stages = viewer.scene.postProcessStages;
-    viewer.postProcessStages.fxaa.enabled = true;
+    viewer.postProcessStages.fxaa.enabled = config.postProcessStages.fxaa.enabled;
+    viewer.scene.brightness = viewer.scene.brightness || stages.add(Cesium.PostProcessStageLibrary.createBrightnessStage());
+    viewer.scene.brightness.enabled = config.postProcessStages.brightness.enabled;
+    viewer.scene.brightness.uniforms.brightness = config.postProcessStages.brightness.brightness;
 
-    // 亮度调整
-    viewer.scene.brightness =
-      viewer.scene.brightness ||
-      stages.add(Cesium.PostProcessStageLibrary.createBrightnessStage());
-    viewer.scene.brightness.enabled = true;
-    viewer.scene.brightness.uniforms.brightness = 1.2;
+    // 设置阴影
+    viewer.shadows = config.shadows.enabled;
+    viewer.shadowMap.darkness = config.shadows.darkness;
 
-    // 地形深度测试
-    viewer.scene.globe.depthTestAgainstTerrain = true;
+    // 设置地形轮廓
+    viewer.scene.terrainProvider.isCreateSkirt = config.terrainProvider.isCreateSkirt;
+
+    // 设置地下模式
+    viewer.scene.undergroundMode = config.undergroundMode;
+
+    // 设置雾效
+    viewer.scene.fog.enabled = config.fog.enabled;
+
+    // 设置高动态范围
+    viewer.scene.highDynamicRange = config.highDynamicRange;
 
     // 隐藏水印
-    viewer._cesiumWidget._creditContainer.style.display = "none";
-
-    // 关闭阴影
-    viewer.shadows = false;
-
-    // 阴影透明度
-    viewer.shadowMap.darkness = 0.8;
-
-    // 隐藏水印
-    viewer.cesiumWidget.creditContainer.style.display = "none";
-
-    // 高动态范围
-    viewer.scene.highDynamicRange = true;
-
-    // 泛光
-    viewer.scene.postProcessStages.bloom.enabled = true;
-    viewer.scene.postProcessStages.bloom.uniforms.contrast = 255;
-    viewer.scene.postProcessStages.bloom.uniforms.brightness = 0.02;
-    viewer.scene.postProcessStages.bloom.uniforms.glowOnly = false;
-    viewer.scene.postProcessStages.bloom.uniforms.delta = 3.1;
-    viewer.scene.postProcessStages.bloom.uniforms.sigma = 5;
-    viewer.scene.postProcessStages.bloom.uniforms.stepSize = 0.6;
-    viewer.scene.postProcessStages.bloom.uniforms.isSelected = false;
-    viewer.scene.postProcessStages.bloom.uniforms.selectedBloom = 10;
-    viewer.scene.postProcessStages.bloom.uniforms.bloomColor =
-      Cesium.Color.fromCssColorString("#fafafa");
-
-    // 隐藏太阳和月亮
-    viewer.scene.sun.show = false;
-    viewer.scene.moon.show = false;
-
-    // 关闭地下模式
-    viewer.scene.undergroundMode = false;
-
-    // 关闭地形轮廓
-    viewer.scene.terrainProvider.isCreateSkirt = false;
-
-    // 关闭地球大气
-    viewer.scene.globe.showGroundAtmosphere = false;
-
-    // 关闭全局光照
-    viewer.scene.globe.enableLighting = false;
-
-    // 关闭雾效
-    viewer.scene.fog.enabled = false;
+    viewer._cesiumWidget._creditContainer.style.display = config.creditContainer.display;
   };
 
+  
   /**
    * Function to add a data source or 3D tileset to the Cesium viewer.
    *
