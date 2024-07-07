@@ -1,4 +1,5 @@
 import * as Cesium from "cesium";
+import { add_ConeGlowBottomCircle, add_wallMaterial } from "../Custom/Materials/list";
 
 
 /**
@@ -21,13 +22,13 @@ export default class MaterialCreator {
             case 'coneglowbottomcircle':
                 (function () {
                     let { color } = options
-                    that.add_ConeGlowBottomCircle(color);
+                    add_ConeGlowBottomCircle(color);
                 })()
                 break;
             case 'wallgradients': {
                 (function () {
                     let { color } = options
-                    that.add_wallMaterial(color);
+                    add_wallMaterial(color);
                 })()
                 break;
             }
