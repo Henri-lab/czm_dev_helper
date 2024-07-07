@@ -103,6 +103,11 @@ export default class ConfigManager extends Manager {
         }
 
         // 设置viewer
+        if (extraConfig['name']) {
+            viewer.name = extraConfig['name'];
+        }
+
+
         if (!extraConfig['logo']) {
             const cC = viewer.cesiumWidget.creditContainer;
             cC.style.display = 'none';

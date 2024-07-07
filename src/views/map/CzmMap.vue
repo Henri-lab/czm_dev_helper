@@ -43,7 +43,7 @@ watchEffect(() => {
 <style lang="scss" scoped>
 #czm-container {
   width: 100%;
-  height: 700px;
+  height: 500px;
   background-color: bisque;
   position: relative;
   #czm-viewer {

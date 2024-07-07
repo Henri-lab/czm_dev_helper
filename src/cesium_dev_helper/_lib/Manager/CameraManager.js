@@ -88,9 +88,14 @@ export default class CameraManager extends Manager {
 
     // 设置视角
     setView({ destination, heading = 0, pitch = -30, roll = 0 }) {
-        const { longitude, latitude, height } = destination;
+        let _destination;
+        if (typeof destination === 'object') {
+            console.log('ss')
+            const { longitude, latitude, height } = destination;
+            _destination = Cartesian3.fromDegrees(longitude, latitude, height)
+        }
         this.camera.setView({
-            destination: Cartesian3.fromDegrees(longitude, latitude, height) || Cartesian3.ZERO,
+            destination: _destination || Cartesian3.ZERO,
             orientation: {
                 heading: CesiumMath.toRadians(heading),
                 pitch: CesiumMath.toRadians(pitch),

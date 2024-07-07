@@ -48,6 +48,7 @@ export default async function initViewerAt(el = { id: 'viewer' }, type) {
 
 
 // 地图配置
+// -武汉地图
 const toWuhan = async (el) => {
     // config
     //腾讯底图
@@ -77,12 +78,13 @@ const toWuhan = async (el) => {
             ],
         },
         extraConfig: {
+            name: 'wuhan',
             AccessToken: import.meta.env.VITE_CESIUM_KEY,
             logo: false,
             depthTest: true,
             canvas: {
                 // width: 2000,
-                height: 1500,
+                // height: 1500,
             },
         },
     };
@@ -152,6 +154,7 @@ const toWuhan = async (el) => {
 
     return czmViewer;
 }
+// -全局视图
 const toGlobal = async (el) => {
     // 世界地图
     const vcfg = {
@@ -166,33 +169,31 @@ const toGlobal = async (el) => {
             imageryProvider: [],
         },
         extraConfig: {
+            name: 'global',
             AccessToken: import.meta.env.VITE_CESIUM_KEY,
             logo: false,
             depthTest: true,
             canvas: {
                 // width: 2000,
-                height: 1500,
+                // height: 1500,
             },
         },
     };
 
-    const viewConfig = { // 没效果？？？？？？？？？？？？？？？？？？
-        destination: {
-            longitude: 103.9356,
-            latitude: 30.9375,
-            height: 10000000,
-        },
-        heading: 100.0,
-        pitch: -90.0,
-        roll: 100.0,
-    }
+    // const viewConfig = {
+    //     heading: 100.0,
+    //     pitch: -90.0,
+    //     roll: 100.0,
+    // }
 
     const cfgM = new ConfigManager();
     const czmViewer = await cfgM.initViewer(vcfg);
     const sM = new SceneManager(czmViewer);
     sM.initScene();
     const cM = new CameraManager(czmViewer);
-    cM.setView(viewConfig);
+
+    // cM.setView(viewConfig);
+
     cM.rotateEarth();// 没效果？？？？？？？？？？？？？？？？？？
 
     // 切换地图
@@ -212,6 +213,7 @@ function switchViewerTo(viewer) {
 }
 function destroyViewer(viewer) {
     if (viewer) {
+        // console.log('destroy', viewer.name)
         viewer.destroy();
         viewer = null;
     }
