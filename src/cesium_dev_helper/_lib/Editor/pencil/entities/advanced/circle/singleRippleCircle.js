@@ -19,7 +19,7 @@ import { CoordTransformer} from '../index';
  * @returns {Cesium.Entity} The created ripple circle entity.
  */
 
-export function RippleCircleEntity(extraOption, options, datasource) {
+export default function singleRippleCircle(extraOption, options, datasource) {
   if (options && options.center) {
     let entity = {}
 

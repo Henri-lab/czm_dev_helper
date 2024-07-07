@@ -13,7 +13,7 @@ import { objHasOwnProperty } from '../index';
  *
  * @returns {Cesium.Entity} The created circle entity.
  */
-export function BlinkCircleEntity(extraOption, options, datasource) {
+export default function BlinkCircle(extraOption, options, datasource) {
     if (options && options.position) {
         let entity = {},
             alp = options.alp || 1,
