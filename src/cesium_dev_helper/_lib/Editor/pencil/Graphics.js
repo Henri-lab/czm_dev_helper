@@ -252,7 +252,7 @@ export default class Graphics extends DrawingManager {
     return datasource.entities.add(finalEntity)//dynamic entity
   }
 
-  //创建高级entity-------------------------------------------------
+  //创建高级entity--部分归 EffectControllor 控制-------------------------
   createAdvancedEntity(type, { extraOption, options, datasource }) {
     const _type = type.toLowerCase();
     switch (_type) {
@@ -262,10 +262,10 @@ export default class Graphics extends DrawingManager {
         throw new TypeError(`Unsupported advanced entity type: ${type}`);
     }
 
-
-
-
   }
+
+
 }
+
 
 
