@@ -11,10 +11,14 @@
 // }
 
 import * as Cesium from "cesium";
-import { MaterialCreator } from "./index.js";
+import { createCMP,get_ConeGlowBottomCircle } from "./index.js";
+
 
 let cones = [];
 export const addGradientCone = (viewer, options) => {
+    // add material type
+const material_ConeGlowBottomCircle=get_ConeGlowBottomCircle()
+
     // 圆柱颜色
     const wallColor = Cesium.defaultValue(
         new Cesium.Color.fromCssColorString(options.color),
@@ -51,7 +55,7 @@ export const addGradientCone = (viewer, options) => {
             positions: wallPositions,
             minimumHeights: minimumHeights,
             maximumHeights: maximumHeights,
-            material: new MaterialCreator(),
+            material: new createCMP('coneglowbottomcircle',),
         },
     });
     cones.push(cone);

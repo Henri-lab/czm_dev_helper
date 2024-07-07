@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { add_ConeGlowBottomCircle, add_wallMaterial } from "../Custom/Materials/list";
+import { get_ConeGlowBottomCircle, get_wallMaterial } from "../Custom/Materials/list";
 
 
 /**
@@ -22,16 +22,17 @@ export default class MaterialCreator {
             case 'coneglowbottomcircle':
                 (function () {
                     let { color } = options
-                    add_ConeGlowBottomCircle(color);
+                    // 执行时 其内部 顺便添加了 这个材质
+                    get_ConeGlowBottomCircle(color);
                 })()
                 break;
-            case 'wallgradients': {
+            case 'wallgradients':
                 (function () {
                     let { color } = options
-                    add_wallMaterial(color);
+                    get_wallMaterial(color);
                 })()
                 break;
-            }
+
             default:
                 throw new Error(`Unsupported material type: ${materialName}`);
         }

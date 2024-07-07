@@ -1,3 +1,6 @@
+// 本模块其实就是提供了 options💫 方便调用 add_CustomMaterial
+
+
 import MaterialCreator from "../../Creator/MaterialCreator";
 import TextureCreator from "../../Creator/TextureCreator";
 
@@ -8,7 +11,7 @@ const tC = new TextureCreator();
 
 
 // 常用材质 - ConeGlowBottomCircle
-function add_ConeGlowBottomCircle(color) {
+function get_ConeGlowBottomCircle(color) {
     const options = {
         type: 'ConeGlowBottomCircle',
         uniforms: {
@@ -17,10 +20,13 @@ function add_ConeGlowBottomCircle(color) {
         },
         source: glsl_circleMapping,
     }
+    // 
     mC.add_CustomMaterial(options)
+
+    return options//💫
 }
 // 常用材质 - wallGradients
-function add_wallMaterial(color) {
+function get_wallMaterial(color) {
     const options = {
         type: "WallGradients",
         uniforms: {
@@ -29,10 +35,13 @@ function add_wallMaterial(color) {
         },
         source: glsl_wallMapping,
     }
+    // 
     mC.add_CustomMaterial(options)
+
+    return options//💫
 }
 
 export {
-    add_ConeGlowBottomCircle,
-    add_wallMaterial,
+    get_ConeGlowBottomCircle,
+    get_wallMaterial,
 }

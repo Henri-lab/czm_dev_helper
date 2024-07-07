@@ -45,8 +45,6 @@ export default class CreateCMP extends CustomMaterialProperty {
         const opt = {
             type,
             source,
-            image,
-            color,
             uniforms
         } = options;
 
