@@ -5,23 +5,34 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, watchEffect } from 'vue';
 import { useCommonStore, initViewerAt, Editor } from '../index';
+
+const commonStore = useCommonStore();
+const el = { id: 'czm-container' };
 
 // 画笔(挂载map时创建)
 let $editor;
 
-const commonStore = useCommonStore();
 onMounted(() => {
-  const el = { id: 'czm-container' };
+  // 默认地图
   initViewerAt(el, 'global').then(($viewer) => {
     // ~test-<layout/> 已經開始挂載🩸
     if ($viewer) {
-      console.log($viewer, 'ssss');
       //  全局共享viewer
       commonStore.setViewer($viewer);
       //  全局共享editor (draw needs canvas)
-      console.log($viewer.canvas, 'pppp');
+      $editor = new Editor($viewer);
+      commonStore.setEditor($editor);
+    }
+  });
+});
+watchEffect(() => {
+  // commonStore.Map() ❌
+  const type = commonStore.Map;
+  initViewerAt(el, type).then(($viewer) => {
+    if ($viewer) {
+      commonStore.setViewer($viewer);
       $editor = new Editor($viewer);
       commonStore.setEditor($editor);
     }

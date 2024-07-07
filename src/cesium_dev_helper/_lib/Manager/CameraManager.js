@@ -88,8 +88,9 @@ export default class CameraManager extends Manager {
 
     // 设置视角
     setView({ destination, heading = 0, pitch = -30, roll = 0 }) {
+        const { longitude, latitude, height } = destination;
         this.camera.setView({
-            destination: Cartesian3.fromDegrees(destination.longitude, destination.latitude, destination.height),
+            destination: Cartesian3.fromDegrees(longitude, latitude, height) || Cartesian3.ZERO,
             orientation: {
                 heading: CesiumMath.toRadians(heading),
                 pitch: CesiumMath.toRadians(pitch),
@@ -141,30 +142,64 @@ export default class CameraManager extends Manager {
 
     // 地球旋转
     // 可以转特定角度,默认为自动循环旋转
-    rotateEarth(angle) {
-        function _rotate() {
-            if (angle)
-                this.scene.globe.rotation = CesiumMath.toRadians(angle);
-            else {
-                // 设置旋转参数
-                const initialPosition = this.viewer.camera.position.clone();
-                const center = new Cesium.Cartesian3(0, 0, 0); // 地球中心点
-                const axis = new Cesium.Cartesian3(0, 0, 1); // 旋转轴，Z 轴
+    rotateEarth(angle = 0) {
+        let that = this,
+            scene = that.scene,
+            camera = that.camera
 
-                let angle = 0;
+        if (angle) {
+            scene.globe.rotation = CesiumMath.toRadians(angle);
+        }
+        else {
+            // 设置旋转参数
+            const center = Cesium.Cartesian3.ZERO; // 地球中心点
+            const axis = Cesium.Cartesian3.UNIT_Z; // 旋转轴，Z 轴
 
-                // 更新角度
-                angle += Cesium.Math.toRadians(0.1); // 每帧旋转0.1度
+            let angle = 0;
 
-                // 计算旋转后的相机位置
-                const rotationMatrix = Cesium.Matrix3.fromRotationZ(angle);
-                const rotatedPosition = Cesium.Matrix3.multiplyByVector(rotationMatrix, initialPosition, new Cesium.Cartesian3());
+            // 更新角度
+            angle += Cesium.Math.toRadians(0.1); // 每帧旋转0.1度
 
-                // 设置相机的新位置
-                this.viewer.camera.lookAt(center, rotatedPosition);
-            }
-            // 请求下一帧
-            requestAnimationFrame(_rotate);
+            // 获取当前相机位置
+            const cameraPosition = camera.position;
+            const cameraUp = camera.up;
+            const cameraDirection = camera.direction;
+
+            // 计算旋转矩阵
+            const rotationMatrix = Cesium.Matrix3.fromRotationZ(angle);
+
+            // 应用旋转矩阵到相机的位置、方向和上向量
+            const rotatedPosition = Cesium.Matrix3.multiplyByVector(rotationMatrix, cameraPosition, new Cesium.Cartesian3());
+            const rotatedUp = Cesium.Matrix3.multiplyByVector(rotationMatrix, cameraUp, new Cesium.Cartesian3());
+            const rotatedDirection = Cesium.Matrix3.multiplyByVector(rotationMatrix, cameraDirection, new Cesium.Cartesian3());
+
+            // 设置相机的新位置、方向和上向量
+            camera.position = rotatedPosition;
+            camera.up = rotatedUp;
+            camera.direction = rotatedDirection;
+
+            // 设置相机的新位置
+            camera.lookAt(center, rotatedPosition);
+
+            // 请求下一帧✨
+            requestAnimationFrame(that.rotateEarth.bind(that));
+            // 📌requestAnimationFrame的使用细节---------------------------------------
+            // --requestAnimationFrame 函数的参数需要传递一个函数引用，而不是直接调用函数。
+            // 如果直接调用 that.rotateEarth，会失去上下文绑定导致问题。
+            // 以下几种方法确保上下文绑定正确，并使循环正常运行：
+            // 1.使用 bind 方法绑定上下文。
+            // 2.使用箭头函数来保留上下文。
+            // ——like 1：————————————————————————————————————————————————————————————————
+            //   rotateEarth(angle = 0) {
+            //       console.log('🎠');
+            //       requestAnimationFrame(this.rotateEarth.bind(this));
+            //   }
+            // ——like 2：————————————————————————————————————————————————————————————————
+            //   rotateEarth(angle = 0) {
+            //       console.log('🎠');
+            //       requestAnimationFrame(() => rotateEarth(angle));
+            //   }
+            // -------------------------------------------------------------------------
         }
     }
 }

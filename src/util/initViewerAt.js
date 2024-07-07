@@ -12,19 +12,42 @@ import {
 import { CoordTransformer } from '../cesium_dev_helper/_lib/Compute';
 import { TencentImageryProvider } from '../cesium_dev_helper/_lib/Plugin/mapPlugin';
 
+
+
+let currentViewer = null;  //导出的地图
+
+let viewers = [];//导出的地图集
+
+
+/**
+ * Initializes a Cesium viewer at a specified element with a specific map type.
+ *
+ * @param {Object} [el={ id: 'viewer' }] - The HTML element where the viewer will be created.
+ * @param {string} type - The type of map to be displayed. Can be either 'global' or 'wuhan'.
+ * @returns {Promise<Cesium.Viewer>} - A promise that resolves to the initialized Cesium viewer.
+ *
+ * @example
+ * // Initialize a viewer at the element with id 'cesiumContainer' and display the global map
+ * const viewer = await initViewerAt({ id: 'cesiumContainer' }, 'global');
+ *
+ * // Initialize a viewer at the default element and display the Wuhan map
+ * const viewer = await initViewerAt({}, 'wuhan');
+ */
 export default async function initViewerAt(el = { id: 'viewer' }, type) {
     const _type = type.toLowerCase();
+    // 切换地图资源
     if (_type === 'global') {
-        toGlobal(el);
+        await toGlobal(el);
     } else if (_type === 'wuhan') {
-        toWuhan(el);
+        await toWuhan(el);
     }
+
+
+    return currentViewer;
 }
 
 
-
-
-
+// 地图配置
 const toWuhan = async (el) => {
     // config
     //腾讯底图
@@ -124,10 +147,11 @@ const toWuhan = async (el) => {
     // })
 
 
+    // 切换地图到wuhan
+    switchViewerTo(czmViewer)
 
     return czmViewer;
 }
-
 const toGlobal = async (el) => {
     // 世界地图
     const vcfg = {
@@ -151,22 +175,45 @@ const toGlobal = async (el) => {
             },
         },
     };
-    const viewConfig = {
+
+    const viewConfig = { // 没效果？？？？？？？？？？？？？？？？？？
         destination: {
-            longitude: 130,
-            latitude: 35,
-            height: 1000000
-        }
+            longitude: 103.9356,
+            latitude: 30.9375,
+            height: 10000000,
+        },
+        heading: 100.0,
+        pitch: -90.0,
+        roll: 100.0,
     }
+
     const cfgM = new ConfigManager();
     const czmViewer = await cfgM.initViewer(vcfg);
-    // console.log('cesium viewer init completed', czmViewer);
     const sM = new SceneManager(czmViewer);
     sM.initScene();
     const cM = new CameraManager(czmViewer);
-    cM.setView(viewConfig)
-    // cM.rotateEarth();
+    cM.setView(viewConfig);
+    cM.rotateEarth();// 没效果？？？？？？？？？？？？？？？？？？
+
+    // 切换地图
+    switchViewerTo(czmViewer)
 
     return czmViewer;
+}
+
+
+// 辅助
+function switchViewerTo(viewer) {
+    if (currentViewer && currentViewer !== viewer) {
+        destroyViewer(currentViewer);
+    }
+    // 设置为导出的currentViewer
+    currentViewer = viewer;
+}
+function destroyViewer(viewer) {
+    if (viewer) {
+        viewer.destroy();
+        viewer = null;
+    }
 }
 

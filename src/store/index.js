@@ -4,12 +4,16 @@ import { defineStore } from 'pinia'
 export const useCommonStore = defineStore("commonData", {
     state: () => {
         return {
+            map: '',//type of map
             viewer: null,
             editor: null
         };
     },
     //不要调用 getter，直接访问它
     getters: {
+        Map() {
+            return this.map;
+        },
         Viewer() {
             return this.viewer;
         },
@@ -18,6 +22,9 @@ export const useCommonStore = defineStore("commonData", {
         }
     },
     actions: {
+        setMap(type) {
+            this.map = type;
+        },
         setViewer(viewer) {
             this.viewer = viewer;
         },

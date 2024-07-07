@@ -111,34 +111,25 @@ const subMenus = [
   {
     key: 'sub1',
     title: '绘制图形',
-    icon: UserOutlined,
-    items: [
-      { key: '1', label: 'test1-polyline' },
-      { key: '2', label: 'test2' },
-      { key: '3', label: 'test3' },
-      { key: '4', label: 'test4' },
-    ],
+    // icon: UserOutlined,
+    items: [{ key: '1', label: '线(测试)' }],
   },
   {
     key: 'sub2',
     title: '高级材质',
-    icon: LaptopOutlined,
-    items: [
-      { key: '5', label: 'test5' },
-      { key: '6', label: 'test6' },
-      { key: '7', label: 'test7' },
-      { key: '8', label: 'test8' },
-    ],
+    items: [{ key: '2', label: 'test' }],
   },
   {
     key: 'sub3',
     title: 'Three集成',
-    icon: NotificationOutlined,
+    items: [{ key: '3', label: 'test' }],
+  },
+  {
+    key: 'sub4',
+    title: '资源加载',
     items: [
-      { key: '9', label: 'test9' },
-      { key: '10', label: 'test10' },
-      { key: '11', label: 'test11' },
-      { key: '12', label: 'test12' },
+      { key: '4', label: '武汉' },
+      { key: '5', label: '全局' },
     ],
   },
 ];
@@ -195,7 +186,14 @@ watch(
           editor.startLine(lineConfig);
         }
         break;
-
+      case '4':
+        // 武汉地图
+        commonStore.setMap('wuhan');
+        break;
+      case '5':
+        // reset 为 全球
+        commonStore.setMap('global');
+        break;
       default:
         break;
     }
