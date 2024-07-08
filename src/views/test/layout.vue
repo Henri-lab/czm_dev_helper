@@ -63,6 +63,7 @@
         >
           <template #default>
             <czm-map></czm-map>
+            <uploadVue v-show="isUpload"></uploadVue>
           </template>
         </a-layout-content>
       </a-layout>
@@ -86,6 +87,7 @@ import {
 } from '../index';
 
 import { lineConfig } from '../../cesium_dev_helper/_lib/Editor';
+import uploadVue from '../../components/test/upload.vue';
 // pinia
 const commonStore = useCommonStore();
 // route
@@ -129,9 +131,8 @@ const subMenus = [
     title: '资源加载',
     items: [
       { key: '4', label: '影像图层-武汉(高德)' },
-      { key: '5', label: '全球' },
-      { key: '6', label: '3D瓦片' },
-      { key: '7', label: 'GLTF模型' },
+      { key: '5', label: '上传模型' },
+      { key: '6', label: '重置' },
     ],
   },
   {
@@ -169,6 +170,7 @@ const subMenus = [
   },
 ];
 
+const isUpload = ref(false);
 onMounted(() => {});
 
 // watch pinia data
@@ -226,6 +228,10 @@ watch(
         commonStore.setMap('wuhan');
         break;
       case '5':
+        // 上传文件
+        isUpload.value = true;
+        break;
+      case '6':
         // reset 为 全球
         commonStore.setMap('global');
         break;

@@ -53,3 +53,39 @@ export async function fetchWithProgress(url, options) {
     // 导出原始数据 可以在外部解析为json
     return new Response(chunksAll, { headers: response.headers });
 }
+
+
+
+// 这种方法适用于小型 3D Tiles 文件，因为文件会在客户端内存中加载。
+// 大型 3D Tiles 文件可能需要更复杂的处理，包括分块加载和内存管理。
+// 由于浏览器的安全限制，某些高级功能可能无法通过 Blob URL 实现。
+export function load(elID, viewer) {
+    let fileInput = document.getElementById(elID || 'fileInput');
+    let file = fileInput.files[0];
+
+    if (file) {
+        // Read the file as a Blob URL
+        // Blob URL 是一种临时的、本地的 URL，它允许你通过 JavaScript 访问内存中的文件或数据。
+        // 它们是由 URL.createObjectURL 方法生成的，指向一个 Blob 或 File 对象。
+        // Blob URL 可以像普通的 URL 一样使用，
+        // 例如在 src 属性中设置图片、视频、音频文件，或者在 href 属性中创建可下载的链接。
+        let fileURL = URL.createObjectURL(file);
+
+        var tileset = new Cesium.Cesium3DTileset({
+            url: fileURL
+        });
+
+        // Add the tileset to the viewer
+        viewer.scene.primitives.add(tileset);
+
+        // Release the Blob URL after loading
+        // 在使用 URL.createObjectURL 创建一个 Blob URL 后，
+        // 该 URL 会一直存在，直到手动释放它。为了防止内存泄漏
+        tileset.readyPromise.then(function (tiles) {
+            viewer.zoomTo(tiles)
+            URL.revokeObjectURL(fileURL);
+        }).otherwise(function (error) {
+            console.error('Error loading 3D Tileset:', error);
+        });
+    }
+}

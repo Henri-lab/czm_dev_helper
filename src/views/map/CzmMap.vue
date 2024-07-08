@@ -7,16 +7,14 @@
 <script setup>
 import { onMounted, watchEffect } from 'vue';
 import { useCommonStore, initViewerAt, Editor } from '../index';
+import { SceneManager } from '../../cesium_dev_helper/_lib/Manager';
 
 const commonStore = useCommonStore();
 const el = { id: 'czm-container' };
 
-// 画笔(挂载map时创建)
-let $editor;
-
-onMounted(() => {
-  // 默认地图
-  initViewerAt(el, 'global').then(($viewer) => {
+// 创建视图 type类型的地图 加载到el元素
+const init = (el, type) => {
+  initViewerAt(el, type).then(($viewer) => {
     // ~test-<layout/> 已經開始挂載🩸
     if ($viewer) {
       //  全局共享viewer
@@ -26,17 +24,18 @@ onMounted(() => {
       commonStore.setEditor($editor);
     }
   });
+};
+// 画笔(挂载map时创建)
+let $editor;
+
+onMounted(() => {
+  // 默认地图
+  init(el, 'global');
 });
 watchEffect(() => {
   // commonStore.Map() ❌
-  const type = commonStore.Map;
-  initViewerAt(el, type).then(($viewer) => {
-    if ($viewer) {
-      commonStore.setViewer($viewer);
-      $editor = new Editor($viewer);
-      commonStore.setEditor($editor);
-    }
-  });
+  const typeFromStore = commonStore.Map;
+  init(el, typeFromStore);
 });
 </script>
 
