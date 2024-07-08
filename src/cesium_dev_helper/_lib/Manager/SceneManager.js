@@ -180,30 +180,40 @@ export default class SceneManager extends Manager {
     } else {//核心💫
       let _singleOpt = options
       const model = await loadAndAddModelByOption(_singleOpt);
-      if (extraOpt && extraOpt.isZoom) {
-        // 跳转到模型
-        that.viewer.zoomTo(model);
-      }
-      return model;
+      // here 跳转会因为异步问题 过快执行而拿不到 await loadAndAddModelByOption(_singleOpt)的结果 model
+      // 不过为什么? 👺
+      // 经过测试 这个跳转必须放在readyPromise中💥
+      // if (extraOpt && extraOpt.isZoom) {
+      //   // 跳转到模型
+      //   that.viewer.zoomTo(model);
+      // }
     }
 
 
     // Helper function to load and add a 3d model by a single option
     async function loadAndAddModelByOption(option) {
       try {
-        let readyPromise;//加载的model
+        let res;//加载的model
         if (_type === '3dtiles') {
           // $dL.load3DTiles会把加载的model 执行的progress 和err 通过option的三个on属性回调出来
-          readyPromise = await $dL.load3DTiles(option);
+          res = await $dL.load3DTiles(option);
         } else if (_type === 'gltf') {
-          readyPromise = await $dL.loadGLTF(option);
+          res = await $dL.loadGLTF(option);
         }
 
-        if (readyPromise) {
-          readyPromise.then((final) => {
+        if (res) {
+          res.readyPromise.then((final) => {
             that.addToScene(final, _type);//核心
-            resArr.push({ t_id: Date.now(), model });
+            resArr.push({ t_id: Date.now(), model: final });
             cb(resArr);//传入回调cb 并标记一个timestamp 作为 t_id
+
+            // 经过测试 这个跳转必须放在readyPromise中💥
+            if (extraOpt && extraOpt.isZoom) {
+              // 跳转到模型
+              that.viewer.zoomTo(final);
+            }
+
+            // 想尝试在await loadAndAddModelByOption(_singleOpt)处拿到model 不过失败了 👺
             return final;
           });
         }

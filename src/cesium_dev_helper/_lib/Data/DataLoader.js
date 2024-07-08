@@ -151,12 +151,16 @@ class DataLoader {
             else console.error(`DataLoader loading ${type}:`, error);
         }
 
-        // 监听3d元素的加载进度  回掉加载进度
-        if (type === '3dtiles' && loaded) {
-            this._check3DTilesetLoadProgress(loaded, options.onProgress);
-        }
+        // 监听3d元素的加载进度  回调出加载进度 3d元素都要readyPeomise 有点烦💢
+        // if (type === '3dtiles' && loaded) {
+        //     loaded.readyPromise.then(final => {
+        //         this._check3DTilesetLoadProgress(final, options.onProgress);
+        //     })
+        // }
         if (type === 'gltf' && loaded) {
-            this._checkModelLoadingProgress(loaded, options.onProgress);
+            loaded.readyPromise.then(final => {
+                this._checkModelLoadingProgress(final, options.onProgress);
+            })
         }
 
         return loaded;
@@ -203,8 +207,12 @@ class DataLoader {
             // 加载3dtiles的时候要使用readyPromise 
 
             if (type === '3dtiles' && res) {
-                const _3dtile = await res.readyPromise
-                console.log('3d tileset loaded successfully');
+                const _3dtile = res;
+                // const _3dtile = await res.readyPromise
+                // 💥💥💥有点疑惑这里返回res 或者  res.readyPromise ,
+                // 调用者拿到返回值都要在readyPromise后才能拿到tile💥💥💥
+
+                // console.log('3d tileset loaded successfully');
 
                 // Data loaded is bound to the passed-in opt.onSuccess callback
                 Object.assign(opt, _finalOpt);
@@ -212,7 +220,8 @@ class DataLoader {
                 return _3dtile;
             } else if (type === 'gltf') {
                 const _gltf = await res.readyPromise
-                console.log('GLTF loaded successfully');
+                
+                // console.log('GLTF loaded successfully');
 
                 // Data loaded is bound to the passed-in opt.onSuccess callback
                 Object.assign(opt, _finalOpt);
@@ -316,7 +325,7 @@ class DataLoader {
 
 export default DataLoader;
 
-
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // GLTF (GL Transmission Format)--小模型
 // Purpose: GLTF is a file format for transmitting 3D models, including geometry, textures, and animations. It's designed to be efficient and easy to use, making it suitable for transmitting 3D models over the web.
 // Structure: A GLTF file contains a description of a 3D model, including its meshes, materials, textures, and animations. It can be thought of as a complete representation of a single 3D object or a small collection of objects.
@@ -338,3 +347,48 @@ export default DataLoader;
 // While both GLTF and 3D Tiles can represent 3D content,
 // their purposes, structures, and use cases are different enough that they cannot be simply categorized under the same "model" concept. Instead, they are complementary technologies that serve different needs in the realm of 3D graphics and geospatial visualization.
 // In Cesium, they are handled by different classes and have different loading and rendering mechanisms to accommodate their unique characteristics.
+
+
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// 在 CesiumJS 中，Cesium3DTileset 和 Cesium3DTile 是用于处理 3D Tiles 数据的两个重要概念。它们分别代表整个 3D Tiles 集合和集合中的单个 3D Tile。
+
+// Cesium3DTileset💥
+// Cesium3DTileset 代表一个完整的 3D Tiles 集合。它通常包含一个或多个 3D Tiles 文件，这些文件定义了模型、点云、矢量数据等。Cesium3DTileset 负责管理这些文件的加载和渲染。
+
+// 主要属性和方法存💦
+// url: 用于加载 3D Tileset 的 URL。
+// show: 控制 Tileset 是否可见。
+// style: 用于应用样式到 Tileset 的 Cesium3DTileStyle 对象。
+// readyPromise: 一个 Promise，在 Tileset 准备好后解析。
+// boundingVolume: Tileset 的包围体。
+// maximumScreenSpaceError: 控制 Tileset 的细节层次(LODs)。
+// tileVisible: 在 Tile 可见时触发的事件。
+
+
+// Cesium3DTile💥
+// Cesium3DTile 代表 Cesium3DTileset 中的单个 Tile。每个 Tile 包含几何数据和元数据，并且可以包含子 Tile。Cesium 通过分层次 (LOD) 加载和渲染这些 Tile，以提供更好的性能和可视化效果。
+
+// 主要属性和方法💦
+// boundingVolume: Tile 的包围体。
+// content: Tile 的内容，可以是几何体、点云等。
+// geometricError: 控制 Tile 的几何误差。
+// children: 子 Tile 的数组。
+// visible: 控制 Tile 是否可见。
+// Cesium3DTile 通常不直接实例化，而是通过 Cesium3DTileset 管理和访问。
+
+
+
+// 3D Tiles 加载和渲染流程:💥
+// --初始化 Cesium Viewer: 使用 Cesium.Viewer 初始化 Cesium Viewer。
+// --加载 3D Tileset: 使用 Cesium.Cesium3DTileset 加载 3D Tileset 的入口文件 tileset.json。
+// --处理 Tileset 的加载完成: 使用 tileset.readyPromise 处理 Tileset 加载完成后的操作。
+// --缩放到 Tileset: 使用 viewer.zoomTo(tileset) 缩放到加载的 Tileset。
+// --打印根 Tile 的几何误差: 访问并打印根 Tile 的几何误差。
+// --处理 Tile 可见事件: 使用 tileset.tileVisible 事件处理 Tile 可见时的操作。
+// --修改样式: 使用 Cesium.Cesium3DTileStyle 修改 Tileset 的样式。
+
+// 总结💥
+// 加载 Tileset: 使用 Cesium3DTileset 加载 tileset.json 文件。这个文件定义了 Tileset 的结构和根 Tile。( Tileset.root)
+// 管理 Tiles: Cesium3DTileset 管理 Cesium3DTile 的加载和渲染。它根据视图和层次细节 (LOD) 动态加载和卸载 Tile。
+// 渲染: Cesium 根据 Tile 的可见性和几何误差渲染适当的 Tile。

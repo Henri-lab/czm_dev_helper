@@ -82,6 +82,7 @@ import { CzmMap, useCommonStore, initModelAt } from '../index';
 
 import { lineConfig } from '../../cesium_dev_helper/_lib/Editor';
 import uploadVue from '../../components/test/upload.vue';
+import Cesium3DTileset from 'cesium/Source/Scene/Cesium3DTileset';
 // pinia
 const commonStore = useCommonStore();
 // route
@@ -228,19 +229,7 @@ watch(
         commonStore.setMap('wuhan');
         break;
       case '5':
-        // 上传文件
-        isUpload.value = true;
-        const cb = (res) => {
-          console.log('load successfully', res);
-        };
-        initModelAt(
-          $viewer,
-          {
-            url: '../..//mock/3dtiles/Tile_+000_+000/tileset.json',
-          },
-          '3dtiles',
-          cb
-        );
+        handleUploadTestModel();
         break;
       case '6':
         // reset 为 全球
@@ -251,6 +240,24 @@ watch(
     }
   }
 );
+
+const handleUploadTestModel = async () => {
+  // 上传文件
+  isUpload.value = true;
+  const cb = (res) => {
+    console.log('load successfully', res);
+  };
+  await initModelAt(
+    $viewer,
+    {
+      url: '/src/mock/3dtiles/Tile_+000_+000/tileset.json',
+    },
+    '3dtiles',
+    cb
+  );
+};
+
+
 </script>
 
 <style scoped>
