@@ -112,7 +112,9 @@ export default class DataLoader {
 
                 // Data loaded is bound to the passed-in opt.onSuccess callback
                 Object.assign(opt, _finalOpt);
-                console.log('hhhhhhhhh', _gltf)
+
+                // console.log('gltf', _gltf)
+
                 return _gltf;
             }
 
@@ -389,3 +391,40 @@ export default class DataLoader {
 // 加载 Tileset: 使用 Cesium3DTileset 加载 tileset.json 文件。这个文件定义了 Tileset 的结构和根 Tile。( Tileset.root)
 // 管理 Tiles: Cesium3DTileset 管理 Cesium3DTile 的加载和渲染。它根据视图和层次细节 (LOD) 动态加载和卸载 Tile。
 // 渲染: Cesium 根据 Tile 的可见性和几何误差渲染适当的 Tile。
+
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// 在 CesiumJS 中加载和显示 3D Tileset 时，可以通过配置一些参数和方法来控制加载和渲染的细节。
+// 这包括设置细节层次（Level of Detail, LOD）、控制屏幕空间误差（Screen Space Error, SSE）、
+// 调整视距裁剪（View Distance Clipping）等。
+// 以下是一些常见的配置选项和方法来控制 3D Tileset 的细节：
+
+// 1. 设置屏幕空间误差（Screen Space Error, SSE）
+// 屏幕空间误差是控制 3D Tileset 细节层次的重要参数。较小的 SSE 值会导致加载更高细节的 Tiles，默认值为16
+// 但会增加计算和渲染的负担。可以通过设置 maximumScreenSpaceError 来控制：
+// 2. 设置最大内存使用量
+// 可以通过设置 maximumMemoryUsage 参数来限制 3D Tileset 在 GPU 上的最大内存使用量（以 MB 为单位）：
+// 3. 调整视距裁剪（View Distance Clipping）
+// 可以通过设置 maximumScreenSpaceError 来控制在远距离时是否加载较低细节的 Tiles。
+// 也可以通过自定义着色器----tileset.style 属性来应用自定义样式和着色器   来裁剪超出特定距离的 Tiles。
+// tileset.style = new Cesium.Cesium3DTileStyle({
+//     color: {
+//         conditions: [
+//             ['${Height} > 100', 'color("red")'],
+//             ['${Height} > 50', 'color("yellow")'],
+//             ['true', 'color("green")']
+//         ]
+//     }
+// });
+
+// 4.调整细节层次和加载策略
+// 可以通过 loadSiblings、skipLevelOfDetail 和 baseScreenSpaceError 等参数来调整细节层次和加载策略：
+// var tileset = new Cesium.Cesium3DTileset({
+//     url: 'path/to/tileset.json',
+//     skipLevelOfDetail: true,  // 是否跳过细节层次
+//     baseScreenSpaceError: 1024,  // 基础屏幕空间误差
+//     skipScreenSpaceErrorFactor: 16,  // 跳过细节层次的屏幕空间误差因子
+//     skipLevels: 1,  // 跳过的层次级别数量
+//     immediatelyLoadDesiredLevelOfDetail: true,  // 是否立即加载所需的细节层次
+//     loadSiblings: true  // 是否加载兄弟节点
+// });

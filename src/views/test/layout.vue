@@ -235,7 +235,7 @@ watch(
         console.log('testing 3dtileset');
         // 加载示例大楼瓦片-3dtiles
         handleUploadTestModel(
-          '/src/mock/3dtiles/Tile_+000_+000/tileset.json',
+          '/src/mock/3dtiles/Tile_+002_+005/tileset.json',
           '3dtiles'
         );
         break;
@@ -272,10 +272,11 @@ const handleUploadTestModel = async (url, type) => {
   // 加载测试数据-3dtiles
   await initModelAt(
     $viewer,
+    type,
     {
       url,
+      maximumScreenSpaceError: 2,
     },
-    type,
     handleLoadedModel
   );
 };

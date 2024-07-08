@@ -157,8 +157,8 @@ export default class SceneManager extends Manager {
   /**
  * Function to add 3D model to the Cesium viewer.
  *
- * @param {Object|Array} options - The options for loading the 3D model. If an array is provided, multiple models will be loaded.
  * @param {string} type - The type of the 3D model. It can be '3dtiles', 'gltf', or 'primitive'.
+ * @param {Object|Array} options - The options for loading the 3D model. If an array is provided, multiple models will be loaded.
  * @param {function} cb - The callback function to be executed after the model is loaded.
  * @param {Object} [extraOpt] - Additional options for the function.
  * @param {boolean} [extraOpt.isZoom] - If true, the viewer will zoom to the loaded model.
@@ -166,8 +166,8 @@ export default class SceneManager extends Manager {
  * @returns {Promise<Cesium.Cesium3DTileset|Cesium.Primitive|undefined>} - A promise that resolves to the loaded 3D model.
  * If the input is an array, it will return an array of loaded models.
  * If the input is not an array and the model fails to load, it will return undefined.
- */
-  async add3DModel(options, type, cb, extraOpt = { isZoom: true }) {
+  */
+  async add3DModel(type, options, cb, extraOpt = { isZoom: true }) {
     const that = this;
     const $dL = this.$dL;
     const _type = type.toLowerCase();
@@ -175,7 +175,7 @@ export default class SceneManager extends Manager {
     //  two type options
     if (Array.isArray(options)) {
       for (let option of options) {
-        return await loadAndAddModelByOption(option);
+        await loadAndAddModelByOption(option);
       }
     } else {//核心💫
       let _singleOpt = options
@@ -198,10 +198,12 @@ export default class SceneManager extends Manager {
           // $dL.load3DTiles会把加载的model 执行的progress 和err 通过option的三个on属性回调出来
           res = await $dL.load3DTiles(option);
         } else if (_type === 'gltf') {
+
           res = await $dL.loadGLTF(option);
         }
 
         if (res) {
+          // 为啥加载gltf就挂起了?? -2024/7/8/23:00
           res.readyPromise.then((final) => {
             that.addToScene(final, _type);//核心
             resArr.push({ t_id: Date.now(), model: final });
@@ -215,7 +217,12 @@ export default class SceneManager extends Manager {
 
             // 想尝试在await loadAndAddModelByOption(_singleOpt)处拿到model 不过失败了 👺
             return final;
+          }).catch(function (error) {
+            console.error('Error loading model:', error);
           });
+          // 在 Promise 中，通常使用 catch 方法来捕获异常，而 otherwise 方法不是标准的 Promise 方法。
+          // 然而，有些库或框架可能定义了自己的 Promise 扩展方法，包括 otherwise 用于捕获错误。
+          // 在 CesiumJS 中，它遵循标准的 Promise API，因此你应该使用 catch 方法来处理异步操作中可能出现的错误。
         }
 
       } catch (e) {
