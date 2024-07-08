@@ -3,78 +3,18 @@ import { typeOf } from "../util/type";
 
 
 // 本类调用者应习惯将回调cb放在options中 而不是通常的另起一个参数
-class DataLoader {
+export default class DataLoader {
     constructor(viewer) {
         this.viewer = viewer;
         this.cache = new Map(); // 缓存机制
     }
 
-    /**
-     * Private method to listen for tile load progress and call a progress callback.
-     *
-     * @private
-     * @param {Cesium.Cesium3DTileset} tileset - The 3D tileset to listen for progress events.
-     * @param {function} progressCallback - A callback function to be called with progress information.
-     *
-     * @returns {undefined}
-     */
-    async _check3DTilesetLoadProgress(tileset, progressCallback) {
-        let totalTiles = 0;
-        let loadedTiles = 0;
-
-        // Event listener for when a tile is requested
-        tileset.tileLoadProgress.addEventListener(function (event) {
-            totalTiles = event.total; // Total tiles to be loaded
-            loadedTiles = event.current; // Tiles currently loaded
-
-            if (progressCallback) {
-                const progress = loadedTiles / totalTiles;
-                progressCallback(progress);
-            }
-        });
-
-        // Event listener for when all tiles have finished loading
-        tileset.allTilesLoaded.addEventListener(function () {
-            if (progressCallback) {
-                progressCallback(1); // Loading complete
-            }
-        });
+    clearCache() {
+        this.cache.clear();
     }
 
-    /**
-      * Private method to listen for model load progress and call a progress callback.
-      *
-      * @private
-      * @param {Cesium.Model} model - The model to listen for progress events.
-      * @param {function} progressCallback - A callback function to be called with progress information.
-      *
-      * @returns {undefined}
-      */
-    async _checkModelLoadingProgress(model, progressCallback) {
-        if (model.ready) {
-            // Model is fully loaded
-            if (progressCallback) {
-                progressCallback(1); // 100% loaded
-            }
-            return; //递归结束
-        }
 
-        const stats = model._resource.fetchImage().then(() => {
-            const loadedBytes = model._resource.getBytesLoaded();
-            const totalBytes = model._resource.getTotalBytes();
-            const progress = loadedBytes / totalBytes;
-
-            if (progressCallback && loadedBytes !== previousLoadedBytes) {
-                previousLoadedBytes = loadedBytes;
-                progressCallback(progress);
-            }
-
-            // 递归循环监听
-            // Continue checking the loading progress
-            setTimeout(_checkModelLoadingProgress(model, progressCallback), 100);
-        });
-    }
-
+    // 中央函数✨
     /**
      * Private method to load data with progress feedback.
      *
@@ -157,15 +97,17 @@ class DataLoader {
         //         this._check3DTilesetLoadProgress(final, options.onProgress);
         //     })
         // }
-        if (type === 'gltf' && loaded) {
-            loaded.readyPromise.then(final => {
-                this._checkModelLoadingProgress(final, options.onProgress);
-            })
-        }
+        // if (type === 'gltf' && loaded) {
+        //     loaded.readyPromise.then(final => {
+        //         this._checkModelLoadingProgress(final, options.onProgress);
+        //     })
+        // }
 
         return loaded;
     }
 
+
+    // 中央函数✨
     /**
      * Generic function to load a resource into the Cesium viewer.
      *
@@ -219,13 +161,13 @@ class DataLoader {
 
                 return _3dtile;
             } else if (type === 'gltf') {
-                const _gltf = await res.readyPromise
-                
+                const _gltf = res/*await res.readyPromise*/;
+
                 // console.log('GLTF loaded successfully');
 
                 // Data loaded is bound to the passed-in opt.onSuccess callback
                 Object.assign(opt, _finalOpt);
-
+                console.log('hhhhhhhhh', _gltf)
                 return _gltf;
             }
 
@@ -237,50 +179,7 @@ class DataLoader {
         }
     }
 
-    /**
-     * Function to load multiple 3D tilesets into the Cesium viewer.
-     *
-     * @param {Object|Array} opt - Objects containing the URL and options for each 3D tileset.
-     * @returns {Promise<Cesium.Cesium3DTileset|Array<Promise<Cesium.Cesium3DTileset>>>} 
-     * A promise that resolves to the loaded 3D tileset(s). If multiple URLs are provided, it returns an array of promises.
-     */
-    async load3DTiles(opt) {
-        return await this.load3D(opt, '3dtiles');
-    }
-
-    /**
-     * Function to load a GLTF model into the Cesium viewer.
-     *
-     * @param {Object|Array} opt - Objects containing the URL and options for each GLTF model.
-     * @returns {Promise<Cesium.Model|Array<Promise<Cesium.Model>>>} 
-     * A promise that resolves to the loaded GLTF model(s). If multiple URLs are provided, it returns an array of promises.
-     */
-    async loadGLTF(opt) {
-        return await this.load3D(opt, 'gltf');
-    }
-
-    async loadGeoJSON(url, options = {}) {
-        return this._loadDataWithProgress(url, 'geojson', options);
-    }
-
-    async loadKML(url, options = {}) {
-        return this._loadDataWithProgress(url, 'kml', options);
-    }
-
-    async loadCZML(url, options = {}) {
-        return this._loadDataWithProgress(url, 'czml', options);
-    }
-
-    async loadGPX(url, options = {}) {
-        return this._loadDataWithProgress(url, 'gpx', options);
-    }
-
-    async loadTopoJSON(url, options = {}) {
-        return this._loadDataWithProgress(url, 'topojson', options);
-    }
-
-
-
+    // 中央函数✨
     /**
      * Load data of a specific type into the Cesium viewer.
      *
@@ -318,12 +217,112 @@ class DataLoader {
         }
     }
 
-    clearCache() {
-        this.cache.clear();
+
+
+
+
+    // 扩展函数🙌
+    /**
+     * Private method to listen for tile load progress and call a progress callback.
+     *
+     * @private
+     * @param {Cesium.Cesium3DTileset} tileset - The 3D tileset to listen for progress events.
+     * @param {function} progressCallback - A callback function to be called with progress information.
+     *
+     * @returns {undefined}
+     */
+    async _check3DTilesetLoadProgress(tileset, progressCallback) {
+        let totalTiles = 0;
+        let loadedTiles = 0;
+
+        // Event listener for when a tile is requested
+        tileset.tileLoadProgress.addEventListener(function (event) {
+            totalTiles = event.total; // Total tiles to be loaded
+            loadedTiles = event.current; // Tiles currently loaded
+
+            if (progressCallback) {
+                const progress = loadedTiles / totalTiles;
+                progressCallback(progress);
+            }
+        });
+
+        // Event listener for when all tiles have finished loading
+        tileset.allTilesLoaded.addEventListener(function () {
+            if (progressCallback) {
+                progressCallback(1); // Loading complete
+            }
+        });
     }
+
+    /**
+      * Private method to listen for model load progress and call a progress callback.
+      *
+      * @private
+      * @param {Cesium.Model} model - The model to listen for progress events.
+      * @param {function} progressCallback - A callback function to be called with progress information.
+      *
+      * @returns {undefined}
+      */
+    async _checkModelLoadingProgress(model, progressCallback) {
+        if (model.ready) {
+            // Model is fully loaded
+            if (progressCallback) {
+                progressCallback(1); // 100% loaded
+            }
+            return; //递归结束
+        }
+
+        const stats = model._resource.fetchImage().then(() => {
+            const loadedBytes = model._resource.getBytesLoaded();
+            const totalBytes = model._resource.getTotalBytes();
+            const progress = loadedBytes / totalBytes;
+
+            if (progressCallback && loadedBytes !== previousLoadedBytes) {
+                previousLoadedBytes = loadedBytes;
+                progressCallback(progress);
+            }
+
+            // 递归循环监听
+            // Continue checking the loading progress
+            setTimeout(_checkModelLoadingProgress(model, progressCallback), 100);
+        });
+    }
+
+
+
+
+    // 快速调用💨
+    async load3DTiles(opt) {
+        return await this.load3D(opt, '3dtiles');
+    }
+
+    async loadGLTF(opt) {
+        return await this.load3D(opt, 'gltf');
+    }
+
+    async loadGeoJSON(url, options = {}) {
+        return this._loadDataWithProgress(url, 'geojson', options);
+    }
+
+    async loadKML(url, options = {}) {
+        return this._loadDataWithProgress(url, 'kml', options);
+    }
+
+    async loadCZML(url, options = {}) {
+        return this._loadDataWithProgress(url, 'czml', options);
+    }
+
+    async loadGPX(url, options = {}) {
+        return this._loadDataWithProgress(url, 'gpx', options);
+    }
+
+    async loadTopoJSON(url, options = {}) {
+        return this._loadDataWithProgress(url, 'topojson', options);
+    }
+
 }
 
-export default DataLoader;
+
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // GLTF (GL Transmission Format)--小模型
