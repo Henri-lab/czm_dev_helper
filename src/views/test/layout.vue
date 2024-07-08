@@ -128,8 +128,8 @@ const subMenus = [
     key: 'sub4',
     title: '资源加载',
     items: [
-      { key: '4', label: '影像图层' },
-      { key: '5', label: '地形图层' },
+      { key: '4', label: '影像图层-武汉(高德)' },
+      { key: '5', label: '全球' },
       { key: '6', label: '3D瓦片' },
       { key: '7', label: 'GLTF模型' },
     ],
@@ -152,10 +152,12 @@ const subMenus = [
   {
     key: 'sub7',
     title: '用户管理',
-    items: [{ key: '13', label: '操作日志' }],
-    items: [{ key: '14', label: '系统配置' }],
-    items: [{ key: '15', label: '权限配置' }],
-    items: [{ key: '16', label: '编码规则' }],
+    items: [
+      { key: '13', label: '操作日志' },
+      { key: '14', label: '系统配置' },
+      { key: '15', label: '权限配置' },
+      { key: '16', label: '编码规则' },
+    ],
   },
   {
     key: 'sub8',

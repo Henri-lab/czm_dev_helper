@@ -96,12 +96,15 @@ const toWuhan = async (el) => {
             latitude: 30.5961,
             height: 40000,
         },
-        orientation: {
-            heading: Cesium.Math.toRadians(35.0),
-            pitch: Cesium.Math.toRadians(-90.0),
-            roll: 0.0,
-        },
-        duration: 2,
+        effectOptions: {
+            orientation: {
+                heading: Cesium.Math.toRadians(35.0),
+                pitch: Cesium.Math.toRadians(-90.0),
+                roll: 0.0,
+            },
+            duration: 2,
+        }
+
     }
     // 3dtiles
     const modelOpt = {
