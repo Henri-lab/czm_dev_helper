@@ -79,10 +79,12 @@
 import { watchEffect, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { CzmMap, useCommonStore, initModelAt } from '../index';
-
 import { lineConfig } from '../../cesium_dev_helper/_lib/Editor';
 import uploadVue from '../../components/test/upload.vue';
 import Cesium3DTileset from 'cesium/Source/Scene/Cesium3DTileset';
+function sleep() {
+  return new Promise((resolve) => setTimeout(resolve, 1000));
+}
 // pinia
 const commonStore = useCommonStore();
 // route
@@ -220,7 +222,7 @@ watch(
     switch (newValue[0]) {
       case '1':
         if (editor) {
-          console.log('testing test1-option');
+          console.log('testing line');
           editor.startLine(lineConfig);
         }
         break;
@@ -241,23 +243,30 @@ watch(
   }
 );
 
+// 上传模型
 const handleUploadTestModel = async () => {
-  // 上传文件
+  // 打开上传文件视图
   isUpload.value = true;
-  const cb = (res) => {
+  // 一个可以接到加载后model的callback
+  const handleLoadedModel = (res) => {
     console.log('load successfully', res);
+    if (res) {
+      // 加载好model 关闭上传文件视图
+      setTimeout(() => {
+        isUpload.value = false;
+      }, 1000);
+    }
   };
+  // 加载测试数据-3dtiles
   await initModelAt(
     $viewer,
     {
       url: '/src/mock/3dtiles/Tile_+000_+000/tileset.json',
     },
     '3dtiles',
-    cb
+    handleLoadedModel
   );
 };
-
-
 </script>
 
 <style scoped>
