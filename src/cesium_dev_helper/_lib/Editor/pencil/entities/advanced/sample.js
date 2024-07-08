@@ -1,4 +1,5 @@
-import { Cesium, createGraphics, } from './index';
+import * as Cesium from "cesium";
+import { createGraphics, } from './index';
 import { PathGraphics } from '../../graphics/index';
 
 export function SampleEntity(extraOption, options, datasource, viewer) {

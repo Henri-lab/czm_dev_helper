@@ -100,9 +100,9 @@ const isShow3DMap = ref(true);
 // 顶部导航栏
 const naviHeadItems = [
   { key: '1', label: '主页' },
-  { key: '2', label: '三维地球' },
-  { key: '3', label: '二维地图' },
-  { key: '4', label: '单体化' },
+  { key: '2', label: '三维' },
+  { key: '3', label: '二维' },
+  { key: '4', label: '其他' },
   { key: '5', label: '其他1' },
   { key: '6', label: '其他2' },
 ];
@@ -110,7 +110,7 @@ const naviHeadItems = [
 const subMenus = [
   {
     key: 'sub1',
-    title: '绘制图形',
+    title: '绘制工具',
     // icon: UserOutlined,
     items: [{ key: '1', label: '线(测试)' }],
   },
@@ -121,16 +121,49 @@ const subMenus = [
   },
   {
     key: 'sub3',
-    title: 'Three集成',
+    title: '场景控制',
     items: [{ key: '3', label: 'test' }],
   },
   {
     key: 'sub4',
     title: '资源加载',
     items: [
-      { key: '4', label: '武汉' },
-      { key: '5', label: '全局' },
+      { key: '4', label: '影像图层' },
+      { key: '5', label: '地形图层' },
+      { key: '6', label: '3D瓦片' },
+      { key: '7', label: 'GLTF模型' },
     ],
+  },
+  {
+    key: 'sub5',
+    title: '工具箱',
+    items: [
+      { key: '8', label: '测量' },
+      { key: '9', label: '定位' },
+      { key: '10', label: '地理分析' },
+      { key: '11', label: '物体拖拽' },
+    ],
+  },
+  {
+    key: 'sub6',
+    title: 'Three集成',
+    items: [{ key: '12', label: 'test' }],
+  },
+  {
+    key: 'sub7',
+    title: '用户管理',
+    items: [{ key: '13', label: '操作日志' }],
+    items: [{ key: '14', label: '系统配置' }],
+    items: [{ key: '15', label: '权限配置' }],
+    items: [{ key: '16', label: '编码规则' }],
+  },
+  {
+    key: 'sub8',
+    title: '测试',
+    items: [{ key: '17', label: '' }],
+    items: [{ key: '18', label: '' }],
+    items: [{ key: '19', label: '' }],
+    items: [{ key: '20', label: '' }],
   },
 ];
 
