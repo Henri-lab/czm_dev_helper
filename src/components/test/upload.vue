@@ -11,6 +11,7 @@
         <div style="margin-top: 8px">Upload</div>
       </div>
     </a-upload>
+
     <a-modal
       :open="previewVisible"
       :title="previewTitle"
@@ -19,6 +20,8 @@
     >
       <img alt="example" style="width: 100%" :src="previewImage" />
     </a-modal>
+
+    <div class="isloading">模型正在加载中.....</div>
   </div>
 </template>
 <script setup>
@@ -96,5 +99,18 @@ const handlePreview = async (file) => {
 .ant-upload-select-picture-card .ant-upload-text {
   margin-top: 8px;
   color: #666;
+}
+
+.clearfix {
+  position: relative;
+}
+.isloading {
+  position: absolute;
+  top: -400%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  font-weight: 900;
+  color: #ed0d0d;
 }
 </style>

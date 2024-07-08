@@ -128,8 +128,9 @@ const subMenus = [
     title: '资源加载',
     items: [
       { key: '4', label: '影像图层-武汉(高德)' },
-      { key: '5', label: '上传模型' },
-      { key: '6', label: '重置' },
+      { key: '5', label: '3DTileset' },
+      { key: '6', label: 'GLTF' },
+      { key: '7', label: '重置' },
     ],
   },
   {
@@ -231,9 +232,19 @@ watch(
         commonStore.setMap('wuhan');
         break;
       case '5':
-        handleUploadTestModel();
+        console.log('testing 3dtileset');
+        // 加载示例大楼瓦片-3dtiles
+        handleUploadTestModel(
+          '/src/mock/3dtiles/Tile_+000_+000/tileset.json',
+          '3dtiles'
+        );
         break;
       case '6':
+        console.log('testing gltf');
+        // 加载示例地铁车厢-gltf
+        handleUploadTestModel('/src/mock/metro.gltf', 'gltf');
+        break;
+      case '7':
         // reset 为 全球
         commonStore.setMap('global');
         break;
@@ -244,26 +255,27 @@ watch(
 );
 
 // 上传模型
-const handleUploadTestModel = async () => {
+const handleUploadTestModel = async (url, type) => {
   // 打开上传文件视图
   isUpload.value = true;
   // 一个可以接到加载后model的callback
   const handleLoadedModel = (res) => {
-    console.log('load successfully', res);
+    console.log(`load ${type} successfully`, res);
     if (res) {
       // 加载好model 关闭上传文件视图
+      // 模拟大量数据加载的时间  -- 3s
       setTimeout(() => {
         isUpload.value = false;
-      }, 1000);
+      }, 3000);
     }
   };
   // 加载测试数据-3dtiles
   await initModelAt(
     $viewer,
     {
-      url: '/src/mock/3dtiles/Tile_+000_+000/tileset.json',
+      url,
     },
-    '3dtiles',
+    type,
     handleLoadedModel
   );
 };
