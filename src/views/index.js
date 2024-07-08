@@ -1,4 +1,5 @@
 import initViewerAt from '../util/initViewerAt';
+import initModelAt from '../util/initModelAt';
 import { useCommonStore } from '../store';
 import {
     UserOutlined,
@@ -18,4 +19,5 @@ export {
     CzmMap,
     useCommonStore,
     initViewerAt,
+    initModelAt,
 }

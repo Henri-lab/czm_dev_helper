@@ -6,8 +6,7 @@
 
 <script setup>
 import { onMounted, watchEffect } from 'vue';
-import { useCommonStore, initViewerAt, Editor } from '../index';
-import { SceneManager } from '../../cesium_dev_helper/_lib/Manager';
+import { useCommonStore, initViewerAt,  Editor } from '../index';
 
 const commonStore = useCommonStore();
 const el = { id: 'czm-container' };
@@ -37,6 +36,7 @@ watchEffect(() => {
   const typeFromStore = commonStore.Map;
   init(el, typeFromStore);
 });
+
 </script>
 
 <style lang="scss" scoped>

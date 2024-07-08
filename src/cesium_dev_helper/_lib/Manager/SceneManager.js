@@ -117,7 +117,7 @@ export default class SceneManager extends Manager {
     viewer._cesiumWidget._creditContainer.style.display = config.creditContainer.display;
   };
 
-  
+
   /**
    * Function to add a data source or 3D tileset to the Cesium viewer.
    *
@@ -137,9 +137,9 @@ export default class SceneManager extends Manager {
     } else if (!type.includes('url')) {
       return viewer.dataSources.add(loaded);
     }
-
+    // __________________________________________________________________________
     // 👽(扩展)
-    // 搜索资源并添加---和add3DModel具备类似功能,但不能批量处理 不能自动添加t_id
+    // 搜索资源并添加---和add3DModel具备类似功能,但不能批量处理 不能自动添加t_id 不能跳转到模型等
     if (type === '3dtilesurl' || type === 'gltfurl') {
       const options = loaded
 
@@ -155,14 +155,19 @@ export default class SceneManager extends Manager {
   }
 
   /**
-   * Function to add 3D tiles to the Cesium viewer.
-   *
-   * @param {Object|Array} options - The options for loading 3D tiles. It can be a single object or an array of objects.
-   * @param {Function} cb - The callback function to handle the loading progress and result with timestamp.
-   *
-   * @returns {undefined} This function does not return any value.
-   */
-  async add3DModel(options, type, cb) {
+ * Function to add 3D model to the Cesium viewer.
+ *
+ * @param {Object|Array} options - The options for loading the 3D model. If an array is provided, multiple models will be loaded.
+ * @param {string} type - The type of the 3D model. It can be '3dtiles', 'gltf', or 'primitive'.
+ * @param {function} cb - The callback function to be executed after the model is loaded.
+ * @param {Object} [extraOpt] - Additional options for the function.
+ * @param {boolean} [extraOpt.isZoom] - If true, the viewer will zoom to the loaded model.
+ *
+ * @returns {Promise<Cesium.Cesium3DTileset|Cesium.Primitive|undefined>} - A promise that resolves to the loaded 3D model.
+ * If the input is an array, it will return an array of loaded models.
+ * If the input is not an array and the model fails to load, it will return undefined.
+ */
+  async add3DModel(options, type, cb, extraOpt = { isZoom: true }) {
     const that = this;
     const $dL = this.$dL;
     const _type = type.toLowerCase();
@@ -170,30 +175,36 @@ export default class SceneManager extends Manager {
     //  two type options
     if (Array.isArray(options)) {
       for (let option of options) {
-        await loadAndAddModelByOption(option);
+        return await loadAndAddModelByOption(option);
       }
-    } else {
+    } else {//核心💫
       let _singleOpt = options
-      await loadAndAddModelByOption(_singleOpt);
+      const model = await loadAndAddModelByOption(_singleOpt);
+      if (extraOpt && extraOpt.isZoom) {
+        // 跳转到模型
+        that.viewer.zoomTo(model);
+      }
+      return model;
     }
 
 
     // Helper function to load and add a 3d model by a single option
     async function loadAndAddModelByOption(option) {
       try {
-        let model;//加载后的model
+        let readyPromise;//加载的model
         if (_type === '3dtiles') {
           // $dL.load3DTiles会把加载的model 执行的progress 和err 通过option的三个on属性回调出来
-          model = await $dL.load3DTiles(option);
+          readyPromise = await $dL.load3DTiles(option);
         } else if (_type === 'gltf') {
-          model = await $dL.loadGLTF(option);
+          readyPromise = await $dL.loadGLTF(option);
         }
 
-        if (model) {
-          model.readyPromise.then(() => {
-            that.addToScene(model, _type);//核心
+        if (readyPromise) {
+          readyPromise.then((final) => {
+            that.addToScene(final, _type);//核心
             resArr.push({ t_id: Date.now(), model });
             cb(resArr);//传入回调cb 并标记一个timestamp 作为 t_id
+            return final;
           });
         }
 

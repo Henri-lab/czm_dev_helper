@@ -78,13 +78,7 @@
 <script setup>
 import { watchEffect, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import {
-  UserOutlined,
-  LaptopOutlined,
-  NotificationOutlined,
-  CzmMap,
-  useCommonStore,
-} from '../index';
+import { CzmMap, useCommonStore, initModelAt } from '../index';
 
 import { lineConfig } from '../../cesium_dev_helper/_lib/Editor';
 import uploadVue from '../../components/test/upload.vue';
@@ -174,6 +168,12 @@ const isUpload = ref(false);
 onMounted(() => {});
 
 // watch pinia data
+let $viewer;
+watchEffect(() => {
+  const viewerFromStore = commonStore.Viewer;
+  if (viewerFromStore) $viewer = viewerFromStore;
+});
+
 let editor;
 watchEffect(() => {
   const _editorFromStore = commonStore.Editor;
@@ -230,6 +230,17 @@ watch(
       case '5':
         // 上传文件
         isUpload.value = true;
+        const cb = (res) => {
+          console.log('load successfully', res);
+        };
+        initModelAt(
+          $viewer,
+          {
+            url: '../..//mock/3dtiles/Tile_+000_+000/tileset.json',
+          },
+          '3dtiles',
+          cb
+        );
         break;
       case '6':
         // reset 为 全球
