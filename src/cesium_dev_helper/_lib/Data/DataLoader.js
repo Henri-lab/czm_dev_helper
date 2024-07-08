@@ -13,6 +13,117 @@ export default class DataLoader {
         this.cache.clear();
     }
 
+    // 💫核心💫
+    // 中央函数✨
+    /**
+     * Load data of a specific type into the Cesium viewer.
+     *
+     * @param {string} url - The URL of the data to load.
+     * @param {string} type - The type of the data to load. Supported types are: 'geojson', 'kml', 'czml', '3dtiles', 'gpx', 'topojson'.
+     * @param {object} [options] - Additional options for loading the data.
+     * @param {function} [options.onSuccess] - A callback function to be executed when the data is successfully loaded.
+     * @param {function} [options.onError] - A callback function to be executed if an error occurs during the loading process.
+     * @param {function} [options.onProgress] - A callback function to be executed to provide progress information during the loading process.
+     * @param {object} [options.headers] - Additional headers to be sent with the request.
+     * @param {string} [options.overrideMimeType] - A MIME type to override the default MIME type for the request.
+     *
+     * @returns {Promise<Cesium.DataSource} A promise that resolves to the loaded data source
+     *
+     * @throws {Error} If an unsupported data type is specified.
+     */
+    async loadData(url, type, options = {}) {
+        switch (type.toLowerCase()) {
+            case 'geojson':
+                return this.loadGeoJSON(url, options);
+            case 'kml':
+                return this.loadKML(url, options);
+            case 'czml':
+                return this.loadCZML(url, options);
+            case 'gpx':
+                return this.loadGPX(url, options);
+            case '3dtiles':
+                return this.load3DTiles(url, options);
+            case 'gltf':
+                return this.loadGLTF(url, options);
+            // case 'topojson':
+            //     return this.loadTopoJSON(url, options);
+            default:
+                throw new TypeError(`Unsupported data source type: ${type}`);
+        }
+    }
+
+    // 中央函数✨
+    /**
+     * Generic function to load a resource into the Cesium viewer.
+     *
+     * @param {Object|Array} opt - Objects containing the URL and options for each resource.
+     * @param {string} opt.url - The URL of the resource to load.
+     * @param {string} type - The type of resource to load ('3dtiles' or 'gltf').
+     * @param {Object} [opt.headers] - Additional headers to be sent with the request.
+     * @param {string} [opt.overrideMimeType] - A MIME type to override the default MIME type for the request.
+     * @param {function} [opt.onSuccess] - A callback function to be executed when the resource is successfully loaded.
+     * @param {function} [opt.onError] - A callback function to be executed if an error occurs during the loading process.
+     * @param {function} [opt.onProgress] - A callback function to be executed to provide progress information during the loading process.
+     *
+     * @returns {Promise<any|Array<Promise<any>>>} 
+     * A promise that resolves to the loaded resource(s). If multiple URLs are provided, it returns an array of promises.
+     *
+     * @throws {Error} If the provided URL is not a string or if the provided options are not an object.
+     */
+    // 3D Tiles and GLTF are both used in 3D graphics and GIS applications, 
+    // but they serve different purposes and have different structures. 
+    // they can't be simply categorized under the same "model" concept.
+    async load3D(opt, type) {//将扁平的opt分为url和options两个部分🎃
+        // Ensure opt has three properties that can return data
+        let _finalOpt = {
+            onSuccess: () => { },
+            onError: () => { },
+            onProgress: () => { }
+        };
+        Object.assign(_finalOpt, opt);
+
+        // Parse parameters
+        let __finalOptCopy = _finalOpt; // Cache to prevent data loss
+        let _url = _finalOpt.url;
+        delete _finalOpt.url;
+
+        // Load a single URL
+        if (!Array.isArray(opt) && typeOf(_url) === "String" && typeOf(_finalOpt) === "Object") {
+            // Data loaded will be passed back on _finalOpt's three 'on' properties
+            const res = await this._loadDataWithProgress(_url, type, _finalOpt);
+            // 加载3dtiles的时候要使用readyPromise 
+
+            if (type === '3dtiles' && res) {
+                const _3dtile = res;
+                // const _3dtile = await res.readyPromise
+                // 💥💥💥有点疑惑这里返回res 或者  res.readyPromise ,
+                // 调用者拿到返回值都要在readyPromise后才能拿到tile💥💥💥
+
+                // console.log('3d tileset loaded successfully');
+
+                // Data loaded is bound to the passed-in opt.onSuccess callback
+                Object.assign(opt, _finalOpt);
+
+                return _3dtile;
+            } else if (type === 'gltf') {
+                const _gltf = res/*await res.readyPromise*/;
+
+                // console.log('GLTF loaded successfully');
+
+                // Data loaded is bound to the passed-in opt.onSuccess callback
+                Object.assign(opt, _finalOpt);
+                console.log('hhhhhhhhh', _gltf)
+                return _gltf;
+            }
+
+        }
+        // Load multiple URLs
+        else if (Array.isArray(opt)) {
+            let _opts = opt;
+            return Promise.all(_opts.map(opt => this.load3D(opt, type)));
+        }
+    }
+
 
     // 中央函数✨
     /**
@@ -105,119 +216,6 @@ export default class DataLoader {
 
         return loaded;
     }
-
-
-    // 中央函数✨
-    /**
-     * Generic function to load a resource into the Cesium viewer.
-     *
-     * @param {Object|Array} opt - Objects containing the URL and options for each resource.
-     * @param {string} opt.url - The URL of the resource to load.
-     * @param {string} type - The type of resource to load ('3dtiles' or 'gltf').
-     * @param {Object} [opt.headers] - Additional headers to be sent with the request.
-     * @param {string} [opt.overrideMimeType] - A MIME type to override the default MIME type for the request.
-     * @param {function} [opt.onSuccess] - A callback function to be executed when the resource is successfully loaded.
-     * @param {function} [opt.onError] - A callback function to be executed if an error occurs during the loading process.
-     * @param {function} [opt.onProgress] - A callback function to be executed to provide progress information during the loading process.
-     *
-     * @returns {Promise<any|Array<Promise<any>>>} 
-     * A promise that resolves to the loaded resource(s). If multiple URLs are provided, it returns an array of promises.
-     *
-     * @throws {Error} If the provided URL is not a string or if the provided options are not an object.
-     */
-    // 3D Tiles and GLTF are both used in 3D graphics and GIS applications, 
-    // but they serve different purposes and have different structures. 
-    // they can't be simply categorized under the same "model" concept.
-    async load3D(opt, type) {//将扁平的opt分为url和options两个部分🎃
-        // Ensure opt has three properties that can return data
-        let _finalOpt = {
-            onSuccess: () => { },
-            onError: () => { },
-            onProgress: () => { }
-        };
-        Object.assign(_finalOpt, opt);
-
-        // Parse parameters
-        let __finalOptCopy = _finalOpt; // Cache to prevent data loss
-        let _url = _finalOpt.url;
-        delete _finalOpt.url;
-
-        // Load a single URL
-        if (!Array.isArray(opt) && typeOf(_url) === "String" && typeOf(_finalOpt) === "Object") {
-            // Data loaded will be passed back on _finalOpt's three 'on' properties
-            const res = await this._loadDataWithProgress(_url, type, _finalOpt);
-            // 加载3dtiles的时候要使用readyPromise 
-
-            if (type === '3dtiles' && res) {
-                const _3dtile = res;
-                // const _3dtile = await res.readyPromise
-                // 💥💥💥有点疑惑这里返回res 或者  res.readyPromise ,
-                // 调用者拿到返回值都要在readyPromise后才能拿到tile💥💥💥
-
-                // console.log('3d tileset loaded successfully');
-
-                // Data loaded is bound to the passed-in opt.onSuccess callback
-                Object.assign(opt, _finalOpt);
-
-                return _3dtile;
-            } else if (type === 'gltf') {
-                const _gltf = res/*await res.readyPromise*/;
-
-                // console.log('GLTF loaded successfully');
-
-                // Data loaded is bound to the passed-in opt.onSuccess callback
-                Object.assign(opt, _finalOpt);
-                console.log('hhhhhhhhh', _gltf)
-                return _gltf;
-            }
-
-        }
-        // Load multiple URLs
-        else if (Array.isArray(opt)) {
-            let _opts = opt;
-            return Promise.all(_opts.map(opt => this.load3D(opt, type)));
-        }
-    }
-
-    // 中央函数✨
-    /**
-     * Load data of a specific type into the Cesium viewer.
-     *
-     * @param {string} url - The URL of the data to load.
-     * @param {string} type - The type of the data to load. Supported types are: 'geojson', 'kml', 'czml', '3dtiles', 'gpx', 'topojson'.
-     * @param {object} [options] - Additional options for loading the data.
-     * @param {function} [options.onSuccess] - A callback function to be executed when the data is successfully loaded.
-     * @param {function} [options.onError] - A callback function to be executed if an error occurs during the loading process.
-     * @param {function} [options.onProgress] - A callback function to be executed to provide progress information during the loading process.
-     * @param {object} [options.headers] - Additional headers to be sent with the request.
-     * @param {string} [options.overrideMimeType] - A MIME type to override the default MIME type for the request.
-     *
-     * @returns {Promise<Cesium.DataSource} A promise that resolves to the loaded data source
-     *
-     * @throws {Error} If an unsupported data type is specified.
-     */
-    async loadData(url, type, options = {}) {
-        switch (type.toLowerCase()) {
-            case 'geojson':
-                return this.loadGeoJSON(url, options);
-            case 'kml':
-                return this.loadKML(url, options);
-            case 'czml':
-                return this.loadCZML(url, options);
-            case 'gpx':
-                return this.loadGPX(url, options);
-            case '3dtiles':
-                return this.load3DTiles(url, options);
-            case 'gltf':
-                return this.loadGLTF(url, options);
-            // case 'topojson':
-            //     return this.loadTopoJSON(url, options);
-            default:
-                throw new TypeError(`Unsupported data source type: ${type}`);
-        }
-    }
-
-
 
 
 
