@@ -140,8 +140,7 @@ const toGlobal = async (el) => {
     return czmViewer;
 }
 
-
-// 辅助
+// --辅助--
 function switchViewerTo(viewer) {
     if (currentViewer && currentViewer !== viewer) {
         destroyViewer(currentViewer);
