@@ -207,7 +207,7 @@ export default class SceneManager extends Manager {
           res.readyPromise.then((final) => {
             that.addToScene(final, _type);//核心
             resArr.push({ t_id: Date.now(), model: final });
-            cb(resArr);//传入回调cb 并标记一个timestamp 作为 t_id
+            cb && cb(resArr);//传入回调cb 并标记一个timestamp 作为 t_id
 
             // 经过测试 这个跳转必须放在readyPromise中💥
             if (extraOpt && extraOpt.isZoom) {
