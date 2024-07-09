@@ -6,7 +6,7 @@
 
 <script setup>
 import { markRaw, onMounted, watchEffect } from 'vue';
-import { useCommonStore, initViewerAt,  Editor } from '../index';
+import { useCommonStore, initViewerAt, Editor } from '../index';
 
 const commonStore = useCommonStore();
 const el = { id: 'czm-container' };
@@ -16,7 +16,7 @@ const init = (el, type) => {
   initViewerAt(el, type).then((viewer) => {
     // ~test-<layout/> 已經開始挂載🩸
     if (viewer) {
-      let $viewer=markRaw(viewer)
+      let $viewer = markRaw(viewer);
       //  全局共享viewer
       commonStore.setViewer($viewer);
       //  全局共享editor (draw needs canvas)
@@ -35,9 +35,8 @@ onMounted(() => {
 watchEffect(() => {
   // commonStore.Map() ❌
   const typeFromStore = commonStore.Map;
-  init(el, typeFromStore);
+  typeFromStore && init(el, typeFromStore);
 });
-
 </script>
 
 <style lang="scss" scoped>

@@ -234,6 +234,7 @@ watch(
         break;
       case '4':
         // 武汉地图
+        console.log('testing viewer switch');
         commonStore.setMap('wuhan');
         break;
       case '5':
@@ -243,6 +244,8 @@ watch(
           '/src/mock/3dtiles/Tile_+002_+005/tileset.json',
           '3dtiles'
         );
+        // 方便切回地图 因为设计 地图组件 在监听Map值  只有改变Map值才会重新初始化
+        commonStore.setMap('');
         break;
       case '6':
         console.log('testing gltf');
@@ -251,6 +254,7 @@ watch(
         break;
       case '7':
         // reset 为 全球
+        console.log('testing viewer reset');
         commonStore.setMap('global');
         break;
       default:
@@ -277,7 +281,7 @@ const handleUploadTestModel = async (url, type) => {
       }, 3000);
     }
     // 加载模型后关闭自转
-      cM.isRotationEnabled(0);
+    cM.isRotationEnabled(0);
   };
 
   // 加载测试数据-3dtiles
