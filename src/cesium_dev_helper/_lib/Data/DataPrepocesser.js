@@ -24,17 +24,78 @@ class DataPrepocesser {
 		return imgUrls;
 	}
 
+	/**
+	 * Updates the model matrix of a 3D tiles model to perform translation, rotation, and scaling operations.
+	 *
+	 * @param {Object} tileSet - The 3D tiles model to be updated.
+	 * @param {number} [tx=0] - The x-coordinate translation value.
+	 * @param {number} [ty=0] - The y-coordinate translation value.
+	 * @param {number} [tz=-65] - The z-coordinate translation value.
+	 * @param {number} [rx=0] - The rotation angle around the x-axis in degrees.
+	 * @param {number} [ry=0] - The rotation angle around the y-axis in degrees.
+	 * @param {number} [rz=0] - The rotation angle around the z-axis in degrees.
+	 * @param {number} [scale=1.3] - The scaling factor.
+	 *
+	 * @returns {undefined} This function does not return a value.
+	 */
+	// 修改3dtiles位置
+	update3DtilesMaxtrix(tileSet, { tx = 0, ty = 0, tz = -70, rx = 0, ry = 0, rz = 0, scale = 1.3 }) {
+
+		console.log(tileSet, 'tileset');
+		const cartoDegree = this.getCenterDegreeFrom3dTiles(tileSet)
+
+		const surface = Cesium.Cartesian3.fromDegrees(cartoDegree.longitude, cartoDegree.latitude, cartoDegree.height);
+		const m = Cesium.Transforms.eastNorthUpToFixedFrame(surface);
+
+		//平移
+		const _tx = tx ? tx : 0;
+		const _ty = ty ? ty : 0;
+		const _tz = tz ? tz : 0;
+		const tempTranslation = new Cesium.Cartesian3(_tx, _ty, _tz);
+		const offset = Cesium.Matrix4.multiplyByPoint(m, tempTranslation, new Cesium.Cartesian3(0, 0, 0));
+		const translation = Cesium.Cartesian3.subtract(offset, surface, new Cesium.Cartesian3());
+		tileSet.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
+
+		//旋转及缩放
+		if (rx) {
+			const mx = Cesium.Matrix3.fromRotationX(Cesium.Math.toRadians(rx));
+			const rotate = Cesium.Matrix4.fromRotationTranslation(mx);
+			Cesium.Matrix4.multiply(m, rotate, m);
+		}
+
+		if (ry) {
+			const my = Cesium.Matrix3.fromRotationY(Cesium.Math.toRadians(ry));
+			const rotate = Cesium.Matrix4.fromRotationTranslation(my);
+			Cesium.Matrix4.multiply(m, rotate, m);
+		}
+
+		if (rz) {
+			const mz = Cesium.Matrix3.fromRotationZ(Cesium.Math.toRadians(rz));
+			const rotate = Cesium.Matrix4.fromRotationTranslation(mz);
+			Cesium.Matrix4.multiply(m, rotate, m);
+		}
+
+		if (scale) {
+			const _scale = Cesium.Matrix4.fromUniformScale(scale);
+			Cesium.Matrix4.multiply(m, _scale, m);
+		}
+
+		tileSet._root.transform = m;
+	}
+
+
+
 
 	/**
 	 * Corrects the offset of a white film on 3D tiles.
 	 * Updates the model matrix of the 3D tiles.
 	 * @param {number} tx - The x-coordinate offset.
 	 * @param {number} ty - The y-coordinate offset.
-	 * @param {Object} tile - The 3D tile to be updated.
+	 * @param {Object} tile - The tile to be updated.
 	 * @static
 	 */
-	
-	update3dtilesMaxtrix = (tx, ty, tile) => {
+
+	update2DMaxtrix = (tx, ty, tile) => {
 		const center = tile.boundingSphere.center
 		// Get the vertical coordinate system based on the current model as the origin
 		const m = Cesium.Transforms.eastNorthUpToFixedFrame(center);
@@ -136,9 +197,105 @@ class DataPrepocesser {
 		};
 	}
 
-	
 
-	
+	/**
+		* Retrieves the center of a 3D Tiles tileset.
+		*
+		* @param {Object} tileset - The 3D Tiles tileset.
+		* @returns {Object} - The center(degree) of the tileset.
+		*/
+	getCenterDegreeFrom3dTiles(tileset) {
+
+		// 要获取 3D Tiles 的中心坐标，推荐的做法是通过 root 节点的 boundingVolume 获取。
+		// root 节点是 3D Tiles 集的根节点，它通常会包含 boundingVolume 属性。
+		// --获取 boundingVolume
+		const boundingVolume = tileset.root.boundingVolume;
+
+		// 如果是 BoundingSphere
+		if (boundingVolume.boundingVolume instanceof Cesium.BoundingSphere) {
+			const center = boundingVolume.boundingVolume.center;
+			const cartographic = Cesium.Cartographic.fromCartesian(center);
+			const latitude = Cesium.Math.toDegrees(cartographic.latitude);
+			const longitude = Cesium.Math.toDegrees(cartographic.longitude);
+			const height = cartographic.height;
+
+			return {//degree！
+				longitude,
+				latitude,
+				height,
+			}
+			// console.log('BoundingSphere Center:');
+			// console.log(`Latitude: ${latitude}, Longitude: ${longitude}, Height: ${height}`);
+		}
+		// 如果是 OrientedBoundingBox
+		else if (boundingVolume.boundingVolume instanceof Cesium.OrientedBoundingBox) {
+			const center = boundingVolume.boundingVolume.center;
+			const cartographic = Cesium.Cartographic.fromCartesian(center);
+			const latitude = Cesium.Math.toDegrees(cartographic.latitude);
+			const longitude = Cesium.Math.toDegrees(cartographic.longitude);
+			const height = cartographic.height;
+
+			// console.log('OrientedBoundingBox Center:');
+			// console.log(`Latitude: ${latitude}, Longitude: ${longitude}, Height: ${height}`);
+			return {//degree！
+				longitude,
+				latitude,
+				height,
+			}
+		}
+	}
+
+	/**
+	 * Extracts the bounding rectangle from an array of Cartesian positions.
+	 *
+	 * @param {Array.<Cartesian3>} positions - The array of Cartesian positions.
+	 * @returns {Rectangle} The bounding rectangle in longitude, latitude coordinates.
+	 */
+	// 从 positions 数组中提取边界值 west south east north
+	getRectangleFromPositions(positions) {
+		// 与 Cesium.Rectangle.fromCartesianArray 功能基本一致
+		let west = Number.POSITIVE_INFINITY;
+		let south = Number.POSITIVE_INFINITY;
+		let east = Number.NEGATIVE_INFINITY;
+		let north = Number.NEGATIVE_INFINITY;
+
+		positions.forEach(position => {
+			const cartographic = Cesium.Cartographic.fromCartesian(position);
+			const longitude = cartographic.longitude;
+			const latitude = cartographic.latitude;
+
+			west = Math.min(west, longitude);
+			south = Math.min(south, latitude);
+			east = Math.max(east, longitude);
+			north = Math.max(north, latitude);
+		});
+
+		return new Cesium.Rectangle(west, south, east, north);
+	}
+
+	/**
+	 * Extracts the bounding rectangle from a diagonal of Cartesian positions.
+	 *
+	 * @param {Array.<Cartesian3>} positions - The array of Cartesian positions. It must contain exactly 2 positions.
+	 * @returns {Rectangle} The bounding rectangle in longitude, latitude coordinates.
+	 * @throws {Error} If the positions array does not contain exactly 2 positions.
+	 */
+	getRectangleFromDiagonal(positions) {
+		if (positions.length !== 2) {
+			throw new Error("The positions array must contain exactly 2 positions.");
+		}
+
+		const southwest = Cesium.Cartographic.fromCartesian(positions[0]);
+		const northeast = Cesium.Cartographic.fromCartesian(positions[1]);
+
+		return new Cesium.Rectangle(
+			southwest.longitude,
+			southwest.latitude,
+			northeast.longitude,
+			northeast.latitude
+		);
+	}
+
 
 
 

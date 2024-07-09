@@ -81,7 +81,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { CzmMap, useCommonStore, initModelAt } from '../index';
 import { lineConfig } from '../../cesium_dev_helper/_lib/Editor';
 import uploadVue from '../../components/test/upload.vue';
-import Cesium3DTileset from 'cesium/Source/Scene/Cesium3DTileset';
+import { DataPrepocesser } from '../../cesium_dev_helper/_lib/Data';
 function sleep() {
   return new Promise((resolve) => setTimeout(resolve, 1000));
 }
@@ -161,10 +161,10 @@ const subMenus = [
   {
     key: 'sub8',
     title: '测试',
-    items: [{ key: '17', label: '' }],
-    items: [{ key: '18', label: '' }],
-    items: [{ key: '19', label: '' }],
-    items: [{ key: '20', label: '' }],
+    items: [
+      { key: '17', label: '鹰眼控件' },
+      { key: '18', label: '反选遮罩' },
+    ],
   },
 ];
 
@@ -254,6 +254,7 @@ watch(
   }
 );
 
+const $dP = new DataPrepocesser();
 // 上传模型
 const handleUploadTestModel = async (url, type) => {
   // 打开上传文件视图
@@ -262,6 +263,8 @@ const handleUploadTestModel = async (url, type) => {
   const handleLoadedModel = (res) => {
     console.log(`load ${type} successfully`, res);
     if (res) {
+      // 调整模型位置
+      $dP.update3DtilesMaxtrix(res[0].model,{});
       // 加载好model 关闭上传文件视图
       // 模拟大量数据加载的时间  -- 3s
       setTimeout(() => {
