@@ -1,4 +1,5 @@
 import * as Cesium from "cesium";
+import { isValidCartesian3, isValidCartographic } from '../util/isValid';
 
 class CoordTransformer {
     constructor() {
@@ -201,11 +202,16 @@ class CoordTransformer {
      * @returns {Cartesian3} The WGS84 coordinates.
      */
     static transformCartesianToWGS84(cartesianPosition) {
+        if (!isValidCartesian3(cartesianPosition)) return null;
         const cartographic = Cesium.Cartographic.fromCartesian(cartesianPosition);
         const longitude = Cesium.Math.toDegrees(cartographic.longitude);
         const latitude = Cesium.Math.toDegrees(cartographic.latitude);
         const height = cartographic.height;
-        return Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
+        return {
+            longitude: longitude,
+            latitude: latitude,
+            height: height
+        };
     }
 
     /**
@@ -218,6 +224,7 @@ class CoordTransformer {
      * @returns {Cartesian3} The Cartesian coordinates.
      */
     static transformWGS84ToCartesian(wgs84Position) {
+        if (!isValidCartographic(wgs84Position)) return null;
         const longitude = wgs84Position.longitude;
         const latitude = wgs84Position.latitude;
         const height = wgs84Position.height;
