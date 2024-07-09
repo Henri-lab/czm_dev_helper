@@ -186,7 +186,12 @@ export default class CameraManager extends Manager {
             camera.lookAt(center, rotatedPosition);
 
             // 请求下一帧✨
-            requestAnimationFrame(that.rotateEarth.bind(that));
+            // console.log('rotating?', camera, center, rotatedPosition);
+            // requestAnimationFrame(that.rotateEarth().bind(that)); //--传函数返回结果--👺栈溢出了
+            // requestAnimationFrame(that.rotateEarth.bind(that));//--传函数 👺没效果
+            requestAnimationFrame(() => {
+                that.rotateEarth(); // 继续旋转👍
+            });
             // 📌requestAnimationFrame的使用细节---------------------------------------
             // --requestAnimationFrame 函数的参数需要传递一个函数引用，而不是直接调用函数。
             // 如果直接调用 that.rotateEarth，会失去上下文绑定导致问题。
