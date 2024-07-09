@@ -1,0 +1,144 @@
+{
+  "asset": {
+    "generatetool": "cesiumlab2@www.cesiumlab.com/model2tiles",
+    "version": "1.0"
+  },
+  "extras": { "scenetree": "scenetree.json" },
+  "geometricError": 140537.253395289,
+  "properties": {
+    "Color": {
+      "extras": {
+        "group": "",
+        "id": "c2b73616fd0df6d64c76d5dee2c33920",
+        "name": "Color",
+        "type": "int32_t",
+        "unittype": ""
+      },
+      "maximum": 245.0,
+      "minimum": 245.0
+    },
+    "Elevation": {
+      "extras": {
+        "group": "",
+        "id": "38922acad5c0fddd4adcc9486ca06dc8",
+        "name": "Elevation",
+        "type": "double",
+        "unittype": ""
+      },
+      "maximum": 282.0,
+      "minimum": 3.0
+    },
+    "LineWt": {
+      "extras": {
+        "group": "",
+        "id": "e8e7e976bba6fc239b288ba15cb5ac7b",
+        "name": "LineWt",
+        "type": "int32_t",
+        "unittype": ""
+      },
+      "maximum": 25.0,
+      "minimum": 25.0
+    },
+    "Linetype": {
+      "extras": {
+        "group": "",
+        "id": "f1c5f31f60fef51fc88cf33ece742c6e",
+        "name": "Linetype",
+        "type": "string",
+        "unittype": ""
+      },
+      "maximum": -2147483647.0,
+      "minimum": 2147483647.0
+    }
+  },
+  "refine": "REPLACE",
+  "root": {
+    "boundingVolume": {
+      "box": [
+        1.16415321826935e-10, 158.526059709489, 143.6674819896,
+        58158.5964150327, 0, 0, 0, 70268.6266976446, 0, 0, 0, 142.646279642358
+      ]
+    },
+    "children": [
+      {
+        "boundingVolume": {
+          "box": [
+            28825.552278146, 24934.8217550714, 557.443004245404,
+            28825.552278146, 0, 0, 0, 24934.8217550714, 0, 0, 0,
+            212.400474783499
+          ]
+        },
+        "content": { "uri": "NoLod_0.b3dm" },
+        "geometricError": 0.0,
+        "refine": "REPLACE"
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            14648.3210614283, -4891.96981025128, 680.457615390886,
+            4864.38144092575, 0, 0, 0, 4891.96981025128, 0, 0, 0,
+            57.6364642311819
+          ]
+        },
+        "content": { "uri": "NoLod_1.b3dm" },
+        "geometricError": 0.0,
+        "refine": "REPLACE"
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            7337.95471537692, -2445.98490512564, 700.187847730694,
+            2445.98490512564, 0, 0, 0, 2445.98490512564, 0, 0, 0,
+            56.7258746270185
+          ]
+        },
+        "content": { "uri": "NoLod_2.b3dm" },
+        "geometricError": 0.0,
+        "refine": "REPLACE"
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            7337.95471537692, -7337.95471537692, 695.754287515155,
+            2445.98490512564, 0, 0, 0, 2445.98490512564, 0, 0, 0,
+            57.7649626129708
+          ]
+        },
+        "content": { "uri": "NoLod_3.b3dm" },
+        "geometricError": 0.0,
+        "refine": "REPLACE"
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            2445.98490512564, -2445.98490512564, 724.654476623051,
+            2445.98490512564, 0, 0, 0, 2445.98490512564, 0, 0, 0,
+            75.5472008110955
+          ]
+        },
+        "content": { "uri": "NoLod_4.b3dm" },
+        "geometricError": 0.0,
+        "refine": "REPLACE"
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            2445.98490512564, -7337.95471537692, 730.684262205587,
+            2445.98490512564, 0, 0, 0, 2445.98490512564, 0, 0, 0,
+            87.2439404002191
+          ]
+        },
+        "content": { "uri": "NoLod_5.b3dm" },
+        "geometricError": 0.0,
+        "refine": "REPLACE"
+      }
+    ],
+    "geometricError": 140537.253395289,
+    "transform": [
+      -0.910871745737078, -0.412689547744898, 0.0, 0.0, 0.210515667379201,
+      -0.464641701003849, 0.860111180880785, 0.0, -0.354958894248022,
+      0.78345097285686, 0.51010661289956, 0.0, -2265718.75203848,
+      5000803.16134935, 3234236.56363444, 1.0
+    ]
+  }
+}

@@ -82,6 +82,7 @@ import { CzmMap, useCommonStore, initModelAt } from '../index';
 import { lineConfig } from '../../cesium_dev_helper/_lib/Editor';
 import uploadVue from '../../components/test/upload.vue';
 import { DataPrepocesser } from '../../cesium_dev_helper/_lib/Data';
+import { CameraManager } from '../../cesium_dev_helper/_lib/Manager';
 function sleep() {
   return new Promise((resolve) => setTimeout(resolve, 1000));
 }
@@ -173,9 +174,13 @@ onMounted(() => {});
 
 // watch pinia data
 let $viewer;
+let cM;
 watchEffect(() => {
   const viewerFromStore = commonStore.Viewer;
-  if (viewerFromStore) $viewer = viewerFromStore;
+  if (viewerFromStore) {
+    $viewer = viewerFromStore;
+    cM = new CameraManager(viewerFromStore);
+  }
 });
 
 let editor;
@@ -264,14 +269,17 @@ const handleUploadTestModel = async (url, type) => {
     console.log(`load ${type} successfully`, res);
     if (res) {
       // 调整模型位置
-      $dP.update3DtilesMaxtrix(res[0].model,{});
+      $dP.update3DtilesMaxtrix(res[0].model, {});
       // 加载好model 关闭上传文件视图
       // 模拟大量数据加载的时间  -- 3s
       setTimeout(() => {
         isUpload.value = false;
       }, 3000);
     }
+    // 加载模型后关闭自转
+      cM.isRotationEnabled(0);
   };
+
   // 加载测试数据-3dtiles
   await initModelAt(
     $viewer,

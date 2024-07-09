@@ -11,6 +11,7 @@ import {
 } from '../cesium_dev_helper/_lib/Manager';
 import { CoordTransformer } from '../cesium_dev_helper/_lib/Compute';
 import { TencentImageryProvider } from '../cesium_dev_helper/_lib/Plugin/mapPlugin';
+import { DataPrepocesser } from '../cesium_dev_helper/_lib/Data';
 
 
 
@@ -89,31 +90,6 @@ const toWuhan = async (el) => {
         },
     };
 
-    // cameraFly configuration
-    const flyOpt = {
-        position: {//wuhan
-            longitude: 114.2977,
-            latitude: 30.5961,
-            height: 40000,
-        },
-        effectOptions: {
-            orientation: {
-                heading: Cesium.Math.toRadians(35.0),
-                pitch: Cesium.Math.toRadians(-90.0),
-                roll: 0.0,
-            },
-            duration: 2,
-        }
-
-    }
-    // 3dtiles
-    const modelOpt = {
-        // port 8001
-        url: "http://localhost:8001/wuhan/tileset.json",
-    }
-
-
-
     const cfgM = new ConfigManager();
     const czmViewer = await cfgM.initViewer(vcfg);
 
@@ -124,33 +100,14 @@ const toWuhan = async (el) => {
     sM.initScene();
     // console.log('cesium scene init completed');
 
-
-
-    const cM = new CameraManager(czmViewer);
-    cM.flyTo(flyOpt);
-    // console.log('cesium camera location completed');
-
     // 白膜加载
-    // sM.add3DModel(modelOpt, '3dtiles', async (tiles) => {
-    //     const _loadedModel = await tiles[0];
-    //     sM.handleDefaultModelEffect(_loadedModel)
-    //     // console.log(`3d model which _id is ${_loadedModel._id} has been added to this viewer`);
-    //     // fly to the new model
-    //     const cM = new CameraManager(czmViewer);
-    //     const center = CoordTransformer.getCenterFrom3dTiles(_loadedModel.model);
-    //     center.height = 40000;
-    //     const _center = center;
-    //     cM.flyTo(
-    //         _center,
-    //         flyOpt
-    //     );
-    //     // console.log('fly to the new model completed');
-    // })
-
+    const modelOpt = {
+        url: "/src/mock/wuhan/tileset.json",
+    }
+    sM.add3DModel('3dtiles', modelOpt)
 
     // 切换地图到wuhan
     switchViewerTo(czmViewer)
-
     return czmViewer;
 }
 // -全局视图
@@ -161,7 +118,6 @@ const toGlobal = async (el) => {
         baseConfig: {
             navigationHelpButton: true,
             navigationInstructionsInitiallyVisible: true,
-            // skyAtmosphere: new Cesium.SkyAtmosphere(),
         },
         providerConfig: {
             terrainProvider: [],
@@ -172,32 +128,15 @@ const toGlobal = async (el) => {
             AccessToken: import.meta.env.VITE_CESIUM_KEY,
             logo: false,
             depthTest: true,
-            canvas: {
-                // width: 2000,
-                // height: 1500,
-            },
         },
     };
-
-    // const viewConfig = {
-    //     heading: 100.0,
-    //     pitch: -90.0,
-    //     roll: 100.0,
-    // }
-
     const cfgM = new ConfigManager();
     const czmViewer = await cfgM.initViewer(vcfg);
     const sM = new SceneManager(czmViewer);
     sM.initScene();
     const cM = new CameraManager(czmViewer);
-
-    // cM.setView(viewConfig);
-
-    cM.rotateEarth();// 没效果？？？？？？？？？？？？？？？？？？
-
-    // 切换地图
-    switchViewerTo(czmViewer)
-
+    cM.isRotationEnabled(1, 0, 0.5);// 开启地球自转
+    switchViewerTo(czmViewer) //切换地图
     return czmViewer;
 }
 

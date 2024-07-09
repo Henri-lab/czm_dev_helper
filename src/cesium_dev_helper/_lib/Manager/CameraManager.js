@@ -12,6 +12,8 @@ export default class CameraManager extends Manager {
         this.vehicleEntity = null;
         this.isFirstPerson = false;
         this.firstPersonOffset = new Cartesian3(0, 0, 5); // 调整摄像头相对于车辆的位置
+        this.animationFrameId = null; // 用于存储 requestAnimationFrame 返回的 ID✨
+        this.rotatedEarthAngleSum = 0;//用于累加旋转角度
     }
     // 更新第一人称视角
     _updateFirstPersonView() {
@@ -146,31 +148,89 @@ export default class CameraManager extends Manager {
 
     // 地球旋转
     // 可以转特定角度,默认为自动循环旋转
-    rotateEarth(angle = 0) {
+
+    // 开始旋转
+    /**
+ * Enables or disables the earth's rotation.
+ *
+ * @param {boolean} flag - A flag indicating whether to enable or disable the rotation.
+ * @param {number} [angle] - The initial angle of rotation in degrees. Default is 0.
+ * @param {number} [speed] - The speed of rotation in degrees per frame. Default is 0.1.
+ *
+ * @returns {void}
+ */
+    isRotationEnabled(flag, angle, speed) {
+        this.rotatedEarthAngleSum = 0;
+        let _animationFrameId = this.animationFrameId;
+        // --辅助函数--
+        // 开启旋转 
+        const _startRotation = (angle, speed) => {
+            if (!_animationFrameId) {
+                this.rotateEarth(angle, speed); // 开始旋转
+            }
+        }
+        // 停止旋转
+        function _stopRotation() {
+            if (_animationFrameId) {
+                console.log('sssss')
+                cancelAnimationFrame(_animationFrameId); // 取消下一帧请求
+                _animationFrameId = null; // 清空 animationFrameId
+            }
+        }
+
+        //中央✨
+        if (flag) {
+            // 开启旋转 
+            const defaultAngle = 0;
+            const defaultSpeed = 0.1;
+            const _angle = angle || defaultAngle
+            const _speed = speed || defaultSpeed;
+            _startRotation(_angle, _speed);
+        } else {
+            // 关闭旋转
+            console.log('close rotate')
+            _stopRotation();
+        }
+
+
+    }
+    /**
+     * Rotates the earth around its center axis.
+     *
+     * @param {number} [angle] - The initial angle of rotation in degrees. If not provided, the earth will start rotating from its current position.
+     * @param {number} [speed] - The speed of rotation in degrees per frame. Default is 0.1.
+     *
+     * @returns {void}
+     */
+    // 角度用弧度计算💥
+    rotateEarth(angle, speed) {
         let that = this,
             scene = that.scene,
-            camera = that.camera
+            camera = that.camera,
+            _angle = angle || CesiumMath.toRadians(that.rotatedEarthAngleSum)//开启无限自转时 angle=0 ,_angle取出之前的累积角度
 
         if (angle) {
+            // scene.globe.rotation 属性是一个 实验性 特性，
+            // 可能在不同的 Cesium 版本中会有所变化或不完全支持。
+            // 通过修改地球的旋转角度，可以实现地球的旋转效果。
             scene.globe.rotation = CesiumMath.toRadians(angle);
         }
-        else {
+        else if (angle === 0) {
             // 设置旋转参数
             const center = Cesium.Cartesian3.ZERO; // 地球中心点
             const axis = Cesium.Cartesian3.UNIT_Z; // 旋转轴，Z 轴
 
-            let angle = 0;
-
             // 更新角度
-            angle += Cesium.Math.toRadians(0.1); // 每帧旋转0.1度
+            _angle += Cesium.Math.toRadians(speed); // 默认每帧旋转0.1度
+            that.rotatedEarthAngleSum = _angle; //记录角度
 
             // 获取当前相机位置
             const cameraPosition = camera.position;
             const cameraUp = camera.up;
             const cameraDirection = camera.direction;
 
-            // 计算旋转矩阵
-            const rotationMatrix = Cesium.Matrix3.fromRotationZ(angle);
+            // 计算旋转矩阵 核心💫
+            const rotationMatrix = Cesium.Matrix3.fromRotationZ(_angle);
 
             // 应用旋转矩阵到相机的位置、方向和上向量
             const rotatedPosition = Cesium.Matrix3.multiplyByVector(rotationMatrix, cameraPosition, new Cesium.Cartesian3());
@@ -186,18 +246,18 @@ export default class CameraManager extends Manager {
             camera.lookAt(center, rotatedPosition);
 
             // 请求下一帧✨
-            // console.log('rotating?', camera, center, rotatedPosition);
-            // requestAnimationFrame(that.rotateEarth().bind(that)); //--传函数返回结果--👺栈溢出了
-            // requestAnimationFrame(that.rotateEarth.bind(that));//--传函数 👺没效果
-            requestAnimationFrame(() => {
-                that.rotateEarth(); // 继续旋转👍
+            that.animationFrameId = requestAnimationFrame(() => {
+                // console.log('rotating-animationFrameId', that.animationFrameId);
+                that.rotateEarth(0, speed);
             });
-            // 📌requestAnimationFrame的使用细节---------------------------------------
+
+
+            // 📌📌📌requestAnimationFrame的使用细节📌📌📌---------------------------------------
             // --requestAnimationFrame 函数的参数需要传递一个函数引用，而不是直接调用函数。
             // 如果直接调用 that.rotateEarth，会失去上下文绑定导致问题。
             // 以下几种方法确保上下文绑定正确，并使循环正常运行：
-            // 1.使用 bind 方法绑定上下文。
-            // 2.使用箭头函数来保留上下文。
+            // 1.使用 bind方法👻 绑定上下文。
+            // 2.使用 箭头函数👻 保留上下文。
             // ——like 1：————————————————————————————————————————————————————————————————
             //   rotateEarth(angle = 0) {
             //       console.log('🎠');
@@ -209,6 +269,8 @@ export default class CameraManager extends Manager {
             //       requestAnimationFrame(() => rotateEarth(angle));
             //   }
             // -------------------------------------------------------------------------
+            // requestAnimationFrame(that.rotateEarth().bind(that)); //--传函数返回结果--👺栈溢出了
+            // requestAnimationFrame(that.rotateEarth.bind(that));//--传函数 👺没效果 
         }
     }
 }

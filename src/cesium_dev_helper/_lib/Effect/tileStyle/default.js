@@ -5,8 +5,8 @@ import * as Cesium from "cesium";
 const defaultStyle = new Cesium.Cesium3DTileStyle({
     color: {
         conditions: [
-            ["Number(${Elevation})<20", "color('rgb(25, 211, 226)',0.0)"],
-            ["Number(${Elevation})>20", "color('rgb(25, 211, 226)',1)"],
+            ["Number(${Elevation})<5", "color('rgb(25, 211, 226)',0.0)"],
+            ["Number(${Elevation})>10", "color('rgb(25, 211, 226)',1)"],
             //['true', "color('rgb(42, 122, 237)',1)"]
         ],
         show: false,
