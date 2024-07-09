@@ -1,0 +1,396 @@
+<mxfile host="65bd71144e">
+    <diagram id="UhEsE-5qs92lNBbUJdIN" name="Page-1">
+        <mxGraphModel dx="1504" dy="1076" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="#000000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="23" value="" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="122" y="231" width="710" height="256" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="czm_dev_helper(ES6)" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="10" y="20" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="" style="endArrow=classic;html=1;strokeWidth=5;rounded=1;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="40" y="80" as="sourcePoint"/>
+                        <mxPoint x="40" y="140" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="6" value="App" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="10" y="140" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="" style="endArrow=classic;html=1;strokeWidth=5;rounded=1;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="170" y="80" as="sourcePoint"/>
+                        <mxPoint x="230" y="140" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8" value="_lib" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="160" y="140" width="140" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Bubble" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="150" y="240" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Chart" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="300" y="240" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Compute" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="440" y="240" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Creator" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="580" y="240" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Custom" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="720" y="240" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="Data" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="150" y="300" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Editor" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="300" y="300" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="Effect" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="440" y="300" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="Plugin" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="580" y="300" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="util" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="720" y="300" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="" style="endArrow=classic;html=1;entryX=0.295;entryY=0.007;entryDx=0;entryDy=0;entryPerimeter=0;strokeWidth=5;rounded=1;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1" target="23">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="290" y="180" as="sourcePoint"/>
+                        <mxPoint x="340" y="230" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="25" value="弹窗" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="170" y="270" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="&lt;h1&gt;czm_dev_helper文件结构介绍&lt;/h1&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="675" y="11" width="340" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="图表" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="320" y="270" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="计算器" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="448" y="270" width="92" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="生成器" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="585" y="270" width="90" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="自定义" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="725" y="270" width="92" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="数据管理" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="150" y="337.5" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="图形编辑器" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="312" y="343" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="场景控制器" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="455" y="351" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="插件" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="595" y="337.5" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="通用工具" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="720" y="337.5" width="105" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="管理器(核心)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="170" y="425" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="3DLib" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="297" y="384" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="集成的3D库" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="315" y="429" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="Bubble" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="57" y="593" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;fontColor=#E6E6E6;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="167" y="548" width="20" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" value="&lt;font color=&quot;#e6e6e6&quot;&gt;VueTemplate&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="197" y="548" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="&lt;font color=&quot;#e6e6e6&quot;&gt;popupLoader&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="197" y="623" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="50" value="弹窗vue模板" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="307" y="553" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="51" value="弹窗加载器" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="297" y="628" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value="Chart" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="57" y="728" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;fontColor=#E6E6E6;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="167" y="683" width="20" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="54" value="&lt;font color=&quot;#e6e6e6&quot;&gt;type&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="197" y="683" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" value="&lt;font color=&quot;#e6e6e6&quot;&gt;render&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="197" y="763" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="56" value="图表模板" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="297" y="688" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="57" value="渲染图表" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="297" y="768" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="61" value="Compute" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="427" y="658" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="62" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;fontColor=#E6E6E6;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="527" y="553" width="20" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="63" value="&lt;font color=&quot;#e6e6e6&quot;&gt;CoordTranformer&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="547" y="548" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="64" value="坐标转换器" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="667" y="548" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="65" value="&lt;font color=&quot;#e6e6e6&quot;&gt;Math2D&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="547" y="598" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="66" value="二维计算" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="667" y="598" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="67" value="&lt;font color=&quot;#e6e6e6&quot;&gt;Math3D&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="547" y="648" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="68" value="三维计算" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="667" y="653" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="69" value="&lt;font color=&quot;#e6e6e6&quot;&gt;trajectory&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="547" y="698" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="70" value="子弹轨迹" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="667" y="708" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="72" value="&lt;font color=&quot;#e6e6e6&quot;&gt;TurfUser&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="547" y="753" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="73" value="集成&amp;nbsp;&lt;font color=&quot;#ff0000&quot; style=&quot;font-size: 22px;&quot;&gt;Turf&amp;nbsp;&lt;/font&gt;进行地理计算" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="657" y="758" width="160" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="76" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;fontColor=#E6E6E6;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="970" y="65" width="20" height="875" as="geometry"/>
+                </mxCell>
+                <mxCell id="77" value="&lt;font style=&quot;font-size: 18px;&quot; color=&quot;#007fff&quot;&gt;Manager&lt;/font&gt;" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fontColor=#FF0000;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="857.5" y="480" width="112.5" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="91" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;ConfigManager&lt;/font&gt;" style="shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontColor=#007FFF;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="1005" y="180" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="98" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;MapGroupManager&lt;/font&gt;" style="shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontColor=#007FFF;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="1010" y="850" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="103" value="Manager" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="150" y="381" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="111" value="视图管理" style="swimlane;fontSize=14;fontColor=#007FFF;fillColor=none;startSize=23;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="1250" y="70" width="450" height="870" as="geometry">
+                        <mxRectangle x="425" y="790" width="100" height="30" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="88" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;AnimationManager&lt;/font&gt;" style="shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontColor=#007FFF;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="10" y="690" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="89" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;AnnotationManager&lt;/font&gt;" style="shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontColor=#007FFF;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="10" y="750" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="90" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;CameraManager&lt;/font&gt;" style="shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontColor=#007FFF;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="10" y="230" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="92" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;ControlsManager&lt;/font&gt;" style="shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontColor=#007FFF;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="10" y="790" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="93" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;DrawingManager&lt;/font&gt;" style="shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontColor=#007FFF;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="10" y="360" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="94" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;EventManager&lt;/font&gt;" style="shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontColor=#007FFF;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="10" y="510" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="95" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;LayerManager&lt;/font&gt;" style="shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontColor=#007FFF;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="10" y="280" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="96" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;MeasureManager&lt;/font&gt;" style="shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontColor=#007FFF;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="10" y="590" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="132" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=14;fontColor=#999900;dashed=1;startArrow=none;strokeWidth=4;rounded=1;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="111" source="134" target="90">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="97" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;SceneManager&lt;/font&gt;" style="shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontColor=#007FFF;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="10" y="100" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="122" value="&lt;font color=&quot;#999900&quot;&gt;DataLoader&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fontSize=14;fontColor=#CC0000;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="180" y="30" width="110" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="123" value="" style="shape=crossbar;whiteSpace=wrap;html=1;rounded=1;direction=south;fontSize=14;fontColor=#999900;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="150" y="37.5" width="20" height="155" as="geometry"/>
+                </mxCell>
+                <mxCell id="124" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;场景管理&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="20" y="70" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="125" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;模型/瓦片的加载&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="290" y="40" width="150" height="57" as="geometry"/>
+                </mxCell>
+                <mxCell id="126" value="EffectController" style="shape=switch;whiteSpace=wrap;html=1;fontSize=14;fontColor=#999900;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="180" y="100" width="110" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="128" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;特殊效果的渲染&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="287" y="126" width="140" height="73" as="geometry"/>
+                </mxCell>
+                <mxCell id="129" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;图源和影像数据的管理&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="150" y="280" width="264" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="133" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;摄像机的管理&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="150" y="230" width="187" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="134" value="&lt;font color=&quot;#cccccc&quot; style=&quot;font-size: 12px;&quot;&gt;场景设置好便可以跳转视角&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=14;fontColor=#999900;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="8.75" y="162.5" width="152.5" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="135" value="" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=14;fontColor=#999900;dashed=1;endArrow=none;strokeWidth=4;rounded=1;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="111" source="97" target="134">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="505.0000000000002" y="890" as="sourcePoint"/>
+                        <mxPoint x="505.0000000000002" y="990" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="136" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;绘制画笔管理&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="8.75" y="327" width="150" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="137" value="&lt;span style=&quot;font-size: 22px;&quot;&gt;&lt;font color=&quot;#99ccff&quot; style=&quot;background-color: rgb(0, 76, 153); font-size: 22px;&quot;&gt;Cesium&lt;/font&gt;&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;事件管理&lt;/font&gt;&lt;/span&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="140" y="510" width="150" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="139" value="" style="shape=crossbar;whiteSpace=wrap;html=1;rounded=1;direction=south;fontSize=14;fontColor=#999900;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="150" y="330" width="20" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="140" value="&lt;font style=&quot;background-color: rgb(255, 255, 255); font-size: 19px;&quot; color=&quot;#663300&quot;&gt;Draw&lt;/font&gt;" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;labelBackgroundColor=#004C99;fontSize=12;fontColor=#99CCFF;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="170" y="330" width="90" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="142" value="&lt;font size=&quot;1&quot; color=&quot;#663300&quot;&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 16px;&quot;&gt;Graphics&lt;/span&gt;&lt;/font&gt;" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;labelBackgroundColor=#004C99;fontSize=12;fontColor=#99CCFF;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="170" y="380" width="90" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="143" value="&lt;font size=&quot;1&quot; color=&quot;#663300&quot;&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-size: 17px;&quot;&gt;Gemetry&lt;/span&gt;&lt;/font&gt;" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;labelBackgroundColor=#004C99;fontSize=12;fontColor=#99CCFF;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="170" y="430" width="90" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="144" value="" style="edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;curved=0;rounded=1;endSize=8;startSize=8;dashed=1;fontSize=17;fontColor=#663300;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;strokeWidth=3;fillColor=#e3c800;strokeColor=#B09500;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="111" source="93" target="139">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="35" y="420" as="sourcePoint"/>
+                        <mxPoint x="145" y="450" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="85" y="450"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="145" value="&lt;font style=&quot;background-color: rgb(0, 0, 0);&quot; color=&quot;#ffffff&quot;&gt;extends&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;labelBackgroundColor=#FFFFFF;fontSize=17;fontColor=#663300;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="90" y="420" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="149" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;绘制器&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="260" y="340" width="112" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="150" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;图形资源和实体资源&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="262" y="380" width="184" height="59" as="geometry"/>
+                </mxCell>
+                <mxCell id="182" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;图元资源&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="256" y="446" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="184" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;PickManager&lt;/font&gt;" style="shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;fontSize=18;fontColor=#007FFF;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="10" y="640" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="185" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;测量管理&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="140" y="590" width="150" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="186" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;拾取管理&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="140" y="640" width="150" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="188" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;动画管理&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="140" y="690" width="150" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="189" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;控件管理&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="140" y="790" width="150" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="191" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;label实体管理&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="111">
+                    <mxGeometry x="140" y="750" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="114" value="" style="endArrow=classic;html=1;fontSize=22;fontColor=#6600CC;shape=flexArrow;fillColor=#1ba1e2;strokeColor=#006EAF;rounded=1;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1125" y="220" as="sourcePoint"/>
+                        <mxPoint x="1235" y="510" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="116" value="" style="endArrow=classic;html=1;fontSize=22;fontColor=#6600CC;shape=flexArrow;fillColor=#6a00ff;strokeColor=#3700CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1235" y="510" as="sourcePoint"/>
+                        <mxPoint x="1105" y="840" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="118" value="&lt;font style=&quot;font-size: 22px;&quot; color=&quot;#cc0000&quot;&gt;配置视图&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="1005" y="150" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="119" value="&lt;font color=&quot;#cc0000&quot; style=&quot;font-size: 22px;&quot;&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;多视图管理&lt;/span&gt;&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=22;fontColor=#6600CC;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="1010" y="820" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="194" value="Data" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="57" y="953" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="195" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;fontColor=#E6E6E6;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="167" y="833" width="20" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="198" value="&lt;font color=&quot;#e6e6e6&quot;&gt;Dataloader&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="197" y="843" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="199" value="&lt;font color=&quot;#e6e6e6&quot;&gt;DataPrepocesser&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="197" y="903" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="200" value="&lt;font color=&quot;#e6e6e6&quot;&gt;gifLoader&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="197" y="963" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="201" value="&lt;font color=&quot;#e6e6e6&quot;&gt;hierachy&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="197" y="1023" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="202" value="数据源&lt;font color=&quot;#66ffff&quot; style=&quot;font-size: 22px;&quot;&gt;/&lt;/font&gt;模型加载器" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="297" y="848" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="203" value="数据预处理器" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="297" y="908" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="204" value="GIF加载器" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="307" y="968" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="205" value="层次模型处理器" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="307" y="1028" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="207" value="Custom" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="435" y="943" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="208" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;fontColor=#E6E6E6;fillColor=none;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="547" y="838" width="20" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="209" value="&lt;font color=&quot;#e6e6e6&quot;&gt;material&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="565" y="840" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="210" value="&lt;font color=&quot;#e6e6e6&quot;&gt;Property&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="567" y="913" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="211" value="&lt;font color=&quot;#e6e6e6&quot;&gt;Provider&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontColor=#CC0066;fillColor=none;rounded=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+                    <mxGeometry x="570" y="998" width="100" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="214" value="自定义材质列表" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="680" y="843" width="167" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="215" value="材质属性注册..." style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="677.5" y="918" width="175" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="216" value="影像&lt;font color=&quot;#66ffff&quot;&gt;/&lt;/font&gt;地形配置" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fillColor=none;fontColor=#CC0066;sketch=1;curveFitting=1;jiggle=2;fontSize=22;" vertex="1" parent="1">
+                    <mxGeometry x="680" y="1006" width="170" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

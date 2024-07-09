@@ -46,13 +46,13 @@ export const pointsToPositions = (points, height) => {
 
 /**
  * Flattens an array of objects with lng and lat properties to an array of numbers.
- * @param {Array<{lng: number, lat: number}>} paths - An array of objects with lng and lat properties.
+ * @param {Array<{lng: number, lat: number}>} paths - An array of objects with lng and lat ,height properties.
  * @returns {number[]} An array of numbers representing the flattened positions.
  */
 export const flattenPositions = (paths) => {
     const result = [];
     paths.forEach((path) => {
-        result.push(path.lng, path.lat);
+        result.push(path.lng, path.lat, path.height);
     });
     return result;
 };
