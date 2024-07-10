@@ -1,4 +1,4 @@
-import { providerTypes, terrainProviderTypes, imageryProviderTypes, viewerProperties } from "./CONST";
+import { providerTypes, terrainProviderTypes, imageryProviderTypes, viewerProperties } from "./enum";
 
 // 加速查找操作，因为 Set 的查找时间复杂度为 O(1)
 const _providerTypes = new Set(providerTypes);
