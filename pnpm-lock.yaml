@@ -35,6 +35,9 @@ importers:
       pinia:
         specifier: ^2.1.7
         version: 2.1.7(vue@3.4.30)
+      proj4js:
+        specifier: ^10.0.0
+        version: 10.0.0
       v-scale-screen:
         specifier: ^2.2.0
         version: 2.2.0(vue@3.4.30)
@@ -1446,6 +1449,10 @@ packages:
   process@0.11.10:
     resolution: {integrity: sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==}
     engines: {node: '>= 0.6.0'}
+
+  proj4js@10.0.0:
+    resolution: {integrity: sha512-b9KksgE94mmymexKOAcZt41sK2U+ez5QCnLJ06B3ZJkJmXMCHWYe2BA7vvZQPIfrbyNdVrGDeQzWIYCOkoXxCQ==}
+    deprecated: please use 'proj4' instead, proj4js is not maintained
 
   protobufjs@7.3.2:
     resolution: {integrity: sha512-RXyHaACeqXeqAKGLDl68rQKbmObRsTIn4TYVUUug1KfS47YWCo5MacGITEryugIgZqORCvJWEk4l449POg5Txg==}
@@ -3693,6 +3700,8 @@ snapshots:
       source-map-js: 1.2.0
 
   process@0.11.10: {}
+
+  proj4js@10.0.0: {}
 
   protobufjs@7.3.2:
     dependencies:
