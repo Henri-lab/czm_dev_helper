@@ -46,3 +46,19 @@ export function setPropertiesUpdatedPerFrame(dataArr, isConst = false) {
     })
     return resArr
 }
+
+/**
+ * Filters out null, undefined, or empty string properties from an object.
+ *
+ * @param {Object} properties - The object from which to filter properties.
+ * @returns {Object} - The input object with null, undefined, or empty string properties removed.
+ */
+export function filterNullProperties(properties) {
+    Object.keys(properties).filter(
+        (key) =>
+            (properties[key] === '' || properties[key] === undefined || properties[key] === null) &&
+            delete properties[key]
+    )
+
+    return properties
+}
