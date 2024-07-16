@@ -32,15 +32,7 @@ export default class CameraManager extends Manager {
                 cameraOffset,
                 new Cartesian3()
             );
-
-            this.camera.setView({
-                destination: cameraPosition,
-                orientation: {
-                    heading: CesiumMath.heading(vehicleOrientation),
-                    pitch: CesiumMath.toRadians(0),
-                    roll: 0
-                }
-            });
+            this.setView({ destination: cameraPosition, heading: CesiumMath.heading(vehicleOrientation), pitch: CesiumMath.toRadians(0), roll: 0 })
         }
     }
 
@@ -88,7 +80,9 @@ export default class CameraManager extends Manager {
         });
     }
 
-    // 设置视角
+    // 设置视角的三种方案
+
+    // 精度和控制程度最高
     setView({ destination, heading = 0, pitch = -30, roll = 0 }) {
         let _destination;
         if (typeof destination === 'object') {
@@ -104,6 +98,29 @@ export default class CameraManager extends Manager {
             }
         });
     }
+
+    // 精度和控制程度比lookat更高
+    setCameraLookAtTransform(targetPosition, offset = new Cesium.Cartesian3(0.0, 0.0, 0.0)) {
+        this.scene.preRender.addEventListener((scene, time) => {
+            const position = targetPosition.getValue(time);
+            if (position) {
+                const transform = Cesium.Transforms.eastNorthUpToFixedFrame(position);//将局部东、北、上（ENU）坐标系转换为地心地固（ECF）坐标系。生成一个以目标位置为原点的变换矩阵。
+                this.camera.lookAtTransform(transform, offset);//目标位置默认在视野正中心 并根据offset进行调整
+            }
+        });
+    }
+    // 精度和控制程度较低 但是除了 指定trackEntity的方法 外最方便
+    setCameraLookAt(targetPosition, offset = new Cesium.Cartesian3(0.0, 0.0, 0.0)) {
+        this.scene.preRender.addEventListener((scene, time) => {
+            const position = targetPosition.getValue(time);
+            if (position) {
+                this.camera.lookAt(position, offset);
+            }
+        });
+    }
+
+
+
 
     // 重置视图
     resetView() {
