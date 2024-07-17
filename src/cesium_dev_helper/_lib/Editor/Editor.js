@@ -1,5 +1,5 @@
 //Editor 能够 绘制多个实体+存储实体要素
-//增加事件处理程序：每次右键点击后，重置 positions 数组，并创建新的线实体以准备绘制下一条线。
+//增加：重置 收集点 数组，并创建新的线实体以准备绘制下一条线。
 
 import Draw from "./pencil/Draw";
 
@@ -20,6 +20,7 @@ export default class Editor {
         let that = this;
         let $draw = that.$draw;
         if (!that.viewer || !that.$options) return;
+        // 增加被调用函数的行为
         const pluginFunction = (cb_currentLine, cb_curPosCollection) => {
             that.currentLine = cb_currentLine
             // 将当前绘制完成的线添加到 lines 数组中

@@ -1,7 +1,6 @@
 import * as Cesium from "cesium";
 import { objHasOwnProperty, setProperties } from "./index";
 export function PlaneGraphics(options = {}) {
-    if (options) {
         return new Cesium.PlaneGraphics({
             ...options,
             plane: options.plane || new Cesium.Plane(Cesium.Cartesian3.UNIT_Y, 0.0), // PlaneGraphics 的一个属性是 Plane 
@@ -12,5 +11,4 @@ export function PlaneGraphics(options = {}) {
             distanceDisplayCondition: options.distanceDisplayCondition || undefined,
             shadows: options.shadows || Cesium.ShadowMode.DISABLED // 投影模式
         })
-    }
 }

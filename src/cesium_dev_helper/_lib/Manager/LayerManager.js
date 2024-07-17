@@ -42,6 +42,7 @@ class LayerManager extends Manager {
         const _viewer = this.viewer
         // find
         let dataSource = _viewer.dataSources.getByName(name)[0];
+        console.log(dataSource, 'find?')
         if (!dataSource) {
             dataSource = new Cesium.CustomDataSource(name);
             this.datasources.push(dataSource);
@@ -61,6 +62,7 @@ class LayerManager extends Manager {
         }
         _datasources.forEach(ds => {
             ds && _viewer.dataSources.add(ds);
+            // _viewer.zoomTo(ds)
         });
     }
 }

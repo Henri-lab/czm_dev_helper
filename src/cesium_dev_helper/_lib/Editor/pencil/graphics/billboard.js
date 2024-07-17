@@ -1,7 +1,7 @@
 import * as Cesium from "cesium";
 import { objHasOwnProperty, setProperties, createGraphics } from "./index";
 export function BillboardGraphics(options = {}) {
-    if (options && options.img) {
+    if (options.img) {
         return new Cesium.BillboardGraphics({
             ...options,
             image: options.img,

@@ -1,6 +1,5 @@
 import * as Cesium from "cesium";
-export function CylinderGraphics(options) {
-    if (options) {
+export function CylinderGraphics(options={}) {
         return new Cesium.CylinderGraphics({
             ...options,
             HeightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
@@ -10,5 +9,4 @@ export function CylinderGraphics(options) {
             material: options.material || new Cesium.Color(0, 1, 1, 0.4),
             slices: options.slices || 128
         })
-    }
 }

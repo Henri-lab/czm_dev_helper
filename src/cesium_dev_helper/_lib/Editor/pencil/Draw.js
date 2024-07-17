@@ -91,13 +91,13 @@ export default class Draw extends DrawingManager {
     _updatePos(options, newPos) {
         options.positions = newPos;
     }
-    _updatePosByType(type, pickPosCollection = [], newPickPos = new Cesium.Cartesian3(0, 0, 0), entityOptions = {}, isClose = true) {
+    _updatePosByType(type, pickedPosCollection = [], newPickPos = new Cesium.Cartesian3(0, 0, 0), entityOptions = {}, isClose = true) {
         // --多边形闭合--
         if (isClose) {
             if (!type === 'point' || !type === 'polyline') {
                 // 首尾相连
-                pickPosCollection.push(pickPosCollection[0]);
-                this._updatePos(entityOptions, pickPosCollection);
+                pickedPosCollection.push(pickedPosCollection[0]);
+                this._updatePos(entityOptions, pickedPosCollection);
             }
             // 只是为了闭合图形更新 提前返回
             return true;
@@ -105,29 +105,29 @@ export default class Draw extends DrawingManager {
 
         // --多边形编辑--
         // 线段 
-        if (type === 'polyline' && pickPosCollection.length >= 2) {
+        if (type === 'polyline' && pickedPosCollection.length >= 2) {
             // 端点更新
-            pickPosCollection.pop();
-            pickPosCollection.push(newPickPos);
+            pickedPosCollection.pop();
+            pickedPosCollection.push(newPickPos);
 
         }
         // 矩形(保持2个点)
         else if (type === 'rectangle') {
-            if (pickPosCollection.length === 1) {
+            if (pickedPosCollection.length === 1) {
                 // 矩形 端点更新(增加)
-                pickPosCollection.push(newPickPos);
+                pickedPosCollection.push(newPickPos);
             } else {
                 // 矩形 端点更新(替换已有点)
-                pickPosCollection[1] = newPickPos;
+                pickedPosCollection[1] = newPickPos;
             }
         }
         // 圆形
         else if (type === 'ellipse') {
             // 检测到还没有创建圆的圆心
-            if (pickPosCollection.length === 0) return;
+            if (pickedPosCollection.length === 0) return;
             // 缩放半径
-            if (pickPosCollection.length === 1) {
-                const _center = pickPosCollection[0];
+            if (pickedPosCollection.length === 1) {
+                const _center = pickedPosCollection[0];
                 const _radius = Cesium.Cartesian3.distance(_center, newPickPos);
                 const dynamicRadius = this._setDynamic(_radius);//每帧都调用
                 entityOptions.semiMajorAxis = dynamicRadius
@@ -136,10 +136,10 @@ export default class Draw extends DrawingManager {
         }
         // 其他 直接添加数据点
         else {
-            pickPosCollection.push(newPickPos);
+            pickedPosCollection.push(newPickPos);
         }
         // 更新实体的配置选项点坐标 
-        this._updatePos(entityOptions, pickPosCollection);
+        this._updatePos(entityOptions, pickedPosCollection);
         return true;
     }
 
@@ -158,13 +158,13 @@ export default class Draw extends DrawingManager {
         // 辅助
         function extra() { // 特殊情况的额外处理
             // 特殊处理:绘制两点直线
-            if (options.straight && type === 'polyline' && pickPosCollection.length == 2) {
+            if (options.straight && type === 'polyline' && pickedPosCollection.length == 2) {
                 // 销毁事件处理程序 结束绘制
                 _handlers.destroy();
                 _handlers = null;
                 // 绘制后的回调 
                 if (typeof options.after === "function") {
-                    options.after(currentEntity, $this._transformCartesianToWGS84(pickPosCollection),);
+                    options.after(currentEntity, $this._transformCartesianToWGS84(pickedPosCollection),);
                 }
             }
         }
@@ -174,10 +174,10 @@ export default class Draw extends DrawingManager {
         let $this = this
         let eM = new EventManager($this.viewer),
             // 收集click处的坐标
-            pickPosCollection = [],
-            // 初始化实体
-            _entity = $this.MyEntity(),
-            currentEntity = this._drawLayer.entities.add(_entity),//添加到此datasource,等待更新后reRender
+            pickedPosCollection = [],
+            // 初始化实体的'配置'
+            _entityConfig = {},
+            currentEntity = this._drawLayer.entities.add(_entityConfig),//添加到此datasource,等待更新后reRender
             // 获取 ~新~ 事件handler程序 ,防止事件绑定间的冲突
             _handlers = eM.handler
 
@@ -185,12 +185,12 @@ export default class Draw extends DrawingManager {
         $this.currentHandler = _handlers;
 
         // 准备动态实体的数据
-        options.positions = pickPosCollection;
+        options.positions = pickedPosCollection;
         if (!options.datasource) options.datasource = this._drawLayer // 默认添至的图层
 
         const getNewPosition = () => {
-            // return pickPosCollection[pickPosCollection.length - 1];最后位置
-            return pickPosCollection//整体坐标
+            // return pickedPosCollection[pickedPosCollection.length - 1];最后位置
+            return pickedPosCollection//整体坐标
         }
         // --创建动态实体--
         currentEntity = $this._startDynamicEntity(type, options, getNewPosition)
@@ -202,27 +202,28 @@ export default class Draw extends DrawingManager {
 
         // --EVENT--
         // set callback function
-        const afterLeftClick = (movement) => {   // left click
-            // 点击处的地理坐标
-            let cartesian = $this._getCartesian3FromPX(movement.position /*pixel*/);
+        const afterLeftClick = (movement, pickedPos, pickedObj) => {   // left click
+            // 点击处的直角坐标
+            const cartesian = pickedPos;
             // 检查格式
             if (!cartesian || !isValidCartesian3(cartesian)) return;
             // 收集 点击处的地理坐标
-            pickPosCollection.push(cartesian);
-            this._updatePos(options);
+            pickedPosCollection.push(cartesian);
+            // 更新实体的坐标
+            this._updatePos(options, pickedPosCollection);
 
             // test
-            // console.log('cur-entity', currentEntity);
-            // console.log('pickPosCollection-length', pickPosCollection.length);
-            // console.log('cur-entity-line', currentEntity.polyline);
-            console.log('datasource-entities', this._drawLayer.entities.values)
+            // console.log('datasource-entities', this._drawLayer.entities.values)
+            // console.log('entity', currentEntity)
+            // console.log('positions', options.positions)
+            console.log('datasorces', this.viewer.dataSources)
 
         }
         const afterMouseMove = (movement) => { // mouse movement 
             let cartesian = $this._getCartesian3FromPX(movement.endPosition);
             // 持续更新坐标选项 动态实体会每帧读取
             if (!cartesian || !isValidCartesian3(cartesian)) return;
-            $this._updatePosByType(type, pickPosCollection, cartesian, options)
+            $this._updatePosByType(type, pickedPosCollection, cartesian, options)
 
             // test
             // console.log('mouse moving', cartesian)
@@ -231,12 +232,12 @@ export default class Draw extends DrawingManager {
 
             // 更新图形
             const isClose = true;
-            $this._updatePosByType(type, pickPosCollection, {}, options, isClose);
+            $this._updatePosByType(type, pickedPosCollection, {}, options, isClose);
 
             //开启测量功能
             if (options.measure) {
                 let endPos/*右键点击处地理坐标*/ = $this._getCartesian3FromPX(movement.position);
-                const res /*测量结果*/ = $this.$turfer.measureSimple(type, pickPosCollection);
+                const res /*测量结果*/ = $this.$turfer.measureSimple(type, pickedPosCollection);
                 $this._measureResultHandle({
                     /*...*/
                     entity: currentEntity,
@@ -253,12 +254,12 @@ export default class Draw extends DrawingManager {
 
             // callback with Entity and Positions
             if (typeof options.after === "function") {
-                options.after(currentEntity, $this._transformCartesianToWGS84(pickPosCollection));
+                options.after(currentEntity, $this._transformCartesianToWGS84(pickedPosCollection));
             }
 
             // 执行额外的程序
             const _currentEntity = currentEntity;//当前绘制的实体
-            const _currentPosArr = pickPosCollection
+            const _currentPosArr = pickedPosCollection
             if (typeof pluginFunction === "function") {
                 // 交给pluginFunction处理数据
                 pluginFunction(_currentEntity, _currentPosArr);

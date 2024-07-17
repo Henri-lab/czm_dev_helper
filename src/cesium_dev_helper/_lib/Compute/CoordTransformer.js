@@ -1,6 +1,6 @@
 import * as Cesium from "cesium";
 import { isValidCartesian3, isValidCartographic } from '../util/isValid';
-import proj4 from 'proj4js';
+// import proj4 from 'proj4js';
 
 class CoordTransformer {
     constructor() {

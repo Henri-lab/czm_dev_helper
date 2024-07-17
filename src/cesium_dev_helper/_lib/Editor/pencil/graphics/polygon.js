@@ -2,7 +2,7 @@ import * as Cesium from "cesium";
 import { objHasOwnProperty, setProperties } from "./index";
 export function PolygonGraphics(options = {}) {
 
-    if (options && options.positions) {
+    if (options.positions) {
         return new Cesium.PolygonGraphics({
             ...options,
             hierarchy: {

@@ -9,10 +9,7 @@ import {
     SceneManager,
     CameraManager
 } from '../cesium_dev_helper/_lib/Manager';
-import { CoordTransformer } from '../cesium_dev_helper/_lib/Compute';
-import { TencentImageryProvider } from '../cesium_dev_helper/_lib/Plugin/mapPlugin';
-import { DataPrepocesser } from '../cesium_dev_helper/_lib/Data';
-
+import { get_vcfg_wuhan, modelOpt_wuhan, get_vcfg_global } from '../views';
 
 
 let currentViewer = null;  //导出的地图
@@ -42,8 +39,6 @@ export default async function initViewerAt(el = { id: 'viewer' }, type) {
     } else if (_type === 'wuhan') {
         await toWuhan(el);
     }
-
-
     return currentViewer;
 }
 
@@ -51,87 +46,20 @@ export default async function initViewerAt(el = { id: 'viewer' }, type) {
 // 地图配置
 // -武汉地图
 const toWuhan = async (el) => {
-    // config
-    //腾讯底图
-    const txOpt = {
-        style: 4, //style: img、1：经典
-        crs: 'WGS84',
-    };
-    const tcip = new TencentImageryProvider(txOpt);
-
-    // 配置viewer
-    const vcfg = {
-        containerId: `${el.id}`,
-        baseConfig: {
-            navigationHelpButton: true,
-            navigationInstructionsInitiallyVisible: true,
-            // skyAtmosphere: new Cesium.SkyAtmosphere(),
-        },
-        providerConfig: {
-            terrainProvider: [],
-            imageryProvider: [
-                {
-                    type: 'UrlTemplateImageryProvider',
-                    option: {
-                        customProvider: tcip,
-                    },
-                },
-            ],
-        },
-        extraConfig: {
-            name: 'wuhan',
-            AccessToken: import.meta.env.VITE_CESIUM_KEY,
-            logo: false,
-            depthTest: true,
-            canvas: {
-                // width: 2000,
-                // height: 1500,
-            },
-        },
-    };
-
     const cfgM = new ConfigManager();
-    const czmViewer = await cfgM.initViewer(vcfg);
-
-    // czmViewer 没有 readyPromise ！👹
-    // 如何确保 viewer 初始化完成 ？🎃
-
+    const vcfg_wuhan = get_vcfg_wuhan(el.id);
+    const czmViewer = await cfgM.initViewer(vcfg_wuhan);
     const sM = new SceneManager(czmViewer);
     sM.initScene();
-    // console.log('cesium scene init completed');
-
-    // 白膜加载
-    const modelOpt = {
-        url: "/src/mock/wuhan/tileset.json",
-    }
-    sM.add3DModel('3dtiles', modelOpt)
-
-    // 切换地图到wuhan
+    sM.add3DModel('3dtiles', modelOpt_wuhan)
     switchViewerTo(czmViewer)
     return czmViewer;
 }
 // -全局视图
 const toGlobal = async (el) => {
-    // 世界地图
-    const vcfg = {
-        containerId: `${el.id}`,
-        baseConfig: {
-            navigationHelpButton: true,
-            navigationInstructionsInitiallyVisible: true,
-        },
-        providerConfig: {
-            terrainProvider: [],
-            imageryProvider: [],
-        },
-        extraConfig: {
-            name: 'global',
-            AccessToken: import.meta.env.VITE_CESIUM_KEY,
-            logo: false,
-            depthTest: true,
-        },
-    };
+    const vcfg_global = get_vcfg_global(el.id);
     const cfgM = new ConfigManager();
-    const czmViewer = await cfgM.initViewer(vcfg);
+    const czmViewer = await cfgM.initViewer(vcfg_global);
     const sM = new SceneManager(czmViewer);
     sM.initScene();
     const cM = new CameraManager(czmViewer);

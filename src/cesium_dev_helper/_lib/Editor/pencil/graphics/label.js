@@ -1,7 +1,7 @@
 import * as Cesium from "cesium";
 import { objHasOwnProperty, setProperties } from "./index";
 export function LabelGraphics(options = {}) {
-    if (options && options.text) {
+    if (options.text) {
         return new Cesium.LabelGraphics({
             ...options,
             // 文字标签

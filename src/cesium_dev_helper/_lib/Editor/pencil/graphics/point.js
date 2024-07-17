@@ -1,7 +1,6 @@
 import * as Cesium from "cesium";
 import { objHasOwnProperty, setProperties } from "./index";
 export function PointGraphics(options = {}) {
-    if (options) {
         return new Cesium.PointGraphics({
             ...options,
             color: options.color || Cesium.Color.GREEN,
@@ -9,5 +8,4 @@ export function PointGraphics(options = {}) {
             outlineColor: options.outlineColor || Cesium.Color.WHITE,
             outlineWidth: options.outlineWidth || 1
         })
-    }
 }
