@@ -1,6 +1,6 @@
 // 武汉视图
 
-import { TencentImageryProvider } from '../../../cesium_dev_helper/_lib/Plugin/mapPlugin';
+import { TencentImageryProvider } from '../index';
 
 //腾讯底图
 const txOpt = {

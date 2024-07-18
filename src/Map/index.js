@@ -6,7 +6,7 @@ import {
     LaptopOutlined,
     NotificationOutlined,
 } from '@ant-design/icons-vue';
-import CzmMap from './map/CzmMap.vue';
+import CzmMap from './cesiumMap/CzmMap.vue';
 import { Editor } from '../cesium_dev_helper/_lib/Editor';
 
 
@@ -23,5 +23,5 @@ export {
     initModelAt,
 }
 
-export { vcfg_wuhan, modelOpt_wuhan, get_vcfg_wuhan } from './map/config/wuhan'
-export { vcfg_global, get_vcfg_global } from './map/config/global'
+export { vcfg_wuhan, modelOpt_wuhan, get_vcfg_wuhan } from './cesiumMap'
+export { vcfg_global, get_vcfg_global } from './cesiumMap'

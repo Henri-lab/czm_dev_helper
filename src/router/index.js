@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import MeTest from '@/views/test/me.vue';
+import MeTest from '@/views/me.vue';
 // import LayOutTest from '@/views/test/layout.vue';
-import CzmMap from '../views/map/CzmMap.vue';
+import CzmMap from '../Map/cesiumMap/CzmMap.vue';
 
 
 const routes = [

@@ -9,7 +9,7 @@ import {
     SceneManager,
     CameraManager
 } from '../cesium_dev_helper/_lib/Manager';
-import { get_vcfg_wuhan, modelOpt_wuhan, get_vcfg_global } from '../views';
+import { get_vcfg_wuhan, modelOpt_wuhan, get_vcfg_global } from '../Map';
 
 
 let currentViewer = null;  //导出的地图
@@ -41,7 +41,6 @@ export default async function initViewerAt(el = { id: 'viewer' }, type) {
     }
     return currentViewer;
 }
-
 
 // 地图配置
 // -武汉地图
