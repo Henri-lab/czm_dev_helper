@@ -15,6 +15,7 @@ import czmHelper from '../cesium_dev_helper/_lib';
 
 const commonStore = useCommonStore();
 const managerModule = czmHelper.ManagerModule;
+const dataProcesser = new czmHelper.DataModule.DataPrepocesser();
 
 // 分发管理者
 let $viewer = computed(() => commonStore.Viewer);
@@ -23,6 +24,7 @@ let CameraManagerRef = ref(null);
 let EventManagerRef = ref(null);
 watchEffect(() => {
   const _viewer = commonStore.Viewer;
+  if (!_viewer) return;
   SceneManagerRef.value = new managerModule.SceneManager(_viewer);
   CameraManagerRef.value = new managerModule.CameraManager(_viewer);
   EventManagerRef.value = new managerModule.EventManager(_viewer);
@@ -39,15 +41,33 @@ const getEventManager = () => {
   return computed(() => EventManagerRef.value);
   // return EventManagerRef;
 };
+const initScene = (options) => {
+  SceneManagerRef.value?.initScene(options);
+};
+const add3DModel = (type, options, extraOpt) => {
+  const cb_setClampToGround = (resArr) => {
+    const tile = resArr[0].model;//💢
+    const maxtrixOpt = {
+      tx: 0,
+      ty: 0,
+      tz: -70,
+      rx: 0,
+      ry: 0,
+      rz: 0,
+      scale: 1.3,
+    };
+    dataProcesser.update3DtilesMaxtrix(tile, maxtrixOpt);
+  };
+  SceneManagerRef.value?.add3DModel(
+    type,
+    options,
+    cb_setClampToGround,
+    extraOpt
+  );
+};
 
-
-
-
-
-
-
-// -----------------------------------------------------------------------------
-// 分发图形编辑器
+// ---管理者的工具-------------------------------------------------------------------------
+// 分发图形编辑器(后续打算放在drawing-manager身上)
 const editorRef = ref(null);
 watchEffect(() => {
   const _editorFromStore = commonStore.Editor;
@@ -72,6 +92,8 @@ defineExpose({
   getSceneManager,
   getCameraManager,
   getEventManager,
+  initScene,
+  add3DModel,
   getEditor,
   startLine,
 });

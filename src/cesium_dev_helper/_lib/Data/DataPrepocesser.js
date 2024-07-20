@@ -39,9 +39,8 @@ class DataPrepocesser {
 	 * @returns {undefined} This function does not return a value.
 	 */
 	// 修改3dtiles位置
-	update3DtilesMaxtrix(tileSet, { tx = 0, ty = 0, tz = -70, rx = 0, ry = 0, rz = 0, scale = 1.3 }) {
+	update3DtilesMaxtrix(tileSet, { tx = 0, ty = 0, tz = 0, rx = 0, ry = 0, rz = 0, scale = 1.0 }) {
 
-		console.log(tileSet, 'tileset');
 		const cartoDegree = this.getCenterDegreeFrom3dTiles(tileSet)
 
 		const surface = Cesium.Cartesian3.fromDegrees(cartoDegree.longitude, cartoDegree.latitude, cartoDegree.height);
@@ -294,6 +293,15 @@ class DataPrepocesser {
 			northeast.longitude,
 			northeast.latitude
 		);
+	}
+
+	markCluster(entities) {
+		if (!entities || entities.length === 0) {
+			return [];
+		}
+		const k = determineOptimalClusters(entities); // 假设有一个函数可以确定最佳聚类数量
+		const clusters = kMeansCluster(entities, k);
+		return clusters;
 	}
 
 

@@ -75,6 +75,11 @@ function handleItemClick(itemKey) {
     setMap('wuhan');
   }
   if (itemKey === source_3dtiles) {
+    //加载模型
+    const tileOpt = {
+      url: '/src/mock/3dtiles/Tile_+002_+005/tileset.json',
+    };
+    viewerManagerRef.value?.add3DModel('3dtiles', tileOpt);
   }
 }
 </script>

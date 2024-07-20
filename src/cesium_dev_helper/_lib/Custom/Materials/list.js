@@ -1,5 +1,4 @@
-// 本模块其实就是提供了 options💫 方便调用 add_CustomMaterial
-
+// 本模块其实就是提供了 options💫 方便调用 addMatertial
 
 import MaterialCreator from "../../Creator/MaterialCreator";
 import TextureCreator from "../../Creator/TextureCreator";
@@ -20,7 +19,7 @@ function get_ConeGlowBottomCircle(color) {
         source: glsl_circleMapping,
     }
     // 
-    mC.add_CustomMaterial(options)
+    mC.addMatertial(options)
 
     return options//💫
 }
@@ -35,7 +34,7 @@ function get_wallGradients(color) {
         source: glsl_wallMapping,
     }
     // 
-    mC.add_CustomMaterial(options)
+    mC.addMatertial(options)
 
     return options//💫
 }

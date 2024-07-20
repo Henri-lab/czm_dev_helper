@@ -7,7 +7,8 @@
 
 <script setup>
 import { markRaw, onMounted, watchEffect } from 'vue';
-import { useCommonStore, initViewerAt, Editor } from '../index';
+import { useCommonStore } from '@/store';
+import { initViewerAt, Editor } from '../index';
 
 const commonStore = useCommonStore();
 const el = { id: 'czm-container' };

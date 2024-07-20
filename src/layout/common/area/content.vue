@@ -23,7 +23,7 @@
 import { ref } from 'vue';
 import breadcrumb from '../naviBars/breadcrumb/breadcrumb.vue';
 import CzmMap from '../../../Map/cesiumMap/CzmMap.vue';
-import upload from '../../../components/test/upload.vue';
+import upload from '../../../components/upload.vue';
 import LeftMenu from '../naviMenu/L1.vue';
 
 const isUpload = ref(false);
