@@ -16,3 +16,6 @@ export default function inherits(childCtor, parentCtor) {
         return parentCtor.prototype[methodName].apply(me, args);
     };
 }
+
+
+

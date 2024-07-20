@@ -8,7 +8,7 @@
       </span>
     </template>
     <!-- 选项 -->
-    <subItemL3 :submenu_items_type="submenu.type"></subItemL3>
+    <subItemL3 :submenu_type="submenu.type"></subItemL3>
   </a-sub-menu>
 </template>
 

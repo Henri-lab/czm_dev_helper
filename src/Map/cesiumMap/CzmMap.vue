@@ -1,3 +1,4 @@
+<!-- 创建地图视图 并且加载对应视图的管理者 -->
 <template>
   <div id="czm-container">
     <div id="czm-viewer"></div>

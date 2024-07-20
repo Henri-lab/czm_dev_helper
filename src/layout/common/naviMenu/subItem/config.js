@@ -1,3 +1,5 @@
+// item的内容
+
 import { MENU_ITEM_KEY_Map as KEY, MENU_ITEM_TITLE_CN_Map as CN } from "./enums";
 let index = 0;
 

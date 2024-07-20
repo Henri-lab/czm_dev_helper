@@ -12,15 +12,15 @@ export const MENU_ITEM_KEY_Map = {
 }
 
 
-export const MENU_ITEM_TITLE_CN_Map = {//中文标题
+export const MENU_ITEM_TITLE_CN_Map = {//汉化
     'pencil_test': '画笔测试',
     'material_test': '材质测试',
     'scene_test': '后处理测试',
-    'source_test': '数据源测试',
+    'source_test': '城市白膜',
+    'source_3dtiles': '3D Tiles',
+    'source_gltf': 'glTF',
     'tool_test': '工具测试',
     'three_test': 'THREE测试',
     'user_test': '用户测试',
-    'source_3dtiles': '3D Tiles',
-    'source_gltf': 'glTF',
 }
 

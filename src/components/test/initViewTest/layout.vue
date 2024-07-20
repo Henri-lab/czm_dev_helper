@@ -79,7 +79,7 @@
 import { watchEffect, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { CzmMap, useCommonStore, initModelAt } from '../index';
-import { lineConfig } from '../../../cesium_dev_helper/_lib/Editor';
+import { lineOpt } from '../../../cesium_dev_helper/_lib/Editor';
 import uploadVue from '../../components/test/upload.vue';
 import { DataPrepocesser } from '../../cesium_dev_helper/_lib/Data';
 import { CameraManager } from '../../cesium_dev_helper/_lib/Manager';

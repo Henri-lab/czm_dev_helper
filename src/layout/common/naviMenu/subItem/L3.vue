@@ -19,7 +19,7 @@ import {
 
 // menu组件指定了submenu_items_type，根据该值获取菜单项
 const props = defineProps({
-  submenu_items_type: {
+  submenu_type: {
     type: String,
     required: true,
     // default: 'undefine',
@@ -37,7 +37,7 @@ const menuItemsMap = {
 };
 // 根据submenu_items_type获取到的菜单项 + 性能考虑
 const submenu_items = computed(() => {
-  const _type = props.submenu_items_type;
+  const _type = props.submenu_type;
   return menuItemsMap[_type] || [];
 });
 </script>

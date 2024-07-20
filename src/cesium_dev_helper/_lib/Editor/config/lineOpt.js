@@ -1,6 +1,6 @@
 import * as Cesium from "cesium";
 
-const lineConfig = {
+const lineOpt = {
 
     t_id: Date.now(),  //timestamp as t_id
     name: 'test-line', //图形名称
@@ -21,7 +21,7 @@ const lineConfig = {
 
 }
 export {
-    lineConfig,
+    lineOpt,
 }
 
 
