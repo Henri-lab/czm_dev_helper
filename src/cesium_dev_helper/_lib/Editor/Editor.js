@@ -16,7 +16,7 @@ export default class Editor {
 
     //可以把配置单独传给startLine
     //也可以传给 Editor 
-    startLine(options = this.$options) {
+    startLine(options = this.$options.line) {
         let that = this;
         let $draw = that.$draw;
         if (!that.viewer || !that.$options) return;

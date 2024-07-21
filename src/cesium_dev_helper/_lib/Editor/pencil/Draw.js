@@ -11,30 +11,23 @@ import * as Cesium from "cesium";
  */
 export default class Draw extends DrawingManager {
     constructor(viewer, StaticMap = {}) {
+        if (!viewer) return;
+        console.log('new Draw class');
         super(viewer);
+        this.initLayer('Draw-drawLayer@henriFox')
         this.dfSt = StaticMap || undefined;//图片资源path
         this.$graphics = new Graphics(viewer, this._drawLayer);
         this.$coords = new CoordTransformer();
         this.$turfer = new TurfUser(viewer);
         this.defaultImageUrl = '';
         this.currentHandler = null;//方便在removeEventHandler剔除
+    }
 
-        // 画家自己管理图源
-        this.$layerM = null;
-        this._drawLayer = null;
-        this._loadLayer();
-
-
+    initLayer(name) {
+        const lM = new LayerManager(this.viewer)
+        this._drawLayer = lM.addDatasourceByName(name);;//保证图层的唯一性
     }
     // --辅助函数-----------------------------------------
-
-    // 添加图源
-    _loadLayer() {
-        this.$layerM = new LayerManager(this.viewer)
-        this._drawLayer = this.$layerM.getOrCreateDatasourceByName('drawLayer@henriFox');//保证图层的唯一性
-        this.$layerM.addDatasourceByName('drawLayer@henriFox');
-    }
-
     // 获得屏幕位置的cartesian
     _getCartesian3FromPX/*pixel*/ = (position) => {
         return this.$coords.getCartesianFromScreenPosition(position, this.viewer);
@@ -51,35 +44,26 @@ export default class Draw extends DrawingManager {
         console.log('the measure result:', res.value, 'km');
     }
 
+    _parseConfig(entityOption) {
+        const { t_id, name, description/*可随意添加*/, datasource, ...rest } = entityOption;
+        const parsedEntityOpt = {
+            extraOption: {
+                t_id,
+                name,
+                description,
+            },
+            graphicOption: rest,
+            datasource: this._drawLayer,//指定特定图层
+        }
+        return parsedEntityOpt;
+    }
     // 绘制动态实体(限制在本图层)-位置坐标为callbackProperty
-    _startDynamicEntity = (typeOfEntity, config, getNewPosition) => {
+    _startDynamicEntity = (typeOfEntity, entityOption, getNewPosition) => {
         if (typeof getNewPosition !== 'function') throw new Error('cannot get new position')
-
         try {
-            let Entity = null;
-            const { t_id, name, description/*可随意添加*/, datasource, ...rest } = config;
-            const entityConfig = {
-                extraOption: {
-                    t_id,
-                    name,
-                    description,
-                },
-                options: rest,
-                getNewPosition, // 每一帧 执行 getNewPosition
-                datasource: this._drawLayer,//指定特定图层
-            }
-            // 这种方法不成立 因为czm_Entity 的polyline被记录为_polyline;
-            // 尝试在其添加polyline属性 结果是失败的
-            // 而调用_polyline这种czm的私有属性是不合适的，有可能产生风险
-            // ——————————————————————————————————————————————————————————-------------
-            // // 静态
-            // Entity = this.$graphics.createStaticEntity(typeOfEntity, entityConfig);
-            // // 为位置添加动态 - 返回 当前~点击收集点~的坐标数组
-            // Entity.positions = this._setDynamic(curPosArr)
-            // ——————————————————————————————————————————————————————————-------------
-
-            // 换一种方法：直接用czm提供的api 创建 动态属性 的实体
-            Entity = this.$graphics.createDynamicEntity(typeOfEntity, entityConfig)
+            // 配置解析
+            const parsedEntityOpt = this._parseConfig(entityOption);
+            let Entity = this.$graphics.createDynamicEntity(typeOfEntity, parsedEntityOpt, getNewPosition)
             return Entity;
         } catch (e) {
             console.error('sth is wrong after mouse left click :', e)
@@ -155,29 +139,12 @@ export default class Draw extends DrawingManager {
         console.log('drawWithEvent-type:', Type)
         if (!this.viewer || !options) return null;
 
-        // 辅助
-        function extra() { // 特殊情况的额外处理
-            // 特殊处理:绘制两点直线
-            if (options.straight && type === 'polyline' && pickedPosCollection.length == 2) {
-                // 销毁事件处理程序 结束绘制
-                _handlers.destroy();
-                _handlers = null;
-                // 绘制后的回调 
-                if (typeof options.after === "function") {
-                    options.after(currentEntity, $this._transformCartesianToWGS84(pickedPosCollection),);
-                }
-            }
-        }
-
         // --数据准备--
         const type = Type.toLowerCase()
         let $this = this
         let eM = new EventManager($this.viewer),
             // 收集click处的坐标
             pickedPosCollection = [],
-            // 初始化实体的'配置'
-            _entityConfig = {},
-            currentEntity = this._drawLayer.entities.add(_entityConfig),//添加到此datasource,等待更新后reRender
             // 获取 ~新~ 事件handler程序 ,防止事件绑定间的冲突
             _handlers = eM.handler
 
@@ -193,12 +160,23 @@ export default class Draw extends DrawingManager {
             return pickedPosCollection//整体坐标
         }
         // --创建动态实体--
-        currentEntity = $this._startDynamicEntity(type, options, getNewPosition)
-
+        let currentEntity = $this._startDynamicEntity(type, options, getNewPosition)
+        console.log(currentEntity, 'currentEntity')
 
 
         // 特殊处理 
-        extra();
+        function extra() { // 特殊情况的额外处理
+            // 特殊处理:绘制两点直线
+            if (options.straight && type === 'polyline' && pickedPosCollection.length == 2) {
+                // 销毁事件处理程序 结束绘制
+                _handlers.destroy();
+                _handlers = null;
+                // 绘制后的回调 
+                if (typeof options.after === "function") {
+                    options.after(currentEntity, $this._transformCartesianToWGS84(pickedPosCollection),);
+                }
+            }
+        } extra()
 
         // --EVENT--
         // set callback function
@@ -208,22 +186,21 @@ export default class Draw extends DrawingManager {
             // 检查格式
             if (!cartesian || !isValidCartesian3(cartesian)) return;
             // 收集 点击处的地理坐标
-            pickedPosCollection.push(cartesian);
-            // 更新实体的坐标
-            this._updatePos(options, pickedPosCollection);
+            pickedPosCollection.push(cartesian); // 更新实体的坐标
+           
 
             // test
-            // console.log('datasource-entities', this._drawLayer.entities.values)
+            console.log('datasource-entities', this._drawLayer.entities.values)
             // console.log('entity', currentEntity)
             // console.log('positions', options.positions)
-            console.log('datasorces', this.viewer.dataSources)
+            // console.log('datasorces', this.viewer.dataSources)
 
         }
         const afterMouseMove = (movement) => { // mouse movement 
             let cartesian = $this._getCartesian3FromPX(movement.endPosition);
             // 持续更新坐标选项 动态实体会每帧读取
             if (!cartesian || !isValidCartesian3(cartesian)) return;
-            $this._updatePosByType(type, pickedPosCollection, cartesian, options)
+            // pickedPosCollection.push(cartesian);
 
             // test
             // console.log('mouse moving', cartesian)

@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import MeTest from '@/views/me.vue';
+import MeTest from '@/components/me.vue';
 // import LayOutTest from '@/views/test/layout.vue';
 import CzmMap from '../Map/cesiumMap/CzmMap.vue';
 

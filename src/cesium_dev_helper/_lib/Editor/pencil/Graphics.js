@@ -39,10 +39,10 @@ import {
 
 export default class Graphics extends DrawingManager {
   constructor(viewer, dataSource) {
-    if (viewer)
-      super(viewer);
-    this._graphicsLayer = new LayerManager(viewer).getOrCreateDatasourceByName('graphicsLayer@henriFox');//保证图层的唯一性
-    this.viewer && this.viewer.dataSources.add(this._graphicsLayer)
+    if (!viewer) return
+    console.log('new Graphics class')
+    super(viewer);
+    this.initLayer('Graphics-graphicsLayer@henriFox');
     // method for initing the graphics 
     this.PointGraphics = PointGraphics
     this.LineGraphics = LineGraphics
@@ -55,12 +55,15 @@ export default class Graphics extends DrawingManager {
     this.EllipsoidGraphics = EllipsoidGraphics
   }
 
-
+  initLayer(name) {
+    const lM = new LayerManager(this.viewer)
+    this._graphicsLayer = lM.addDatasourceByName(name);//保证图层的唯一性
+  }
 
   //  创建一个czm帧刷新属性
-  czm_callbackProperty(fn, isConst = false) {
+  czm_callbackProperty(data, isConst = false) {
     return new Cesium.CallbackProperty(() => {
-      fn;
+      return data;
     }, isConst)
   }
 
@@ -184,47 +187,27 @@ export default class Graphics extends DrawingManager {
    * @returns {Object} The created dynamic entity.
    */
   // 每一帧 执行 return curPosArr <-- _newPositions <-- getNewPosition()
-  createDynamicEntity(type, { extraOption, options, datasource, getNewPosition }) {
+  createDynamicEntity(type, { extraOption, graphicOption, datasource }, getNewPosition) {
     if (typeof getNewPosition !== 'function') throw new Error('cannot get new position')
-
-    let _newPositions = getNewPosition();
-
     const _type = type.toLowerCase();
-    // bug 
-    // if (_type === 'polyline') {
-    //   if (_newPositions.length < 2) return;
-    // }
-
-    /** 
-     * get pickPosCollection which type is Cartesian3[ ] 
-    */
-    const curPosArr = () => {
+    const curPosArr = () => {//笛卡尔坐标
       let curPosArr;
-      if (isValidCartographic(_newPositions)) {
+      let _newPositions = getNewPosition();
+      isValidCartographic(_newPositions) ?
         curPosArr = CoordTransformer.transformCartographicToCartesian3(_newPositions)
-      }
-      else if (isValidCartesian3(_newPositions)) {
-        curPosArr = _newPositions
-      }
-      else {
-        console.error('Invalid positions when creating dynamic entity');
-      }
+        : curPosArr = _newPositions
       return curPosArr
     }
-
-
     /**@normalObj */
-    let entity = {};
-
-
+    let entityOpt = {};
     // bind graphics👻
-    entity[_type] = this.createGraphicsByType(_type, options);
+    entityOpt[_type] = this.createGraphicsByType(_type, graphicOption);
 
     if (_type === 'polygon') {
       const Hierarchy = (pos) => {
         return new Cesium.PolygonHierarchy(pos);
       }
-      entity.polygon.hierarchy = this.czm_callbackProperty(Hierarchy(curPosArr()))// 核心
+      entityOpt.polygon.hierarchy = this.czm_callbackProperty(Hierarchy(curPosArr()))// 核心
     }
 
     else if (_type === 'rectangle') {
@@ -233,23 +216,23 @@ export default class Graphics extends DrawingManager {
         if (posArr.length < 2) throw new TypeError('Invalid positions when creating rectangle');
         return Cesium.Rectangle.fromCartesianArray(posArr);//西南东北 w s e n
       }
-      entity.rectangle.coordinates = this.czm_callbackProperty(Rectangle(curPosArr()))//核心
+      entityOpt.rectangle.coordinates = this.czm_callbackProperty(Rectangle(curPosArr()))//核心
     }
 
     else if (_type === 'polyline') {
-      entity.polyline.positions = this.czm_callbackProperty(curPosArr()) // 核心
-      // console.log('create a dynamic polyline, -positions:', entity.polyline.positions);
+      // entityOpt.polyline.positions = this.czm_callbackProperty(curPosArr()) //bug🚨
+      entityOpt.polyline.positions = this.czm_callbackProperty(getNewPosition()) // 核心
     }
 
     else {
-      entity.positions = this.czm_callbackProperty(curPosArr())// 核心
+      entityOpt.positions = this.czm_callbackProperty(curPosArr())// 核心
     }
 
-    const finalEntity = {
+    const finalOpt = {
       ...extraOption,
-      ...entity,// 已经绑定graphics 并且将坐标数据设置为动态
+      ...entityOpt,// 已经绑定graphics 并且将坐标数据设置为动态
     }
-    return datasource.entities.add(finalEntity)//dynamic entity
+    return datasource.entities.add(finalOpt)//dynamic entity
   }
 
   //创建高级entity--部分归 EffectControllor 控制-------------------------

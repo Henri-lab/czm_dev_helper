@@ -7,7 +7,7 @@ const lineOpt = {
 
     positions: [],  //坐标数组需要交互时添加
     material: Cesium.Color.RED,  //配置线段材质
-    width: 50,  //线宽
+    width: 2,  //线宽
     clampToGround: true,  //是否贴地?
     measure: true, //开启测量?
     straight: false, //直线模式?

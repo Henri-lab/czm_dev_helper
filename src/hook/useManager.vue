@@ -46,7 +46,7 @@ const initScene = (options) => {
 };
 const add3DModel = (type, options, extraOpt) => {
   const cb_setClampToGround = (resArr) => {
-    const tile = resArr[0].model;//💢
+    const tile = resArr[0].model; //💢
     const maxtrixOpt = {
       tx: 0,
       ty: 0,
@@ -81,10 +81,10 @@ const getEditor = () => {
   // 两种方法性能接近
   return computed(() => editorRef.value);
 };
-const startLine = () => {
+const startLine = (options) => {
   // 调用 editor 的 startLine 方法
   if (editorRef.value) {
-    editorRef.value.startLine();
+    editorRef.value.startLine(options);
   }
 };
 
@@ -92,9 +92,9 @@ defineExpose({
   getSceneManager,
   getCameraManager,
   getEventManager,
+  getEditor,
   initScene,
   add3DModel,
-  getEditor,
   startLine,
 });
 </script>
