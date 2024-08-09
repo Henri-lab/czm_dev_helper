@@ -1,9 +1,9 @@
 <template>
-  <main-page></main-page>
+    <breadcrumb></breadcrumb>
 </template>
 
 <script setup>
-import MainPage from '../common/area/index.vue';
+import breadcrumb from './breadcrumb.vue';
 </script>
 
 <style lang="scss" scoped></style>

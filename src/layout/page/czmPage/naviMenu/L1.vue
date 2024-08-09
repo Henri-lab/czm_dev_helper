@@ -16,13 +16,13 @@
 <script setup>
 import { ref, watch } from 'vue';
 import subMenuL2 from './subMenu/L2.vue';
-import ViewerManager from '../../../hook/useManager.vue';
+import ViewerManager from '@/hook/useManager.vue';
 import {
   MENU_ITEM_KEY_Map as itemKEY,
   MENU_ITEM_TITLE_CN_Map as CN,
 } from '../naviMenu/subItem/enums';
-import { lineOpt } from '../../../cesium_dev_helper/_lib/Editor/config/lineOpt';
-import { useCommonStore } from '../../../store';
+import { lineOpt } from '@/cesium_dev_helper/_lib/Editor/config/lineOpt';
+import { useCommonStore } from '@/store';
 
 const naviSideKeys = ref([]); //sub-menu-item-key
 const openKeys = ref([]); //sub-menu-key

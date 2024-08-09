@@ -47,11 +47,6 @@ export function isValidCartographic(coord) {
 }
 
 
-
-
-
-
-
 /**
  * Validates if the given input is a valid Cesium provider.
  *
@@ -145,3 +140,13 @@ export function isValidViewerProperty(string) {
 export function isValidImageryProviderType(string) {
     return _imageryProviderTypes.has(string);
 }
+
+
+// 验证经纬度格式
+export function isValidLongitude(longitude) {
+    return /^-?(?:180(?:\.0{1,6})?|1[0-7]?\d(?:\.\d{1,6})?|0?\d{1,2}(?:\.\d{1,6})?)$/.test(longitude);
+}
+export function isValidLatitude(latitude) {
+    return /^-?(?:90(?:\.0{1,6})?|[0-8]?\d(?:\.\d{1,6})?)$/.test(latitude);
+}
+

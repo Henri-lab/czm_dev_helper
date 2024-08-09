@@ -16,9 +16,9 @@
 </template>
 
 <script setup>
-import MyHead from './head.vue';
-import MyFoot from './foot.vue';
-import MyContent from './content.vue';
+import MyHead from '../czmPage/area/head.vue';
+import MyFoot from '../czmPage/area/foot.vue';
+import MyContent from '../czmPage/area/content.vue';
 </script>
 
 <style lang="scss" scoped>

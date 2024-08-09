@@ -2,20 +2,33 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import MeTest from '@/components/me.vue';
 // import LayOutTest from '@/views/test/layout.vue';
 import CzmMap from '../Map/cesiumMap/CzmMap.vue';
+import LayOut from '@/layout/index.vue'
 
-
-const routes = [
+const layOutChildren = [
   {
-    // 打算放个人简历
     path: "/me",
     name: "me",
     component: MeTest,
   },
   {
-    // 默认地图
-    path: "/",
-    name: "default-map",
+    // cesium
+    path: "/czm",
+    name: "czm",
     component: CzmMap,
+  },
+  // {
+  //   // openlayer
+  //   path: "/ol",
+  //   name: "ol",
+  //   component: CzmMap,
+  // },
+]
+const commonRoutes = [
+  {
+    // 登录界面
+    path: "/",
+    name: "home",
+    component: Home,
   },
 ];
 
@@ -23,7 +36,7 @@ const routes = [
 const router = createRouter({
   // 4. 内部提供了 history 模式的实现。为了简单起见，我们在这里使用 hash 模式。
   history: createWebHashHistory(),
-  routes, // `routes: routes` 的缩写
+  commonRoutes, // `routes: routes` 的缩写
 });
 
 export default router

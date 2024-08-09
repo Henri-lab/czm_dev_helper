@@ -1,13 +1,13 @@
 
 import axios from "axios";
-const api = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL, // 所有请求的公共地址部分
+const instance = axios.create({
+  baseURL: import.meta.env.VITE_METRO_BASE_URL, // 所有请求的公共地址部分
   headers: { "Content-Type": "application/json;charset=UTF-8" },
   withCredentials: true, // 跨域请求时是否需要使用凭证
   timeout: 50000, // 请求超时时间
 });
 
-api.interceptors.request.use(
+instance.interceptors.request.use(
   (config) => {
     // config 请求的所有信息
     return config; // 将配置完成的config对象返回出去 如果不返回 请求不会进行
@@ -18,7 +18,7 @@ api.interceptors.request.use(
   }
 );
 
-api.interceptors.response.use(
+instance.interceptors.response.use(
   (response) => {
     const data = response.data;
     if (data.code === 200) {
@@ -33,4 +33,4 @@ api.interceptors.response.use(
 );
 
 
-export default api;
+export default instance;

@@ -25,9 +25,9 @@ const naviHeadKeys = ref([]);
 // 顶部导航栏
 const naviHeadItems = [
   { key: '1', label: '主页' },
-  { key: '2', label: '三维' },
-  { key: '3', label: '二维' },
-  { key: '4', label: '其他' },
+  { key: '2', label: 'Cesium' },
+  { key: '3', label: 'OpenLayers' },
+  { key: '4', label: 'MapBox' },
   { key: '5', label: '其他1' },
   { key: '6', label: '其他2' },
 ];
@@ -37,28 +37,25 @@ watch(
   (newValue) => {
     switch (newValue[0]) {
       case '1':
-        $router.push({ path: '/me', name: 'me' });
+        $router.push({ path: '/', name: 'home' });
         break;
       case '2':
-        isShow3DMap.value = true;
+        $router.push({ path: '/czm', name: 'czm' });
         break;
       case '3':
-        isShow3DMap.value = false;
+        $router.push({ path: '/ol', name: 'ol' });
         break;
       case '4':
-        /* */
-        isShow3DMap.value = false;
+        $router.push({ path: '/mb', name: 'mb' });
         break;
       case '5':
-        /* */
-        isShow3DMap.value = false;
+        $router.push({ path: '/me', name: 'me' });
         break;
       case '6':
-        /* */
-        isShow3DMap.value = false;
+        $router.push({ path: '/me', name: 'me' });
         break;
       default:
-        isShow3DMap.value = true;
+        $router.push({ path: '/me', name: 'me' });
         break;
     }
   }
