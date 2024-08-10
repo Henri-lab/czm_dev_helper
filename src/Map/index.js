@@ -1,4 +1,4 @@
-import initViewerAt from '../util/initViewerAt';
+import initViewerAt from '../common/initViewerAt';
 import {
     UserOutlined,
     LaptopOutlined,
