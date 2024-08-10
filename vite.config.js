@@ -15,8 +15,6 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 import compress from "vite-plugin-compression";
 import glsl from 'vite-plugin-glsl';
 
-// https://vitejs.dev/config/
-export default defineConfig(config);
 
 
 const config = (context) => {
@@ -25,6 +23,7 @@ const config = (context) => {
   const mode = context.mode;
   const envDir = "env"; // 环境变量文件的文件夹，相对于项目的路径，也可以用 nodejs 函数拼接绝对路径
   const env = loadEnv(mode, envDir);
+  const cesiumBaseUrl = env.VITE_CESIUM_BASE_URL;
   console.log(env);//方便查看环境变量
 
   const isProd = mode === "production";//是否是生产模式
@@ -154,4 +153,5 @@ const config = (context) => {
 };
 
 
-
+// https://vitejs.dev/config/
+export default defineConfig(config);

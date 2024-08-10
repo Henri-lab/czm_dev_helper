@@ -1,5 +1,5 @@
-import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login, logout, getInfo } from '@/api/auth'
+import { getToken, setToken, removeToken } from '@/util/cookie'
 import defAva from '@/assets/images/profile.jpg'
 // 用户管理
 const useUserStore = defineStore(

@@ -3,6 +3,7 @@ import MeTest from '@/components/me.vue';
 // import LayOutTest from '@/views/test/layout.vue';
 import CzmMap from '../Map/cesiumMap/CzmMap.vue';
 import LayOut from '@/layout/index.vue'
+import Login from '@/views/login.vue'
 
 const layOutChildren = [
   {
@@ -28,7 +29,7 @@ const commonRoutes = [
     // 登录界面
     path: "/",
     name: "home",
-    component: Home,
+    component: Login,
   },
 ];
 

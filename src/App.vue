@@ -1,5 +1,5 @@
 <template>
-  <main-page></main-page>
+ <layout></layout>
   <!-- <router-view></router-view> -->
   <!-- <v-scale-screen width="1920" height="1080" delay="200">
     <keep-alive>
@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import MainPage from './layout/common/area/index.vue';
+import layout from './layout/index.vue';
 import { onMounted } from 'vue';
 
 onMounted(() => {});

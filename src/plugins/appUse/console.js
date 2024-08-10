@@ -3,8 +3,8 @@
 // __________________________________________________________________________________________
 
 // 改造原生 console 
-let consolePlugin1 = null;
-let consolePlugin2 = null;
+let consolePlugin1 = null;// 重写 ~
+let consolePlugin2 = null;// 代理 ~
 
 // 重写 
 // 经过测试发现拦截不了来自cesium的打印！      ???
@@ -72,7 +72,4 @@ consolePlugin2 = {
     }
 }
 
-export {
-    consolePlugin1,
-    consolePlugin2
-}
+export default consolePlugin1;
