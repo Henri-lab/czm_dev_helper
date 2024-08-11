@@ -5,16 +5,29 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- css-vue -->
+  <link rel="stylesheet" href="/src/assets/css/index.css">
+  <!-- css -alib-iconfont -->
   <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_4268437_hdj2la3gidb.css">
-  <!-- OPENLAYERS -->
+  <!-- css-OPENLAYERS-->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css" type="text/css">
-  <title>czm_dev_helper</title>
-</head> 
-
-<body>
-  <div id="app"></div>
   <!-- OPENLAYERS -->
   <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+  <title>czm_dev_helper</title>
+</head>
+
+<body>
+  <!-- vue项目 -->
+  <div id="app">
+    <!-- 加载动画 -->
+    <div id="loader-wrapper">
+      <div id="loader"></div>
+      <div class="loader-section section-left"></div>
+      <div class="loader-section section-right"></div>
+      <div class="load_title">正在加载系统资源，请耐心等待</div>
+    </div>
+  </div>
+  <!-- 主程序 -->
   <script type="module" src="/src/main.js"></script>
 </body>
 

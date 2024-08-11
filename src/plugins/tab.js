@@ -35,7 +35,7 @@ export default {
       return useTagsViewStore().delView(router.currentRoute.value).then(({ visitedViews }) => {
         const latestView = visitedViews.slice(-1)[0]
         if (latestView) {
-            return router.push(latestView.fullPath)
+          return router.push(latestView.fullPath)
         }
         return router.push('/');
       });
@@ -65,5 +65,9 @@ export default {
   // 修改tab页签
   updatePage(obj) {
     return useTagsViewStore().updateVisitedView(obj);
+  },
+  // 新窗口打开tab页签
+  openNewPage(url) {
+    window.open(url, '_blank');
   }
 }
