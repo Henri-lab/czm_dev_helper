@@ -1,4 +1,4 @@
-import request from './request'
+import request from './instance/request'
 
 // 登录方法
 export function login(username, password, code, uuid) {

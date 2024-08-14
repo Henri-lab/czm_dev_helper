@@ -1,5 +1,5 @@
 import useUserStore from '@/store/modules/user'
-
+// 当前用户是否拥有arg-permission权限或者拥有root权限
 function authPermission(permission) {
   const all_permission = "*:*:*";
   const permissions = useUserStore().permissions
@@ -11,7 +11,7 @@ function authPermission(permission) {
     return false
   }
 }
-
+// 当前用户是否拥有arg-role角色或者拥有admin角色
 function authRole(role) {
   const super_admin = "admin";
   const roles = useUserStore().roles
