@@ -38,6 +38,7 @@
     "js-cookie": "3.0.1",
     "jsencrypt": "3.3.1",
     "libgif": "^0.0.3",
+    "nprogress": "^0.2.0",
     "pinia": "^2.1.7",
     "proj4js": "^10.0.0",
     "v-scale-screen": "^2.2.0",

@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+import { setPermissionGuardExclude } from "./guard/permission";
 import MeTest from '@/components/me.vue';
-// import LayOutTest from '@/views/test/layout.vue';
 import CzmMap from '../Map/cesiumMap/CzmMap.vue';
 import LayOut from '@/layout/index.vue'
 import Login from '@/views/login.vue'
@@ -17,19 +17,27 @@ const layOutChildren = [
     name: "czm",
     component: CzmMap,
   },
-  // {
-  //   // openlayer
-  //   path: "/ol",
-  //   name: "ol",
-  //   component: CzmMap,
-  // },
 ]
 const constRoutes = [
   {
-    // 登录界面
-    path: "/",
-    name: "home",
-    component: Login,
+    path: "/login",
+    component: () => import("@/views/login"),
+    hidden: true,
+  },
+  {
+    path: "/register",
+    component: () => import("@/views/register"),
+    hidden: true,
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    component: () => import("@/views/error/404"),
+    hidden: true,
+  },
+  {
+    path: "/401",
+    component: () => import("@/views/error/401"),
+    hidden: true,
   },
 ];
 const dynamicRoutes = []
@@ -39,6 +47,7 @@ const router = createRouter({
   // hash 模式
   history: createWebHashHistory(),
   routers: constRoutes,
+  // 保持滚动状态
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition;
@@ -47,5 +56,7 @@ const router = createRouter({
     }
   },
 });
+// 全局守卫
+setPermissionGuardExclude(router, ['/login', '/register'])
 
 export default router
