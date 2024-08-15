@@ -1,6 +1,6 @@
 import * as Cesium from "cesium";
-import { Graphics } from '../../../_lib/Editor'
-import { LayerManager } from "../../../_lib/Manager";
+import { Graphics } from '../Editor'
+import { LayerManager } from "../Manager";
 
 export default class Roam {
     constructor(viewer, positions, {
