@@ -6,18 +6,20 @@ import { useViteExternalsPlugin } from "./viteExternalsPlugin";
 import { useViteStaticCopy } from "./viteStaticCopy";
 import { useCompress } from "./compress";
 
-
-export const usePlugins = (isProd = false) => {
+// export let pluginOption = [];
+export const usePlugins = ({ isProd = false }) => {
     const arrOfArr = [
         useVuePlugin(),
         useElementPlus(),
         useGlsl(),
         useInsertHtlml(),
-        useViteExternalsPlugin()
+        useViteExternalsPlugin(),
+        useCompress(),
     ]
     if (!isProd) {
-        arrOfArr.push(useViteExternalsPlugin())
+        arrOfArr.push(useViteStaticCopy())
     }
     return arrOfArr.flat(1)
 }
+
 
