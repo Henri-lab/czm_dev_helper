@@ -4,16 +4,11 @@
 // 4. 使用vite-plugin-compression插件对大文件进行进一步压缩
 // 5. 使用vite-plugin-glsl加载本地glsl文件 会忽略注释
 import { defineConfig, loadEnv } from "vite";
-import vue from "@vitejs/plugin-vue";
-import Components from 'unplugin-vue-components/vite';
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
-import AutoImport from 'unplugin-auto-import/vite';
 import { fileURLToPath } from "url";
-import { viteExternalsPlugin } from "vite-plugin-externals";
-import { insertHtml, h } from "vite-plugin-insert-html";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import compress from "vite-plugin-compression";
-import glsl from 'vite-plugin-glsl';
+import { usePlugins } from "./src/viteConfig/plugin";
+
 
 
 
@@ -27,41 +22,7 @@ const config = (context) => {
   console.log(env);//方便查看环境变量
 
   const isProd = mode === "production";//是否是生产模式
-  const plugins = [
-    vue(),
-    viteExternalsPlugin(
-      {
-        cesium: "Cesium", // 外部化 cesium 依赖，之后全局访问形式是 window['Cesium']
-      }, {
-      disableInServe: true //开发环境不启用外部化
-    }
-    ),
-    insertHtml({
-      head: [
-        // 生产模式使用 CDN 或已部署的 CesiumJS 在线库链接，开发模式用拷贝的库文件，根据 VITE_CESIUM_BASE_URL 自动拼接
-        h("script", {
-          // 因为涉及前端路径访问，所以开发模式最好显式拼接 base 路径，适配不同 base 路径的情况
-          src: isProd
-            ? `${cesiumBaseUrl}Cesium.js`
-            : `${base}${cesiumBaseUrl}Cesium.js`,
-        }),
-        h("link", {
-          rel: "stylesheet",
-          href: isProd
-            ? `${cesiumBaseUrl}Widgets/widgets.css`
-            : `${base}${cesiumBaseUrl}Widgets/widgets.css`,
-        }),
-      ],
-    }),
-    glsl(),
-    // ELEMENT-PLUS 自动导入
-    Components({
-      resolvers: [ElementPlusResolver()],
-    }),
-    AutoImport({
-      resolvers: [ElementPlusResolver()],
-    }),
-  ];
+  const plugins = usePlugins();
   if (!isProd) {
     // 开发模式，复制 node_modules 下的 cesium 依赖
     const cesiumLibraryRoot = "node_modules/cesium/Build/CesiumUnminified/";
