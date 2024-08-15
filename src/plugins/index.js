@@ -3,7 +3,7 @@ import auth from './auth'
 import cache from './cache'
 import modal from './modal'
 import download from './download'
-import { c } from 'vite/dist/node/types.d-aGj9QkWt'
+
 
 export default function installPlugins(app) {
   // 页签操作

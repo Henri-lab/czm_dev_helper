@@ -29,6 +29,7 @@
     "@ant-design/icons-vue": "^7.0.1",
     "@turf/turf": "^7.0.0",
     "@videojs-player/vue": "^1.0.0",
+    "@vueup/vue-quill": "^1.2.0",
     "ant-design-vue": "^4.2.1",
     "axios": "^1.6.8",
     "cesium": "1.99",

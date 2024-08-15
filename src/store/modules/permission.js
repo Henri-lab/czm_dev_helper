@@ -1,6 +1,6 @@
 import auth from '@/plugins/auth'
 import router, { constRoutes, dynamicRoutes } from '@/router'
-import { getRouters } from '@/api/menu'
+import { getRouters } from '@/api/navigator'
 import Layout from '@/layout/index'
 
 

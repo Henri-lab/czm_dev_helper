@@ -8,8 +8,8 @@ import Antd from 'ant-design-vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import 'ant-design-vue/dist/reset.css';
 import ElementPlus from 'element-plus';
-import locale from 'element-plus/lib/locale/lang/zh-cn' // CN
-import './style.scss'
+// import lang_zh_cn from 'element-plus/lib/locale/lang/zh-cn' // CN
+import './assets/css/index.css'
 import VScaleScreen from 'v-scale-screen'//响应式
 // 组件
 import App from './App.vue'
@@ -28,7 +28,7 @@ app.use(createPinia())
     .use(Antd)
     .use(VScaleScreen)
     .use(ElementPlus, {
-        locale: locale,
+        // locale: lang_zh_cn,
         size: Cookies.get('size') || 'default'
     })
 

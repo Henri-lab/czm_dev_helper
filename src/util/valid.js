@@ -1,5 +1,5 @@
 // 验证是否为blob格式
-export function isValidateBlob(data) {
+export function isBlob(data) {
     return data.type !== 'application/json'
 }
 

@@ -1,14 +1,29 @@
 html,
 body,
+.chromeframe {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow: hidden;
+}
+
 #app {
     height: 100%;
     margin: 0px;
     padding: 0px;
 }
 
-.chromeframe {
-    margin: 0.2em 0;
-    background: #ccc;
-    color: #000;
-    padding: 0.2em 0;
+#cesiumContainer {
+    width: 100vw;
+    height: 100vh;
 }

@@ -34,7 +34,7 @@ const config = (context) => {
     plugins,
     resolve,
     css,
-    server
+    server,
   }
 };
 

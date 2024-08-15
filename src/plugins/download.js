@@ -1,9 +1,10 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { saveAs } from 'file-saver'
-import { getToken } from '@/utils/auth'
-import errorCode from '@/utils/errorCode'
-import { blobValidate } from '@/utils/ruoyi'
+import { getToken } from '@/util/cookie'
+import errorCode from '@/util/errorCode'
+import { isBlob } from '@/util/valid'
+
 
 const baseURL = import.meta.env.VITE_APP_BASE_API
 
@@ -16,8 +17,8 @@ export default {
       responseType: 'blob',
       headers: { 'Authorization': 'Bearer ' + getToken() }
     }).then((res) => {
-      const isBlob = blobValidate(res.data);
-      if (isBlob) {
+      const is_Blob = isBlob(res.data);
+      if (is_Blob) {
         const blob = new Blob([res.data])
         this.saveAs(blob, decodeURIComponent(res.headers['download-filename']))
       } else {
@@ -33,8 +34,8 @@ export default {
       responseType: 'blob',
       headers: { 'Authorization': 'Bearer ' + getToken() }
     }).then((res) => {
-      const isBlob = blobValidate(res.data);
-      if (isBlob) {
+      const is_Blob = isBlob(res.data);
+      if (is_Blob) {
         const blob = new Blob([res.data])
         this.saveAs(blob, decodeURIComponent(res.headers['download-filename']))
       } else {

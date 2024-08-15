@@ -1,4 +1,4 @@
-import useUserStore from '@/store/modules/user'
+import useUserStore from '../store/modules/user'
 // 当前用户是否拥有arg-permission权限或者拥有root权限
 function authPermission(permission) {
   const all_permission = "*:*:*";
