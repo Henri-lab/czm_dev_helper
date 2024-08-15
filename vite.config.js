@@ -1,9 +1,9 @@
 
 import { defineConfig, loadEnv } from "vite";
-import { usePlugins } from "./src/viteConfig/plugin";
-import { cssOption } from "./src/viteConfig/css";
-import { resolveOption } from './src/viteConfig/resolve'
-import { serverOption } from './src/viteConfig/server'
+import { usePlugins } from "./src/vite/plugin";
+import { cssOption } from "./src/vite/css";
+import { resolveOption } from './src/vite/resolve'
+import { serverOption } from './src/vite/server'
 
 const config = (context) => {
   // 获取 构建模式
