@@ -2,7 +2,10 @@
 export function isBlob(data) {
     return data.type !== 'application/json'
 }
-
+// 验证是否是hex格式
+export function isHexColor(str) {
+    return /^#([A-Fa-f0-9]{6})$/.test(str);
+}
 
 /**
  * 判断url是否是http或https 

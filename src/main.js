@@ -51,6 +51,6 @@ canvasArr.forEach(canvas => {
         var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 })
 
-// console.log('main')
+
 export default app
 

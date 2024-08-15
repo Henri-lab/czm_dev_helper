@@ -2,19 +2,19 @@ import axios from "axios";
 import { ElMessageBox, ElMessage } from "element-plus";
 import Cookies from "js-cookie";
 
+export let isRelogin = { show: false };
+
+
 // 创建axios实例
 const instance = axios.create({
-  baseURL: "/dev-api", // 设置API的基础URL
+  baseURL: import.meta.env.VITE_APP_BASE_API, // 设置API的基础URL
 });
 
 // 请求拦截器
 instance.interceptors.request.use(
   (config) => {
     // 可在请求发送前对config进行修改，如添加请求头等
-    const headers = config.headers || {};
-    headers["Authorization"] = Cookies.get("Admin-Token");
-    config.headers = headers;
-    return config;
+    config.headers["Authorization"] = Cookies.get("Admin-Token");
   },
   (error) => {
     // 处理请求错误

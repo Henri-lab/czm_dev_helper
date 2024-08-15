@@ -3,14 +3,15 @@ import { ElNotification, ElMessageBox, ElMessage, ElLoading } from 'element-plus
 import { getToken } from '@/util/cookie'
 import errorCode from '@/util/errorCode'
 import { tansParams } from '@/util/format'
-import { isValidateBlob } from '@/util/valid'
+import { isBlob } from '@/util/valid'
 import cache from '@/plugins/cache'
 import { saveAs } from 'file-saver'
 import useUserStore from '@/store/modules/user'
 
 
-// 是否显示重新登录
+// 是否显示重新登录 (default：false)
 export let isRelogin = { show: false };
+
 //发送数据为JSON格式，编码方式为UTF-8
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 
@@ -192,8 +193,8 @@ export async function download(url, params, filename, config) {
     );
 
     // 检查是否为有效的Blob数据
-    const isBlob = isValidateBlob(data);
-    if (isBlob) {
+    const is_Blob = isBlob(data);
+    if (is_Blob) {
       // 创建Blob对象并保存到本地
       const blob = new Blob([data]);
       saveAs(blob, filename);
