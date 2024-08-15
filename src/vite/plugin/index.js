@@ -7,12 +7,12 @@ import { useViteStaticCopy } from "./viteStaticCopy";
 import { useCompress } from "./compress";
 
 // export let pluginOption = [];
-export const usePlugins = ({ isProd = false }) => {
+export const usePlugins = ({ isProd = false, base = '/', cesiumBaseUrl }) => {
     const arrOfArr = [
         useVuePlugin(),
         useElementPlus(),
         useGlsl(),
-        useInsertHtlml(),
+        useInsertHtlml({ isProd, base, cesiumBaseUrl }),
         useViteExternalsPlugin(),
         useCompress(),
     ]

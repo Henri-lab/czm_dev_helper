@@ -1,10 +1,6 @@
 import { insertHtml, h } from "vite-plugin-insert-html";
 
-// 路径配置
-const base = "/";
-const cesiumBaseUrl = env.VITE_CESIUM_BASE_URL;
-
-export const useInsertHtlml = () => {
+export const useInsertHtlml = ({ isProd, base, cesiumBaseUrl }) => {
     return [
         insertHtml({
             // 在head标签中插入内容
