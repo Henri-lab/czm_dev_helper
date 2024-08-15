@@ -1,12 +1,22 @@
-import { createApp, inject, provide } from 'vue'
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
-import App from './App.vue'
+import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import router from './router'
-import VScaleScreen from 'v-scale-screen'
-import './style.scss'
+// 插件
+import plugins from './plugins';
+// UI
+import Antd from 'ant-design-vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
+import 'ant-design-vue/dist/reset.css';
+import ElementPlus from 'element-plus';
+import locale from 'element-plus/lib/locale/lang/zh-cn' // CN
+import './style.scss'
+import VScaleScreen from 'v-scale-screen'//响应式
+// 组件
+import App from './App.vue'
+// 自定义指令 绑定
+import directive from './directive';
+// 通用
+import Cookies from 'js-cookie'
 
 const app = createApp(App);
 // 全局注册图标
@@ -14,8 +24,16 @@ app.component('PlusOutlined', PlusOutlined);
 
 app.use(createPinia())
     .use(router)
+    .use(plugins)
     .use(Antd)
-    .use(VScaleScreen);
+    .use(VScaleScreen)
+    .use(ElementPlus, {
+        locale: locale,
+        size: Cookies.get('size') || 'default'
+    })
+
+// 注册自定义指令
+directive(app);
 
 app.mount('#app')
 
