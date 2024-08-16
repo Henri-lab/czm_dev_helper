@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import router from './router'
 // 插件
-import plugins from './plugins';
+import extraPlugins from './plugins';
 // UI
 import Antd from 'ant-design-vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
@@ -24,18 +24,22 @@ app.component('PlusOutlined', PlusOutlined);
 
 app.use(createPinia())
     .use(router)
-    .use(plugins)
-    .use(Antd)
     .use(VScaleScreen)
+    .use(Antd)
     .use(ElementPlus, {
         // locale: lang_zh_cn,
         size: Cookies.get('size') || 'default'
     })
+    .use(extraPlugins)
 
 // 注册自定义指令
 directive(app);
 
 app.mount('#app')
+
+
+
+
 
 //偷个懒 👀
 
@@ -50,6 +54,10 @@ canvasArr.forEach(canvas => {
         // 可以频繁地使用 getImageData 而不会有性能问题啦 👍
         var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 })
+
+
+
+
 
 
 export default app

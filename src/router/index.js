@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import { setPermissionGuardExclude } from "./guard/permission";
 // import MeTest from '@/components/me.vue';
-// import CzmMap from '../Map/cesiumMap/CzmMap.vue';
+// import CzmMap from '@/Map/cesiumMap/CzmMap.vue';
 // import LayOut from '@/layout/index.vue'
 // import Login from '@/views/login.vue'
 
@@ -46,7 +46,9 @@ import { setPermissionGuardExclude } from "./guard/permission";
 const router = createRouter({
   // hash 模式
   history: createWebHashHistory(),
-  routers: [],
+  routes: [
+
+  ],
   // 保持滚动状态
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -57,6 +59,8 @@ const router = createRouter({
   },
 });
 // 全局守卫
-setPermissionGuardExclude(router, ['/login', '/register'])
+// setPermissionGuardExclude(router, ['/login', '/register'])
 
 export default router
+export const constRoutes = []
+export const dynamicRoutes = []

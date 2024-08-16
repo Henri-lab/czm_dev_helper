@@ -1,4 +1,4 @@
-import { useElementPlus } from "./elementplus";
+import { useElementPlus } from "./autoImport";
 import { useGlsl } from "./glsl";
 import { useVuePlugin } from "./vue";
 import { useInsertHtlml } from "./insertHtml";
