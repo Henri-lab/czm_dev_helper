@@ -23,5 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 
-
-*src/cesium_dev_helper/traffic/assets/model/
+# 大屏可视化模板
+*Resource

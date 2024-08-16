@@ -7,7 +7,8 @@
 
   <!-- test -->
   <!-- <Editor /> -->
-  <LayOut />
+  <!-- <LayOut /> -->
+  <Login />
 </template>
 
 
@@ -15,7 +16,9 @@
 // test
 import Editor from './components/Editor/index.vue'
 import LayOut from './layout/index.vue'
-import login from './views/login.vue'
+import Login from './views/login/index.vue'
 
 </script>
-<style lang="scss"></style>
+<style lang="scss">
+@import url(./index.scss)
+</style>

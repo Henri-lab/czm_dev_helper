@@ -1,24 +1,23 @@
 <template>
-  <div class="login">
-    <a-form ref="loginRef" :form="form" :rules="loginRules" class="login-form">
-      <h3 class="title">Cesium工具集@henriFox</h3>
-      <h3 class="title1">欢迎登陆</h3>
+  <div class="left">
+    <div class="header">
+      <h3 class="title">CesiumHelper v1.0.0</h3>
+      <h3 class="title1">欢迎回来,请登陆您的账户</h3>
+    </div>
+
+    <a-form class="container" ref="loginRef" :form="form" :rules="loginRules">
       <a-form-item name="用户名" :rules="loginRules.username">
         <a-input v-model:value="loginForm.username" placeholder="Username">
-          <template #prefix
-            ><UserOutlined style="color: rgba(0, 0, 0, 0.25)"
-          /></template>
+          <template #prefix>
+            <UserOutlined style="color: rgba(0, 0, 0, 0.25)" />
+          </template>
         </a-input>
       </a-form-item>
       <a-form-item name="密码" :rules="loginRules.password">
-        <a-input
-          v-model:value="loginForm.password"
-          type="password"
-          placeholder="Password"
-        >
-          <template #prefix
-            ><LockOutlined style="color: rgba(0, 0, 0, 0.25)"
-          /></template>
+        <a-input v-model:value="loginForm.password" type="password" placeholder="Password">
+          <template #prefix>
+            <LockOutlined style="color: rgba(0, 0, 0, 0.25)" />
+          </template>
         </a-input>
       </a-form-item>
       <!-- Uncomment if you want to use a captcha -->
@@ -50,13 +49,7 @@
       </a-form-item>
       -->
       <a-form-item style="width: 300px; margin: 10px auto">
-        <a-button
-          :loading="loading"
-          size="large"
-          type="primary"
-          style="width: 300px"
-          @click.prevent="handleLogin"
-        >
+        <a-button :loading="loading" size="large" type="primary" style="width: 300px" @click.prevent="handleLogin">
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
         </a-button>
@@ -65,9 +58,10 @@
         </div>
       </a-form-item>
     </a-form>
+
     <!--  底部  -->
-    <div class="el-login-footer">
-      <!-- <span>Copyright © 2018-2023 ruoyi.vip All Rights Reserved.</span> -->
+    <div class="footer">
+      <span>repo:https://github.com/Henri-lab/czm_dev_helper</span>
     </div>
   </div>
 </template>
@@ -138,7 +132,7 @@ const loginRules = {
       required: true,
       trigger: 'blur',
       message: '请输入您的账号',
-      validator: validUserName,
+      validator: () => validUserName,//arrow func 解决 :ReferenceError: Cannot access 'validUserName' before initialization
     },
   ],
   password: [
@@ -146,7 +140,7 @@ const loginRules = {
       required: true,
       trigger: 'blur',
       message: '请输入您的密码',
-      validator: validPass,
+      validator: () => validPass,
     },
   ],
 };
@@ -210,104 +204,3 @@ function getCookie() {
 // getCode();
 getCookie();
 </script>
-
-<style lang="scss" scoped>
-.el-form {
-  width: 609px !important;
-  height: 507px;
-  background: url('@/assets/images/登录框.png') no-repeat center !important;
-  background-size: cover !important;
-  position: relative;
-}
-.login {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  background-image: url('@/assets/images/背景.png');
-  background-size: cover;
-}
-.title {
-  margin: 0px auto 30px auto;
-  text-align: center;
-  color: #ffff;
-  position: fixed;
-  font-size: 30px;
-  top: 30px;
-}
-.title1 {
-  margin: 0px auto 30px auto;
-  text-align: center;
-  color: #ffff;
-  position: absolute;
-  font-size: 22px;
-  top: 28px;
-}
-.login-form {
-  border-radius: 6px;
-  background: #ffffff;
-  width: 400px;
-  padding: 25px 25px 5px 25px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  .el-input {
-    height: 40px;
-    width: 300px;
-    margin: 5px auto;
-    input {
-      height: 40px;
-    }
-  }
-  .input-icon {
-    height: 39px;
-    width: 14px;
-    margin-left: 0px;
-    color: #a0d6f0;
-  }
-}
-.login-tip {
-  font-size: 13px;
-  text-align: center;
-  color: #bfbfbf;
-}
-.login-code {
-  width: 33%;
-  height: 40px;
-  float: right;
-  img {
-    cursor: pointer;
-    vertical-align: middle;
-  }
-}
-.el-login-footer {
-  height: 40px;
-  line-height: 40px;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  color: #fff;
-  font-family: Arial;
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-.login-code-img {
-  height: 40px;
-  padding-left: 12px;
-}
-</style>
-<style>
-.el-input__wrapper {
-  background: none;
-  box-shadow: none;
-  border: 1px solid #194d83;
-}
-.el-input__inner {
-  color: #ffff;
-}
-.is-focus {
-  box-shadow: none !important;
-}
-</style>

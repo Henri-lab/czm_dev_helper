@@ -1,13 +1,13 @@
 html,
 body,
-.chromeframe {
+/* .chromeframe {
     margin: 0.2em 0;
-    background: pink;
+    background: black;
     color: #000;
     padding: 0.2em 0;
     box-sizing: border-box;
     overflow: hidden;
-}
+} */
 
 
 #app {

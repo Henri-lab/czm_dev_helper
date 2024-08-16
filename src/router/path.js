@@ -1,3 +1,4 @@
-export default Path = {
+let Path = {
     afterLogin: '/'
 }
+export default Path 
