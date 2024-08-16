@@ -1,29 +1,36 @@
-@import '@/assets/scss/_var.scss'; //not @import url('../assets/scss/_var.scss');
 .login {
   width: $login-w;
   height: $login-h;
   position: relative;
   background-color: gray;
+  // border-radius: 10%;
   .left {
     width: 40%;
     height: 100%;
     position: absolute;
     left: 0;
-    .header {
-      .title {
-        font-size: 20px;
+    .login-form {
+      width: 90%;
+      height: 60%;
+      .header {
+        position: absolute;
+        top: 20%;
+        color: red;
+        .title {
+          font-size: 20px;
+        }
+        .title1 {
+          font-size: 12px;
+        }
       }
-      .title1 {
-        font-size: 12px;
+      .container {
+        width: 45%;
+        height: 40%;
+        position: absolute;
+        top: 30%;
       }
-    }
-    .container {
-      width: 45%;
-      height: 40%;
-      position: absolute;
-      top: 30%;
-    }
-    .footer {
+      .footer {
+      }
     }
   }
   .right {

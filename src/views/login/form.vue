@@ -1,55 +1,35 @@
 <template>
-  <div class="left">
+  <div class="login-form">
     <div class="header">
       <h3 class="title">CesiumHelper v1.0.0</h3>
       <h3 class="title title1">欢迎回来,请登陆您的账户</h3>
     </div>
-
     <a-form class="container" ref="loginRef" :form="form" :rules="loginRules">
-      <a-form-item name="用户名" :rules="loginRules.username">
+      <!-- 用户名 -->
+      <a-form-item name="username" :rules="loginRules.username">
         <a-input v-model:value="loginForm.username" placeholder="Username">
-          <template #prefix>
-            <UserOutlined style="color: rgba(0, 0, 0, 0.25)" />
-          </template>
         </a-input>
       </a-form-item>
-      <a-form-item name="密码" :rules="loginRules.password">
+      <!-- 密码 -->
+      <a-form-item name="password" :rules="loginRules.password">
         <a-input v-model:value="loginForm.password" type="password" placeholder="Password">
-          <template #prefix>
-            <LockOutlined style="color: rgba(0, 0, 0, 0.25)" />
-          </template>
         </a-input>
       </a-form-item>
-      <!-- Uncomment if you want to use a captcha -->
-      <!--
-      <a-form-item
-        name="code"
-        v-if="captchaEnabled"
-        :rules="[{ required: true, message: '请输入验证码' }]"
-      >
-        <a-input
-          v-model:value="loginForm.code"
-          size="large"
-          placeholder="验证码"
-          style="width: 63%"
-          @keyup.enter="handleLogin"
-          prefix-icon={<svg-icon icon-class="validCode" class="ant-input-prefix-icon" />}
-        />
+      <!-- 验证码 -->
+      <a-form-item name="code" v-if="captchaEnabled">
+        <a-input v-model:value="loginForm.code" size="large" placeholder="验证码" style="width: 63%"
+          @keyup.enter="handleLogin" />
         <div class="login-code">
           <img :src="codeUrl" @click="getCode" class="login-code-img" />
         </div>
       </a-form-item>
-      -->
-      <!-- Uncomment if you want to use remember me -->
-      <!--
-      <a-form-item
-        name="rememberMe"
-      >
+      <!-- 记住我 -->
+      <a-form-item name="rememberMe">
         <a-checkbox v-model:checked="loginForm.rememberMe">记住密码</a-checkbox>
       </a-form-item>
-      -->
-      <a-form-item style="width: 300px; margin: 10px auto">
-        <a-button :loading="loading" size="large" type="primary" style="width: 300px" @click.prevent="handleLogin">
+      <!-- 登录按钮 -->
+      <a-form-item class="login-submit" style="width: 100px; margin: 10px auto">
+        <a-button :loading="loading" size="large" type="primary" style="width: 100px" @click.prevent="handleLogin">
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
         </a-button>
@@ -58,10 +38,8 @@
         </div>
       </a-form-item>
     </a-form>
-
-    <!--  底部  -->
     <div class="footer">
-      <span>repo:https://github.com/Henri-lab/czm_dev_helper</span>
+      <span>repo: https://github.com/Henri-lab/czm_dev_helper</span>
     </div>
   </div>
 </template>
@@ -143,6 +121,13 @@ const loginRules = {
       validator: () => validPass,
     },
   ],
+  code: [
+    {
+      required: true,
+      trigger: 'blur',
+      message: '请输入验证码',
+    },
+  ],
 };
 // 规则
 const validUserName = (rule, name) => {
@@ -205,4 +190,55 @@ function getCookie() {
 getCookie();
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.login-form {
+  width: 90%;
+  height: 60%;
+  left: 5%;
+  padding: 20px 10px 20px 10px;
+
+  .header {
+    width: 100%;
+    height: 40%;
+    position: relative;
+    color: black;
+    padding: 10px 5px 10px 5px;
+
+    .title {
+      width: 100%;
+      height: 20%;
+      // overflow: scroll;
+      font-size: 20px;
+    }
+
+    .title1 {
+      width: 100%;
+      height: 80%;
+      // overflow: scroll;
+      font-size: 12px;
+    }
+  }
+
+  .container {
+    width: 100%;
+    height: 50%;
+    padding: 10px 5px 10px 5px;
+    position: relative;
+
+    .login-submit {
+      position: absolute;
+      bottom: -18%;
+
+    }
+  }
+
+  .footer {
+    width: 100%;
+    height: 10%;
+    position: absolute;
+    bottom: -5%;
+    left: 5%;
+    font-size: 12px;
+  }
+}
+</style>
