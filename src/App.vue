@@ -15,6 +15,7 @@
 // test
 import Editor from './components/Editor/index.vue'
 import LayOut from './layout/index.vue'
+import login from './views/login.vue'
 
 </script>
 <style lang="scss"></style>
