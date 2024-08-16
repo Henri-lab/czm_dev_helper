@@ -1,7 +1,16 @@
 @import '@/assets/scss/_var.scss';
+@import '@/assets/scss/mixin.scss';
 #app {
   background-color: blanchedalmond;
   overflow: hidden;
+  //主题
+  &.body-theme-light {
+    @include theme-light;
+  }
+  &.body-theme-dark {
+    @include theme-dark;
+  }
+  //登录面板
   .login {
     margin: 0 auto;
     margin-top: calc(50vh - ($login-h * 0.5));

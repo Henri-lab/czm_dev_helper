@@ -2,7 +2,7 @@
   <div class="left">
     <div class="header">
       <h3 class="title">CesiumHelper v1.0.0</h3>
-      <h3 class="title1">欢迎回来,请登陆您的账户</h3>
+      <h3 class="title title1">欢迎回来,请登陆您的账户</h3>
     </div>
 
     <a-form class="container" ref="loginRef" :form="form" :rules="loginRules">
@@ -204,3 +204,5 @@ function getCookie() {
 // getCode();
 getCookie();
 </script>
+
+<style lang="scss" scoped></style>

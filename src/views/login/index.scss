@@ -5,12 +5,11 @@
   position: relative;
   background-color: gray;
   .left {
-    width: 50%;
+    width: 40%;
     height: 100%;
     position: absolute;
     left: 0;
     .header {
-      color: red;
       .title {
         font-size: 20px;
       }
@@ -28,7 +27,7 @@
     }
   }
   .right {
-    width: 50%;
+    width: 60%;
     height: 100%;
     position: absolute;
     right: 0;

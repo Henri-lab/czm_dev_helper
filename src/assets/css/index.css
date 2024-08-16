@@ -1,2 +1,15 @@
-@import url('./global.css');
-@import url('./loadWrapper.css');
+@import './global.css';
+@import './loadWrapper.css';
+
+/* 
+@import url('./global.css');和 @import './global.css';
+
+在 CSS 中的主要区别在于如何指定导入的文件路径： 
+ @import url('./global.css');
+: 使用 url() 函数来指定文件路径。 更适合跨域或需要绝对 URL 的情况。 
+当文件路径包含特殊字符或者需要转义时，使用 url() 可以更灵活地处理路径。
+ @import './global.css';
+: 直接指定文件路径。 更简洁，适用于相对路径的情况。
+ 在大多数现代浏览器中，这种方式更为常见和推荐使用。 两者在功能上基本相同，都可以用来导入外部样式表。选择哪种方式主要取决于具体的使用场景和个人偏好。在大多数情况下，直接使用 @import './global.css';
+是更简单和常见的做法。
+ */

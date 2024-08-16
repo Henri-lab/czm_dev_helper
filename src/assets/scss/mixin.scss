@@ -1,0 +1,12 @@
+@mixin theme-light {
+  $rgb-title: black !default;
+  .title {
+    color: $rgb-title;
+  }
+}
+@mixin theme-dark {
+  $rgb-title: rgb(86, 221, 245) !default;
+  .title {
+    color: $rgb-title;
+  }
+}

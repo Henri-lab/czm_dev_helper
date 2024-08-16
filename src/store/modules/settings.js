@@ -4,12 +4,15 @@ const { sideTheme, showSettings, topNav, tagsView, fixedHeader, sidebarLogo, dyn
 
 const storageSetting = JSON.parse(localStorage.getItem('layout-setting')) || ''
 
+const theme_0 = 'body-theme-light'
+const theme_1 = 'body-theme-dark'
+
 const useSettingsStore = defineStore(
   'settings',
   {
     state: () => ({
       title: '',
-      theme: storageSetting.theme || '#409EFF',
+      theme: storageSetting.theme || theme_0,
       sideTheme: storageSetting.sideTheme || sideTheme,
       showSettings: showSettings,
       topNav: storageSetting.topNav === undefined ? topNav : storageSetting.topNav,
@@ -34,7 +37,13 @@ const useSettingsStore = defineStore(
         } else {
           document.title = defaultSettings.title
         }
-      }
+      },
+      // 切换主题
+      toggleTheme() {
+        document.body.classList.remove(this.theme);
+        this.theme = this.theme === theme_0 ? theme_1 : theme_0;
+        document.body.classList.add(this.theme);
+      },
     }
   })
 

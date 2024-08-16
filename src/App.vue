@@ -19,6 +19,6 @@ import LayOut from './layout/index.vue'
 import Login from './views/login/index.vue'
 
 </script>
-<style lang="scss">
-@import url(./index.scss)
+<style lang="scss" scoped>
+@import './index.scss';
 </style>
