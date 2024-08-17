@@ -4,10 +4,6 @@
 
 **正在逐渐完善 cesium_dev_helper**
 
-
-目前的文件结构概述
-![czm_dev_helper](https://github.com/Henri-lab/czm_dev_helper/assets/62045411/91641bca-f0c4-4174-9178-04d31eb7d573)
-
 测试视图
 ![login](https://github.com/user-attachments/assets/eb55cf02-ad72-4fa7-a7e9-2edcd426b9fd)
 
