@@ -77,14 +77,16 @@ export const parse_viewerConfig = (viewerConfig: viewerConfig) => {
     for (const type in info.iMap) {
       const option = info.iMap[type];
       if (isValidImageryProviderType(type)) {
-        if (option.customProvider) {
+        if (
+          option.customProvider /*&& option.customProvider instanceof Cesium.ImageryProvider 经过测试 这个条件导致有些自定义影像会被阻止*/
+        ) {
           images.push(option.customProvider);
         } else {
           const provider = createProvider({
             type,
             option, //delete option.customProvider;
           }) as ImageryProvider;
-          images.push(provider);
+          provider && images.push(provider);
         }
       }
     }

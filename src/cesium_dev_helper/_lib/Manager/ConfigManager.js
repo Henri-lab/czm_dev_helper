@@ -77,34 +77,7 @@ export default class ConfigManager extends Manager {
 
         return viewer;
     }
-
-    /**
-     * 添加影像提供者
-     * @param {Object} viewer - Viewer 实例
-     * @param {string} cfg.type - 提供者类型
-     * @param {Object} cfg.option - 提供者选项
-     * @param {Object} cfg.customProvider - 自定义图源
-     */
-
-    addImageryProvider(viewer, { type, option }) {
-        if (isValidImageryProviderType(type)) {
-            const _cip = option.customProvider;
-            // 没提供自定义 就创建对应的
-            if (!_cip) {
-                const _provider = createProvider({ type, option });
-                _provider instanceof Cesium.ImageryProvider && viewer.imageryLayers.addImageryProvider(_provider);
-            }
-            // 提供了自定义 就使用自定义
-            else if (_cip && _cip instanceof Cesium.ImageryProvider) {
-                // console.log('loading custom imageryProvider')
-                viewer.imageryLayers.addImageryProvider(_cip);
-            }
-        } else {
-            console.warn(`${type} is not the valid imagery provider type`);
-        }
-    }
 }
-
 
 
 
