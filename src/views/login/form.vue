@@ -16,25 +16,25 @@
         </a-input>
       </a-form-item>
       <!-- 验证码 -->
-      <a-form-item name="code" v-if="captchaEnabled">
-        <a-input v-model:value="loginForm.code" size="large" placeholder="验证码" style="width: 63%"
+      <a-form-item class="code" name="code" v-if="captchaEnabled">
+        <a-input class="input-code" v-model:value="loginForm.code" size="middle" placeholder="验证码"
           @keyup.enter="handleLogin" />
-        <div class="login-code">
-          <img :src="codeUrl" @click="getCode" class="login-code-img" />
+        <div class="img-code">
+          <img :src="codeUrl" @click="getCode" class="code-img" />
         </div>
       </a-form-item>
       <!-- 记住我 -->
-      <a-form-item name="rememberMe">
+      <a-form-item class="remember-me" name="rememberMe">
         <a-checkbox v-model:checked="loginForm.rememberMe">记住密码</a-checkbox>
       </a-form-item>
       <!-- 登录按钮 -->
-      <a-form-item class="login-submit" style="width: 100px; margin: 10px auto">
-        <a-button :loading="loading" size="large" type="primary" style="width: 100px" @click.prevent="handleLogin">
+      <a-form-item class="login-submit">
+        <a-button class="btn" :loading="loading" size="small" type="primary" @click.prevent="handleLogin">
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
         </a-button>
-        <div style="float: right" v-if="register">
-          <router-link class="link-type" to="/register">立即注册</router-link>
+        <div class="register" style="float: right" v-if="register">
+          <router-link class="link-type" to="/register"><span>立即注册</span></router-link>
         </div>
       </a-form-item>
     </a-form>
@@ -191,10 +191,11 @@ getCookie();
 </script>
 
 <style lang="scss" scoped>
+.span {
+  font-size: 14px;
+}
+
 .login-form {
-  width: 90%;
-  height: 60%;
-  left: 5%;
   padding: 20px 10px 20px 10px;
 
   .header {
@@ -221,14 +222,44 @@ getCookie();
 
   .container {
     width: 100%;
-    height: 50%;
+    height: 61%;
     padding: 10px 5px 10px 5px;
     position: relative;
+    border-radius: 5%;
+    background-color: rgb(232, 222, 209, 0.5);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+
+    .code {
+      width: 100%;
+      position: relative;
+
+      .input-code {
+        width: 40%;
+      }
+
+      .img-code {
+        border: 1px solid rgba(0, 0, 0, 1);
+        width: 50%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: 5%;
+      }
+    }
+
+    .remember-me {
+      margin-top: -20px;
+    }
 
     .login-submit {
-      position: absolute;
-      bottom: -18%;
+      margin: -20px 0 0 0;
+      width: 265px;
+      position: relative;
 
+      .btn {
+        width: 5rem;
+        height: 2rem;
+      }
     }
   }
 
@@ -236,8 +267,7 @@ getCookie();
     width: 100%;
     height: 10%;
     position: absolute;
-    bottom: -5%;
-    left: 5%;
+    bottom: -1.8rem;
     font-size: 12px;
   }
 }

@@ -9,29 +9,6 @@
     height: 100%;
     position: absolute;
     left: 0;
-    .login-form {
-      width: 90%;
-      height: 60%;
-      .header {
-        position: absolute;
-        top: 20%;
-        color: red;
-        .title {
-          font-size: 20px;
-        }
-        .title1 {
-          font-size: 12px;
-        }
-      }
-      .container {
-        width: 45%;
-        height: 40%;
-        position: absolute;
-        top: 30%;
-      }
-      .footer {
-      }
-    }
   }
   .right {
     width: 60%;
@@ -40,11 +17,5 @@
     right: 0;
     background-image: url($login-r-img);
     background-size: cover;
-    .header {
-    }
-    .container {
-    }
-    .footer {
-    }
   }
 }

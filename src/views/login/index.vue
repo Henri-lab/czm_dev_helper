@@ -1,7 +1,10 @@
 <template>
     <div class="login" v-draggable>
         <login-form class="left"></login-form>
+
         <div class="right"></div>
+
+
     </div>
 </template>
 
@@ -11,4 +14,10 @@ import LoginForm from './form.vue';
 
 <style lang="scss" scoped>
 @import './index.scss';
+
+// .header {}
+
+// .container {}
+
+// .footer {}
 </style>
