@@ -1,9 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import { setPermissionGuardExclude } from "./guard/permission";
-// import MeTest from '@/components/me.vue';
-// import CzmMap from '@/Map/cesiumMap/CzmMap.vue';
-// import LayOut from '@/layout/index.vue'
-// import Login from '@/views/login.vue'
 
 // const layOutChildren = [
 //   {
@@ -42,13 +38,21 @@ import { setPermissionGuardExclude } from "./guard/permission";
 // ];
 // const dynamicRoutes = []
 
+const testRoutes = [
+  {
+    path: '/layout',
+    component: () => import('@/layout/index.vue'),
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/login/index.vue'),
+  },
+]
 
 const router = createRouter({
   // hash 模式
   history: createWebHashHistory(),
-  routes: [
-
-  ],
+  routes: testRoutes,
   // 保持滚动状态
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

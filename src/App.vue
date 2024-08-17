@@ -1,26 +1,34 @@
 <template>
   <div class="whole-page">
-    <!-- <v-scale-screen width="1920" height="1080" delay="200">
-    <keep-alive>
-      <router-view></router-view>
-    </keep-alive>
-  </v-scale-screen> -->
-
     <!-- test -->
-    <!-- <Editor /> -->
-    <LayOut />
-    <!-- <Login /> -->
+    <div class="test">
+      <span style="color: white;">测试：</span>
+      <router-link to="/login"><el-button type="success" size="large">登录界面</el-button></router-link>&nbsp;&nbsp;
+      <router-link to="/layout"><el-button type="success" size="large">Cesium界面</el-button></router-link>&nbsp;&nbsp;
+    </div>
+    <v-scale-screen width="1920" height="1080" delay="200">
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
+    </v-scale-screen>
   </div>
 </template>
 
 
 <script setup>
 // test
-import Editor from './components/Editor/index.vue'
-import LayOut from './layout/index.vue'
-import Login from './views/login/index.vue'
+
 
 </script>
 <style lang="scss" scoped>
+.test {
+  width: 100vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: black;
+  z-index: 999;
+}
+
 @import './index.scss';
 </style>
