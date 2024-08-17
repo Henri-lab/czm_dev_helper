@@ -9,5 +9,7 @@
 ![czm_dev_helper](https://github.com/Henri-lab/czm_dev_helper/assets/62045411/91641bca-f0c4-4174-9178-04d31eb7d573)
 
 测试视图
+![image](https://github.com/Henri-lab/czm_dev_helper/assets/test/login.png)
+![image](https://github.com/Henri-lab/czm_dev_helper/assets/test/cesium.png)
 
 
