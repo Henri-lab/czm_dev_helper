@@ -5,7 +5,7 @@ import {
     NotificationOutlined,
 } from '@ant-design/icons-vue';
 import CzmMap from './cesiumMap/CzmMap.vue';
-import { Editor } from '../cesium_dev_helper/_lib/Editor';
+import { Editor } from '@czmHelper/Editor';
 
 
 

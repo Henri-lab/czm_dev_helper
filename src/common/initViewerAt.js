@@ -8,7 +8,7 @@ import {
     ConfigManager,
     SceneManager,
     CameraManager
-} from '../cesium_dev_helper/_lib/Manager';
+} from '@czmHelper/Manager';
 import { get_vcfg_wuhan, modelOpt_wuhan, get_vcfg_global } from '../Map';
 
 

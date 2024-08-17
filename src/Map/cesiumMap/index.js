@@ -5,7 +5,7 @@ import {
     NotificationOutlined,
 } from '@ant-design/icons-vue';
 import CzmMap from './CzmMap.vue';
-import { Editor } from '../../cesium_dev_helper/_lib/Editor';
+import { Editor } from '@czmHelper/Editor';
 
 
 
@@ -20,6 +20,6 @@ export {
 }
 
 
-export { TencentImageryProvider } from '../../cesium_dev_helper/_lib/Plugin/mapPlugin'
+export { TencentImageryProvider } from '@czmHelper/Plugin/mapPlugin'
 export { vcfg_wuhan, modelOpt_wuhan, get_vcfg_wuhan } from './config/wuhan'
 export { vcfg_global, get_vcfg_global } from './config/global'

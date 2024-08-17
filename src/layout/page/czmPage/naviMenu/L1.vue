@@ -21,15 +21,15 @@ import {
   MENU_ITEM_KEY_Map as itemKEY,
   MENU_ITEM_TITLE_CN_Map as CN,
 } from '../naviMenu/subItem/enums';
-import { lineOpt } from '@/cesium_dev_helper/_lib/Editor/config/lineOpt';
-import { useCommonStore } from '@/store';
+import { lineOpt } from '@czmHelper/Editor/config/lineOpt';
+import  useDefaultStore  from '@/store';
 
 const naviSideKeys = ref([]); //sub-menu-item-key
 const openKeys = ref([]); //sub-menu-key
 const viewerManagerRef = ref(null);
 
-const commonStore = useCommonStore();
-const setMap = commonStore.setMap;
+const defaultStore = useDefaultStore();
+const setMap = defaultStore.setMap;
 
 // 菜单选项编码
 const pencil = itemKEY[1]; //'pencil_test'

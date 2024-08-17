@@ -1,4 +1,4 @@
-<!-- 创建地图视图 并且加载对应视图的管理者 -->
+<!-- 创建ceisum地图视图 并且加载对应视图的管理者 -->
 <template>
   <div id="czm-container">
     <div id="czm-viewer"></div>
@@ -7,23 +7,22 @@
 
 <script setup>
 import { markRaw, onMounted, watchEffect } from 'vue';
-import { useCommonStore } from '@/store';
+import useDefaultStore from '@/store';
 import { initViewerAt, Editor } from '../index';
 
-const commonStore = useCommonStore();
+const defaultStore = useDefaultStore();
 const el = { id: 'czm-container' };
 
 // 创建视图 type类型的地图 加载到el元素
 const init = (el, type) => {
   initViewerAt(el, type).then((viewer) => {
-    // ~test-<layout/> 已經開始挂載🩸
     if (viewer) {
       let $viewer = markRaw(viewer);
       //  全局共享viewer
-      commonStore.setViewer($viewer);
+      defaultStore.setViewer($viewer);
       //  全局共享editor (draw needs canvas)
       $editor = new Editor($viewer);
-      commonStore.setEditor($editor);
+      defaultStore.setEditor($editor);
     }
   });
 };
@@ -35,8 +34,7 @@ onMounted(() => {
   init(el, 'global');
 });
 watchEffect(() => {
-  // commonStore.Map() ❌
-  const typeFromStore = commonStore.Map;
+  const typeFromStore = defaultStore.Map;
   typeFromStore && init(el, typeFromStore);
 });
 </script>
@@ -47,6 +45,7 @@ watchEffect(() => {
   height: 1000px;
   background-color: bisque;
   position: relative;
+
   #czm-viewer {
     position: absolute;
     top: 50%;

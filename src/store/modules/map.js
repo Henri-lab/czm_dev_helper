@@ -1,12 +1,10 @@
-// 其实喜欢compositionAPI更多 但是选择option API风格，为了更好的兼容vuex习惯;
-// 这里的map指的是map type 是一个字符串 而不是czm相关的map对象 
 import { defineStore } from 'pinia'
 
-export default defineStore('defaultStore', {
+export const useCommonStore = defineStore('czmMapData', {
     state: () => {
         return {
             map: '', // type of map 
-            viewer: null, 
+            viewer: null,
             editor: null,
             // 检测变化标志
             mapUpdated: false,

@@ -1,7 +1,7 @@
 import api from "./request";
 import { lineColors } from "../store/staticData";
-import { DataPrepocesser } from "../../../_lib/Data";
-import { CoordTransformer } from '../../../_lib/Compute'
+import { DataPrepocesser } from "@czmHelper/Data";
+import { CoordTransformer } from '@czmHelper/Compute'
 
 export const getLine = async (params) => {
     try {

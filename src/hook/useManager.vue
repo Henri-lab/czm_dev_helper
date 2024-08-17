@@ -5,25 +5,25 @@
 
 <script setup>
 // editorRef: 使用 ref 创建一个响应式引用来存储 editor。
-// watchEffect: 监视 commonStore.Editor 的变化并更新 editorRef 的值。
+// watchEffect: 监视 defaultStore.Editor 的变化并更新 editorRef 的值。
 // useEditor: 返回一个 computed 引用，每次调用时都会计算并返回最新的 editor 实例。
 // startLine: 确保在调用 editor.startLine() 前 editor 存在。
 // 通过这种方式，useEditor 始终返回最新的 editor 实例，并且由于 editorRef 是响应式的，computed 将确保每次获取的都是最新的 editor。
 import { ref, computed, watchEffect } from 'vue';
-import { useCommonStore } from '@/store';
-import czmHelper from '../cesium_dev_helper/_lib';
+import  useDefaultStore  from '@/store';
+import czmHelper from '@czmHelper';
 
-const commonStore = useCommonStore();
+const defaultStore = useDefaultStore();
 const managerModule = czmHelper.ManagerModule;
 const dataProcesser = new czmHelper.DataModule.DataPrepocesser();
 
 // 分发管理者
-let $viewer = computed(() => commonStore.Viewer);
+let $viewer = computed(() => defaultStore.Viewer);
 let SceneManagerRef = ref(null);
 let CameraManagerRef = ref(null);
 let EventManagerRef = ref(null);
 watchEffect(() => {
-  const _viewer = commonStore.Viewer;
+  const _viewer = defaultStore.Viewer;
   if (!_viewer) return;
   SceneManagerRef.value = new managerModule.SceneManager(_viewer);
   CameraManagerRef.value = new managerModule.CameraManager(_viewer);
@@ -70,7 +70,7 @@ const add3DModel = (type, options, extraOpt) => {
 // 分发图形编辑器(后续打算放在drawing-manager身上)
 const editorRef = ref(null);
 watchEffect(() => {
-  const _editorFromStore = commonStore.Editor;
+  const _editorFromStore = defaultStore.Editor;
   if (_editorFromStore) {
     editorRef.value = _editorFromStore;
   }
