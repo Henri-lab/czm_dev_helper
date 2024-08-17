@@ -6,6 +6,7 @@
     <NaviMenuU1></NaviMenuU1>
     <!-- 路由页面 -->
     <!-- <router-view /> -->
+    <czmPage />
 
 
     <!-- test 水印 -->
@@ -19,6 +20,7 @@
 
 <script setup>
 import NaviMenuU1 from './common/U1.vue';
+import czmPage from './page/czmPage/index.vue'
 const font = reactive({
   color: 'rgba(0, 0, 0, .15)',
 })

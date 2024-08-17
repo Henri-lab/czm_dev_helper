@@ -14,6 +14,10 @@ const vcfg_global = {
         AccessToken: import.meta.env.VITE_CESIUM_KEY,
         logo: false,
         depthTest: true,
+        // canvas: {
+        //     width: 2000,
+        //     height: 1500,
+        // },
     },
 };
 const get_vcfg_global = (id) => {

@@ -38,4 +38,8 @@ import MyContent from '../czmPage/area/content.vue';
 .site-layout-background {
   background: #fff;
 }
+
+.header {
+  display: none;
+}
 </style>

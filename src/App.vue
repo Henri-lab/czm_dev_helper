@@ -8,8 +8,8 @@
 
     <!-- test -->
     <!-- <Editor /> -->
-    <!-- <LayOut /> -->
-    <Login />
+    <LayOut />
+    <!-- <Login /> -->
   </div>
 </template>
 

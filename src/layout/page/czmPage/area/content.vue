@@ -1,7 +1,6 @@
 <template>
   <!-- 面包屑导航 📍-->
   <breadcrumb />
-
   <a-layout style="padding: 24px 0; background: #fff">
     <!-- 内容区左侧 📍-->
     <a-layout-sider width="200" style="background: #fff">
@@ -22,8 +21,7 @@
 <script setup>
 import { ref } from 'vue';
 import breadcrumb from '../naviBars/breadcrumb/breadcrumb.vue';
-import CzmMap from '../../../Map/cesiumMap/CzmMap.vue';
-import upload from '../../../components/upload.vue';
+import CzmMap from '@/Map/cesiumMap/CzmMap.vue';
 import LeftMenu from '../naviMenu/L1.vue';
 
 const isUpload = ref(false);
