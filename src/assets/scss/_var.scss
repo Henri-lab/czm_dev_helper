@@ -1,10 +1,6 @@
 // 下划线 _ 开头表示这是一个“部分”文件，不应该直接被浏览器加载，而应该通过 @import 导入到其他 SCSS 文件中。
 
-$login-w: 750px !default;
+$login-w: 1000px !default;
 $login-h: ($login-w * 0.6);
 $login-r-img: '@/assets/images/user/form/background.png';
-
-
-
-
-
+$bg-img: '@/assets/images/system/bg.png';

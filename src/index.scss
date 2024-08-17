@@ -1,6 +1,10 @@
-#app {
-  background-color: blanchedalmond;
+.whole-page {
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
+  background-image: url($bg-img);
+  background-size: cover;
+  background-repeat: no-repeat;
   //主题
   &.body-theme-light {
     @include theme-light;
@@ -10,8 +14,8 @@
   }
   //登录面板
   .login {
-    margin: 0 auto;
-    margin-top: calc(50vh - ($login-h * 0.5));
+    margin-top: calc(30vh - ($login-h * 0.5));
+    margin-left: calc(75vw - ($login-w * 0.5));
     box-shadow: 10px 5px 10px 10px rgba(0, 0, 0, 0.5);
   }
 }

@@ -1,10 +1,7 @@
 <template>
-    <div class="login" v-draggable>
+    <div class="login">
         <login-form class="left"></login-form>
-
         <div class="right"></div>
-
-
     </div>
 </template>
 

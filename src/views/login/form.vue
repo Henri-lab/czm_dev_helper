@@ -222,7 +222,7 @@ getCookie();
 
   .container {
     width: 100%;
-    height: 60%;
+    height: 43%;
     padding: 10px 5px 10px 5px;
     position: relative;
     border-radius: 5%;

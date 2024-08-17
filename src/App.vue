@@ -1,14 +1,16 @@
 <template>
-  <!-- <v-scale-screen width="1920" height="1080" delay="200">
+  <div class="whole-page">
+    <!-- <v-scale-screen width="1920" height="1080" delay="200">
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
   </v-scale-screen> -->
 
-  <!-- test -->
-  <!-- <Editor /> -->
-  <!-- <LayOut /> -->
-  <Login />
+    <!-- test -->
+    <!-- <Editor /> -->
+    <!-- <LayOut /> -->
+    <Login />
+  </div>
 </template>
 
 
