@@ -122,7 +122,7 @@ export function isValidViewerProperty(string) {
 /**
  * Validates if the given input is a valid Cesium imagery provider.
  *
- * @param {string} string - The string representing the imagery provider to be validated.
+ * @param {string} string- The string representing the imagery provider to be validated.
  * @returns {boolean} - Returns true if the input is a valid Cesium imagery provider, false otherwise.
  *
  * @throws Will throw an error if the input is not a string.

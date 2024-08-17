@@ -1,0 +1,37 @@
+// 对于 TypeScript 项目，通常会使用 tsconfig.json 文件来配置 TypeScript 编译器的行为。有时候，为了在多个项目中共享通用的 TypeScript 配置，可以使用 tsconfig.base.json 文件作为基础配置，然后在具体项目中继承或扩展该配置
+{
+  "compilerOptions": {
+    "types": ["vite/client"], // 如果你使用的是 Vite
+    "target": "es2022" /* 编译后的 JavaScript 目标版本 为 ES2022*/,
+    "moduleResolution": "Node", //ES6 模块解析
+    "esModuleInterop": true /* 允许使用 CommonJS 模块语法 */, //启用ES模块的互操作性，使得使用CommonJS和ES模块导入导出语法的包之间能够兼容。(环境变量的识别)
+    "module": "esnext" /* 指定生成的模块系统代码 */,
+    "strict": true /* 启用所有严格类型检查选项 */,
+    "sourceMap": true /* 生成 Sourcemap 文件，用于调试 */,
+    "outDir": "./dist" /* 输出目录 */,
+    // 简化模块引入
+    "baseUrl": "./src" /* 解析非相对模块名的基本目录 即 直接使用模块名来导入模块*/,
+    "paths": {
+      "@/*": ["*"] /* 路径映射，用于模块解析 */,
+      "@vueuse/core": ["node_modules/@vueuse/core"] //ts编译器查找时会找到对应的@vueuse/core映射地址
+    },
+    "allowJs": true //允许导入文件自动识别为js文件
+  },
+  "include": [
+    "src/**/*" /* 需要编译的 TypeScript 文件的目录 为 src文件夹下所有文件*/,
+    "global.d.ts"
+  ],
+  "exclude": ["node_modules" /* 不包括编译的目录或文件 */]
+}
+// 从 ES6 (ES2015) 到 ES2022 JavaScript 语言规范新增加了哪些特性，那么可以总结如下几点关键变化：
+
+// Async/Await: ES2017 引入了 async 和 await 关键字，使得异步编程更加简洁。
+// Class Properties: ES2022 允许直接在类定义中声明类属性，而不需要在构造函数或原型链中定义。
+// Numeric Separators: 在 ES2022 中，可以在数字字面量中使用下划线 _ 作为分隔符，提高可读性。
+// Private Class Methods and Fields: 可以使用 # 前缀定义私有方法和字段。
+// Optional Catch Binding: 在 try...catch 语句中，catch 参数现在是可选的。
+// Promise.any: 添加了一个新的静态方法 Promise.any，用于处理多个 Promise。
+// WeakRefs: 提供了一种引用对象的方式，不会阻止对象被垃圾回收。
+// Top-Level Await: 允许在模块顶层使用 await。
+// Error Causality: Error 对象可以携带一个 cause 属性，表示导致错误的原因。
+// Static Semantics: 语言规范中引入了一些新的静态语义规则，如禁止重复导入相同的模块。

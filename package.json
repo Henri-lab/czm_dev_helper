@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/cesium": "^1.70.0",
     "@vitejs/plugin-vue": "^5.0.4",
     "sass": "^1.77.0",
     "unplugin-auto-import": "^0.18.2",
