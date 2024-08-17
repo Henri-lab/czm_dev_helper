@@ -1,5 +1,4 @@
-// 武汉视图
-
+// 武汉 白模 视图 
 import { TencentImageryProvider } from '../index';
 
 //腾讯底图
@@ -30,13 +29,9 @@ const vcfg_wuhan = {
     },
     extraConfig: {
         name: 'wuhan',
-        AccessToken: import.meta.env.VITE_CESIUM_KEY,
+        AccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiMDk4NmM5OS03MmNlLTRiNWItOTUzNy1hYzhkMTUwYjgwNmQiLCJpZCI6MjE3MTc3LCJpYXQiOjE3MTcwNTUwMTh9.C3dvJjK0cBUhb87AI_EnpLPUwxD3ORI8sGcntlhCAmw',
         logo: false,
         depthTest: true,
-        // canvas: {
-        //     width: 2000,
-        //     height: 1500,
-        // },
     },
 };
 

@@ -72,10 +72,27 @@ export const parse_viewerConfig = (viewerConfig: viewerConfig) => {
 
     const parsed = { ...vConfig_native, ...terrian };
 
+    //根据 影像配置 生成 provider
+    const images = [];
+    for (const type in info.iMap) {
+      const option = info.iMap[type];
+      if (isValidImageryProviderType(type)) {
+        if (option.customProvider) {
+          images.push(option.customProvider);
+        } else {
+          const provider = createProvider({
+            type,
+            option, //delete option.customProvider;
+          }) as ImageryProvider;
+          images.push(provider);
+        }
+      }
+    }
+
     return {
       id: containerId,
       parsed,
-      images: info.iMap, //影像数据配置 集合
+      images, //影像数据集合
       extra: extraConfig,
     };
   }

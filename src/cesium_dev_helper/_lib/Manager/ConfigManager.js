@@ -39,14 +39,13 @@ export default class ConfigManager extends Manager {
     async initViewer(config) {
 
         const _config = parse_viewerConfig(config);
+        console.log(_config, 'parsed config')
         // 核心
         let viewer = new Cesium.Viewer(_config.id, _config.parsed);
 
         // 加载影像图层列表 -通过 viewer.imageryLayers.addImageryProvider方法
-        for (const type in _config.images) {
-            const option = _config.images[type];
-            this.addImageryProvider(viewer, { type, option });
-        }
+        _config.images.forEach(image => viewer.imageryLayers.addImageryProvider(image));
+
 
         // 设置viewer的其他属性
         const extra = _config.extra;
@@ -92,7 +91,7 @@ export default class ConfigManager extends Manager {
             const _cip = option.customProvider;
             // 没提供自定义 就创建对应的
             if (!_cip) {
-                const _provider = this.createProvider({ type, option });
+                const _provider = createProvider({ type, option });
                 _provider instanceof Cesium.ImageryProvider && viewer.imageryLayers.addImageryProvider(_provider);
             }
             // 提供了自定义 就使用自定义

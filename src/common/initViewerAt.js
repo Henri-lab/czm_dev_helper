@@ -21,7 +21,7 @@ let viewers = [];//导出的地图集
  * Initializes a Cesium viewer at a specified element with a specific map type.
  *
  * @param {Object} [el={ id: 'viewer' }] - The HTML element where the viewer will be created.
- * @param {string} type - The type of map to be displayed. Can be either 'global' or 'wuhan'.
+ * @param {string} type - The type of map to be displayed. Can be either 'global' or 'wuhan' or else.
  * @returns {Promise<Cesium.Viewer>} - A promise that resolves to the initialized Cesium viewer.
  *
  * @example
@@ -43,17 +43,6 @@ export default async function initViewerAt(el = { id: 'viewer' }, type) {
 }
 
 // 地图配置
-// -武汉地图
-const toWuhan = async (el) => {
-    const cfgM = new ConfigManager();
-    const vcfg_wuhan = get_vcfg_wuhan(el.id);
-    const czmViewer = await cfgM.initViewer(vcfg_wuhan);
-    const sM = new SceneManager(czmViewer);
-    sM.initScene();
-    sM.add3DModel('3dtiles', modelOpt_wuhan)
-    switchViewerTo(czmViewer)
-    return czmViewer;
-}
 // -全局视图
 const toGlobal = async (el) => {
     const vcfg_global = get_vcfg_global(el.id);
@@ -64,6 +53,17 @@ const toGlobal = async (el) => {
     const cM = new CameraManager(czmViewer);
     cM.isRotationEnabled(1, 0, 0.5);// 开启地球自转
     switchViewerTo(czmViewer) //切换地图
+    return czmViewer;
+}
+// -武汉地图
+const toWuhan = async (el) => {
+    const cfgM = new ConfigManager();
+    const vcfg_wuhan = get_vcfg_wuhan(el.id);
+    const czmViewer = await cfgM.initViewer(vcfg_wuhan);
+    const sM = new SceneManager(czmViewer);
+    sM.initScene();
+    sM.add3DModel('3dtiles', modelOpt_wuhan)
+    switchViewerTo(czmViewer)
     return czmViewer;
 }
 
