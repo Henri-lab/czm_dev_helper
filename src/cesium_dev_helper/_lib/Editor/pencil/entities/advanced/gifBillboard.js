@@ -4,7 +4,7 @@ import {
     CoordTransformer,
     objHasOwnProperty,
     setProperties,
-    createGraphics,
+    createEntity,
 } from './index';
 
 /**

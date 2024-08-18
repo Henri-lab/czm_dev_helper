@@ -6,15 +6,15 @@ import TurfUser from "../../Compute/TurfUser";
 import * as Cesium from "cesium";
 
 /**
- * Draw class for drawing entities with events on a Cesium viewer with event handling.
+ * Entity class for drawing entities with events on a Cesium viewer with event handling.
  * @class
  */
-export default class Draw extends DrawingManager {
+export default class Entity extends DrawingManager {
     constructor(viewer, StaticMap = {}) {
         if (!viewer) return;
-        console.log('new Draw class');
+        console.log('new Entity class');
         super(viewer);
-        this.initLayer('Draw-drawLayer@henriFox')
+        this.initLayer('Entity-drawLayer@henriFox')
         this.dfSt = StaticMap || undefined;//图片资源path
         this.$graphics = new Graphics(viewer, this._drawLayer);
         this.$coords = new CoordTransformer();
@@ -129,7 +129,7 @@ export default class Draw extends DrawingManager {
 
     // 核心
     /**
-     * Draw an entity with event handling.
+     * Entity an entity with event handling.
      * @param {String} Type - The type of the entity.
      * @param {Object} options - The options include extraOption and entityOptions.
      * @param {Function} pluginFunction - Optional plugin function for additional processing.
@@ -270,9 +270,6 @@ export default class Draw extends DrawingManager {
             _handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
         }
     }
-
-
-
 }
 
 

@@ -12,19 +12,10 @@ class DrawingManager extends Manager {
     }
     /**
     * 创建一个实体
-    * 函数名起的不恰当,后续再改
     * @returns {Object} 实体空对象（带签名）
     */
-    static createGraphics() {
+    static createEntity() {
         let entity = new Cesium.Entity();
-
-        // author sign
-        // Object.defineProperty(entity, 'Auther', {
-        //     value: 'henriFox',
-        //     writable: false,    // 不可写
-        //     configurable: false // 不可配置
-        // });
-
         return entity;
     }
 
@@ -34,16 +25,6 @@ class DrawingManager extends Manager {
     */
     MyEntity() {
         let entity = new Cesium.Entity();
-
-        // author sign ~~ czm Entity不接受
-        // Object.defineProperty(entity, 'Auther', {
-        //     value: 'henriFox',
-        //     writable: false,    // 不可写
-        //     configurable: false // 不可配置
-        // });
-
-
-
         return entity;
     }
 

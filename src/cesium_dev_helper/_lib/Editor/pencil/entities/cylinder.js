@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { objHasOwnProperty, setProperties, createGraphics } from "./index";
+import { objHasOwnProperty, setProperties, createEntity } from "./index";
 import { CylinderGraphics } from "../graphics/index";
 
 

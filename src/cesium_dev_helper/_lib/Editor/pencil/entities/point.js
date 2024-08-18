@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { createGraphics } from "./index";
+import { createEntity } from "./index";
 import { PointGraphics, BillboardGraphics, LabelGraphics } from "../graphics/index";
 
 

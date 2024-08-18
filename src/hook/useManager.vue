@@ -10,8 +10,9 @@
 // startLine: 确保在调用 editor.startLine() 前 editor 存在。
 // 通过这种方式，useEditor 始终返回最新的 editor 实例，并且由于 editorRef 是响应式的，computed 将确保每次获取的都是最新的 editor。
 import { ref, computed, watchEffect } from 'vue';
-import  useDefaultStore  from '@/store';
+import useDefaultStore from '@/store';
 import czmHelper from '@czmHelper';
+
 
 const defaultStore = useDefaultStore();
 const managerModule = czmHelper.ManagerModule;
@@ -22,12 +23,14 @@ let $viewer = computed(() => defaultStore.Viewer);
 let SceneManagerRef = ref(null);
 let CameraManagerRef = ref(null);
 let EventManagerRef = ref(null);
+let DrawManagerRef = ref(null);
 watchEffect(() => {
   const _viewer = defaultStore.Viewer;
   if (!_viewer) return;
   SceneManagerRef.value = new managerModule.SceneManager(_viewer);
   CameraManagerRef.value = new managerModule.CameraManager(_viewer);
   EventManagerRef.value = new managerModule.EventManager(_viewer);
+  DrawManagerRef.value = new managerModule.DrawingManager(_viewer);
 });
 const getSceneManager = () => {
   return computed(() => SceneManagerRef.value);

@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { objHasOwnProperty, setProperties, createGraphics } from "./index";
+import { objHasOwnProperty, setProperties, createEntity } from "./index";
 import { ModelGraphics } from "../graphics/index";
 export function ModelEntity(extraOption = {}, options = {}, datasource = {}) {
     if (options && options.position) {

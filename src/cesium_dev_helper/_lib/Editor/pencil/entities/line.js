@@ -1,10 +1,10 @@
 import * as Cesium from "cesium";
-import { objHasOwnProperty, setProperties, createGraphics } from "./index";
+import { objHasOwnProperty, setProperties, createEntity } from "./index";
 import { LineGraphics } from "../graphics/index";
 export function LineEntity(extraOption = {}, options = {}, datasource = {}) {
     if (options && options.positions) {
         // 直接添加Cesium.Entity
-        // let czm_entity = createGraphics()
+        // let czm_entity = createEntity()
 
         let entity = {};
         entity.polyline = LineGraphics(options)

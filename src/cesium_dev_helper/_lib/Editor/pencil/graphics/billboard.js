@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { objHasOwnProperty, setProperties, createGraphics } from "./index";
+import { objHasOwnProperty, setProperties, createEntity } from "./index";
 export function BillboardGraphics(options = {}) {
     if (options.img) {
         return new Cesium.BillboardGraphics({

@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { objHasOwnProperty, setProperties, createGraphics } from "./index";
+import { objHasOwnProperty, setProperties, createEntity } from "./index";
 import { CorridorGraphics } from "../graphics/index";
 export function CorridorEntity(extraOption = {}, options = {}, datasource = {}) {
   if (options && options.positions) {

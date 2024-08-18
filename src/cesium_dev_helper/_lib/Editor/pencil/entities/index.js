@@ -12,7 +12,7 @@ import Graphics from "../Graphics";
 import { DrawingManager } from "../../../Manager";
 
 
-const createGraphics = DrawingManager.createGraphics;
+const createEntity = DrawingManager.createEntity;
 
 // 生成实体的坐标要采用Cartesian3
 export {
@@ -26,7 +26,7 @@ export {
     SampleEntity, 
     objHasOwnProperty,
     setProperties,
-    createGraphics,//method in drawing manager
+    createEntity,//method in drawing manager
 }
 
 

@@ -28,7 +28,7 @@ import {
 } from './Effect'
 
 import {
-    Draw,
+    Entity,
     Graphics,
     Editor,
 } from './Editor'
@@ -90,7 +90,7 @@ const EffectModule = {
 }
 
 const EditorModule = {
-    Draw,
+    Entity,
     Graphics,
     Editor,
 }

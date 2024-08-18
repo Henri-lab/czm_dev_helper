@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { objHasOwnProperty, setProperties, createGraphics } from "./index";
+import { objHasOwnProperty, setProperties, createEntity } from "./index";
 import { PolygonGraphics } from "../graphics/index";
 
 export function PolygonEntity(extraOption = {}, options = {}, datasource = {}) {
