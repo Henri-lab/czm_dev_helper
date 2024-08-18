@@ -44,6 +44,10 @@ const getEventManager = () => {
   return computed(() => EventManagerRef.value);
   // return EventManagerRef;
 };
+const getDrawingManager = () => {
+  return computed(() => DrawManagerRef.value);
+  // return DrawManagerRef;
+};
 const initScene = (options) => {
   SceneManagerRef.value?.initScene(options);
 };
