@@ -1,13 +1,13 @@
 //Editor 能够 绘制多个实体+存储实体要素
 //增加：重置 收集点 数组，并创建新的线实体以准备绘制下一条线。
 
-import Entity from "./pencil/Entity";
+import EntityDrawer from "./pencil/EntityDrawer";
 
 
 export default class Editor {
     constructor(viewer, $options) {
         this.viewer = viewer;
-        this.$entity = new Entity(viewer);
+        this.$entityDrawer = new EntityDrawer(viewer);
         this.$options = $options || {};
         this.currentLine = null;
         this.lines = [];//cache
@@ -18,7 +18,7 @@ export default class Editor {
     //也可以传给 Editor 
     startLine(options = this.$options.line) {
         let that = this;
-        let $entity = that.$entity;
+        let $entityDrawer = that.$entityDrawer;
         if (!that.viewer || !that.$options) return;
         // 增加被调用函数的行为
         const pluginFunction = (cb_currentLine, cb_curPosCollection) => {
@@ -28,7 +28,7 @@ export default class Editor {
             // 重置 curPosCollection 数组，为下一条线做准备
             cb_curPosCollection = [];
         }
-        $entity.drawWithEvent('polyline', options, pluginFunction)
+        $entityDrawer.drawWithEvent('polyline', options, pluginFunction)
         // TEST
         console.log('start a Line' + that.index++);
     }

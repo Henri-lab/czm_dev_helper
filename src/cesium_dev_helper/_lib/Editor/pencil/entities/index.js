@@ -8,7 +8,7 @@ import { PolygonEntity } from "./polygon";
 import { SampleEntity } from './advanced/sample'
 import { objHasOwnProperty, setProperties } from "../../../util/properties";
 
-import Graphics from "../Graphics";
+import EntityMaker from "../EntityMaker";
 import { DrawingManager } from "../../../Manager";
 
 

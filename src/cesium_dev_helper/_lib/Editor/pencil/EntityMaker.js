@@ -37,12 +37,12 @@ import {
  * @param {Cesium.DataSource} dataSource - The data source for the graphics.
  */
 
-export default class Graphics extends DrawingManager {
+export default class EntityMaker extends DrawingManager {
   constructor(viewer, dataSource) {
     if (!viewer) return
-    console.log('new Graphics class')
+    console.log('new EntityMaker class')
     super(viewer);
-    this.initLayer('Graphics-graphicsLayer@henriFox');
+    this.initLayer('EntityMaker-graphicsLayer@henriFox');
     // method for initing the graphics 
     this.PointGraphics = PointGraphics
     this.LineGraphics = LineGraphics

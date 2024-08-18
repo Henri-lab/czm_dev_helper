@@ -100,7 +100,7 @@ class EffectController {
                     }, false)
                 } else console.log('Invalid startPos')
             } catch (error) {
-                console.log('Graphics floating failed', error)
+                console.log('EntityMaker floating failed', error)
             }
         }
     }

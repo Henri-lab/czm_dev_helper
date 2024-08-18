@@ -1,22 +1,22 @@
 import { DrawingManager, EventManager, LayerManager } from "../../Manager";
-import Graphics from "./Graphics";
+import EntityMaker from "./EntityMaker";
 import { CoordTransformer } from "../../Compute";
 import { isValidCartesian3 } from "../../util/isValid";
 import TurfUser from "../../Compute/TurfUser";
 import * as Cesium from "cesium";
 
 /**
- * Entity class for drawing entities with events on a Cesium viewer with event handling.
+ * EntityDrawer class for drawing entities with events on a Cesium viewer with event handling.
  * @class
  */
-export default class Entity extends DrawingManager {
+export default class EntityDrawer extends DrawingManager {
     constructor(viewer, StaticMap = {}) {
         if (!viewer) return;
-        console.log('new Entity class');
+        console.log('new EntityDrawer class');
         super(viewer);
-        this.initLayer('Entity-drawLayer@henriFox')
+        this.initLayer('EntityDrawer-drawLayer@henriFox')
         this.dfSt = StaticMap || undefined;//图片资源path
-        this.$graphics = new Graphics(viewer, this._drawLayer);
+        this.$entityMaker = new EntityMaker(viewer, this._drawLayer);
         this.$coords = new CoordTransformer();
         this.$turfer = new TurfUser(viewer);
         this.defaultImageUrl = '';
@@ -63,7 +63,7 @@ export default class Entity extends DrawingManager {
         try {
             // 配置解析
             const parsedEntityOpt = this._parseConfig(entityOption);
-            let Entity = this.$graphics.createDynamicEntity(typeOfEntity, parsedEntityOpt, getNewPosition)
+            let Entity = this.$entityMaker.createDynamicEntity(typeOfEntity, parsedEntityOpt, getNewPosition)
             return Entity;
         } catch (e) {
             console.error('sth is wrong after mouse left click :', e)

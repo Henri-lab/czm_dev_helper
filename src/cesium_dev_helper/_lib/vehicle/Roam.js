@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { Graphics } from '../Editor'
+import { EntityMaker } from '../Editor'
 import { LayerManager } from "../Manager";
 
 export default class Roam {
@@ -15,7 +15,7 @@ export default class Roam {
         if (!viewer) return;
         this.viewer = viewer;
         this.datasource = datasource || new LayerManager(viewer).getOrCreateDatasourceByName('metroLayer@henriFox');
-        this.$graphics = new Graphics(viewer);
+        this.$entityMaker = new EntityMaker(viewer);
         // 核心数据
         this.data.positions = positions;
         this.data.speed = speed || 1;
@@ -84,7 +84,7 @@ export default class Roam {
             },
             datasource,
         }
-        this.$graphics.createAdvancedEntity('sample', cfg);
+        this.$entityMaker.createAdvancedEntity('sample', cfg);
     }
     /**
      * Executes a specific action based on the given order.

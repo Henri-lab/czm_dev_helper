@@ -1,11 +1,11 @@
-import Entity from './pencil/Entity';
-import Graphics from './pencil/Graphics';
+import EntityDrawer from './pencil/EntityDrawer';
+import EntityMaker from './pencil/EntityMaker';
 import Editor from './Editor';
 import { lineOpt } from './config/lineOpt';
 
 export {
-    Entity,
-    Graphics,
+    EntityDrawer,
+    EntityMaker,
     Editor,
     lineOpt
 };
