@@ -1,7 +1,8 @@
 // 对于 TypeScript 项目，通常会使用 tsconfig.json 文件来配置 TypeScript 编译器的行为。有时候，为了在多个项目中共享通用的 TypeScript 配置，可以使用 tsconfig.base.json 文件作为基础配置，然后在具体项目中继承或扩展该配置
 {
   "compilerOptions": {
-    "types": ["vite/client"], // 如果你使用的是 Vite
+    "types": ["vite/client", "vue"], // 列出全局类型声明文件，如果你使用的是 Vite Vue
+    "typeRoots": ["node_modules/@types"], //指定类型声明文件的根目录
     "target": "es2022" /* 编译后的 JavaScript 目标版本 为 ES2022*/,
     "moduleResolution": "Node", //ES6 模块解析
     "esModuleInterop": true /* 允许使用 CommonJS 模块语法 */, //启用ES模块的互操作性，使得使用CommonJS和ES模块导入导出语法的包之间能够兼容。(环境变量的识别)
@@ -9,11 +10,10 @@
     "strict": true /* 启用所有严格类型检查选项 */,
     "sourceMap": true /* 生成 Sourcemap 文件，用于调试 */,
     "outDir": "./dist" /* 输出目录 */,
-    // 简化模块引入
+    // 简化模块引入：baseUrl + paths
     "baseUrl": "./src" /* 解析非相对模块名的基本目录 即 直接使用模块名来导入模块*/,
     "paths": {
       "@/*": ["*"] /* 路径映射，用于模块解析 */,
-      "@vueuse/core": ["node_modules/@vueuse/core"] //ts编译器查找时会找到对应的@vueuse/core映射地址
     },
     "allowJs": true //允许导入文件自动识别为js文件
   },

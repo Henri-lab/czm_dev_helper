@@ -99,6 +99,7 @@ defineExpose({
   getSceneManager,
   getCameraManager,
   getEventManager,
+  getDrawingManager,
   getEditor,
   initScene,
   add3DModel,

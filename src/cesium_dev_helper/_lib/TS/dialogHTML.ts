@@ -1,6 +1,5 @@
 // 施工中...
 
-
 /**
  * Enable dragging functionality for a dialog element.
  * @param el The HTML element representing the dialog container.
@@ -168,19 +167,6 @@ export function animateDialogOpen(el: HTMLElement) {
 export function animateDialogClose(el: HTMLElement) {
   // Apply animations or transitions for closing
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 const o = {
   dragDialogAt,
