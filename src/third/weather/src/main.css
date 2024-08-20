@@ -1,0 +1,11 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bcolor: rgb(24, 68, 70);
+  --bcolor2: rgba(0, 82, 110, 0.5);
+  --bcolor3: rgba(0, 82, 110, 0);
+}
