@@ -14,10 +14,10 @@ export default defineConfig(({ command, mode }) => {
   // console.log(env)
 
   return {
-    base: import.meta.env.VITE_BASE_URL, // 子应用的基础路径
+    base: './third/weather/' || import.meta.env.VITE_BASE_URL, // 子应用的基础路径
     plugins: [
       vue(),
-      qiankun('subapp-weather'),// 配置子应用的名称
+      qiankun('weather'),// 注册子应用的名称
     ],
     resolve: {
       alias: {

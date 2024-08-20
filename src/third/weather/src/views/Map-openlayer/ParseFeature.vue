@@ -48,7 +48,7 @@ const high_style_yellow = featureStyle({
 })
 
 onMounted(() => {
-  const app = inject('app')
+  const app = inject('weather-app')//@provide
   $map = app.config.globalProperties.$map
 
   if ($map) {

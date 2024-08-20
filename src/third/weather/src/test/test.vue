@@ -12,7 +12,7 @@ import { getFeatureAtPixel, getPropsFromFeatureByAliyun } from '@/util/getOlObj/
 const mapStore = useMapStore()
 const featureStore = useFeatureStore()
 let $map = null
-const app = inject('app')
+const app = inject('weather-app')//@provide
 
 onMounted(async () => {
   $map = app.config.globalProperties.$map

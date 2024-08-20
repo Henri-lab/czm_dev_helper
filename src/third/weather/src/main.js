@@ -21,8 +21,11 @@ function render(props) {
     child_app.use(createPinia())
     child_app.use(router)
     child_app.use(echartsPlugin)
-    child_app.provide(props.container || '#app', child_app)
-    child_app.mount(props.container || '#app')
+    console.log(props.container, 'div#')
+    child_app.provide(props.container || '#weather-app', child_app)
+    child_app.mount(props.container || '#weather-app')
+    // child_app.provide('#app', child_app)
+    // child_app.mount('#app')
 }
 
 renderWithQiankun({

@@ -1,5 +1,5 @@
 export const serverOption = {
-    port: 5123,
+    port: 5000,
     host: true,
     open: true,
     proxy: {

@@ -12,7 +12,7 @@ import 'ant-design-vue/dist/reset.css';
 import ElementPlus from 'element-plus';
 // import lang_zh_cn from 'element-plus/lib/locale/lang/zh-cn' // CN
 import './assets/css/index.css';
-// import VScaleScreen from 'v-scale-screen'; //bug 安装插件后样式出现冲突 
+// import VScaleScreen from 'v-scale-screen'; //bug 安装插件后样式出现冲突
 // 组件
 import AppVue from './App.vue';
 // 自定义指令 绑定
@@ -72,10 +72,10 @@ if (1) {
   // 注册子应用
   registerMicroApps([
     {
-      name: 'subapp/weather', // 子应用名称
-      entry: '//localhost:8881', // 子应用的入口地址
-      container: '#app', // 子应用挂载的容器
-      activeRule: '/vue3-child-app', // 子应用激活的路由规则: 🗽只要路径中包含激活规则定义的字符串，子应用就会被加载 （http://domain.com/anything/vue3-child-app/page）
+      name: 'weather', // 子应用名称
+      entry: '//localhost:5001', // 子应用的入口地址 建议 49152-65535 
+      container: '#weather-app', // 子应用挂载的容器
+      activeRule: '/subapp/weather/', // 子应用激活的路由规则: 🗽只要路径中包含激活规则定义的字符串，子应用就会被加载 （http://domain.com/anything/vue3-child-app/page）
     },
   ]);
   // 开启子应用

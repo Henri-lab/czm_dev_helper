@@ -18,7 +18,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="app">
+  <div id="weather-app">
     <div class="box">
       <NaviHead />
       <router-view name="citySearchAndWeather" />

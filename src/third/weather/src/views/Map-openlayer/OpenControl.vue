@@ -15,7 +15,7 @@ import sleep from '@/util/sleep'
 const mouseStore = useMouseStore()
 const mouse = ref()
 let $map = null
-const app = inject('app')
+const app = inject('weather-app')//@provide
 
 onMounted(() => {
   $map = app.config.globalProperties.$map

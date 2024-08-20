@@ -146,7 +146,7 @@ const mouseCity = ref('')
 // 分享地图
 // 自动定位倒计时
 // 定位之后--点击地图获取鼠标点击处的中国城市
-const app = inject('app')
+const app = inject('weather-app')//@provide
 onMounted(() => {
   // $map = mapStore.loadMap('openMap', 'myMap', defaultView, gdTile)
   $map = loadMap()

@@ -13,7 +13,7 @@ const mapStore = useMapStore()
 const featureStore = useFeatureStore()
 const eventStore = useEventStore()
 let $map = null
-const app = inject('app')
+const app = inject('weather-app')//@provide
 const isOnMounted = ref(false)
 const isMapCilcked = ref(false)
 
