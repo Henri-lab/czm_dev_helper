@@ -2,9 +2,7 @@
 import axios from 'axios'
 import { gaode } from './Instance'
 import { aliyun } from './Instance'
-const key = 'bc18393795584768f61543fd423262e5'
-// const key = '030f480ba89c9b9bf9efe99c5f98c7a0'
-// const key = '15ac89d2e97769c345aa9be687d7bec3'
+const key = import.meta.env.VITE_GAODE_KEY
 
 // 地理编码
 const getLocal = async () => {

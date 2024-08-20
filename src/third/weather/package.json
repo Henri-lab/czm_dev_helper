@@ -19,6 +19,7 @@
     "pinia": "^2.1.7",
     "pnpm": "^9.1.0",
     "uuid": "^9.0.1",
+    "vite-plugin-qiankun": "^1.0.15",
     "vue": "^3.4.21",
     "vue-echarts": "^6.6.9",
     "vue-router": "^4.3.0"

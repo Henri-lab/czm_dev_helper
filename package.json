@@ -16,7 +16,7 @@
     "@types/cesium": "^1.70.0",
     "@types/js-cookie": "^3.0.6",
     "@types/vue": "^2.0.0",
-    "@vitejs/plugin-vue": "^5.0.4",
+    "@vitejs/plugin-vue": "^5.0.5",
     "sass": "^1.77.0",
     "unplugin-auto-import": "^0.18.2",
     "unplugin-vue-components": "^0.27.3",

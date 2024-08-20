@@ -97,7 +97,7 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0(typescript@5.5.4)
       '@vitejs/plugin-vue':
-        specifier: ^5.0.4
+        specifier: ^5.0.5
         version: 5.0.5(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6))(vue@3.4.30(typescript@5.5.4))
       sass:
         specifier: ^1.77.0

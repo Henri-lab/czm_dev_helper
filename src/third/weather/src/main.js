@@ -1,28 +1,48 @@
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import App from './App.vue'
+import router from './router'
 import VueECharts from 'vue-echarts';
 import { echartsPlugin } from './plugin/echarts';
 import './main.css'
 import 'animate.css'
+import { renderWithQiankun } from 'vite-plugin-qiankun/dist/helper';
 
 
 
 
-import App from './App.vue'
-import router from './router'
+// micro 子应用 child-app-weather
+let child_app = null;
 
-export const app = createApp(App)
+function render(props) {
+    const child_app = createApp(App)
+    child_app.component('v-chart', VueECharts);
+    child_app.use(createPinia())
+    child_app.use(router)
+    child_app.use(echartsPlugin)
+    child_app.provide(props.container || '#app', child_app)
+    child_app.mount(props.container || '#app')
+}
 
-app.component('v-chart', VueECharts);
+renderWithQiankun({
+    bootstrap: () => { },
+    mount(props) {
+        render(props);
+    },
+    unmount: () => {
+        if (child_app) {
+            child_app.unmount();
+        }
+    },
+    update: (props) => {
+        console.log('update props', props);
+    },
+});
 
-app.use(createPinia())
-app.use(router)
-app.use(echartsPlugin)
-
-app.provide('app', app)
-
-app.mount('#app')
+if (!window.__POWERED_BY_QIANKUN__) {
+    render();
+}
 
 // test
 

@@ -42,7 +42,7 @@
 
   "include": [
     "src/**/*" /* 需要编译的 TypeScript 文件的目录 为 src文件夹下所有文件*/,
-    "global.d.ts"
+    "global.d.ts"//不写也行 -默认src下所有的类型声明-
   ],
   "exclude": ["node_modules" /* 不包括编译的目录或文件 */]
 }

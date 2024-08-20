@@ -2,7 +2,7 @@ import { createApp, App as app } from 'vue';
 import { createPinia } from 'pinia';
 import router from './router';
 // micro
-import { registerMicroApps, start } from 'qiankun';
+import { registerMicroApps, start, initGlobalState } from 'qiankun';
 // 插件
 import extraPlugins from './plugins';
 // UI
@@ -43,8 +43,28 @@ app
 
 // 注册自定义指令
 directive(app);
+// <子应用-----------------------------------------------------------------------------------------------------------------------------------
+// 注册子应用
+registerMicroApps([
+  {
+    name: 'vue3-child-app-weather', // 子应用名称
+    entry: '//localhost:8881', // 子应用的入口地址
+    container: '#app', // 子应用挂载的容器
+    activeRule: '/vue3-child-app', // 子应用激活的路由规则: 🗽只要路径中包含激活规则定义的字符串，子应用就会被加载 （http://domain.com/anything/vue3-child-app/page）
+  },
+]);
+// 开启子应用
+start();
+// 监听子应用
+const actions = initGlobalState({});
+actions.onGlobalStateChange((state, prev) => {
+  console.log('state changed', state, prev);
+});
+actions.setGlobalState({ key: 'value' });
+// 子应用>-----------------------------------------------------------------------------------------------------------------------------------
 
 app.mount('#app');
+export default app;
 
 // ------------------------------------------------------------------------------------------------------------------------------------------
 // 频繁地进行读取操作，可以通过设置 willReadFrequently 属性来提高性能。
@@ -58,7 +78,6 @@ canvasArr.forEach((canvas) => {
     // 可以频繁地使用 getImageData 而不会有性能问题啦 👍
     var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 });
-
 // ------------------------------------------------------------------------------------------------------------------------------------------
 // SizeType 类型定义
 type SizeType = '' | 'default' | 'small' | 'large';
@@ -73,5 +92,3 @@ function asSize(size: string): SizeType {
   }
 }
 // ------------------------------------------------------------------------------------------------------------------------------------------
-
-export default app;

@@ -3,6 +3,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'node:path';
+import qiankun from 'vite-plugin-qiankun';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
@@ -13,8 +14,10 @@ export default defineConfig(({ command, mode }) => {
   // console.log(env)
 
   return {
+    base: import.meta.env.VITE_BASE_URL, // 子应用的基础路径
     plugins: [
       vue(),
+      qiankun('vue3-child-app-weather'),// 配置子应用的名称
     ],
     resolve: {
       alias: {
