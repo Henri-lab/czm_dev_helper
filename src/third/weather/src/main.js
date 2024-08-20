@@ -10,7 +10,7 @@ import 'animate.css'
 import { renderWithQiankun } from 'vite-plugin-qiankun/dist/helper';
 
 
-
+const id = '#weather-app';
 
 // micro 子应用 child-app-weather
 let child_app = null;
@@ -21,19 +21,21 @@ function render(props) {
     child_app.use(createPinia())
     child_app.use(router)
     child_app.use(echartsPlugin)
-    console.log(props.container, 'div#')
-    child_app.provide(props.container || '#weather-app', child_app)
-    child_app.mount(props.container || '#weather-app')
-    // child_app.provide('#app', child_app)
-    // child_app.mount('#app')
+    child_app.provide(props.container || id, child_app)
+    child_app.mount(props.container || id)
+    // child_app.provide('#weather-app', child_app)
+    // child_app.mount('#weather-app')
 }
 
 renderWithQiankun({
     bootstrap: () => { },
     mount(props) {
+        console.log('subapp-weather mounted;', 'div#', props.container)
+        console.log()
         render(props);
     },
     unmount: () => {
+        console.log('subapp-weather unmounted')
         if (child_app) {
             child_app.unmount();
         }

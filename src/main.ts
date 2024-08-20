@@ -73,7 +73,7 @@ if (1) {
   registerMicroApps([
     {
       name: 'weather', // 子应用名称
-      entry: '//localhost:5001', // 子应用的入口地址 建议 49152-65535 
+      entry: '//localhost:5001', // 子应用的入口地址 建议 49152-65535
       container: '#weather-app', // 子应用挂载的容器
       activeRule: '/subapp/weather/', // 子应用激活的路由规则: 🗽只要路径中包含激活规则定义的字符串，子应用就会被加载 （http://domain.com/anything/vue3-child-app/page）
     },
@@ -83,7 +83,7 @@ if (1) {
   // 监听子应用
   const actions = initGlobalState({});
   actions.onGlobalStateChange((state, prev) => {
-    console.log('state changed', state, prev);
+    console.log('state changed', state, '<--from---', prev);
   });
   actions.setGlobalState({ key: 'value' });
   // 子应用>-----------------------------------------------------------------------------------------------------------------------------------
