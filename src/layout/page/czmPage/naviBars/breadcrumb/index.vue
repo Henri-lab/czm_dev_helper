@@ -3,7 +3,8 @@
 </template>
 
 <script setup>
-import breadcrumb from './breadcrumb.vue';
+import breadcrumb from './breadcrumb copy.vue';
+// import breadcrumb from './breadcrumb.vue';
 </script>
 
 <style lang="scss" scoped></style>
