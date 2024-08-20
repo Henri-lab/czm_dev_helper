@@ -8,15 +8,21 @@ REMOTE2='gitee'
 BRANCH="master"
 BRANCH2='master'
 
-git push -u "$REMOTE2" "$BRANCH2"
+until git push -u "$REMOTE2" "$BRANCH2";
+do
+    echo "Gitee push failed, retrying in 1 second..."
+    sleep 1
+done
+echo "Gitee push succeeded."
 
 # 循环直到git push成功
-until git push -u "$REMOTE" "$BRANCH"; do
-    echo "Git push failed, retrying in 5 seconds..."
-    sleep 5
+until git push -u "$REMOTE" "$BRANCH"; 
+do
+    echo "GitHub push failed, retrying in 1 second..."
+    sleep 1
 done
 
-echo "Git push succeeded."
+echo "GitHub push succeeded."
 
 
 
