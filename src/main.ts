@@ -37,7 +37,7 @@ app
   .use(Antd)
   .use(ElementPlus, {
     // locale: lang_zh_cn,
-    size: handleSize(Cookies.get('size') || 'default'),
+    size: asSize(Cookies.get('size') || 'default'),
   })
   .use(extraPlugins);
 
@@ -64,7 +64,7 @@ canvasArr.forEach((canvas) => {
 type SizeType = '' | 'default' | 'small' | 'large';
 // 假设allowedSizes是一个枚举或者常量数组，包含了所有允许的SizeType
 const allowedSizes: SizeType[] = ['', 'default', 'small', 'large'];
-function handleSize(size: string): SizeType {
+function asSize(size: string): SizeType {
   // 使用类型断言确保传入的字符串是SizeType类型之一
   if (allowedSizes.includes(size as SizeType)) {
     return size as SizeType;
