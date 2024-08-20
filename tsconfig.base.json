@@ -7,7 +7,6 @@
     "moduleResolution": "Node", //ES6 模块解析
     "esModuleInterop": true /* 允许使用 CommonJS 模块语法 */, //启用ES模块的互操作性，使得使用CommonJS和ES模块导入导出语法的包之间能够兼容。(环境变量的识别)
     "module": "esnext" /* 指定生成的模块系统代码 */,
-    "strict": true /* 启用所有严格类型检查选项 */,
     "sourceMap": true /* 生成 Sourcemap 文件，用于调试 */,
     "outDir": "./dist" /* 输出目录 */,
     // 简化模块引入：baseUrl + paths

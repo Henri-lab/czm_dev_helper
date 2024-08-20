@@ -26,6 +26,12 @@ const config = (context) => {
   const css = cssOption;
   // 获得 开发服务器配置
   const server = serverOption;
+  // 获得 rollup 打包配置
+  const build = {
+    rollupOptions: {
+      input: './src/main.ts', // 确保打包时使用 main.ts
+    }
+  }
 
   return {
     mode,
@@ -35,6 +41,7 @@ const config = (context) => {
     resolve,
     css,
     server,
+    build,
   }
 };
 
