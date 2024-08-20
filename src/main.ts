@@ -12,59 +12,13 @@ import 'ant-design-vue/dist/reset.css';
 import ElementPlus from 'element-plus';
 // import lang_zh_cn from 'element-plus/lib/locale/lang/zh-cn' // CN
 import './assets/css/index.css';
-import VScaleScreen from 'v-scale-screen'; //响应式
+// import VScaleScreen from 'v-scale-screen'; //bug 安装插件后样式出现冲突 
 // 组件
 import AppVue from './App.vue';
 // 自定义指令 绑定
 import directive from './directive';
 // 通用
 import Cookies from 'js-cookie';
-
-const app = createApp(AppVue);
-
-// 全局注册图标
-app.component('PlusOutlined', PlusOutlined);
-
-app
-  .use(createPinia())
-  .use(router)
-  //----------
-  .use({
-    install: (app: app): void => {
-      app.component('VScaleScreen', VScaleScreen);
-    },
-  })
-  .use(Antd)
-  .use(ElementPlus, {
-    // locale: lang_zh_cn,
-    size: asSize(Cookies.get('size') || 'default'),
-  })
-  .use(extraPlugins);
-
-// 注册自定义指令
-directive(app);
-// <子应用-----------------------------------------------------------------------------------------------------------------------------------
-// 注册子应用
-registerMicroApps([
-  {
-    name: 'vue3-child-app-weather', // 子应用名称
-    entry: '//localhost:8881', // 子应用的入口地址
-    container: '#app', // 子应用挂载的容器
-    activeRule: '/vue3-child-app', // 子应用激活的路由规则: 🗽只要路径中包含激活规则定义的字符串，子应用就会被加载 （http://domain.com/anything/vue3-child-app/page）
-  },
-]);
-// 开启子应用
-start();
-// 监听子应用
-const actions = initGlobalState({});
-actions.onGlobalStateChange((state, prev) => {
-  console.log('state changed', state, prev);
-});
-actions.setGlobalState({ key: 'value' });
-// 子应用>-----------------------------------------------------------------------------------------------------------------------------------
-
-app.mount('#app');
-export default app;
 
 // ------------------------------------------------------------------------------------------------------------------------------------------
 // 频繁地进行读取操作，可以通过设置 willReadFrequently 属性来提高性能。
@@ -92,3 +46,45 @@ function asSize(size: string): SizeType {
   }
 }
 // ------------------------------------------------------------------------------------------------------------------------------------------
+const app = createApp(AppVue);
+
+// 全局注册图标
+app.component('PlusOutlined', PlusOutlined);
+
+app
+  .use(createPinia())
+  .use(router)
+  .use(Antd)
+  .use(ElementPlus, {
+    // locale: lang_zh_cn,
+    size: asSize(Cookies.get('size') || 'default'),
+  })
+  .use(extraPlugins);
+
+// 注册自定义指令
+directive(app);
+
+app.mount('#app');
+export default app;
+
+if (1) {
+  // <子应用-----------------------------------------------------------------------------------------------------------------------------------
+  // 注册子应用
+  registerMicroApps([
+    {
+      name: 'vue3-child-app-weather', // 子应用名称
+      entry: '//localhost:8881', // 子应用的入口地址
+      container: '#app', // 子应用挂载的容器
+      activeRule: '/vue3-child-app', // 子应用激活的路由规则: 🗽只要路径中包含激活规则定义的字符串，子应用就会被加载 （http://domain.com/anything/vue3-child-app/page）
+    },
+  ]);
+  // 开启子应用
+  start();
+  // 监听子应用
+  const actions = initGlobalState({});
+  actions.onGlobalStateChange((state, prev) => {
+    console.log('state changed', state, prev);
+  });
+  actions.setGlobalState({ key: 'value' });
+  // 子应用>-----------------------------------------------------------------------------------------------------------------------------------
+}
