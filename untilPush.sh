@@ -2,9 +2,13 @@
 
 # 定义远程仓库名称，默认为origin
 REMOTE="origin"
+REMOTE2='gitee'
 
 # 定义分支名称
 BRANCH="master"
+BRANCH2='master'
+
+git push -u "$REMOTE2" "$BRANCH2"
 
 # 循环直到git push成功
 until git push -u "$REMOTE" "$BRANCH"; do
@@ -13,6 +17,8 @@ until git push -u "$REMOTE" "$BRANCH"; do
 done
 
 echo "Git push succeeded."
+
+
 
 # chmod +x untilPush.sh
 # ./untilPush.sh
