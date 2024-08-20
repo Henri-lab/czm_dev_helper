@@ -1,7 +1,7 @@
 // 对于 TypeScript 项目，通常会使用 tsconfig.json 文件来配置 TypeScript 编译器的行为。有时候，为了在多个项目中共享通用的 TypeScript 配置，可以使用 tsconfig.base.json 文件作为基础配置，然后在具体项目中继承或扩展该配置
 {
   "compilerOptions": {
-    "types": ["vite/client", "vue"], // 列出全局类型声明文件，如果你使用的是 Vite Vue
+    // "types": ["vite/client", "vue"], // 列出全局类型声明文件，如果你使用的是 Vite Vue
     "typeRoots": ["node_modules/@types"], //指定类型声明文件的根目录
     "target": "es2022" /* 编译后的 JavaScript 目标版本 为 ES2022*/,
     "moduleResolution": "Node", //ES6 模块解析
@@ -13,10 +13,33 @@
     // 简化模块引入：baseUrl + paths
     "baseUrl": "./src" /* 解析非相对模块名的基本目录 即 直接使用模块名来导入模块*/,
     "paths": {
-      "@/*": ["*"] /* 路径映射，用于模块解析 */,
+      "@/*": ["*"] /* 路径映射，用于模块解析 */
     },
-    "allowJs": true //允许导入文件自动识别为js文件
+    "allowJs": true, //允许导入文件自动识别为js文件
+
+    // 添加对 .vue 文件的支持
+    // 允许使用 import json from 'module.json' 这样的语法来引入 JSON 模块
+    "resolveJsonModule": true,
+    // 跳过对所有声明文件（.d.ts）的类型检查，可以加快编译速度
+    "skipLibCheck": true,
+    // 允许从没有默认导出的模块中默认导入，这在Vue组件中很常见
+    "allowSyntheticDefaultImports": true,
+    // 是否启用所有严格类型检查选项
+    "strict": false,
+    // 编译后不输出文件，主要用于测试或某些工具场景
+    "noEmit": true,
+    "plugins": [
+      {
+        // 使用 @vue/compiler-sfc 插件来编译 .vue 文件
+        "transform": "@vue/compiler-sfc",
+        // 指定该插件只对特定的文件进行转换，这里以 App.vue 为例
+        "filename": "App.vue",
+        // 指定是否使用 script setup 语法，false 表示不使用
+        "isScriptSetup": true
+      }
+    ]
   },
+
   "include": [
     "src/**/*" /* 需要编译的 TypeScript 文件的目录 为 src文件夹下所有文件*/,
     "global.d.ts"
