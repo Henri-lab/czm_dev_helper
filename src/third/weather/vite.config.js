@@ -17,7 +17,7 @@ export default defineConfig(({ command, mode }) => {
     base: import.meta.env.VITE_BASE_URL, // 子应用的基础路径
     plugins: [
       vue(),
-      qiankun('vue3-child-app-weather'),// 配置子应用的名称
+      qiankun('subapp-weather'),// 配置子应用的名称
     ],
     resolve: {
       alias: {

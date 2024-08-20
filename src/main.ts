@@ -72,7 +72,7 @@ if (1) {
   // 注册子应用
   registerMicroApps([
     {
-      name: 'vue3-child-app-weather', // 子应用名称
+      name: 'subapp/weather', // 子应用名称
       entry: '//localhost:8881', // 子应用的入口地址
       container: '#app', // 子应用挂载的容器
       activeRule: '/vue3-child-app', // 子应用激活的路由规则: 🗽只要路径中包含激活规则定义的字符串，子应用就会被加载 （http://domain.com/anything/vue3-child-app/page）
