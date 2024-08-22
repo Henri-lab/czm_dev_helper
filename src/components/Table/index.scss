@@ -1,0 +1,127 @@
+.error-input-lon .el-input__inner {
+  color: red;
+}
+
+.error-input-lat .el-input__inner {
+  color: red;
+}
+
+.el-descriptions__header {
+  .el-descriptions__title {
+    width: 100%;
+
+    .descrTitle {
+      width: 98%;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+}
+
+.descriptions {
+  padding: 5px 10px;
+  overflow-y: auto;
+}
+
+.el-descriptions__label.el-descriptions__cell.is-bordered-label {
+  background: #152a41;
+  color: #fff;
+  width: 80px;
+}
+
+.el-descriptions__body
+  .el-descriptions__table.is-bordered
+  .el-descriptions__cell {
+  border: 1px solid #276989 !important;
+  background: #152a41;
+}
+
+.el-descriptions__title {
+  color: #fff;
+}
+
+.el-descriptions__header {
+  margin: 10px;
+}
+
+.el-input__wrapper {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+.el-input__inner {
+  color: #fff;
+}
+
+.el-textarea__inner {
+  background: none !important;
+  box-shadow: none !important;
+  border: 1px solid #1296db !important;
+  border-radius: 5px;
+  color: #fff;
+}
+
+.el-input__inner::placeholder {
+  color: #fff;
+}
+
+.el-select {
+  outline: none;
+  background-color: transparent !important;
+  border: 1px solid #1296db !important;
+  border-radius: 5px;
+  box-shadow: none !important;
+}
+
+$selectBg: #264e74;
+$selectHover: #4475ad;
+
+.el-select-dropdown__empty {
+  background-color: $selectBg;
+  color: #fff;
+}
+
+.el-select__popper.el-popper {
+  background-color: $selectBg;
+  /* 这里设置下拉框的背景颜色 */
+  border: none;
+
+  .el-select-dropdown__item {
+    color: #fff;
+  }
+
+  .el-select-dropdown__item.hover {
+    background: $selectHover;
+    color: #fff;
+  }
+}
+
+.el-select-dropdown {
+  background-color: $selectBg;
+  /* 这里设置下拉框的背景颜色 */
+  border: none;
+}
+
+.el-popper.is-light .el-popper__arrow::before {
+  background: $selectBg;
+  border: none;
+}
+
+.el-popper.is-light {
+  background: $selectBg;
+
+  //   border:1px solid #1a5076;
+  .el-dropdown-menu {
+    background: $selectBg;
+    border: none;
+
+    .el-dropdown-menu__item {
+      color: #fff;
+    }
+
+    .el-dropdown-menu__item:not(.is-disabled):focus {
+      background: $selectHover;
+      color: #fff;
+    }
+  }
+}
