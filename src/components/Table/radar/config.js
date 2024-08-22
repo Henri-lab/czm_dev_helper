@@ -1,3 +1,28 @@
+// 雷达参数
+const paramsOrder = [
+    'facilityName', 'targetSize', 'camouflage', 'feature', 'radar',
+    'antennaType', 'workBand', 'sender', 'carrierType', 'carrierValue',
+    'carrierAlw', 'cycleType', 'cycleValue', 'cycleAlw', 'pulseType',
+    'pulseValue', 'pulseAlw', 'antennaHeight', 'antennaAngle', 'beamWidth',
+    'decoy', 'equipment'
+];
+
+export const orderRadarParams = (unOrderedObj, keysOrdered) => {//输入对象 返回数组 
+    return keysOrdered.reduce((acc, key/*当前指向元素*/) => {
+        if (unOrderedObj[key]) {
+            acc.push({
+                key,
+                value,
+                name: nameMap[key] || '',
+                span: spanSizeMap[key] || '',
+                type: textTypeMap[key] || '',
+                status: true,
+            });
+        }
+        return acc;
+    }, []);
+}
+
 const spanSizeMap = {
     facilityName: 3,
     targetSize: 3,
