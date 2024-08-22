@@ -7,7 +7,7 @@ const paramsOrder = [
     'decoy', 'equipment'
 ];
 
-export const orderRadarParams = (unOrderedObj, keysOrdered) => {//输入对象 返回数组 
+export const orderRadarParams = (unOrderedObj, keysOrdered = paramsOrder) => {//输入对象 返回数组 
     return keysOrdered.reduce((acc, key/*当前指向元素*/) => {
         if (unOrderedObj[key]) {
             acc.push({
