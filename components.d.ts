@@ -14,8 +14,9 @@ declare module 'vue' {
     HlsLive: typeof import('./src/components/charts/HlsLive.vue')['default']
     Me: typeof import('./src/components/me.vue')['default']
     Pagination: typeof import('./src/components/Pagination/index.vue')['default']
+    Radar: typeof import('./src/components/Table/radar/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Upload: typeof import('./src/components/upload.vue')['default']
+    Upload: typeof import('./src/components/upload/index.vue')['default']
   }
 }
