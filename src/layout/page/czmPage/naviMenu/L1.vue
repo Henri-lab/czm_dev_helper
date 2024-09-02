@@ -39,7 +39,6 @@ const user = 'g-1';
 watch(
   () => naviSideKeys.value,
   (newValue) => {
-    console.log('naviSideKeys')
     // 菜单项的执行
     const logMap = {
       [pencil]: () => handleItemClick(pencil), //画笔测试
@@ -56,7 +55,10 @@ watch(
     logMap[newValue[0]]?.();
   }
 );
-
+// watch(() => openKeys.value,
+//   (newValue) => {
+//     console.log(newValue)
+//   })
 // 菜单项的执行
 function handleItemClick(itemKey) {
   console.log(itemKey);

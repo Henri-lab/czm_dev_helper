@@ -121,7 +121,8 @@ export const menuOption = () => {
 
 export const getItemsByCode = (value) => {
     Object.keys(menuStructure).find(prop => {
-        if (menuStructure[prop][key] == value) {
+        console.log(prop,'prop')
+        if (menuStructure[prop]['key'] == value) {
             return menuStructure[prop].items
         }
     })
