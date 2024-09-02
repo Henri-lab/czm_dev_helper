@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import subMenuL2 from './subMenu/L2.vue';
 import ViewerManager from '@/hook/useManager.vue';
 import { lineOpt } from '@czmHelper/Editor/config/lineOpt';
@@ -33,10 +33,13 @@ const tool = 'e-1';
 const three = 'f-1';
 const user = 'g-1';
 
+
+
 // 侧边导航菜单项的监听
 watch(
   () => naviSideKeys.value,
   (newValue) => {
+    console.log('naviSideKeys')
     // 菜单项的执行
     const logMap = {
       [pencil]: () => handleItemClick(pencil), //画笔测试

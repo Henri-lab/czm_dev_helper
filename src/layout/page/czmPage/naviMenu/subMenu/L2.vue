@@ -1,6 +1,6 @@
 <template>
   <!-- 子菜单 -->
-  <a-sub-menu v-for="submenu in subMenus" :key="submenu.key">
+  <a-sub-menu v-for="submenu in subMenus" :key="submenu.code">
     <template #title>
       <span>
         <component :is="submenu.icon" />

@@ -1,6 +1,6 @@
 <template>
   <!-- 菜单下拉选项 -->
-  <a-menu-item class="subItem-L3" v-for="item in submenu_items" :key="item.key">
+  <a-menu-item class="subItem-L3" v-for="item in submenu_items" :key="item.code">
     {{ item.label }}
   </a-menu-item>
 </template>

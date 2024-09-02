@@ -25,54 +25,54 @@ const MENU_ITEM_LABEL = { // 汉化
 // 示例
 // const menuStructure = {
 //     'pencil': {
-//         code: 'a',
+//         key: 'a',
 //         label: MENU_LABEL.pencil,
 //         items: [
-//             { code: 'a-1', label: MENU_ITEM_LABEL[`pencil:test`] }
+//             { key: 'a-1', label: MENU_ITEM_LABEL[`pencil:test`] }
 //         ]
 //     },
 //     'material': {
-//         code: 'b',
+//         key: 'b',
 //         label: MENU_LABEL.material,
 //         items: [
-//             { code: 'b-1', label: MENU_ITEM_LABEL[`material:test`] }
+//             { key: 'b-1', label: MENU_ITEM_LABEL[`material:test`] }
 //         ]
 //     },
 //     'scene': {
-//         code: 'c',
+//         key: 'c',
 //         label: MENU_LABEL.scene,
 //         items: [
-//             { code: 'c-1', label: MENU_ITEM_LABEL[`scene:test`] }
+//             { key: 'c-1', label: MENU_ITEM_LABEL[`scene:test`] }
 //         ]
 //     },
 //     'source': {
-//         code: 'd',
+//         key: 'd',
 //         label: MENU_LABEL.source,
 //         items: [
-//             { code: 'd-1', label: MENU_ITEM_LABEL[`source:mono`] },
-//             { code: 'd-2', label: MENU_ITEM_LABEL[`source:3dtiles`] },
-//             { code: 'd-3', label: MENU_ITEM_LABEL[`source:gltf`] }
+//             { key: 'd-1', label: MENU_ITEM_LABEL[`source:mono`] },
+//             { key: 'd-2', label: MENU_ITEM_LABEL[`source:3dtiles`] },
+//             { key: 'd-3', label: MENU_ITEM_LABEL[`source:gltf`] }
 //         ]
 //     },
 //     'tool': {
-//         code: 'e',
+//         key: 'e',
 //         label: MENU_LABEL.tool,
 //         items: [
-//             { code: 'e-1', label: MENU_ITEM_LABEL[`tool:test`] }
+//             { key: 'e-1', label: MENU_ITEM_LABEL[`tool:test`] }
 //         ]
 //     },
 //     'three': {
-//         code: 'f',
+//         key: 'f',
 //         label: MENU_LABEL.three,
 //         items: [
-//             { code: 'f-1', label: MENU_ITEM_LABEL[`three:test`] }
+//             { key: 'f-1', label: MENU_ITEM_LABEL[`three:test`] }
 //         ]
 //     },
 //     'user': {
-//         code: 'g',
+//         key: 'g',
 //         label: MENU_LABEL.user,
 //         items: [
-//             { code: 'g-1', label: MENU_ITEM_LABEL[`user:test`] }
+//             { key: 'g-1', label: MENU_ITEM_LABEL[`user:test`] }
 //         ]
 //     }
 // };
@@ -90,28 +90,28 @@ const config = {
 }
 // 自动生成菜单结构
 Object.keys(config).forEach((prop, index) => {
-    // 生成 code 的前缀（从 a 开始）
-    const codePrefix = String.fromCharCode(97 + index); // 97 是字符 'a' 的 ASCII 码
+    // 生成 key 的前缀（从 a 开始）
+    const keyPrefix = String.fromCharCode(97 + index); // 97 是字符 'a' 的 ASCII 码
     const items = config[prop].map((subItem, subIndex) => ({
-        code: `${codePrefix}-${subIndex + 1}`, // 生成子项的 code a1、a2...
-        label: MENU_ITEM_LABEL[`${MENU_LABEL[prop]}:${subItem}`] // 使用对应的 label
+        key: `${keyPrefix}-${subIndex + 1}`, // 生成子项的 key a1、a2...
+        label: MENU_ITEM_LABEL[`${prop}:${subItem}`]// 使用对应的 label
     }));
 
     // 填充 menuStructure
     menuStructure[prop] = {
-        code: codePrefix,
+        key: keyPrefix,
         label: MENU_LABEL[prop],
         items: items
     };
 });
 
-
+console.log(menuStructure,'menuStructure')
 export const menuOption = () => {
     const res = []
     Object.keys(menuStructure).forEach(prop => {
         res.push({
             type: prop,
-            code: menuStructure[prop].code,
+            key: menuStructure[prop].key,
             label: menuStructure[prop].label
         }
         )
@@ -121,7 +121,7 @@ export const menuOption = () => {
 
 export const getItemsByCode = (value) => {
     Object.keys(menuStructure).find(prop => {
-        if (menuStructure[prop][code] == value) {
+        if (menuStructure[prop][key] == value) {
             return menuStructure[prop].items
         }
     })
@@ -129,7 +129,7 @@ export const getItemsByCode = (value) => {
 
 export const getItemsByType = (value) => {
     Object.keys(menuStructure).find(prop => {
-        if (menuStructure[prop][type] == value) {
+        if (menuStructure[prop]['type'] == value) {
             return menuStructure[prop].items
         }
     })
