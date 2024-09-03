@@ -89,21 +89,9 @@ export default class DataLoader {
 
         // Load a single URL
         if (!Array.isArray(opt) && typeOf(_url) === "String" && typeOf(_finalOpt) === "Object") {
-            // Data loaded will be passed back on _finalOpt's three 'on' properties
-            const res = await this._loadDataWithProgress(_url, type, _finalOpt);
-            // 加载3dtiles的时候要使用readyPromise 
-
-            if (type === '3dtiles' && res) {
-                const _3dtile = res;
-                Object.assign(opt, _finalOpt);
-
-                return _3dtile;
-            } else if (type === 'gltf') {
-                const _gltf = res/*await res.readyPromise*/;
-                Object.assign(opt, _finalOpt);
-                return _gltf;
-            }
-
+            const res = await this.startLoad(_url, type, _finalOpt);
+            Object.assign(opt, _finalOpt);
+            return res;
         }
         // Load multiple URLs
         else if (Array.isArray(opt)) {
@@ -129,7 +117,7 @@ export default class DataLoader {
      *
      * @returns {Promise<Cesium.DataSource|Cesium.Cesium3DTileset>} A promise that resolves to the loaded data source or 3DTileset;
      * */
-    async _loadDataWithProgress(url, type, options = {}) {
+    async startLoad(url, type, options = {}) {
         // 检查缓存
         if (this.cache.has(url)) {
             const cachedData = this.cache.get(url);
@@ -145,7 +133,6 @@ export default class DataLoader {
                 const response = await xhr;
                 data = await response.json();
             }
-
             switch (type.toLowerCase()) {
                 case 'geojson':
                     loaded = await Cesium.GeoJsonDataSource.load(data, options);
@@ -173,11 +160,10 @@ export default class DataLoader {
                 default:
                     throw new TypeError(`Unsupported data type: ${type}`);
             }
-
-            // 🚨
             // 不能将3dtiles放到dataSource里面:dataSource会被时钟监听,而model即primitive不受时钟控制
-            if (!type.toLowerCase() === '3dtiles' || !type.toLowerCase() === 'gltf')
+            if (!type.toLowerCase() === '3dtiles' || !type.toLowerCase() === 'gltf') {
                 this.viewer.dataSources.add(loaded/* 此时仅仅是datasource*/);
+            }
 
             // 添加到缓存
             this.cache.set(url, loaded);
@@ -189,19 +175,6 @@ export default class DataLoader {
             if (options.onError) options.onError(error);
             else console.error(`DataLoader loading ${type}:`, error);
         }
-
-        // 监听3d元素的加载进度  回调出加载进度 3d元素都要readyPeomise 有点烦💢
-        // if (type === '3dtiles' && loaded) {
-        //     loaded.readyPromise.then(final => {
-        //         this._check3DTilesetLoadProgress(final, options.onProgress);
-        //     })
-        // }
-        // if (type === 'gltf' && loaded) {
-        //     loaded.readyPromise.then(final => {
-        //         this._checkModelLoadingProgress(final, options.onProgress);
-        //     })
-        // }
-
         return loaded;
     }
 
@@ -287,23 +260,23 @@ export default class DataLoader {
     }
 
     async loadGeoJSON(url, options = {}) {
-        return this._loadDataWithProgress(url, 'geojson', options);
+        return this.startLoad(url, 'geojson', options);
     }
 
     async loadKML(url, options = {}) {
-        return this._loadDataWithProgress(url, 'kml', options);
+        return this.startLoad(url, 'kml', options);
     }
 
     async loadCZML(url, options = {}) {
-        return this._loadDataWithProgress(url, 'czml', options);
+        return this.startLoad(url, 'czml', options);
     }
 
     async loadGPX(url, options = {}) {
-        return this._loadDataWithProgress(url, 'gpx', options);
+        return this.startLoad(url, 'gpx', options);
     }
 
     async loadTopoJSON(url, options = {}) {
-        return this._loadDataWithProgress(url, 'topojson', options);
+        return this.startLoad(url, 'topojson', options);
     }
 
 }

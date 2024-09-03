@@ -77,12 +77,9 @@ function handleItemClick(itemKey) {
   else if (itemKey === menuNameKeys['source_gltf']) {
     const gltfOpt = {
       url: '/src/mock/metro.gltf',
-      modelMatrix: Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0.0, 0.0, 0.0)), // 设置模型的位置
-      scale: 1.0 // 缩放因子
+      modelMatrix: Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0.0, 0.0, 0.0)),
+      scale: 1.0 
     }
-    // const model = Cesium.Model.fromGltf(gltfOpt)
-    // czmhelper.value.$viewer.scene.primitives.add(model)
-    // czmhelper.value.$viewer.zoomTo(model)
     czmhelper.value?.add3DModel('gltf', gltfOpt);
 
   }
