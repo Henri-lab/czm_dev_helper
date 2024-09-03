@@ -11,6 +11,9 @@ importers:
       '@ant-design/icons-vue':
         specifier: ^7.0.1
         version: 7.0.1(vue@3.4.30(typescript@5.5.4))
+      '@simonwep/pickr':
+        specifier: ^1.9.1
+        version: 1.9.1
       '@turf/turf':
         specifier: ^7.0.0
         version: 7.0.0
@@ -89,6 +92,9 @@ importers:
       vue-router:
         specifier: ^4.3.2
         version: 4.4.0(vue@3.4.30(typescript@5.5.4))
+      vuetify:
+        specifier: ^3.7.1
+        version: 3.7.1(typescript@5.5.4)(vue@3.4.30(typescript@5.5.4))
     devDependencies:
       '@types/cesium':
         specifier: ^1.70.0
@@ -1269,6 +1275,9 @@ packages:
   '@simonwep/pickr@1.8.2':
     resolution: {integrity: sha512-/l5w8BIkrpP6n1xsetx9MWPWlU6OblN5YgZZphxan0Tq4BByTCETL6lyIeY8lagalS2Nbt4F2W034KHLIiunKA==}
 
+  '@simonwep/pickr@1.9.1':
+    resolution: {integrity: sha512-fR3qmfAcPf/HSFS7GEnTmZLM3+xERv1+jyMBbzT63ilRRM8veYjI7ELvkHHKk0/du3lHp7uh/FqatjM3646X1g==}
+
   '@sindresorhus/is@0.7.0':
     resolution: {integrity: sha512-ONhaKPIufzzrlNbqtWFFd+jlnemX6lJAgq9ZeiZtS7I1PIf/la7CW4m83rTXRnVnsMbW2k56pGYu7AUFJD9Pow==}
     engines: {node: '>=4'}
@@ -2295,6 +2304,9 @@ packages:
 
   core-js-compat@3.38.0:
     resolution: {integrity: sha512-75LAicdLa4OJVwFxFbQR3NdnZjNgX6ILpVcVzcC4T2smerB5lELMrJQQQoWV6TiuC/vlaFqgU2tKQx9w5s0e0A==}
+
+  core-js@3.37.0:
+    resolution: {integrity: sha512-fu5vHevQ8ZG4og+LXug8ulUtVxjOcEYvifJr7L5Bfq9GOztVqsKd9/59hUk2ZSbCrS3BqUr3EpaYGIYzq7g3Ug==}
 
   core-js@3.37.1:
     resolution: {integrity: sha512-Xn6qmxrQZyB0FFY8E3bgRXei3lWDJHhvI+u0q9TKIYM49G8pAr0FgnnrFRAmsbptZL1yxRADVXn+x5AGsbBfyw==}
@@ -4774,6 +4786,22 @@ packages:
       typescript:
         optional: true
 
+  vuetify@3.7.1:
+    resolution: {integrity: sha512-N1XlczbgeGt/O+JUk72QPrqcDaRIXUdptUciJqGyTvZ9cfMoSlEWs6TZO+dOOfXbKvmIMFMycYg4dgSHDpCPhg==}
+    engines: {node: ^12.20 || >=14.13}
+    peerDependencies:
+      typescript: '>=4.7'
+      vite-plugin-vuetify: '>=1.0.0'
+      vue: ^3.3.0
+      webpack-plugin-vuetify: '>=2.0.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+      vite-plugin-vuetify:
+        optional: true
+      webpack-plugin-vuetify:
+        optional: true
+
   warning@4.0.3:
     resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}
 
@@ -6142,6 +6170,11 @@ snapshots:
   '@simonwep/pickr@1.8.2':
     dependencies:
       core-js: 3.37.1
+      nanopop: 2.4.2
+
+  '@simonwep/pickr@1.9.1':
+    dependencies:
+      core-js: 3.37.0
       nanopop: 2.4.2
 
   '@sindresorhus/is@0.7.0': {}
@@ -8082,6 +8115,8 @@ snapshots:
   core-js-compat@3.38.0:
     dependencies:
       browserslist: 4.23.3
+
+  core-js@3.37.0: {}
 
   core-js@3.37.1: {}
 
@@ -10706,6 +10741,12 @@ snapshots:
       '@vue/runtime-dom': 3.4.30
       '@vue/server-renderer': 3.4.30(vue@3.4.30(typescript@5.5.4))
       '@vue/shared': 3.4.30
+    optionalDependencies:
+      typescript: 5.5.4
+
+  vuetify@3.7.1(typescript@5.5.4)(vue@3.4.30(typescript@5.5.4)):
+    dependencies:
+      vue: 3.4.30(typescript@5.5.4)
     optionalDependencies:
       typescript: 5.5.4
 

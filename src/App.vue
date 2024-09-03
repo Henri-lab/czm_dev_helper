@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 // test
-
+// import ColorPicker from '@/components/ColorPicker/index.vue'
 
 </script>
 <style lang="scss" scoped>

@@ -10,6 +10,10 @@ import Antd from 'ant-design-vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import 'ant-design-vue/dist/reset.css';
 import ElementPlus from 'element-plus';
+import 'vuetify/styles';
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 // import lang_zh_cn from 'element-plus/lib/locale/lang/zh-cn' // CN
 import './assets/css/index.css';
 // import VScaleScreen from 'v-scale-screen'; //bug 安装插件后样式出现冲突
@@ -47,6 +51,10 @@ function asSize(size: string): SizeType {
 }
 // ------------------------------------------------------------------------------------------------------------------------------------------
 const app = createApp(AppVue);
+const vuetify = createVuetify({
+  components,
+  directives,
+});
 
 // 全局注册图标
 app.component('PlusOutlined', PlusOutlined);
@@ -59,6 +67,7 @@ app
     // locale: lang_zh_cn,
     size: asSize(Cookies.get('size') || 'default'),
   })
+  .use(vuetify)
   .use(extraPlugins);
 
 // 注册自定义指令

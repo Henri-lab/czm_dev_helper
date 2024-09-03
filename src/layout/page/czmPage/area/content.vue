@@ -37,6 +37,7 @@ import Panel from '@/components/Panel/index.vue'
     position: relative;
 
     .panel {
+      width: 15%;
       position: absolute;
       right: 2%;
       top: 2%;

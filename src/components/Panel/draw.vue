@@ -1,21 +1,16 @@
 <template>
-    <a-card hoverable style="width: 300px">
-        <template #cover>
-            <img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />
-        </template>
-        <template #actions>
-            <setting-outlined key="setting" />
-            <edit-outlined key="edit" />
-            <ellipsis-outlined key="ellipsis" />
-        </template>
-        <a-card-meta title="Card title" description="This is the description">
-            <template #avatar>
-                <a-avatar src="https://joeschmoe.io/api/v1/random" />
-            </template>
+    <a-card hoverable>
+        <a-card-meta title="Polyline">
+
         </a-card-meta>
+        <template #cover>
+            <img alt="example" src="@/assets/images/card/line.png" />
+        </template>
+        <v-divider />
+        <v-color-picker></v-color-picker>
+
     </a-card>
 </template>
 <script lang="ts" setup>
-import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
 </script>
 
