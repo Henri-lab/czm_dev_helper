@@ -172,29 +172,52 @@ export default class SceneManager extends Manager {
     let viewer = this.viewer;
     let scene = viewer.scene;
     const type = Type.toLowerCase();
-    // 直接添加(核心)
-    if (type === '3dtiles' || type === 'gltf' || type === 'primitive') {
+    if (type === '3dtiles' || type === 'gltf' || type === 'primitive')
       return scene.primitives.add(loaded);
-    } else if (!type.includes('url')) {
+    else
       return viewer.dataSources.add(loaded);
-    }
-    // __________________________________________________________________________
-    // 👽(扩展)
-    // 搜索资源并添加---和add3DModel具备类似功能,但不能批量处理 不能自动添加t_id 不能跳转到模型等
-    if (type === '3dtilesurl' || type === 'gltfurl') {
-      const options = loaded
-
-      const res = (type === '3dtilesurl') ?
-        await this.$dL.load3DTiles(options)
-        : await this.$dL.loadGLTF(options);
-
-      res.readyPromise.then((primitive) => {
-        return scene.primitives.add(primitive)
-      })
-    }
-
   }
 
+  /**
+ * 根据指定类型和选项异步加载并添加模型到场景中
+ * @param {string} type - 模型类型，例如 '3dtiles' 或 'gltf'
+ * @param {Object} option - 加载模型所需的配置选项
+ * @param {Function} [cb] - 回调函数，用于处理加载结果
+ * @param {Object} [extraOpt] - 额外选项，如是否自动缩放至模型
+ * @param {Array} [arr=[]] - 可选参数，用于存储加载结果的数组
+ */
+  // 可以直接拿到model 也可以利用回调函数拿到model和其他附属信息
+  async _addModelByOption(type, option, cb, extraOpt, arr) {
+    const that = this;
+    const $dL = that.$dL;
+    let res = arr || [];
+    try {
+      let model;
+      if (type === '3dtiles') {
+        model = await $dL.load3DTiles(option); // $dL.load3DTiles会把加载的model 执行的progress 和err 通过option的三个on属性回调出来
+      } else if (type === 'gltf') {
+        model = await $dL.loadGLTF(option);
+      }
+      if (model) {
+        model.readyPromise
+          .then((final) => {
+            that.addToScene(final, type);
+            res.push({ t_id: Date.now(), model: final });//添加model的附属信息
+            cb && cb(res);
+            if (extraOpt && extraOpt.isZoom) {
+              that.viewer.zoomTo(final);  // 跳转到模型
+            }
+            return final;
+          })
+          .catch((error) => {
+            console.error('Error loading model:', error);
+          });
+      }
+    } catch (e) {
+      console.error('Scene manager failed loading model', e);
+      throw new Error(e);
+    }
+  };
   /**
  * Function to add 3D model to the Cesium viewer.
  *
@@ -210,67 +233,12 @@ export default class SceneManager extends Manager {
   */
   async add3DModel(type, options, cb, extraOpt = { isZoom: true }) {
     const that = this;
-    const $dL = this.$dL;
-    const _type = type.toLowerCase();
-    let resArr = [];
+    type = type.toLowerCase();
     //  two type options
     if (Array.isArray(options)) {
-      for (let option of options) {
-        await loadAndAddModelByOption(option);
-      }
-    } else {//核心💫
-      let _singleOpt = options
-      const model = await loadAndAddModelByOption(_singleOpt);
-      // here 跳转会因为异步问题 过快执行而拿不到 await loadAndAddModelByOption(_singleOpt)的结果 model
-      // 不过为什么? 👺
-      // 经过测试 这个跳转必须放在readyPromise中💥
-      // if (extraOpt && extraOpt.isZoom) {
-      //   // 跳转到模型
-      //   that.viewer.zoomTo(model);
-      // }
+      for (let item of options) await that._addModelByOption(type, item, cb, extraOpt)
     }
-
-
-    // Helper function to load and add a 3d model by a single option
-    async function loadAndAddModelByOption(option) {
-      try {
-        let res;//加载的model
-        if (_type === '3dtiles') {
-          // $dL.load3DTiles会把加载的model 执行的progress 和err 通过option的三个on属性回调出来
-          res = await $dL.load3DTiles(option);
-        } else if (_type === 'gltf') {
-
-          res = await $dL.loadGLTF(option);
-        }
-
-        if (res) {
-          // 为啥加载gltf就挂起了?? -2024/7/8/23:00
-          res.readyPromise.then((final) => {
-            that.addToScene(final, _type);//核心
-            resArr.push({ t_id: Date.now(), model: final });
-            cb && cb(resArr);//传入回调cb 并标记一个timestamp 作为 t_id
-
-            // 经过测试 这个跳转必须放在readyPromise中💥
-            if (extraOpt && extraOpt.isZoom) {
-              // 跳转到模型
-              that.viewer.zoomTo(final);
-            }
-
-            // 想尝试在await loadAndAddModelByOption(_singleOpt)处拿到model 不过失败了 👺
-            return final;
-          }).catch(function (error) {
-            console.error('Error loading model:', error);
-          });
-          // 在 Promise 中，通常使用 catch 方法来捕获异常，而 otherwise 方法不是标准的 Promise 方法。
-          // 然而，有些库或框架可能定义了自己的 Promise 扩展方法，包括 otherwise 用于捕获错误。
-          // 在 CesiumJS 中，它遵循标准的 Promise API，因此你应该使用 catch 方法来处理异步操作中可能出现的错误。
-        }
-
-      } catch (e) {
-        console.error('Scene manager failed loading model', e);
-        throw new Error(e);
-      }
-    };
+    else await that._addModelByOption(type, options, cb, extraOpt);
   }
 
 

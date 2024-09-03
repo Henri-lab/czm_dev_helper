@@ -12,34 +12,40 @@ import {
 import { get_vcfg_wuhan, modelOpt_wuhan, get_vcfg_global } from '../Map';
 
 
-let currentViewer = null;  //导出的地图
+let curViewer = null;  //导出的地图
 
-let viewers = [];//导出的地图集
+let cacheViewers = [];//导出的地图集
 
 
 /**
  * Initializes a Cesium viewer at a specified element with a specific map type.
  *
  * @param {Object} [el={ id: 'viewer' }] - The HTML element where the viewer will be created.
- * @param {string} type - The type of map to be displayed. Can be either 'global' or 'wuhan' or else.
+ * @param {string} type - The type of map to be displayed. Can be either 'global' or 'wuhan-test' or else.
  * @returns {Promise<Cesium.Viewer>} - A promise that resolves to the initialized Cesium viewer.
  *
  * @example
  * // Initialize a viewer at the element with id 'cesiumContainer' and display the global map
  * const viewer = await initViewerAt({ id: 'cesiumContainer' }, 'global');
  *
- * // Initialize a viewer at the default element and display the Wuhan map
- * const viewer = await initViewerAt({}, 'wuhan');
+ * // Initialize a viewer at the default element and display the wuhan-test map
+ * const viewer = await initViewerAt({}, 'wuhan-test');
  */
-export default async function initViewerAt(el = { id: 'viewer' }, type) {
-    const _type = type.toLowerCase();
+
+let curType = 'global' //当前地图类型
+export default async function initViewerAt(el = { id: 'viewer' }, typeId) {
+    curType = typeId.toLowerCase();
+    // 查找缓存
+    const oldViewer = cacheViewers.find(cache => cache.typeId === typeId)
+    if (oldViewer) return oldViewer.data;
+    // 缓存没有，则初始化
     // 切换地图资源
-    if (_type === 'global') {
+    if (curType === 'global') {
         await toGlobal(el);
-    } else if (_type === 'wuhan') {
+    } else if (curType === 'wuhan-123') {
         await toWuhan(el);
     }
-    return currentViewer;
+    return curViewer;
 }
 
 // 地图配置
@@ -69,11 +75,15 @@ const toWuhan = async (el) => {
 
 // --辅助--
 function switchViewerTo(viewer) {
-    if (currentViewer && currentViewer !== viewer) {
-        destroyViewer(currentViewer);
+    if (curViewer && curViewer !== viewer) {
+        cacheViewers.push({
+            typeId: curType,
+            data: curViewer
+        });//销毁前缓存
+        destroyViewer(curViewer);
     }
     // 设置为导出的currentViewer
-    currentViewer = viewer;
+    curViewer = viewer;
 }
 function destroyViewer(viewer) {
     if (viewer) {

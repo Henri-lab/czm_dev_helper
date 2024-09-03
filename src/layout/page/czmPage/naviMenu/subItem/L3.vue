@@ -20,9 +20,9 @@ const props = defineProps({
 const _k = props.submenu_key;
 // 菜单组名称-菜单项 映射表
 
-// 根据submenu_items_type获取到的菜单项 + 性能考虑
+// 根据submenu_items_type获取到的菜单项 
 const submenu_items = computed(() => {
-  console.log(getItemsByKey(_k),'L3',_k)
+  // console.log(getItemsByKey(_k),'L3',_k)
   return getItemsByKey(_k) || [];
 });
 

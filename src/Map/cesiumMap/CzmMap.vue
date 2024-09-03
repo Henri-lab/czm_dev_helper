@@ -33,10 +33,13 @@ onMounted(() => {
   // 默认地图
   init(el, 'global');
 });
-watchEffect(() => {
-  const typeFromStore = defaultStore.Map;
-  typeFromStore && init(el, typeFromStore);
-});
+watch(() => defaultStore.MapUpdatedCount,
+  (n, o) => {
+    if (n > o) {//更新地图次数增加，重新加载地图
+      init(el, defaultStore.Map);
+    }
+  }
+);
 </script>
 
 <style lang="scss" scoped>

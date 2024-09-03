@@ -1,6 +1,6 @@
 <template>
   <!-- hook -->
-  <ViewerManager ref="viewerManagerRef" />
+  <useCzmHelper ref="czmhelper" />
   <!-- 菜单 -->
   <a-menu v-model:selectedKeys="naviSideKeys" v-model:openKeys="openKeys" mode="inline" style="height: 100%">
     <!-- 子菜单 -->
@@ -11,13 +11,13 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue';
 import subMenuL2 from './subMenu/L2.vue';
-import ViewerManager from '@/hook/useManager.vue';
+import useCzmHelper from '@/hook/useCzmHelper.vue';
 import { lineOpt } from '@czmHelper/Editor/config/lineOpt';
 import useDefaultStore from '@/store';
 
 const naviSideKeys = ref([]); //sub-menu-item-key
 const openKeys = ref([]); //sub-menu-key
-const viewerManagerRef = ref(null);
+const czmhelper = ref(null);
 
 const defaultStore = useDefaultStore();
 const setMap = defaultStore.setMap;
@@ -64,18 +64,24 @@ function handleItemClick(itemKey) {
   console.log(itemKey);
   if (itemKey === pencil) {
     //画笔测试
-    viewerManagerRef.value?.startLine(lineOpt);
+    czmhelper.value?.startLine(lineOpt);
   }
   //加载视图资源（以wuhan白膜为例）
-  if (itemKey === source_mono) {
-    setMap('wuhan');
+  else if (itemKey === source_mono) {
+    setMap('wuhan-123');
   }
-  if (itemKey === source_3dtiles) {
+  else if (itemKey === source_3dtiles) {
     //加载模型
     const tileOpt = {
       url: '/src/mock/3dtiles/Tile_+002_+005/tileset.json',
     };
-    viewerManagerRef.value?.add3DModel('3dtiles', tileOpt);
+    czmhelper.value?.add3DModel('3dtiles', tileOpt);
+  }
+  else if (itemKey === source_gltf) {
+    const gltfOpt = {
+      url: '/src/mock/metro.gltf',
+    }
+    czmhelper.value?.add3DModel('gltf', gltfOpt);
   }
 }
 

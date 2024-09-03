@@ -94,7 +94,8 @@ Object.keys(config).forEach((prop, index) => {
     const keyPrefix = String.fromCharCode(97 + index); // 97 是字符 'a' 的 ASCII 码
     const children = config[prop].map((subItem, subIndex) => ({
         key: `${keyPrefix}-${subIndex + 1}`, // 生成子项的 key a1、a2...
-        label: MENU_ITEM_LABEL[`${prop}:${subItem}`]// 使用对应的 label
+        label: MENU_ITEM_LABEL[`${prop}:${subItem}`],
+        children: []
     }));
 
     // 填充 menuStructure
@@ -105,7 +106,7 @@ Object.keys(config).forEach((prop, index) => {
     };
 });
 
-console.log(menuStructure, 'menuStructure')
+// console.log(menuStructure, 'menuStructure')
 export const menuOption = () => {
     const res = []
     Object.keys(menuStructure).forEach(prop => {

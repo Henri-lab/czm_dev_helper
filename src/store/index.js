@@ -6,34 +6,36 @@ export default defineStore('defaultStore', {
     state: () => {
         return {
             map: '', // type of map 
-            viewer: null, 
+            mapInfo: {},
+            viewer: null,
             editor: null,
-            // 检测变化标志
-            mapUpdated: false,
-            viewerUpdated: false,
-            editorUpdated: false
+            // 检测变化次数
+            mapUpdatedCount: 0,
+            viewerUpdatedCount: 0,
+            editorUpdatedCount: 0,
         };
     },
     getters: {
         Map: state => state.map,
+        MapInfo: state => state.mapInfo,
         Viewer: state => state.viewer,
         Editor: state => state.editor,
-        isMapUpdated: state => state.mapUpdated,
-        isViewerUpdated: state => state.viewerUpdated,
-        isEditorUpdated: state => state.editorUpdated
+        MapUpdatedCount: state => state.mapUpdatedCount,
+        ViewerUpdatedCount: state => state.viewerUpdatedCount,
+        EditorUpdatedCount: state => state.editorUpdatedCount
     },
     actions: {
         setMap(type) {
             this.map = type;
-            this.mapUpdated = !this.mapUpdated;
+            this.mapUpdatedCount++;
         },
         setViewer(viewer) {
             this.viewer = viewer;
-            this.viewerUpdated = !this.viewerUpdated;
+            this.viewerUpdatedCount++;
         },
         setEditor(editor) {
             this.editor = editor;
-            this.editorUpdated = !this.editorUpdated;
+            this.editorUpdatedd++;
         },
     }
 });
