@@ -44,7 +44,7 @@ watch(
       [pencil]: () => handleItemClick(pencil), //画笔测试
       [material]: () => handleItemClick(material),
       [scene]: () => handleItemClick(scene),
-      [source]: () => handleItemClick(source),
+      [source_mono]: () => handleItemClick(source_mono),
       [source_3dtiles]: () => handleItemClick(source_3dtiles),
       [source_gltf]: () => handleItemClick(source_gltf),
       [tool]: () => handleItemClick(tool),
@@ -78,6 +78,7 @@ function handleItemClick(itemKey) {
     viewerManagerRef.value?.add3DModel('3dtiles', tileOpt);
   }
 }
+
 </script>
 
 <style lang="scss" scoped></style>

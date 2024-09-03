@@ -7,7 +7,7 @@
 
 <script setup>
 import { computed, onMounted } from 'vue';
-import { getItemsByCode } from '../config';
+import { getItemsByKey } from '../config';
 
 // menu组件指定了submenu_items_type，根据该值获取菜单项
 const props = defineProps({
@@ -22,12 +22,11 @@ const _k = props.submenu_key;
 
 // 根据submenu_items_type获取到的菜单项 + 性能考虑
 const submenu_items = computed(() => {
-  return getItemsByCode(_k) || [];
+  console.log(getItemsByKey(_k),'L3',_k)
+  return getItemsByKey(_k) || [];
 });
-// const submenu_items = ref(getItemsByCode(_k))
-onMounted(() => {
-  console.log('submenu_items', submenu_items.value);
-});   
+
+
 </script>
 
 <style lang="scss" scoped></style>
