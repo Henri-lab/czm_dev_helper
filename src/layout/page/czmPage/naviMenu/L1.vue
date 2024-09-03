@@ -15,6 +15,7 @@ import subMenuL2 from './subMenu/L2.vue';
 import useCzmHelper from '@/hook/useCzmHelper.vue';
 import { lineOpt } from '@czmHelper/Editor/config/lineOpt';
 import useDefaultStore from '@/store';
+import bus from '@/util/bus';
 
 const naviSideKeys = ref([]); //sub-menu-item-key
 const openKeys = ref([]); //sub-menu-key
@@ -60,8 +61,8 @@ watch(
 function handleItemClick(itemKey) {
   console.log(itemKey);
   if (itemKey === menuNameKeys['pencil']) {
-    //画笔测试
-    czmhelper.value?.startLine(lineOpt);
+    //画笔测试 打开画笔面板
+    bus.emit('panel_draw_showToggle');
   }
   //加载视图资源（以wuhan白膜为例）
   else if (itemKey === menuNameKeys['source_mono']) {
@@ -78,7 +79,7 @@ function handleItemClick(itemKey) {
     const gltfOpt = {
       url: '/src/mock/metro.gltf',
       modelMatrix: Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0.0, 0.0, 0.0)),
-      scale: 1.0 
+      scale: 1.0
     }
     czmhelper.value?.add3DModel('gltf', gltfOpt);
 
