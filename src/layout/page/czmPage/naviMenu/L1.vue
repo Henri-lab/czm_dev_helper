@@ -10,6 +10,7 @@
 
 <script setup>
 import { onMounted, ref, watch } from 'vue';
+import * as Cesium from 'cesium';
 import subMenuL2 from './subMenu/L2.vue';
 import useCzmHelper from '@/hook/useCzmHelper.vue';
 import { lineOpt } from '@czmHelper/Editor/config/lineOpt';
@@ -23,36 +24,32 @@ const defaultStore = useDefaultStore();
 const setMap = defaultStore.setMap;
 
 // 菜单选项编码 a-1 语义化
-const pencil = 'a-1'; //第一栏的第一项
-const material = 'b-1';
-const scene = 'c-1';
-const source_mono = 'd-1';
-const source_3dtiles = 'd-2';
-const source_gltf = 'd-3';
-const tool = 'e-1';
-const three = 'f-1';
-const user = 'g-1';
+
+const menuNameKeys = {
+  pencil: 'a-1', //第一栏的第一项
+  material: 'b-1',
+  scene: 'c-1',
+  source_mono: 'd-1',
+  source_3dtiles: 'd-2',
+  source_gltf: 'd-3',
+  tool: 'e-1',
+  three: 'f-1',
+  user: 'g-1',
+}
 
 
 
 // 侧边导航菜单项的监听
 watch(
   () => naviSideKeys.value,
-  (newValue) => {
+  (newSideKey) => {
+    const curKey = newSideKey[0];
     // 菜单项的执行
-    const logMap = {
-      [pencil]: () => handleItemClick(pencil), //画笔测试
-      [material]: () => handleItemClick(material),
-      [scene]: () => handleItemClick(scene),
-      [source_mono]: () => handleItemClick(source_mono),
-      [source_3dtiles]: () => handleItemClick(source_3dtiles),
-      [source_gltf]: () => handleItemClick(source_gltf),
-      [tool]: () => handleItemClick(tool),
-      [three]: () => handleItemClick(three),
-      [user]: () => handleItemClick(user),
-    };
-
-    logMap[newValue[0]]?.();
+    Object.keys(menuNameKeys).forEach((name) => {
+      if (menuNameKeys[name] === curKey) {
+        handleItemClick(curKey)
+      }
+    });
   }
 );
 // watch(() => openKeys.value,
@@ -62,26 +59,32 @@ watch(
 // 菜单项的执行
 function handleItemClick(itemKey) {
   console.log(itemKey);
-  if (itemKey === pencil) {
+  if (itemKey === menuNameKeys['pencil']) {
     //画笔测试
     czmhelper.value?.startLine(lineOpt);
   }
   //加载视图资源（以wuhan白膜为例）
-  else if (itemKey === source_mono) {
+  else if (itemKey === menuNameKeys['source_mono']) {
     setMap('wuhan-123');
   }
-  else if (itemKey === source_3dtiles) {
+  else if (itemKey === menuNameKeys['source_3dtiles']) {
     //加载模型
     const tileOpt = {
       url: '/src/mock/3dtiles/Tile_+002_+005/tileset.json',
     };
     czmhelper.value?.add3DModel('3dtiles', tileOpt);
   }
-  else if (itemKey === source_gltf) {
+  else if (itemKey === menuNameKeys['source_gltf']) {
     const gltfOpt = {
       url: '/src/mock/metro.gltf',
+      modelMatrix: Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0.0, 0.0, 0.0)), // 设置模型的位置
+      scale: 1.0 // 缩放因子
     }
+    // const model = Cesium.Model.fromGltf(gltfOpt)
+    // czmhelper.value.$viewer.scene.primitives.add(model)
+    // czmhelper.value.$viewer.zoomTo(model)
     czmhelper.value?.add3DModel('gltf', gltfOpt);
+
   }
 }
 

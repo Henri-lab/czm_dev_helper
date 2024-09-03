@@ -191,23 +191,27 @@ export default class SceneManager extends Manager {
     const that = this;
     const $dL = that.$dL;
     let res = arr || [];
+    function afterLoaded(loaded, type) {
+      that.addToScene(loaded, type);
+      res.push({ t_id: Date.now(), model: loaded });//添加model的附属信息
+      cb && cb(res);
+      if (extraOpt && extraOpt.isZoom) {
+        that.viewer.zoomTo(loaded);  // 跳转到模型
+      }
+      return loaded;
+    }
     try {
       let model;
-      if (type === '3dtiles') {
-        model = await $dL.load3DTiles(option); // $dL.load3DTiles会把加载的model 执行的progress 和err 通过option的三个on属性回调出来
-      } else if (type === 'gltf') {
+      if (type === 'gltf') {
         model = await $dL.loadGLTF(option);
+        console.log(model, 'gltf')
+        afterLoaded(model, type)
       }
-      if (model) {
+      else if (type === '3dtiles') {
+        model = await $dL.load3DTiles(option); // $dL.load3DTiles会把加载的model 执行的progress 和err 通过option的三个on属性回调出来
         model.readyPromise
           .then((final) => {
-            that.addToScene(final, type);
-            res.push({ t_id: Date.now(), model: final });//添加model的附属信息
-            cb && cb(res);
-            if (extraOpt && extraOpt.isZoom) {
-              that.viewer.zoomTo(final);  // 跳转到模型
-            }
-            return final;
+            afterLoaded(final, type)
           })
           .catch((error) => {
             console.error('Error loading model:', error);
@@ -231,14 +235,14 @@ export default class SceneManager extends Manager {
  * If the input is an array, it will return an array of loaded models.
  * If the input is not an array and the model fails to load, it will return undefined.
   */
-  async add3DModel(type, options, cb, extraOpt = { isZoom: true }) {
+  async add3DModel(type, options, cb, extraOpt = { isZoom: true }, arr) {
     const that = this;
     type = type.toLowerCase();
     //  two type options
     if (Array.isArray(options)) {
-      for (let item of options) await that._addModelByOption(type, item, cb, extraOpt)
+      for (let item of options) await that._addModelByOption(type, item, cb, extraOpt, arr)
     }
-    else await that._addModelByOption(type, options, cb, extraOpt);
+    else await that._addModelByOption(type, options, cb, extraOpt, arr);
   }
 
 

@@ -14,8 +14,8 @@ const defaultStore = useDefaultStore();
 const el = { id: 'czm-container' };
 
 // 创建视图 type类型的地图 加载到el元素
-const init = (el, type) => {
-  initViewerAt(el, type).then((viewer) => {
+const init = (el, typeId) => {
+  initViewerAt(el, typeId).then((viewer) => {
     if (viewer) {
       let $viewer = markRaw(viewer);
       //  全局共享viewer

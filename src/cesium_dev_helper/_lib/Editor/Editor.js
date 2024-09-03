@@ -6,6 +6,7 @@ import EntityDrawer from "./pencil/EntityDrawer";
 
 export default class Editor {
     constructor(viewer, $options) {
+        console.log('new Editor class')
         this.viewer = viewer;
         this.$entityDrawer = new EntityDrawer(viewer);
         this.$options = $options || {};

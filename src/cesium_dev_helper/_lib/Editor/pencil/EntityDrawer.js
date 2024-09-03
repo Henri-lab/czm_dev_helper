@@ -14,7 +14,7 @@ export default class EntityDrawer extends DrawingManager {
         if (!viewer) return;
         console.log('new EntityDrawer class');
         super(viewer);
-        this.initLayer('EntityDrawer-drawLayer@henriFox')
+        this.initLayer('EntityDrawerLayer@henriFox')
         this.dfSt = StaticMap || undefined;//图片资源path
         this.$entityMaker = new EntityMaker(viewer, this._drawLayer);
         this.$coords = new CoordTransformer();

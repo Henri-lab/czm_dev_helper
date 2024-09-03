@@ -8,9 +8,10 @@ class LayerManager extends Manager {
         super(viewer);
         this.layers = [];
         this.customCache = [];
-        viewer.dataSources.dataSourceAdded.addEventListener((datasource) => console.log(datasource, 'dataSourceAdded'))
+        // viewer.dataSources.dataSourceAdded.addEventListener((datasource) => console.log(datasource, 'dataSourceAdded'))
     }
     addLayer(layer) { /* ... */
+        console.log(layer, 'added Layer')
         this.layers.push(layer);
         this.viewer.imageryLayers.addImageryProvider(layer);
     }
@@ -45,6 +46,7 @@ class LayerManager extends Manager {
         let dataSource = _viewer.dataSources.getByName(name)[0];
         if (!dataSource) {
             dataSource = new Cesium.CustomDataSource(name);
+            console.log(dataSource, 'create new datasource')
             this.customCache.push(dataSource);
         }
         return dataSource;

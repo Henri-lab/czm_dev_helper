@@ -5,6 +5,7 @@ import lightCone from './primitives/lightCone';
 
 export default class Geometry extends DrawingManager {
     constructor(viewer) {
+        console.log('new Geometry class')
         super(viewer);
         this.scene = viewer.scene;
     }

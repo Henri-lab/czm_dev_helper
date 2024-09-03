@@ -73,7 +73,7 @@ export default class DataLoader {
     // 3D Tiles and GLTF are both used in 3D graphics and GIS applications, 
     // but they serve different purposes and have different structures. 
     // they can't be simply categorized under the same "model" concept.
-    async load3D(opt, type) {//将扁平的opt分为url和options两个部分🎃
+    async load3D(type, opt) {//将扁平的opt分为url和options两个部分🎃
         // Ensure opt has three properties that can return data
         let _finalOpt = {
             onSuccess: () => { },
@@ -95,26 +95,12 @@ export default class DataLoader {
 
             if (type === '3dtiles' && res) {
                 const _3dtile = res;
-                // const _3dtile = await res.readyPromise
-                // 💥💥💥有点疑惑这里返回res 或者  res.readyPromise ,
-                // 调用者拿到返回值都要在readyPromise后才能拿到tile💥💥💥
-
-                // console.log('3d tileset loaded successfully');
-
-                // Data loaded is bound to the passed-in opt.onSuccess callback
                 Object.assign(opt, _finalOpt);
 
                 return _3dtile;
             } else if (type === 'gltf') {
                 const _gltf = res/*await res.readyPromise*/;
-
-                // console.log('GLTF loaded successfully');
-
-                // Data loaded is bound to the passed-in opt.onSuccess callback
                 Object.assign(opt, _finalOpt);
-
-                // console.log('gltf', _gltf)
-
                 return _gltf;
             }
 
@@ -293,11 +279,11 @@ export default class DataLoader {
 
     // 快速调用💨
     async load3DTiles(opt) {
-        return await this.load3D(opt, '3dtiles');
+        return await this.load3D('3dtiles', opt);
     }
 
     async loadGLTF(opt) {
-        return await this.load3D(opt, 'gltf');
+        return await this.load3D('gltf', opt);
     }
 
     async loadGeoJSON(url, options = {}) {

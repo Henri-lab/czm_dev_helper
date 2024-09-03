@@ -4,6 +4,7 @@
 */
 
 import * as Cesium from 'cesium';
+import _ from 'lodash';
 import {
     ConfigManager,
     SceneManager,
@@ -13,7 +14,6 @@ import { get_vcfg_wuhan, modelOpt_wuhan, get_vcfg_global } from '../Map';
 
 
 let curViewer = null;  //导出的地图
-
 let cacheViewers = [];//导出的地图集
 
 
@@ -32,17 +32,20 @@ let cacheViewers = [];//导出的地图集
  * const viewer = await initViewerAt({}, 'wuhan-test');
  */
 
-let curType = 'global' //当前地图类型
+let curTypeId = 'global' //当前地图类型
 export default async function initViewerAt(el = { id: 'viewer' }, typeId) {
-    curType = typeId.toLowerCase();
+    curTypeId = typeId.toLowerCase();
     // 查找缓存
     const oldViewer = cacheViewers.find(cache => cache.typeId === typeId)
-    if (oldViewer) return oldViewer.data;
+    if (oldViewer) {
+        // console.log(_.isEqual(oldViewer, await toWuhan(el)),'bug')
+        // return oldViewer.data;
+    }
     // 缓存没有，则初始化
     // 切换地图资源
-    if (curType === 'global') {
+    if (curTypeId === 'global') {
         await toGlobal(el);
-    } else if (curType === 'wuhan-123') {
+    } else if (curTypeId === 'wuhan-123') {
         await toWuhan(el);
     }
     return curViewer;
@@ -53,33 +56,33 @@ export default async function initViewerAt(el = { id: 'viewer' }, typeId) {
 const toGlobal = async (el) => {
     const vcfg_global = get_vcfg_global(el.id);
     const cfgM = new ConfigManager();
-    const czmViewer = await cfgM.initViewer(vcfg_global);
-    const sM = new SceneManager(czmViewer);
+    const global = await cfgM.initViewer(vcfg_global);
+    const sM = new SceneManager(global);
     sM.initScene();
-    const cM = new CameraManager(czmViewer);
+    const cM = new CameraManager(global);
     cM.isRotationEnabled(1, 0, 0.5);// 开启地球自转
-    switchViewerTo(czmViewer) //切换地图
-    return czmViewer;
+    switchViewerTo(global) //切换地图
+    return global;
 }
 // -武汉地图
 const toWuhan = async (el) => {
     const cfgM = new ConfigManager();
     const vcfg_wuhan = get_vcfg_wuhan(el.id);
-    const czmViewer = await cfgM.initViewer(vcfg_wuhan);
-    const sM = new SceneManager(czmViewer);
+    const wuhan = await cfgM.initViewer(vcfg_wuhan);
+    const sM = new SceneManager(wuhan);
     sM.initScene();
     sM.add3DModel('3dtiles', modelOpt_wuhan)
-    switchViewerTo(czmViewer)
-    return czmViewer;
+    switchViewerTo(wuhan)
+    return wuhan;
 }
 
 // --辅助--
 function switchViewerTo(viewer) {
     if (curViewer && curViewer !== viewer) {
-        cacheViewers.push({
-            typeId: curType,
-            data: curViewer
-        });//销毁前缓存
+        cacheViewers.push({//销毁 前 缓存
+            typeId: curTypeId,
+            data: viewer
+        });
         destroyViewer(curViewer);
     }
     // 设置为导出的currentViewer

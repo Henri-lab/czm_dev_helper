@@ -45,6 +45,7 @@
     "js-cookie": "3.0.1",
     "jsencrypt": "3.3.1",
     "libgif": "^0.0.3",
+    "lodash": "^4.17.21",
     "mitt": "^3.0.1",
     "nprogress": "^0.2.0",
     "pinia": "^2.1.7",

@@ -39,7 +39,7 @@ export default class ConfigManager extends Manager {
     async initViewer(config) {
 
         const _config = parse_viewerConfig(config);
-        console.log(_config, 'parsed config')
+        // console.log(_config, 'parsed config')
         // 核心
         let viewer = new Cesium.Viewer(_config.id, _config.parsed);
 
@@ -74,7 +74,7 @@ export default class ConfigManager extends Manager {
             viewer.resize();
         }
         this.viewer = viewer;
-
+        console.log(viewer, ' created Viewer')
         return viewer;
     }
 }

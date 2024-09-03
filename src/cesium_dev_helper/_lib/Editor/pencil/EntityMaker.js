@@ -42,7 +42,7 @@ export default class EntityMaker extends DrawingManager {
     if (!viewer) return
     console.log('new EntityMaker class')
     super(viewer);
-    this.initLayer('EntityMaker-graphicsLayer@henriFox');
+    this.initLayer('EntityMakerLayer@henriFox');
     // method for initing the graphics 
     this.PointGraphics = PointGraphics
     this.LineGraphics = LineGraphics
