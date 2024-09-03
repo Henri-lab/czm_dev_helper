@@ -63,7 +63,8 @@ const add3DModel = (type, options, extraOpt) => {
       rz: 0,
       scale: 1.3,
     };
-    // dataProcesser.update3DtilesMaxtrix(tile, maxtrixOpt);
+    if (type == '3dtiles')
+      dataProcesser.update3DtilesMaxtrix(tile, maxtrixOpt);
   };
   SceneManagerRef.value?.add3DModel(
     type,
