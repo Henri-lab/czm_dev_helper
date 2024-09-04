@@ -1,6 +1,6 @@
 <!-- 给其他组件分发视图的管理者 -->
 <template>
-  <div class="czm-helper" ref="_czmHelper_">
+  <div class="czm-texture" ref="_czmCtx_">
     <slot></slot>
   </div>
 </template>
@@ -9,6 +9,7 @@
 import { ref, computed, watchEffect, provide } from 'vue';
 import { defineStore } from 'pinia'
 import czmHelper from '../lib';
+import mitt from 'mitt'
 const props = defineProps({
   width: {
     type: String,
@@ -19,14 +20,23 @@ const props = defineProps({
     default: '100%'
   }
 })
+// 分发管理者
+let currentViewer = null;
+let viewerHistory = new Set([]);
+let managerModule = czmHelper.ManagerModule;
+let dataProcesser = new czmHelper.DataModule.DataPrepocesser()
 
-const _czmHelper_ = ref(null)
-
-onMounted(() => {
-  _czmHelper_.value.style.width = props.width;
-  _czmHelper_.value.style.height = props.height;
+const $viewer = computed(() => {
+  return $store.Viewer;
 })
-
+const $bus = mitt()
+const _czmCtx_ = ref(null)
+const sM = ref(null)
+const cM = ref(null)
+const eM = ref(null)
+const dM = ref(null)
+const dP = ref(null)
+const cfgM = new managerModule.ConfigManager();
 let useStore = defineStore('czmHelper', {
   state: () => {
     return {
@@ -64,35 +74,42 @@ let useStore = defineStore('czmHelper', {
     },
   }
 });
-
 let $store = useStore();
-provide('$store', $store)
 
-// 分发管理者
-let currentViewer = null;
-let viewerHistory = new Set([]);
-let managerModule = czmHelper.ManagerModule;
-let dataProcesser = new czmHelper.DataModule.DataPrepocesser()
+
+onMounted(() => {
+  _czmCtx_.value.style.width = props.width;
+  _czmCtx_.value.style.height = props.height;
+})
+
+
 watchEffect(() => {
   const $viewer = $store.Viewer;
   viewerHistory.add($viewer);
   if (!$viewer || $viewer === currentViewer) return;
   currentViewer = $viewer; // 保存当前的 viewer
   if (!$viewer) return;
-  let SceneManager = new managerModule.SceneManager($viewer);
-  let CameraManager = new managerModule.CameraManager($viewer);
-  let EventManager = new managerModule.EventManager($viewer);
-  let DrawingManager = new managerModule.DrawingManager($viewer);
-  let ConfigManager = new managerModule.ConfigManager($viewer);
-  provide('$viewer', $viewer);
-  provide('SceneManager', ref(SceneManager));
-  provide('CameraManager', ref(CameraManager));
-  provide('EventManager', ref(EventManager));
-  provide('DrawingManager', ref(DrawingManager));
-  provide('DataProcesser', ref(dataProcesser));
-  provide('ConfigManager', ref(ConfigManager));
+  sM.value = new managerModule.SceneManager($viewer);
+  cM.value = new managerModule.CameraManager($viewer);
+  eM.value = new managerModule.EventManager($viewer);
+  dM.value = new managerModule.DrawingManager($viewer);
 });
 
+
+onMounted(() => {
+  console.log(import.meta.url, '<CzmTexture> mounted')
+})
+
+provide('$bus', $bus)
+provide('$store', $store)
+provide('$viewer', $viewer);
+provide('SceneManager', sM);
+provide('CameraManager', cM);
+provide('EventManager', eM);
+provide('DrawingManager', dM);
+provide('DataProcesser', dP);
+provide('ConfigManager', cfgM);
+provide('DataProcesser', dataProcesser)
 </script>
 
 <style lang="scss" scoped>

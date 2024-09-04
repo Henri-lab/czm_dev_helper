@@ -1,13 +1,13 @@
 <template>
     <div class="ex1">
-        <CzmHelper>
-            <CzmMap></CzmMap>
-        </CzmHelper>
+        <CzmTexture>
+            <CzmMap />
+        </CzmTexture>
     </div>
 </template>
 
 <script setup>
-import { CzmHelper, CzmMap } from '../../components'
+import { CzmTexture, CzmMap } from '../../components'
 
 </script>
 

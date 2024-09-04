@@ -1,8 +1,6 @@
 <!-- 创建ceisum地图视图 并且加载对应视图的管理者 -->
 <template>
-    <div id="czm-container">
-        <div id="czm-viewer"></div>
-    </div>
+    <div id="czm-container"></div>
 </template>
 
 <script setup>
@@ -20,18 +18,20 @@ const props = defineProps({
     }
 
 })
+
+const $bus = inject('$bus');
 const $store = inject('$store');
 const cfgM = inject('ConfigManager')
 const sM = inject('SceneManager')
 const cM = inject('CameraManager');
 
 
-let curName = 'global' //当前地图类型
-let curViewer = null;  //导出的地图
+let curName //当前地图类型
+let curViewer;  //导出的地图
 let cacheViewers = [];//导出的地图集
 
 async function createMap(name) {
-    curName = name.toLowerCase();
+    name ? curName = name.toLowerCase() : curName = '';
     // 查找缓存
     const oldViewer = cacheViewers.find(cache => cache.name === name)
     if (oldViewer) {
@@ -40,12 +40,15 @@ async function createMap(name) {
     }
     // 缓存没有，则初始化
     // 切换地图资源
-    if (props.option == {}) {
+    if (props.option == {} || !name) {
+        console.log('default viewer creating')
         curViewer = await toGlobalViewer()
-        curName = 'global'
+        console.log('default viewer created')
+        curName = 'global@henrifox'
     } else {
-        props.option.containerId = `czm_viewer`;
+        console.log(`custom viewer-${name} creating`)
         curViewer = await toCustomViewer(props.option);
+        console.log(`custom viewer-${name} created`)
         curName = name
     }
     $store.setMap(curName)
@@ -57,7 +60,7 @@ async function createMap(name) {
 const toGlobalViewer = async () => {
     // 世界地图
     const def_vcfg_global = {
-        containerId: `czm_viewer`,
+        containerId: 'czm-container',
         baseConfig: {
             navigationHelpButton: true,
             navigationInstructionsInitiallyVisible: true,
@@ -75,6 +78,7 @@ const toGlobalViewer = async () => {
     };
     try {
         // 世界地图配置...
+        console.log(cfgM.value,'sfsfssfsfsfs')
         const global = await cfgM.value.initViewer(def_vcfg_global);
         $store.setViewer(markRaw(global));
         // 等待 Vue 完成响应式更新
@@ -84,12 +88,13 @@ const toGlobalViewer = async () => {
         switchViewerTo(global); // 切换地图
         return global;
     } catch (error) {
-        console.error("Error initializing global viewer:", error);
+        console.error("Error initializing default viewer:", error);
     }
 }
 const toCustomViewer = async (option) => {
     try {
         // 世界地图配置...
+        option.containerId = `czm-container`;
         const _viewer = await cfgM.value.initViewer(option);
         $store.setViewer(markRaw(_viewer));
         await nextTick();
@@ -121,16 +126,18 @@ function destroyViewer(viewer) {
     }
 }
 
-onMounted(() => {
-    createMap('global');
+onMounted(async () => {
+    console.log(import.meta.url, '<CzmMap> mounted')
+    createMap()
+    // $store.setMap('global@henrifox')
 })
 
 
-watch(() => $store.MapUpdatedCount,
-    (n, o) => {
-        if (n > o) {//更新地图次数增加，重新加载地图
-            createMap($store.Map);
-        }
-    }
-);
+// watch(() => $store.MapUpdatedCount,
+//     (n, o) => {
+//         if (n > o) {//更新地图次数增加，重新加载地图
+//             createMap($store.Map);
+//         }
+//     }
+// );
 </script>
