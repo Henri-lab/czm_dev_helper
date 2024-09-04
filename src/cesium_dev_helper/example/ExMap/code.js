@@ -2,9 +2,7 @@ export default
     `
 <template>
     <div class="ex1">
-        <CzmMap name="wuhan123" :option="wuhan" width="30%" height="40%">
-            <CzmTexture></CzmTexture>
-        </CzmMap>
+        <CzmMap name="wuhan123" :option="wuhan" width="30%" height="40%" />
     </div>
 </template>
 

@@ -9,19 +9,17 @@ import * as Cesium from 'cesium';
 import _ from 'lodash';
 const $bus = inject('$bus');
 const $store = inject('$store');
-
-const $viewer = computed(() => inject('$viewer'));
-const sM = inject('SceneManager');
-
-watch(() => $viewer.value, (n, o) => {
-  console.log(n, o, 'viewer changed')
-}, { immediate: true })
-// watch(() => sM, (n, o) => {
-//   console.log(n, o, 'sceneManager changed')
-// }, { immediate: true })
-onMounted(() => {
-
+let $viewer
+let $scene
+let $camera
+$bus.on('ctx', (viewer) => {
+  console.log(viewer, 'ctx:$viewer')
+  $viewer = viewer
+  $scene = $viewer.scene
+  $camera=$viewer.camera
 })
+defineExpose({ $viewer, $scene ,$camera})
+
 
 
 </script>

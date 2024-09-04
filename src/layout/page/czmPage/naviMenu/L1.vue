@@ -71,13 +71,13 @@ function handleItemClick(itemKey) {
   else if (itemKey === menuNameKeys['source_3dtiles']) {
     //加载模型
     const tileOpt = {
-      url: '/src/mock/3dtiles/Tile_+002_+005/tileset.json',
+      url: 'static/3dtiles/Tile_+002_+005/tileset.json',
     };
     czmhelper.value?.add3DModel('3dtiles', tileOpt);
   }
   else if (itemKey === menuNameKeys['source_gltf']) {
     const gltfOpt = {
-      url: '/src/mock/metro.gltf',
+      url: 'static/gltf/metro.gltf',
       modelMatrix: Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0.0, 0.0, 0.0)),
       scale: 1.0
     }

@@ -37,7 +37,7 @@ const vcfg_wuhan = {
 
 // 白膜
 const modelOpt_wuhan = {
-    url: "/src/mock/wuhan/tileset.json",
+    url: "static/mono/wuhan/tileset.json",
 }
 
 // 获取配置 可以指定viewer在哪个容器

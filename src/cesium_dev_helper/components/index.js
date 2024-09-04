@@ -1,7 +1,7 @@
 import CzmMap from "./CzmMap.vue";
-import CzmTexture from './CzmTexture.vue'
+import CzmCtx from './CzmCtx.vue'
 
 export {
     CzmMap,
-    CzmTexture
+    CzmCtx
 }

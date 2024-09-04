@@ -78,18 +78,18 @@ let useStore = defineStore('czmHelper', {
 });
 let $bus = mitt()
 let $store = useStore();
-let $viewer = computed(() => $store.Viewer);
+let $viewer
 // 分发管理者
 let cfgM, dP
-let sMRef = ref(null), cMRef = ref(null), eMRef = ref(null), dMRef = ref(null)
+let sM , cM , eM , dM 
 let managerModule = czmHelper.ManagerModule;
 cfgM = new managerModule.ConfigManager();
 dP = new czmHelper.DataModule.DataPrepocesser()
 function _updateViewerManager_(viewer) {
-    sMRef.value = new managerModule.SceneManager(viewer);
-    cMRef.value = new managerModule.CameraManager(viewer);
-    eMRef.value = new managerModule.EventManager(viewer);
-    dMRef.value = new managerModule.DrawingManager(viewer);
+    cM = new managerModule.CameraManager(viewer);
+    sM = new managerModule.SceneManager(viewer);
+    eM = new managerModule.EventManager(viewer);
+    dM = new managerModule.DrawingManager(viewer);
 }
 
 const _czm_ = ref(null)
@@ -151,8 +151,8 @@ const _toDefaultViewer_ = async () => {
         const global = await cfgM.initViewer(def_vcfg_global);
         $store.setViewer(markRaw(global));
         _updateViewerManager_(global);
-        sMRef.value.initScene();
-        cMRef.value.isRotationEnabled(1, 0, 0.5); // 开启地球自转
+        sM.initScene();
+        cM.isRotationEnabled(1, 0, 0.5); // 开启地球自转
         _switchViewerTo_(global); // 切换地图
         return global;
     } catch (error) {
@@ -164,10 +164,9 @@ const _toCustomViewer_ = async (option) => {
         // 世界地图配置...
         option.containerId = `czm-container`;
         const _viewer = await cfgM.initViewer(option);
-        console.log(_viewer, 'fsfsfs')
         $store.setViewer(markRaw(_viewer));
         _updateViewerManager_(_viewer);
-        sMRef.initScene();
+        sM.initScene();
         _switchViewerTo_(_viewer); // 切换地图
         return _viewer;
     } catch (error) {
@@ -194,14 +193,6 @@ function _destroyViewer_(viewer) {
 
 provide('$bus', $bus)
 provide('$store', $store)
-provide('$viewer', $viewer);
-provide('SceneManager', sMRef);
-provide('CameraManager', cMRef);
-provide('EventManager', eMRef);
-provide('DrawingManager', dMRef);
-provide('DataProcesser', dP);
-provide('ConfigManager', cfgM);
-
 
 
 
@@ -210,6 +201,7 @@ provide('ConfigManager', cfgM);
 onMounted(async () => {
     console.log(import.meta.url, '<CzmMap> mounted')
     await createMap(props.name)
+    $bus.emit('ctx', curViewer)
 })
 </script>
 

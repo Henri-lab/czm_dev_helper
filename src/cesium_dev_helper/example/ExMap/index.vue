@@ -3,7 +3,7 @@
         <div class="code" ref="code"
             style="color:antiquewhite; background-color: rgb(26, 40, 4); height: 20%; overflow: scroll;"></div>
         <CzmMap name="wuhan123" :option="wuhan" width="100%" height="80%">
-            <CzmTexture></CzmTexture>
+            <CzmCtx></CzmCtx>
         </CzmMap>
     </div>
 </template>
@@ -11,7 +11,7 @@
 <script setup>
 import { marked } from 'marked'
 import codeString from './code.js'
-import { CzmTexture, CzmMap } from '../../components'
+import { CzmCtx, CzmMap } from '../../components'
 // 武汉 白模 视图 
 import { TencentImageryProvider } from '../../lib/Plugin/mapPlugin';
 
