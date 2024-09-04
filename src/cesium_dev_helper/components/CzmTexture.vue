@@ -8,17 +8,20 @@ import { markRaw, onMounted, watch, inject, computed } from 'vue';
 import * as Cesium from 'cesium';
 import _ from 'lodash';
 const $bus = inject('$bus');
+const $store = inject('$store');
 
 const $viewer = computed(() => inject('$viewer'));
 const sM = inject('SceneManager');
 
-// watch(() => $viewer.value, (n, o) => {
-//   console.log(n, o, 'viewer changed')
-// }, { immediate: true })
-watch(() => sM, (n, o) => {
-  console.log(n, o, 'sceneManager changed')
+watch(() => $viewer.value, (n, o) => {
+  console.log(n, o, 'viewer changed')
 }, { immediate: true })
+// watch(() => sM, (n, o) => {
+//   console.log(n, o, 'sceneManager changed')
+// }, { immediate: true })
+onMounted(() => {
 
+})
 
 
 </script>

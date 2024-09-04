@@ -41,6 +41,15 @@ let useStore = defineStore('czmHelper', {
             mapUpdatedCount: 0,
             viewerUpdatedCount: 0,
             editorUpdatedCount: 0,
+            // 
+            manager: {
+                SceneManager: null,
+                CameraManager: null,
+                EventManager: null,
+                DrawingManager: null,
+                DataProcesser: null,
+                ConfigManager: null
+            }
         };
     },
     getters: {
@@ -191,6 +200,10 @@ provide('EventManager', eMRef);
 provide('DrawingManager', dMRef);
 provide('DataProcesser', dP);
 provide('ConfigManager', cfgM);
+
+
+
+
 
 
 onMounted(async () => {
