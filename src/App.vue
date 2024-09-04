@@ -26,6 +26,10 @@
   background-color: black;
   z-index: 999;
 }
+.app{
+  width: 100vw;
+  height: 100vh;
+}
 
 @import './index.scss';
 </style>

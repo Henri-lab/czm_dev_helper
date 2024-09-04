@@ -151,27 +151,26 @@ export default class EntityMaker extends DrawingManager {
    * @returns {Cesium.Entity} The created static entity.
    */
   // 创建静态实体--------------------------------------------------------
-  createStaticEntity(type, { extraOption, options, datasource }) {
-    const _type = type.toLowerCase();
-    switch (_type) {
-      case 'point':
-        return PointEntities(extraOption, options, datasource);
-      case 'polyline':
-        return LineEntity(extraOption, options, datasource);
-      case 'polygon':
-        return PolygonEntity(extraOption, options, datasource);
-      case 'box':
-        return BoxEntity(extraOption, options, datasource);
-      case 'corridor':
-        return CorridorEntity(extraOption, options, datasource);
-      case 'ellipse':
-        return EllipseEntity(extraOption, options, datasource);
-      case 'model':
-        return ModelEntity(extraOption, options, datasource);
-      default:
-        throw new TypeError(`Unsupported entity type: ${type}`);
-    }
+  createStaticEntity(type, config) {
+  const constructors = {
+    'point': (extraOption, options, datasource) => PointEntities(extraOption, options, datasource),
+    'polyline': (extraOption, options, datasource) => LineEntity(extraOption, options, datasource),
+    'polygon': (extraOption, options, datasource) => PolygonEntity(extraOption, options, datasource),
+    'box': (extraOption, options, datasource) => BoxEntity(extraOption, options, datasource),
+    'corridor': (extraOption, options, datasource) => CorridorEntity(extraOption, options, datasource),
+    'ellipse': (extraOption, options, datasource) => EllipseEntity(extraOption, options, datasource),
+    'model': (extraOption, options, datasource) => ModelEntity(extraOption, options, datasource)
+  };
+
+  const _type = type.toLowerCase();
+  const constructor = constructors[_type];
+  
+  if (!constructor) {
+    throw new TypeError(`Unsupported entity type: ${type}`);
   }
+
+  return constructor(config.extraOption, config.options, config.datasource);
+}
 
   // 创建动态实体--------------------------------------------------------
   /**
