@@ -185,7 +185,7 @@ function _destroyViewer_(viewer) {
 provide('$bus', $bus)
 provide('$store', $store)
 provide('$viewer', $viewer);
-provide('SceneManager', computed(() => sMRef.value));
+provide('SceneManager', sMRef);
 provide('CameraManager', cMRef);
 provide('EventManager', eMRef);
 provide('DrawingManager', dMRef);
