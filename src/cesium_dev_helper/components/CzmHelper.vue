@@ -1,18 +1,33 @@
 <!-- 给其他组件分发视图的管理者 -->
 <template>
-  <div class="czm-helper">
-
-
-
+  <div class="czm-helper" ref="_czmHelper_">
+    <slot></slot>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, watchEffect, provide } from 'vue';
 import { defineStore } from 'pinia'
-import czmHelper from '../_lib';
+import czmHelper from '../lib';
+const props = defineProps({
+  width: {
+    type: String,
+    default: '100%'
+  },
+  height: {
+    type: String,
+    default: '100%'
+  }
+})
 
-let useStore = defineStore('default', {
+const _czmHelper_ = ref(null)
+
+onMounted(() => {
+  _czmHelper_.value.style.width = props.width;
+  _czmHelper_.value.style.height = props.height;
+})
+
+let useStore = defineStore('czmHelper', {
   state: () => {
     return {
       map: '', // name of map 
@@ -79,3 +94,7 @@ watchEffect(() => {
 });
 
 </script>
+
+<style lang="scss" scoped>
+.czm-helper {}
+</style>

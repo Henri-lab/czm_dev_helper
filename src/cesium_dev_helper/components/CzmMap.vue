@@ -121,6 +121,11 @@ function destroyViewer(viewer) {
     }
 }
 
+onMounted(() => {
+    createMap('global');
+})
+
+
 watch(() => $store.MapUpdatedCount,
     (n, o) => {
         if (n > o) {//更新地图次数增加，重新加载地图
