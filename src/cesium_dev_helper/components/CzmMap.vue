@@ -67,34 +67,27 @@ let useStore = defineStore('czmHelper', {
         },
     }
 });
+let $bus = mitt()
 let $store = useStore();
+let $viewer = computed(() => $store.Viewer);
 // 分发管理者
-let cfgM, sM, cM, eM, dM, dP
+let cfgM, dP
+let sMRef = ref(null), cMRef = ref(null), eMRef = ref(null), dMRef = ref(null)
 let managerModule = czmHelper.ManagerModule;
 cfgM = new managerModule.ConfigManager();
 dP = new czmHelper.DataModule.DataPrepocesser()
-function updateManager(viewer) {
-    sM = new managerModule.SceneManager(viewer);
-    cM = new managerModule.CameraManager(viewer);
-    eM = new managerModule.EventManager(viewer);
-    dM = new managerModule.DrawingManager(viewer);
+function _updateViewerManager_(viewer) {
+    sMRef.value = new managerModule.SceneManager(viewer);
+    cMRef.value = new managerModule.CameraManager(viewer);
+    eMRef.value = new managerModule.EventManager(viewer);
+    dMRef.value = new managerModule.DrawingManager(viewer);
 }
 
-
-const $viewer = computed(() => $store.Viewer);
-
-const $bus = mitt()
 const _czm_ = ref(null)
-
-
 onMounted(() => {
     _czm_.value.style.width = props.width;
     _czm_.value.style.height = props.height;
 })
-
-
-
-
 
 let curName //当前地图类型
 let curViewer;  //导出的地图
@@ -111,13 +104,13 @@ async function createMap(name) {
     // 缓存没有，则初始化
     if (props.option == {} || !name) {
         console.log('default viewer creating')
-        curViewer = await toDefaultViewer()
+        curViewer = await _toDefaultViewer_()
         console.log('default viewer created')
         curName = 'global@henrifox'
 
     } else {
         console.log(`custom viewer-${name} creating`)
-        curViewer = await toCustomViewer(props.option);
+        curViewer = await _toCustomViewer_(props.option);
         console.log(`custom viewer-${name} created`)
         curName = name
     }
@@ -125,9 +118,7 @@ async function createMap(name) {
     return curViewer;
 }
 
-
-// -全局视图
-const toDefaultViewer = async () => {
+const _toDefaultViewer_ = async () => {
     // 世界地图
     const def_vcfg_global = {
         containerId: 'czm-container',
@@ -140,7 +131,7 @@ const toDefaultViewer = async () => {
             imageryProvider: [],
         },
         extraConfig: {
-            name: 'global',
+            name: 'global@henrifox',
             AccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiMDk4NmM5OS03MmNlLTRiNWItOTUzNy1hYzhkMTUwYjgwNmQiLCJpZCI6MjE3MTc3LCJpYXQiOjE3MTcwNTUwMTh9.C3dvJjK0cBUhb87AI_EnpLPUwxD3ORI8sGcntlhCAmw',
             logo: false,
             depthTest: true,
@@ -150,44 +141,41 @@ const toDefaultViewer = async () => {
         // 世界地图配置...
         const global = await cfgM.initViewer(def_vcfg_global);
         $store.setViewer(markRaw(global));
-        updateManager(global);
-        sM.initScene();
-        cM.isRotationEnabled(1, 0, 0.5); // 开启地球自转
-        switchViewerTo(global); // 切换地图
+        _updateViewerManager_(global);
+        sMRef.value.initScene();
+        cMRef.value.isRotationEnabled(1, 0, 0.5); // 开启地球自转
+        _switchViewerTo_(global); // 切换地图
         return global;
     } catch (error) {
         console.error("Error initializing default viewer:", error);
     }
 }
-const toCustomViewer = async (option) => {
+const _toCustomViewer_ = async (option) => {
     try {
         // 世界地图配置...
         option.containerId = `czm-container`;
         const _viewer = await cfgM.value.initViewer(option);
         $store.setViewer(markRaw(_viewer));
-        updateManager(_viewer);
-        sM.initScene();
-        switchViewerTo(_viewer); // 切换地图
+        _updateViewerManager_(_viewer);
+        sMRef.initScene();
+        _switchViewerTo_(_viewer); // 切换地图
         return _viewer;
     } catch (error) {
         console.error("Error initializing viewer:", error);
     }
 }
-// --辅助--
-function switchViewerTo(viewer) {
-    if (curViewer && curViewer !== viewer) {
+function _switchViewerTo_(viewer) {
+    if (curViewer && curViewer !== viewer) {//新 viewer 加入
         cacheViewers.push({//销毁 前 缓存
             name: curName,
             data: viewer
         });
-        destroyViewer(curViewer);
+        _destroyViewer_(curViewer);
     }
-    // 设置为导出的currentViewer
     curViewer = viewer;
 }
-function destroyViewer(viewer) {
+function _destroyViewer_(viewer) {
     if (viewer) {
-        // console.log('destroy', viewer.name)
         viewer.destroy();
         viewer = null;
     }
@@ -197,10 +185,10 @@ function destroyViewer(viewer) {
 provide('$bus', $bus)
 provide('$store', $store)
 provide('$viewer', $viewer);
-provide('SceneManager', sM);
-provide('CameraManager', cM);
-provide('EventManager', eM);
-provide('DrawingManager', dM);
+provide('SceneManager', computed(() => sMRef.value));
+provide('CameraManager', cMRef);
+provide('EventManager', eMRef);
+provide('DrawingManager', dMRef);
 provide('DataProcesser', dP);
 provide('ConfigManager', cfgM);
 

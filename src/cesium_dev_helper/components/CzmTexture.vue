@@ -4,19 +4,20 @@
 </template>
 
 <script setup>
-import { markRaw, onMounted, watchEffect, inject } from 'vue';
+import { markRaw, onMounted, watch, inject, computed } from 'vue';
 import * as Cesium from 'cesium';
 import _ from 'lodash';
 const $bus = inject('$bus');
-const $viewer = inject('$viewer');
 
+const $viewer = computed(() => inject('$viewer'));
+const sM = inject('SceneManager');
 
-
-
-onMounted(async () => {
-  console.log(import.meta.url, '<CzmTexture> mounted')
-  console.log($viewer.value, 'ctx:$viewer')
-})
+// watch(() => $viewer.value, (n, o) => {
+//   console.log(n, o, 'viewer changed')
+// }, { immediate: true })
+watch(() => sM, (n, o) => {
+  console.log(n, o, 'sceneManager changed')
+}, { immediate: true })
 
 
 
