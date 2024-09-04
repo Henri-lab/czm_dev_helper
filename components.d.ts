@@ -16,7 +16,7 @@ declare module 'vue' {
     Editor: typeof import('./src/components/Editor/index.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElWatermark: typeof import('element-plus/es')['ElWatermark']
-    HlsLive: typeof import('./src/components/charts/HlsLive.vue')['default']
+    HlsLive: typeof import('./src/components/Charts/HlsLive.vue')['default']
     'Index copy': typeof import('./src/components/ColorPicker/index copy.vue')['default']
     Me: typeof import('./src/components/me.vue')['default']
     Pagination: typeof import('./src/components/Pagination/index.vue')['default']

@@ -15,6 +15,7 @@ import czmHelper from '@czmHelper';
 
 
 const defaultStore = useDefaultStore();
+const setMap = defaultStore.setMap;
 const managerModule = czmHelper.ManagerModule;
 const dataProcesser = new czmHelper.DataModule.DataPrepocesser();
 
@@ -105,6 +106,7 @@ defineExpose({
   initScene,
   add3DModel,
   startLine,
+  setMap,
   $viewer,
 });
 </script>
