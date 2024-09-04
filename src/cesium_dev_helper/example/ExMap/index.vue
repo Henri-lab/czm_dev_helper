@@ -1,8 +1,8 @@
 <template>
     <div class="ex1">
-        <CzmTexture>
-            <CzmMap />
-        </CzmTexture>
+        <CzmMap>
+            <CzmTexture></CzmTexture>
+        </CzmMap>
     </div>
 </template>
 

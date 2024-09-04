@@ -22,8 +22,11 @@ import {
     SettingOutlined,
 } from '@ant-design/icons-vue';
 import type { MenuTheme } from 'ant-design-vue';
-const theme = ref<MenuTheme>('dark');
+
 const isExMap = ref(false)
+const isTest = ref(false)
+
+const theme = ref<MenuTheme>('dark');
 const selectedKeys = ref([]);
 const openKeys = ref([]);
 const items = ref([
@@ -36,8 +39,8 @@ const items = ref([
     {
         key: '2',
         icon: () => h(CalendarOutlined),
-        label: 'Navigation Two',
-        title: 'Navigation Two',
+        label: 'test',
+        title: '',
     },
     {
         key: 'sub1',
@@ -111,6 +114,9 @@ watch(() => selectedKeys.value,
         if (newV[0] == '1') {
             console.log('1');
             isExMap.value = true
+        }
+        else if (newV[0] == '2') {
+            isTest.value = true
         }
     }
 )

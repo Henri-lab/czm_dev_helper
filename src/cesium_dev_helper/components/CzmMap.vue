@@ -1,29 +1,99 @@
-<!-- 创建ceisum地图视图 并且加载对应视图的管理者 -->
+<!-- 给其他组件分发视图的管理者 -->
 <template>
-    <div id="czm-container"></div>
+    <div id="czm-container" ref="_czm_">
+        <slot></slot>
+    </div>
 </template>
 
 <script setup>
-import { markRaw, onMounted, watchEffect, inject } from 'vue';
+import { ref, computed, watchEffect, provide, onBeforeMount } from 'vue';
+import { defineStore } from 'pinia'
+import czmHelper from '../lib';
+import mitt from 'mitt'
 import * as Cesium from 'cesium';
-import _ from 'lodash';
 const props = defineProps({
+    width: {
+        type: String,
+        default: '100%'
+    },
+    height: {
+        type: String,
+        default: '100%'
+    },
     name: {//map name is not viewer name
         type: String,
-        default: 'global'
+        default: ''
     },
     option: {// map viewer config
         type: Object,
         default: () => ({})
     }
-
 })
 
-const $bus = inject('$bus');
-const $store = inject('$store');
-const cfgM = inject('ConfigManager')
-const sM = inject('SceneManager')
-const cM = inject('CameraManager');
+let useStore = defineStore('czmHelper', {
+    state: () => {
+        return {
+            map: '', // name of map 
+            mapInfo: {},
+            viewer: null,
+            editor: null,
+            // 检测变化次数
+            mapUpdatedCount: 0,
+            viewerUpdatedCount: 0,
+            editorUpdatedCount: 0,
+        };
+    },
+    getters: {
+        Map: state => state.map,
+        MapInfo: state => state.mapInfo,
+        Viewer: state => state.viewer,
+        Editor: state => state.editor,
+        MapUpdatedCount: state => state.mapUpdatedCount,
+        ViewerUpdatedCount: state => state.viewerUpdatedCount,
+        EditorUpdatedCount: state => state.editorUpdatedCount
+    },
+    actions: {
+        setMap(type) {
+            this.map = type;
+            this.mapUpdatedCount++;
+        },
+        setViewer(viewer) {
+            this.viewer = viewer;
+            this.viewerUpdatedCount++;
+        },
+        setEditor(editor) {
+            this.editor = editor;
+            this.editorUpdatedd++;
+        },
+    }
+});
+let $store = useStore();
+// 分发管理者
+let cfgM, sM, cM, eM, dM, dP
+let managerModule = czmHelper.ManagerModule;
+cfgM = new managerModule.ConfigManager();
+dP = new czmHelper.DataModule.DataPrepocesser()
+function updateManager(viewer) {
+    sM = new managerModule.SceneManager(viewer);
+    cM = new managerModule.CameraManager(viewer);
+    eM = new managerModule.EventManager(viewer);
+    dM = new managerModule.DrawingManager(viewer);
+}
+
+
+const $viewer = computed(() => $store.Viewer);
+
+const $bus = mitt()
+const _czm_ = ref(null)
+
+
+onMounted(() => {
+    _czm_.value.style.width = props.width;
+    _czm_.value.style.height = props.height;
+})
+
+
+
 
 
 let curName //当前地图类型
@@ -39,25 +109,25 @@ async function createMap(name) {
         // return oldViewer.data;
     }
     // 缓存没有，则初始化
-    // 切换地图资源
     if (props.option == {} || !name) {
         console.log('default viewer creating')
-        curViewer = await toGlobalViewer()
+        curViewer = await toDefaultViewer()
         console.log('default viewer created')
         curName = 'global@henrifox'
+
     } else {
         console.log(`custom viewer-${name} creating`)
         curViewer = await toCustomViewer(props.option);
         console.log(`custom viewer-${name} created`)
         curName = name
     }
-    $store.setMap(curName)
+    $store.setMap(curName)//MapUpdatedCount ++
     return curViewer;
 }
 
-// 地图配置
+
 // -全局视图
-const toGlobalViewer = async () => {
+const toDefaultViewer = async () => {
     // 世界地图
     const def_vcfg_global = {
         containerId: 'czm-container',
@@ -78,13 +148,11 @@ const toGlobalViewer = async () => {
     };
     try {
         // 世界地图配置...
-        console.log(cfgM.value,'sfsfssfsfsfs')
-        const global = await cfgM.value.initViewer(def_vcfg_global);
+        const global = await cfgM.initViewer(def_vcfg_global);
         $store.setViewer(markRaw(global));
-        // 等待 Vue 完成响应式更新
-        await nextTick();
-        sM.value.initScene();
-        cM.value.isRotationEnabled(1, 0, 0.5); // 开启地球自转
+        updateManager(global);
+        sM.initScene();
+        cM.isRotationEnabled(1, 0, 0.5); // 开启地球自转
         switchViewerTo(global); // 切换地图
         return global;
     } catch (error) {
@@ -97,15 +165,14 @@ const toCustomViewer = async (option) => {
         option.containerId = `czm-container`;
         const _viewer = await cfgM.value.initViewer(option);
         $store.setViewer(markRaw(_viewer));
-        await nextTick();
-        sM.value.initScene();
+        updateManager(_viewer);
+        sM.initScene();
         switchViewerTo(_viewer); // 切换地图
         return _viewer;
     } catch (error) {
         console.error("Error initializing viewer:", error);
     }
 }
-
 // --辅助--
 function switchViewerTo(viewer) {
     if (curViewer && curViewer !== viewer) {
@@ -126,18 +193,24 @@ function destroyViewer(viewer) {
     }
 }
 
+
+provide('$bus', $bus)
+provide('$store', $store)
+provide('$viewer', $viewer);
+provide('SceneManager', sM);
+provide('CameraManager', cM);
+provide('EventManager', eM);
+provide('DrawingManager', dM);
+provide('DataProcesser', dP);
+provide('ConfigManager', cfgM);
+
+
 onMounted(async () => {
     console.log(import.meta.url, '<CzmMap> mounted')
-    createMap()
-    // $store.setMap('global@henrifox')
+    await createMap(props.name)
 })
-
-
-// watch(() => $store.MapUpdatedCount,
-//     (n, o) => {
-//         if (n > o) {//更新地图次数增加，重新加载地图
-//             createMap($store.Map);
-//         }
-//     }
-// );
 </script>
+
+<style lang="scss" scoped>
+.czm-helper {}
+</style>
