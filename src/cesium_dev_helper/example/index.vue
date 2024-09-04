@@ -7,7 +7,7 @@
         <a-menu v-model:openKeys="openKeys" v-model:selectedKeys="selectedKeys" style="width: 20%" mode="inline"
             :theme="theme" :items="items" />
         <div class="doc-content" style="width: 80%;height: 100%; background-color: rgba(24, 24, 23, 0.3);">
-            <ExMap  />
+            <!-- <ExMap  /> -->
         </div>
     </div>
 </template>
