@@ -1,5 +1,5 @@
 <template>
-    <a-card hoverable>
+    <a-card hoverable class="panel-draw">
         <a-card-meta title="Polyline">
 
         </a-card-meta>
@@ -8,6 +8,7 @@
         </template>
         <v-divider />
         <v-color-picker></v-color-picker>
+       <el-button>画线</el-button>
 
     </a-card>
 </template>

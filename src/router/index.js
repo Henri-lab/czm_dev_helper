@@ -6,6 +6,17 @@ import { setPermissionGuardExclude } from "./guard/permission";
 
 const testRoutes = [
   {
+    path: '/',
+    name: 'home',
+    redirect: '/example',
+    // component: () => import('@/views/home/index.vue'),
+  },
+  {
+    path: '/example',
+    name: 'example',
+    component: () => import('@/cesium_dev_helper/example/index.vue'),
+  },
+  {
     path: '/layout',
     component: () => import('@/layout/index.vue'),
   },
