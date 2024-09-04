@@ -1,5 +1,4 @@
 <template>
-    isExMap
     <a-switch :checked="theme === 'dark'" checked-children="Dark" un-checked-children="Light" @change="changeTheme"
         style=" margin-top: 2%;" />
     <div class="doc" style="display: flex; width: 100%;height: 100%;">
@@ -7,7 +6,8 @@
         <br />
         <a-menu v-model:openKeys="openKeys" v-model:selectedKeys="selectedKeys" style="width: 20%" mode="inline"
             :theme="theme" :items="items" />
-        <div class="doc-content" style="width: 80%;height: 100%; background-color: rgba(24, 24, 23, 0.3);">
+        <div class="doc-content"
+            style="width: 80%;height: 100%; background-color: rgba(24, 24, 23, 0.3); overflow: scroll;">
             <ExMap v-if="isExMap" />
         </div>
     </div>

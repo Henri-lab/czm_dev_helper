@@ -163,7 +163,8 @@ const _toCustomViewer_ = async (option) => {
     try {
         // 世界地图配置...
         option.containerId = `czm-container`;
-        const _viewer = await cfgM.value.initViewer(option);
+        const _viewer = await cfgM.initViewer(option);
+        console.log(_viewer, 'fsfsfs')
         $store.setViewer(markRaw(_viewer));
         _updateViewerManager_(_viewer);
         sMRef.initScene();
