@@ -15,7 +15,7 @@ import czmHelper from '../_lib';
 let useStore = defineStore('default', {
   state: () => {
     return {
-      map: '', // type of map 
+      map: '', // name of map 
       mapInfo: {},
       viewer: null,
       editor: null,

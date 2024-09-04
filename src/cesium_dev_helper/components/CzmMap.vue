@@ -7,54 +7,31 @@
 
 <script setup>
 import { markRaw, onMounted, watchEffect, inject } from 'vue';
-import useDefaultStore from '@/store';
-import { initViewerAt, Editor } from '../index';
+import * as Cesium from 'cesium';
+import _ from 'lodash';
 const props = defineProps({
-    name: {
+    name: {//map name is not viewer name
         type: String,
         default: 'global'
     },
-    viewerconfig: {
+    option: {// map viewer config
         type: Object,
         default: () => ({})
     }
 
 })
-/** 
- * @description
- * 为cesium项目初始化viewer 并加载需要的数据
-*/
-import * as Cesium from 'cesium';
-import _ from 'lodash';
 const $store = inject('$store');
 const cfgM = inject('ConfigManager')
 const sM = inject('SceneManager')
 const cM = inject('CameraManager');
 
 
-
-let curTypeId = 'global' //当前地图类型
+let curName = 'global' //当前地图类型
 let curViewer = null;  //导出的地图
 let cacheViewers = [];//导出的地图集
 
-
-/**
- * Initializes a Cesium viewer at a specified element with a specific map type.
- *
- * @param {Object} [el={ id: 'viewer' }] - The HTML element where the viewer will be created.
- * @param {string} type - The type of map to be displayed. Can be either 'global' or 'wuhan-test' or else.
- * @returns {Promise<Cesium.Viewer>} - A promise that resolves to the initialized Cesium viewer.
- *
- * @example
- * // Initialize a viewer at the element with id 'cesiumContainer' and display the global map
- * const viewer = await initViewerAt({ id: 'cesiumContainer' }, 'global');
- *
- * // Initialize a viewer at the default element and display the wuhan-test map
- * const viewer = await initViewerAt({}, 'wuhan-test');
- */
-
-async function createViewer(name) {
-    curTypeId = name.toLowerCase();
+async function createMap(name) {
+    curName = name.toLowerCase();
     // 查找缓存
     const oldViewer = cacheViewers.find(cache => cache.name === name)
     if (oldViewer) {
@@ -63,18 +40,21 @@ async function createViewer(name) {
     }
     // 缓存没有，则初始化
     // 切换地图资源
-    if (props.viewerconfig == {}) {
-        curViewer = await toGlobal()
+    if (props.option == {}) {
+        curViewer = await toGlobalViewer()
+        curName = 'global'
     } else {
-        props.viewerconfig.containerId = `czm_viewer`;
-        curViewer = await to(props.viewerconfig);
+        props.option.containerId = `czm_viewer`;
+        curViewer = await toCustomViewer(props.option);
+        curName = name
     }
+    $store.setMap(curName)
     return curViewer;
 }
 
 // 地图配置
 // -全局视图
-const toGlobal = async () => {
+const toGlobalViewer = async () => {
     // 世界地图
     const def_vcfg_global = {
         containerId: `czm_viewer`,
@@ -97,6 +77,8 @@ const toGlobal = async () => {
         // 世界地图配置...
         const global = await cfgM.value.initViewer(def_vcfg_global);
         $store.setViewer(markRaw(global));
+        // 等待 Vue 完成响应式更新
+        await nextTick();
         sM.value.initScene();
         cM.value.isRotationEnabled(1, 0, 0.5); // 开启地球自转
         switchViewerTo(global); // 切换地图
@@ -105,11 +87,12 @@ const toGlobal = async () => {
         console.error("Error initializing global viewer:", error);
     }
 }
-const to = async (viewerConfig) => {
+const toCustomViewer = async (option) => {
     try {
         // 世界地图配置...
-        const _viewer = await cfgM.value.initViewer(viewerConfig);
+        const _viewer = await cfgM.value.initViewer(option);
         $store.setViewer(markRaw(_viewer));
+        await nextTick();
         sM.value.initScene();
         switchViewerTo(_viewer); // 切换地图
         return _viewer;
@@ -122,7 +105,7 @@ const to = async (viewerConfig) => {
 function switchViewerTo(viewer) {
     if (curViewer && curViewer !== viewer) {
         cacheViewers.push({//销毁 前 缓存
-            name: curTypeId,
+            name: curName,
             data: viewer
         });
         destroyViewer(curViewer);
@@ -138,23 +121,10 @@ function destroyViewer(viewer) {
     }
 }
 
-
-
-// 创建视图 type类型的地图 加载到el元素
-const init = (name) => {
-    createViewer(name).then((viewer) => {
-        if (viewer) {
-            $store.setMap(curTypeId)
-        }
-    });
-};
-// 画笔(挂载map时创建)
-let $editor;
-
 watch(() => $store.MapUpdatedCount,
     (n, o) => {
         if (n > o) {//更新地图次数增加，重新加载地图
-            init($store.Map);
+            createMap($store.Map);
         }
     }
 );
