@@ -1,16 +1,14 @@
+export default
+    `
 <template>
-    <div class="ex1" style="display: flex;flex-direction: column;">
-        <div class="code" ref="code"
-            style="color:antiquewhite; background-color: rgb(26, 40, 4); height: 20%; overflow: scroll;"></div>
-        <CzmMap name="wuhan123" :option="wuhan" width="100%" height="80%">
+    <div class="ex1">
+        <CzmMap name="wuhan123" :option="wuhan" width="30%" height="40%">
             <CzmTexture></CzmTexture>
         </CzmMap>
     </div>
 </template>
 
 <script setup>
-import { marked } from 'marked'
-import codeString from './code.js'
 import { CzmTexture, CzmMap } from '../../components'
 // 武汉 白模 视图 
 import { TencentImageryProvider } from '../../lib/Plugin/mapPlugin';
@@ -45,17 +43,13 @@ const wuhan = {
         depthTest: true,
     },
 };
-const code = ref(null)
-
-const md = marked(`
-\`\`\` js
-${codeString}
-\`\`\`
-`)
-onMounted(() => {
-    code.value.innerHTML = md
-})
 
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.ex1 {
+    height: 100vh;
+    width: 100vw;
+}
+</style>
+`
