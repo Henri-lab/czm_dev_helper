@@ -10,7 +10,7 @@
 <script setup>
 import { ref, computed, watchEffect, provide } from 'vue';
 import { defineStore } from 'pinia'
-import czmHelper from '@czmHelper';
+import czmHelper from '../_lib';
 
 let useStore = defineStore('default', {
   state: () => {
