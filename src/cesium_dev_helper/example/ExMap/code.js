@@ -7,16 +7,14 @@ export default
 </template>
 
 <script setup>
-import { CzmTexture, CzmMap } from '../../components'
-// 武汉 白模 视图 
-import { TencentImageryProvider } from '../../lib/Plugin/mapPlugin';
+import { CzmTexture, CzmMap } from 'cesium_dev_helper/components'
+import { TencentImageryProvider } from 'cesium_dev_helper/Plugin/mapPlugin';
 
-//腾讯底图
 const txOpt = {
     style: 4, //style: img、1：经典
     crs: 'WGS84',
 };
-const tcip = new TencentImageryProvider(txOpt);
+const tcip = new TencentImageryProvider(txOpt);//腾讯底图
 const wuhan = {
     baseConfig: {
         navigationHelpButton: true,
@@ -41,13 +39,5 @@ const wuhan = {
         depthTest: true,
     },
 };
-
 </script>
-
-<style lang="scss" scoped>
-.ex1 {
-    height: 100vh;
-    width: 100vw;
-}
-</style>
 `

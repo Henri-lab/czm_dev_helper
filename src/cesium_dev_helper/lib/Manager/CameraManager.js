@@ -68,7 +68,7 @@ export default class CameraManager extends Manager {
             duration: 3,
             orientation: {
                 heading: CesiumMath.toRadians(0),
-                pitch: CesiumMath.toRadians(-30),
+                pitch: CesiumMath.toRadians(-90),
                 roll: 0
             }
         };
@@ -83,7 +83,7 @@ export default class CameraManager extends Manager {
     // 设置视角的三种方案
 
     // 精度和控制程度最高
-    setView({ destination, heading = 0, pitch = -30, roll = 0 }) {
+    setView({ destination, heading = 0, pitch = -90, roll = 0 }) {
         let _destination;
         if (typeof destination === 'object') {
             const { longitude, latitude, height } = destination;

@@ -12,7 +12,7 @@ const $store = inject('$store');
 let $viewer
 let $scene
 let $camera
-$bus.on('viewer-done', (viewer) => {
+$bus.on('czmViewerEvent@henrifox', (viewer) => {
   console.log(viewer, 'ctx:$viewer')
   $viewer = viewer
   $scene = $viewer.scene

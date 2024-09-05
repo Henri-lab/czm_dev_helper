@@ -202,8 +202,8 @@ onMounted(async () => {
     console.log(import.meta.url, '<CzmMap> mounted')
     await createMap(props.name)
     _updateViewerManager_(curViewer)
-    $bus.emit('viewer-done', curViewer)
-    $bus.emit('cameraManager-done', cM)
+    $bus.emit('czmViewerEvent@henrifox', curViewer)
+    $bus.emit('czmCameraEvent@henrifox', cM)
 })
 </script>
 
