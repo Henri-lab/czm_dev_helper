@@ -1,6 +1,6 @@
 <!-- 给其他组件分发视图的管理者 -->
 <template>
-    <div id="czm-container" ref="_czm_">
+    <div id="czm-container" ref="__CzmMap__">
         <slot></slot>
     </div>
 </template>
@@ -94,10 +94,10 @@ function _updateViewerManager_(viewer) {
     editor = new editorModule.Editor(viewer)
 }
 
-const _czm_ = ref(null)
+const __CzmMap__ = ref(null)
 onMounted(() => {
-    _czm_.value.style.width = props.width;
-    _czm_.value.style.height = props.height;
+    __CzmMap__.value.style.width = props.width;
+    __CzmMap__.value.style.height = props.height;
 })
 
 let curName //当前地图类型

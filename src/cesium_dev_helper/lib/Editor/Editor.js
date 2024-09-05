@@ -34,13 +34,13 @@ export default class Editor {
         }
         $entityDrawer.drawWithEvent('polyline', options, pluginFunction)
     }
-    drawback(type) {
+    drawback(type, isHide = true) {
         let that = this
         let collection = that.viewer.entities
         let _type = type.toLowerCase()
         if (_type === 'polyline' && that.lines.length) {
             const last = that.lines.pop()
-            collection.remove(last)
+            isHide ? (last.show = false) : collection.remove(last)
             console.log('last line removed')
             return last
         }

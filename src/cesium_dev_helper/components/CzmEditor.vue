@@ -1,5 +1,5 @@
 <template>
-    <div class="editor" display="flex">
+    <div class="editor">
     </div>
 </template>
 
@@ -10,11 +10,12 @@ import { lineOpt as defaultLineOpt } from '../lib/Editor';
 const $bus = inject('$bus')
 let editor
 
+//快速启动画笔 :draw={line=true}
 const props = defineProps({
     draw: {
         type: Object,
         default: () => ({
-            line: true,
+            line: false,
         })
     },
     lineOpt: {
@@ -26,18 +27,17 @@ const props = defineProps({
         })
     }
 })
-let drawback
-defineExpose({
-    drawback
-})
+
+
+const emits = defineEmits(['edit'])
 $bus.on('czmEditorEvent@henrifox', (_editor_) => {
     editor = _editor_
+    emits('edit', editor)
     props.draw.line && editor.startLines(props.lineOpt)
-    drawback = editor.drawback
-    setTimeout(() => {
-        editor.drawback('polyline')
-    }, 10000)
 })
+
+
+
 
 </script>
 
