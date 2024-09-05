@@ -57,13 +57,15 @@ export default class EntityDrawer extends DrawingManager {
         }
         return parsedEntityOpt;
     }
-    // 绘制动态实体(限制在本图层)-位置坐标为callbackProperty
+    // 开始准备动态实体(限制在本图层)的绘制
+    // 解析参数 调用createDynamicEntity的中间件 
     _startDynamicEntity = (typeOfEntity, entityOption, getNewPosition) => {
+        let that = this
         if (typeof getNewPosition !== 'function') throw new Error('cannot get new position')
         try {
             // 配置解析
-            const parsedEntityOpt = this._parseConfig(entityOption);
-            let Entity = this.$entityMaker.createDynamicEntity(typeOfEntity, parsedEntityOpt, getNewPosition)
+            const parsedEntityOpt = that._parseConfig(entityOption);
+            let Entity = that.$entityMaker.createDynamicEntity(typeOfEntity, parsedEntityOpt, getNewPosition)
             return Entity;
         } catch (e) {
             console.error('sth is wrong after mouse left click :', e)
@@ -136,47 +138,33 @@ export default class EntityDrawer extends DrawingManager {
      * @returns {Cesium.Entity|null} - The created entity or null if viewer or options are not provided.
      */
     drawWithEvent(Type, options, pluginFunction) {
+        const buffer = { Type, options, pluginFunction }
         console.log('drawWithEvent-type:', Type)
         if (!this.viewer || !options) return null;
 
         // --数据准备--
         const type = Type.toLowerCase()
-        let $this = this
-        let eM = new EventManager($this.viewer),
+        let that = this
+        let eM = new EventManager(that.viewer),
             // 收集click处的坐标
             pickedPosCollection = [],
             // 获取 ~新~ 事件handler程序 ,防止事件绑定间的冲突
-            _handlers = eM.handler
+            _handler_ = eM.handler
 
         // register the handlers which is working 
-        $this.currentHandler = _handlers;
+        that.currentHandler = _handler_;
 
         // 准备动态实体的数据
         options.positions = pickedPosCollection;
-        if (!options.datasource) options.datasource = this._drawLayer // 默认添至的图层
+        if (!options.datasource) options.datasource = that._drawLayer // 默认添至的图层
 
         const getNewPosition = () => {
             // return pickedPosCollection[pickedPosCollection.length - 1];最后位置
             return pickedPosCollection//整体坐标
         }
         // --创建动态实体--
-        let currentEntity = $this._startDynamicEntity(type, options, getNewPosition)
-        console.log(currentEntity, 'currentEntity')
-
-
-        // 特殊处理 
-        function extra() { // 特殊情况的额外处理
-            // 特殊处理:绘制两点直线
-            if (options.straight && type === 'polyline' && pickedPosCollection.length == 2) {
-                // 销毁事件处理程序 结束绘制
-                _handlers.destroy();
-                _handlers = null;
-                // 绘制后的回调 
-                if (typeof options.after === "function") {
-                    options.after(currentEntity, $this._transformCartesianToWGS84(pickedPosCollection),);
-                }
-            }
-        } extra()
+        let currentEntity = that._startDynamicEntity(type, options, getNewPosition)
+        // console.log(currentEntity, 'currentEntity')
 
         // --EVENT--
         // set callback function
@@ -187,35 +175,35 @@ export default class EntityDrawer extends DrawingManager {
             if (!cartesian || !isValidCartesian3(cartesian)) return;
             // 收集 点击处的地理坐标
             pickedPosCollection.push(cartesian); // 更新实体的坐标
-           
-
-            // test
-            console.log('datasource-entities', this._drawLayer.entities.values)
-            // console.log('entity', currentEntity)
-            // console.log('positions', options.positions)
-            // console.log('datasorces', this.viewer.dataSources)
-
+            // 特殊处理 
+            // 1.绘制两点直线
+            if (options.straight && type === 'polyline' && pickedPosCollection.length == 2) {
+                // 销毁事件处理程序 结束绘制
+                _handler_.destroy();
+                _handler_ = null;
+                // 绘制后的回调 
+                if (typeof options.after === "function") {
+                    options.after(currentEntity, that._transformCartesianToWGS84(pickedPosCollection),);
+                }
+            }
         }
         const afterMouseMove = (movement) => { // mouse movement 
-            let cartesian = $this._getCartesian3FromPX(movement.endPosition);
-            // 持续更新坐标选项 动态实体会每帧读取
+            let cartesian = that._getCartesian3FromPX(movement.endPosition);
+            //shadow跟踪 持续更新坐标选项 动态实体会每帧读取 
             if (!cartesian || !isValidCartesian3(cartesian)) return;
-            // pickedPosCollection.push(cartesian);
-
-            // test
-            // console.log('mouse moving', cartesian)
+            (options.mouseFollow) && pickedPosCollection.push(cartesian);
         }
         const afterRightClick = (movement) => { // right click 
 
             // 更新图形
             const isClose = true;
-            $this._updatePosByType(type, pickedPosCollection, {}, options, isClose);
+            that._updatePosByType(type, pickedPosCollection, {}, options, isClose);
 
             //开启测量功能
             if (options.measure) {
-                let endPos/*右键点击处地理坐标*/ = $this._getCartesian3FromPX(movement.position);
-                const res /*测量结果*/ = $this.$turfer.measureSimple(type, pickedPosCollection);
-                $this._measureResultHandle({
+                let endPos/*右键点击处地理坐标*/ = that._getCartesian3FromPX(movement.position);
+                const res /*测量结果*/ = that.$turfer.measureSimple(type, pickedPosCollection);
+                that._measureResultHandle({
                     /*...*/
                     entity: currentEntity,
                     value: res,
@@ -226,12 +214,12 @@ export default class EntityDrawer extends DrawingManager {
 
 
             // 结束绘制
-            _handlers.destroy();
-            _handlers = null;
+            _handler_.destroy();
+            _handler_ = null;
 
             // callback with Entity and Positions
             if (typeof options.after === "function") {
-                options.after(currentEntity, $this._transformCartesianToWGS84(pickedPosCollection));
+                options.after(currentEntity, that._transformCartesianToWGS84(pickedPosCollection));
             }
 
             // 执行额外的程序
@@ -241,13 +229,15 @@ export default class EntityDrawer extends DrawingManager {
                 // 交给pluginFunction处理数据
                 pluginFunction(_currentEntity, _currentPosArr);
             }
+
+            // 画下一条
+            pickedPosCollection = [];
+            that.drawWithEvent(buffer.Type, buffer.options, buffer.pluginFunction);
         }
         // bind events
         eM.onMouseClick(afterLeftClick);
         eM.onMouseMove(afterMouseMove);
         eM.onMouseRightClick(afterRightClick);
-
-
     }
 
 

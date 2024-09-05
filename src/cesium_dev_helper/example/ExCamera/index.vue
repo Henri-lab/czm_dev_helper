@@ -2,7 +2,7 @@
     <div class="ex2">
         <div class="ex1" style="display: flex;">
             <div class="code" ref="code"
-                style="color:antiquewhite; background-color: rgb(25, 27, 22); height: 20%; overflow: scroll; font-size: 16px;">
+                style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
             </div>
             <CzmMap width="100%" height="80%">
                 <CzmCamera :view="view" :position="position" :animation="animation" :rotation="rotation" :reset="reset" />

@@ -2,7 +2,12 @@ export default
     `
 <template>
     <CzmMap>
-        <CzmCamera :view="view" :position="position" :animation="animation" :rotation="rotation" :reset="reset" />
+        <CzmCamera 
+         :view="view"
+         :position="position" 
+         :animation="animation" 
+         :rotation="rotation" 
+         :reset="reset" />
     </CzmMap>
 </template>
 

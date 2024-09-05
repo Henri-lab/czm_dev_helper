@@ -81,8 +81,9 @@ let $store = useStore();
 let $viewer
 // 分发管理者
 let cfgM, dP
-let sM, cM, eM, dM
+let sM, cM, eM, dM, editor
 let managerModule = czmHelper.ManagerModule;
+let editorModule = czmHelper.EditorModule;
 cfgM = new managerModule.ConfigManager();
 dP = new czmHelper.DataModule.DataPrepocesser()
 function _updateViewerManager_(viewer) {
@@ -90,6 +91,7 @@ function _updateViewerManager_(viewer) {
     sM = new managerModule.SceneManager(viewer);
     eM = new managerModule.EventManager(viewer);
     dM = new managerModule.DrawingManager(viewer);
+    editor = new editorModule.Editor(viewer)
 }
 
 const _czm_ = ref(null)
@@ -201,9 +203,9 @@ provide('$store', $store)
 onMounted(async () => {
     console.log(import.meta.url, '<CzmMap> mounted')
     await createMap(props.name)
-    _updateViewerManager_(curViewer)
     $bus.emit('czmViewerEvent@henrifox', curViewer)
     $bus.emit('czmCameraEvent@henrifox', cM)
+    $bus.emit('czmEditorEvent@henrifox', editor)
 })
 </script>
 

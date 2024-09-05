@@ -12,12 +12,15 @@
             style="width: 80%;height: 100%; background-color: rgba(24, 24, 23, 0.3); overflow: scroll;">
             <ExMap v-if="isEx == 'map'" />
             <ExCamera v-if="isEx == 'camera'" />
+            <ExEditor v-if="isEx == 'editor'" />
+
         </div>
     </div>
 </template>
 <script setup>
 import ExMap from './ExMap/index.vue'
 import ExCamera from './ExCamera/index.vue'
+import ExEditor from './ExEditor/index.vue'
 import { h, ref, watch } from 'vue';
 import {
     MailOutlined,
@@ -47,39 +50,10 @@ const items = ref([
         title: '',
     },
     {
-        key: 'sub1',
+        key: '3',
         icon: () => h(AppstoreOutlined),
-        label: 'Navigation Three',
-        title: 'Navigation Three',
-        children: [
-            {
-                key: '3',
-                label: 'Option 3',
-                title: 'Option 3',
-            },
-            {
-                key: '4',
-                label: 'Option 4',
-                title: 'Option 4',
-            },
-            {
-                key: 'sub1-2',
-                label: 'Submenu',
-                title: 'Submenu',
-                children: [
-                    {
-                        key: '5',
-                        label: 'Option 5',
-                        title: 'Option 5',
-                    },
-                    {
-                        key: '6',
-                        label: 'Option 6',
-                        title: 'Option 6',
-                    },
-                ],
-            },
-        ],
+        label: '画笔工具',
+        title: '',
     },
     {
         key: 'sub2',
@@ -116,11 +90,12 @@ const changeTheme = (checked) => {
 watch(() => selectedKeys.value,
     (newV) => {
         if (newV[0] == '1') {
-            console.log('1');
             isEx.value = 'map'
         }
         else if (newV[0] == '2') {
             isEx.value = 'camera'
+        } else if (newV[0] == '3') {
+            isEx.value = 'editor'
         }
     }
 )

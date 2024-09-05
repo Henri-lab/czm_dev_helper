@@ -11,6 +11,7 @@ declare module 'vue' {
     copy: typeof import('./src/components/ColorPicker/index copy.vue')['default']
     Draw: typeof import('./src/components/Panel/draw.vue')['default']
     Editor: typeof import('./src/components/Editor/index.vue')['default']
+    ElBu: typeof import('element-plus/es')['ElBu']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElWatermark: typeof import('element-plus/es')['ElWatermark']
     Gltf: typeof import('./src/components/Panel/gltf.vue')['default']

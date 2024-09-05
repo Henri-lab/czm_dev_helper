@@ -152,25 +152,25 @@ export default class EntityMaker extends DrawingManager {
    */
   // 创建静态实体--------------------------------------------------------
   createStaticEntity(type, config) {
-  const constructors = {
-    'point': (extraOption, options, datasource) => PointEntities(extraOption, options, datasource),
-    'polyline': (extraOption, options, datasource) => LineEntity(extraOption, options, datasource),
-    'polygon': (extraOption, options, datasource) => PolygonEntity(extraOption, options, datasource),
-    'box': (extraOption, options, datasource) => BoxEntity(extraOption, options, datasource),
-    'corridor': (extraOption, options, datasource) => CorridorEntity(extraOption, options, datasource),
-    'ellipse': (extraOption, options, datasource) => EllipseEntity(extraOption, options, datasource),
-    'model': (extraOption, options, datasource) => ModelEntity(extraOption, options, datasource)
-  };
+    const constructors = {
+      'point': (extraOption, options, datasource) => PointEntities(extraOption, options, datasource),
+      'polyline': (extraOption, options, datasource) => LineEntity(extraOption, options, datasource),
+      'polygon': (extraOption, options, datasource) => PolygonEntity(extraOption, options, datasource),
+      'box': (extraOption, options, datasource) => BoxEntity(extraOption, options, datasource),
+      'corridor': (extraOption, options, datasource) => CorridorEntity(extraOption, options, datasource),
+      'ellipse': (extraOption, options, datasource) => EllipseEntity(extraOption, options, datasource),
+      'model': (extraOption, options, datasource) => ModelEntity(extraOption, options, datasource)
+    };
 
-  const _type = type.toLowerCase();
-  const constructor = constructors[_type];
-  
-  if (!constructor) {
-    throw new TypeError(`Unsupported entity type: ${type}`);
+    const _type = type.toLowerCase();
+    const constructor = constructors[_type];
+
+    if (!constructor) {
+      throw new TypeError(`Unsupported entity type: ${type}`);
+    }
+
+    return constructor(config.extraOption, config.options, config.datasource);
   }
-
-  return constructor(config.extraOption, config.options, config.datasource);
-}
 
   // 创建动态实体--------------------------------------------------------
   /**
@@ -185,53 +185,36 @@ export default class EntityMaker extends DrawingManager {
    *
    * @returns {Object} The created dynamic entity.
    */
-  // 每一帧 执行 return curPosArr <-- _newPositions <-- getNewPosition()
+  // 每一帧 执行 return getNewPosition() <-- _newPositions <-- getNewPosition()
   createDynamicEntity(type, { extraOption, graphicOption, datasource }, getNewPosition) {
     if (typeof getNewPosition !== 'function') throw new Error('cannot get new position')
     const _type = type.toLowerCase();
-    const curPosArr = () => {//笛卡尔坐标
-      let curPosArr;
-      let _newPositions = getNewPosition();
-      isValidCartographic(_newPositions) ?
-        curPosArr = CoordTransformer.transformCartographicToCartesian3(_newPositions)
-        : curPosArr = _newPositions
-      return curPosArr
-    }
-    /**@normalObj */
     let entityOpt = {};
-    // bind graphics👻
-    entityOpt[_type] = this.createGraphicsByType(_type, graphicOption);
-
+    entityOpt[_type] = this.createGraphicsByType(_type, graphicOption); // bind graphics👻
     if (_type === 'polygon') {
       const Hierarchy = (pos) => {
         return new Cesium.PolygonHierarchy(pos);
       }
-      entityOpt.polygon.hierarchy = this.czm_callbackProperty(Hierarchy(curPosArr()))// 核心
+      entityOpt.polygon.hierarchy = this.czm_callbackProperty(Hierarchy(getNewPosition()))
     }
-
     else if (_type === 'rectangle') {
-      const Rectangle = (posArr) => {
-        // rectangle 至少需要两个点
+      const Rectangle = (posArr) => {  // rectangle 至少需要两个点
         if (posArr.length < 2) throw new TypeError('Invalid positions when creating rectangle');
         return Cesium.Rectangle.fromCartesianArray(posArr);//西南东北 w s e n
       }
-      entityOpt.rectangle.coordinates = this.czm_callbackProperty(Rectangle(curPosArr()))//核心
+      entityOpt.rectangle.coordinates = this.czm_callbackProperty(Rectangle(getNewPosition()))
     }
-
     else if (_type === 'polyline') {
-      // entityOpt.polyline.positions = this.czm_callbackProperty(curPosArr()) //bug🚨
-      entityOpt.polyline.positions = this.czm_callbackProperty(getNewPosition()) // 核心
+      entityOpt.polyline.positions = this.czm_callbackProperty(getNewPosition())
     }
-
     else {
-      entityOpt.positions = this.czm_callbackProperty(curPosArr())// 核心
+      entityOpt.positions = this.czm_callbackProperty(getNewPosition())//core👻
     }
-
     const finalOpt = {
       ...extraOption,
-      ...entityOpt,// 已经绑定graphics 并且将坐标数据设置为动态
+      ...entityOpt,
     }
-    return datasource.entities.add(finalOpt)//dynamic entity
+    return datasource.entities.add(finalOpt)//add dynamic entity👻
   }
 
   //创建高级entity--部分归 EffectControllor 控制-------------------------
