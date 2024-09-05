@@ -189,7 +189,7 @@ export default class CameraManager extends Manager {
         // 停止旋转
         function _stopRotation() {
             if (_animationFrameId) {
-                console.log('sssss')
+                // console.log('stop rotation')
                 cancelAnimationFrame(_animationFrameId); // 取消下一帧请求
                 _animationFrameId = null; // 清空 animationFrameId
             }

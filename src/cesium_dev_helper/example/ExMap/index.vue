@@ -1,7 +1,8 @@
 <template>
     <div class="ex1" style="display: flex;flex-direction: column;">
         <div class="code" ref="code"
-            style="color:antiquewhite; background-color: rgb(26, 40, 4); height: 20%; overflow: scroll;"></div>
+            style="color:antiquewhite; background-color: rgb(25, 27, 22); height: 20%; overflow: scroll; font-size: 10px;"></div>
+
         <CzmMap name="wuhan123" :option="wuhan" width="100%" height="80%">
             <CzmCtx></CzmCtx>
         </CzmMap>

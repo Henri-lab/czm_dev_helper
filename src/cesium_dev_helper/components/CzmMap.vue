@@ -81,7 +81,7 @@ let $store = useStore();
 let $viewer
 // 分发管理者
 let cfgM, dP
-let sM , cM , eM , dM 
+let sM, cM, eM, dM
 let managerModule = czmHelper.ManagerModule;
 cfgM = new managerModule.ConfigManager();
 dP = new czmHelper.DataModule.DataPrepocesser()
@@ -152,7 +152,7 @@ const _toDefaultViewer_ = async () => {
         $store.setViewer(markRaw(global));
         _updateViewerManager_(global);
         sM.initScene();
-        cM.isRotationEnabled(1, 0, 0.5); // 开启地球自转
+        // cM.isRotationEnabled(1, 0, 0.5); // 开启地球自转
         _switchViewerTo_(global); // 切换地图
         return global;
     } catch (error) {
@@ -201,10 +201,10 @@ provide('$store', $store)
 onMounted(async () => {
     console.log(import.meta.url, '<CzmMap> mounted')
     await createMap(props.name)
-    $bus.emit('ctx', curViewer)
+    _updateViewerManager_(curViewer)
+    $bus.emit('viewer-done', curViewer)
+    $bus.emit('cameraManager-done', cM)
 })
 </script>
 
-<style lang="scss" scoped>
-.czm-helper {}
-</style>
+<style lang="scss" scoped></style>
