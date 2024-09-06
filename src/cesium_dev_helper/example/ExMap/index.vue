@@ -4,7 +4,7 @@
             style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
         </div>
 
-        <CzmMap name="wuhan123" :option="wuhan" width="100%" height="80%">
+        <CzmMap name="wuhan123" :option="wuhan" width="800px" height="1000px">
             <CzmCtx></CzmCtx>
         </CzmMap>
     </div>

@@ -4,7 +4,7 @@
             <div class="code" ref="code"
                 style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
             </div>
-            <CzmMap width="100%" height="80%">
+            <CzmMap width="800px" height="1000px">
                 <CzmCamera :view="view" :position="position" :animation="animation" :rotation="rotation" :reset="reset" />
             </CzmMap>
         </div>

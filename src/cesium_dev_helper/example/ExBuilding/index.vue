@@ -5,7 +5,7 @@
                 style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
             </div>
             <el-button @click="handleCollapse">坍塌切换</el-button>
-            <CzmMap width="100%" height="80%">
+            <CzmMap width="800px" height="1000px">
                 <!-- <Building :option="option" :tileset="tileset"></Building> -->
                 <Building :option="option" :collapse="collapse"></Building>
             </CzmMap>

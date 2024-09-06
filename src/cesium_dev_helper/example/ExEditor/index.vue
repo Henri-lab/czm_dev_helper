@@ -8,7 +8,7 @@
             <el-button @click="drawbackLine">撤销</el-button>
             <el-button @click="stopLine">停止</el-button>
         </div>
-        <CzmMap>
+        <CzmMap width="800px" height="1000px">
             <CzmCamera :view="view"></CzmCamera>
             <CzmEditor ref="__ExEditor_CzmEditor__" @edit="getEditor"></CzmEditor>
         </CzmMap>

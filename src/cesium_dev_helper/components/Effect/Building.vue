@@ -69,12 +69,14 @@ watch(
 
 watch(() => props.collapse,
     (n, o) => {
-        if (n) {
-            console.log('building collapse!')
-        } else {
-            console.log('building reset!')
-        }
-        // collapseFn(_building_, !n)
+        collapseFn(_building_, null, !n)
+
+        // if (n) {
+        //     console.log('building collapse!')
+        // } else {
+        //     console.log('building reset!')
+        // }
+
     },
 )
 
