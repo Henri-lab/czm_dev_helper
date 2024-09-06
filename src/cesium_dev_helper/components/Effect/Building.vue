@@ -35,24 +35,19 @@ const props = defineProps({
 })
 
 let timer
+let _building_, _callback_
 onMounted(() => {
     timer = setTimeout(async () => {
         // 添加模型
         // 异步添加
-        let _callback_ = (resArr) => {
-            console.log(resArr, '<Building> :loaded building')
-        }
-        if (props.option.extra.matrix) {
-            const _cb_matrix = (resArr) => {
-                const tile = resArr[0].model;
-                if (props.option.type.toLowerCase() == '3dtiles') _dP.update3DtilesMaxtrix(tile, props.option.extra.matrix);
+        if (props.option) {
+            _callback_ = (resArr) => {
+                console.log(resArr, '<Building> :loaded building')
+                _building_ = resArr[0].model
+                props.option.extra.matrix && _dP.update3DtilesMaxtrix(_building_, props.option.extra.matrix)
             }
-            _callback_ = _cb_matrix
+            await _sM.add3DModel(props.option.type, props.option.building, props.option.extra, _callback_)
         }
-        props.option && await _sM.add3DModel(props.option.type, props.option.building, props.option.extra, _callback_)
-
-
-
         clearTimeout(timer)
     }, 0)
 })
