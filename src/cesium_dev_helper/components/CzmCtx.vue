@@ -1,6 +1,6 @@
 <!-- 创建ceisum地图视图 并且加载对应视图的管理者 -->
 <template>
-  <div class="czm-context" ref="__CzmCtx__"></div>
+  <div class="czm-context@henrifox" ref="__CzmCtx__"></div>
 </template>
 
 <script setup>

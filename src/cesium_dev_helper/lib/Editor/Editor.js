@@ -2,9 +2,7 @@
 //增加：重置 收集点 数组，并创建新的线实体以准备绘制下一条线。
 
 import EntityDrawer from "./pencil/EntityDrawer";
-import mitt from "mitt";
 
-const bus = mitt();
 export default class Editor {
     constructor(viewer, $options) {
         console.log('new Editor class')
@@ -34,7 +32,7 @@ export default class Editor {
         }
         $entityDrawer.drawWithEvent('polyline', options, pluginFunction)
     }
-    drawback(type, isHide = true) {
+    drawback(type, isHide = false) {
         let that = this
         let collection = that.viewer.entities
         let _type = type.toLowerCase()

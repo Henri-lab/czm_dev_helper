@@ -1,6 +1,5 @@
 <template>
-    <div class="editor">
-    </div>
+    <div class="editor@henrifox"></div>
 </template>
 
 <script setup>

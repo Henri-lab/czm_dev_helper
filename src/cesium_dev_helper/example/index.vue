@@ -13,6 +13,7 @@
             <ExMap v-if="isEx == 'map'" />
             <ExCamera v-if="isEx == 'camera'" />
             <ExEditor v-if="isEx == 'editor'" />
+            <ExBuilding v-if="isEx == 'building'" />
 
         </div>
     </div>
@@ -21,6 +22,7 @@
 import ExMap from './ExMap/index.vue'
 import ExCamera from './ExCamera/index.vue'
 import ExEditor from './ExEditor/index.vue'
+import ExBuilding from './ExBuilding/index.vue'
 import { h, ref, watch } from 'vue';
 import {
     MailOutlined,
@@ -56,15 +58,15 @@ const items = ref([
         title: '',
     },
     {
-        key: 'sub2',
+        key: 'sub4',
         icon: () => h(SettingOutlined),
-        label: 'Navigation Four',
+        label: '模型特效',
         title: 'Navigation Four',
         children: [
             {
-                key: '7',
-                label: 'Option 7',
-                title: 'Option 7',
+                key: '/sub4/1',
+                label: '楼房坍塌',
+                title: '',
             },
             {
                 key: '8',
@@ -96,6 +98,8 @@ watch(() => selectedKeys.value,
             isEx.value = 'camera'
         } else if (newV[0] == '3') {
             isEx.value = 'editor'
+        } else if (newV[0] == '/sub4/1') {
+            isEx.value = 'building'
         }
     }
 )

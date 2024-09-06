@@ -1,6 +1,6 @@
 <!-- 给其他组件分发视图的管理者 -->
 <template>
-    <div id="czm-container" ref="__CzmMap__">
+    <div id="czm-container@henrifox" ref="__CzmMap__">
         <slot></slot>
     </div>
 </template>
@@ -80,10 +80,11 @@ let $bus = mitt()
 let $store = useStore();
 let $viewer
 // 分发管理者
-let cfgM, dP
-let sM, cM, eM, dM, editor
+let cfgM, dP;
+let sM, cM, eM, dM, editor, effecter;
 let managerModule = czmHelper.ManagerModule;
 let editorModule = czmHelper.EditorModule;
+let effectModule = czmHelper.EffectModule;
 cfgM = new managerModule.ConfigManager();
 dP = new czmHelper.DataModule.DataPrepocesser()
 function _updateViewerManager_(viewer) {
@@ -91,6 +92,7 @@ function _updateViewerManager_(viewer) {
     sM = new managerModule.SceneManager(viewer);
     eM = new managerModule.EventManager(viewer);
     dM = new managerModule.DrawingManager(viewer);
+    effecter = new effectModule.EffectController(viewer)
     editor = new editorModule.Editor(viewer)
 }
 
@@ -132,7 +134,7 @@ async function createMap(name) {
 const _toDefaultViewer_ = async () => {
     // 世界地图
     const def_vcfg_global = {
-        containerId: 'czm-container',
+        containerId: 'czm-container@henrifox',
         baseConfig: {
             navigationHelpButton: true,
             navigationInstructionsInitiallyVisible: true,
@@ -164,7 +166,7 @@ const _toDefaultViewer_ = async () => {
 const _toCustomViewer_ = async (option) => {
     try {
         // 世界地图配置...
-        option.containerId = `czm-container`;
+        option.containerId = `czm-container@henrifox`;
         const _viewer = await cfgM.initViewer(option);
         $store.setViewer(markRaw(_viewer));
         _updateViewerManager_(_viewer);
@@ -206,6 +208,7 @@ onMounted(async () => {
     $bus.emit('czmViewerEvent@henrifox', curViewer)
     $bus.emit('czmCameraEvent@henrifox', cM)
     $bus.emit('czmEditorEvent@henrifox', editor)
+    $bus.emit('czmEffectEvent@henrifox', { dP, sM, cM, eM, effecter, editor })
 })
 </script>
 

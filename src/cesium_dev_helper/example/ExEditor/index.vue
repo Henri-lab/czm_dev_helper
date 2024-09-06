@@ -3,10 +3,10 @@
         <div class="code" ref="code"
             style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
         </div>
-        <div class="btns" style="width: 10%; height: 20%; display: flex; flex-direction: column;">
-            <el-button @click="newLine">新建线段</el-button>
-            <el-button @click="stopLine">停止画线</el-button>
+        <div class="btns" style="width: 5%; height: 20%; display: flex; flex-direction: column;">
+            <el-button @click="newLine">新建</el-button>
             <el-button @click="drawbackLine">撤销</el-button>
+            <el-button @click="stopLine">停止</el-button>
         </div>
         <CzmMap>
             <CzmCamera :view="view"></CzmCamera>

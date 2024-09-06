@@ -1,9 +1,3 @@
-<template>
-    <div>
-
-    </div>
-</template>
-
 <script setup>
 import { onMounted } from 'vue';
 import { Math as CesiumMath } from 'cesium'

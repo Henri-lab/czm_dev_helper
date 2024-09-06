@@ -168,7 +168,7 @@ export default class SceneManager extends Manager {
    *
    * @returns {undefined} This function does not return any value.
    */
-  async addToScene(loaded = {}, Type) {
+  addToScene(loaded = {}, Type) {
     let viewer = this.viewer;
     let scene = viewer.scene;
     const type = Type.toLowerCase();
@@ -187,7 +187,7 @@ export default class SceneManager extends Manager {
  * @param {Array} [arr=[]] - 可选参数，用于存储加载结果的数组
  */
   // 可以直接拿到model 也可以利用回调函数拿到model和其他附属信息
-  async _addModelByOption(type, option, cb, extraOpt, arr) {
+  async _addModelByOption(type, option, extraOpt, cb, arr) {
     const that = this;
     const $dL = that.$dL;
     let res = arr || [];
@@ -235,14 +235,14 @@ export default class SceneManager extends Manager {
  * If the input is an array, it will return an array of loaded models.
  * If the input is not an array and the model fails to load, it will return undefined.
   */
-  async add3DModel(type, options, cb, extraOpt = { isZoom: true }, arr) {
+  async add3DModel(type, options, extraOpt = { isZoom: true }, cb, arr) {
     const that = this;
     type = type.toLowerCase();
     //  two type options
     if (Array.isArray(options)) {
-      for (let item of options) await that._addModelByOption(type, item, cb, extraOpt, arr)
+      for (let item of options) await that._addModelByOption(type, item, extraOpt, cb, arr)
     }
-    else await that._addModelByOption(type, options, cb, extraOpt, arr);
+    else await that._addModelByOption(type, options, extraOpt, cb, arr);
   }
 
 
