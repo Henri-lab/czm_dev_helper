@@ -1,8 +1,10 @@
 <template>
     <div>
-        <fu>
+        <!-- <fu>
             <son></son>
-        </fu>
+        </fu> -->
+
+
     </div>
 </template>
 
@@ -10,6 +12,7 @@
 import { onMounted } from 'vue';
 import fu from './fu.vue';
 import son from './son.vue';
+import * as THREE from 'three';
 onMounted(() => {console.log('test')})
 </script>
 

@@ -198,10 +198,6 @@ function _destroyViewer_(viewer) {
 provide('$bus', $bus)
 provide('$store', $store)
 
-
-
-
-
 onMounted(async () => {
     console.log(import.meta.url, '<CzmMap> mounted')
     await createMap(props.name)

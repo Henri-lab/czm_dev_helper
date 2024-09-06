@@ -19,6 +19,7 @@ import './assets/css/index.css';
 // import VScaleScreen from 'v-scale-screen'; //bug 安装插件后样式出现冲突
 // 组件
 import AppVue from './App.vue';
+import Tres from '@tresjs/core';
 // 自定义指令 绑定
 import directive from './directive';
 // 通用
@@ -68,6 +69,7 @@ app
     size: asSize(Cookies.get('size') || 'default'),
   })
   .use(vuetify)
+  .use(Tres)
   .use(extraPlugins);
 
 // 注册自定义指令
