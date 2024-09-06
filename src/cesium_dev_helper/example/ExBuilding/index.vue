@@ -5,7 +5,7 @@
                 style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
             </div>
             <el-button @click="handleCollapse">坍塌切换</el-button>
-            <CzmMap width="800px" height="1000px">
+            <CzmMap name="wuhan123" :option="tecent" width="800px" height="1000px">
                 <!-- <Building :option="option" :tileset="tileset"></Building> -->
                 <Building :option="option" :collapse="collapse"></Building>
             </CzmMap>
@@ -21,6 +21,38 @@ import codeString from './code.js'
 import { onMounted, ref } from 'vue'
 import * as Cesium from 'cesium';
 import axios from 'axios'
+import { TencentImageryProvider } from '../../lib/Plugin/mapPlugin';
+
+//腾讯底图
+const txOpt = {
+    style: 4, //style: img、1：经典
+    crs: 'WGS84',
+};
+const tcip = new TencentImageryProvider(txOpt);
+const tecent = {
+    baseConfig: {
+        navigationHelpButton: true,
+        navigationInstructionsInitiallyVisible: true,
+        // skyAtmosphere: new Cesium.SkyAtmosphere(),
+    },
+    providerConfig: {
+        terrainProvider: [],
+        imageryProvider: [
+            {
+                type: 'UrlTemplateImageryProvider',
+                option: {
+                    customProvider: tcip,
+                },
+            },
+        ],
+    },
+    extraConfig: {
+        name: 'wuhan',
+        AccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiMDk4NmM5OS03MmNlLTRiNWItOTUzNy1hYzhkMTUwYjgwNmQiLCJpZCI6MjE3MTc3LCJpYXQiOjE3MTcwNTUwMTh9.C3dvJjK0cBUhb87AI_EnpLPUwxD3ORI8sGcntlhCAmw',
+        logo: false,
+        depthTest: true,
+    },
+};
 
 const option =
 {

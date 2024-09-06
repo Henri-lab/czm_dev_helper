@@ -3,10 +3,10 @@ export default
 <template>
     <div class="ex1">
         <CzmMap 
-        name="wuhan123" 
-        :option="wuhan" 
-        width="30%" 
-        height="40%" />
+         name="tx123" 
+         :option="tx"
+         width="30%" 
+         height="40%" />
     </div>
 </template>
 
@@ -19,7 +19,7 @@ const txOpt = {
     crs: 'WGS84',
 };
 const tcip = new TencentImageryProvider(txOpt);//腾讯底图
-const wuhan = {
+const tx = {
     baseConfig: {
         navigationHelpButton: true,
         navigationInstructionsInitiallyVisible: true,

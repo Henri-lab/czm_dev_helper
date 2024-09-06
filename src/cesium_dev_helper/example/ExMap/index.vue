@@ -4,7 +4,7 @@
             style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
         </div>
 
-        <CzmMap name="wuhan123" :option="wuhan" width="800px" height="1000px">
+        <CzmMap name="tx123" :option="tx" width="800px" height="1000px">
             <CzmCtx></CzmCtx>
         </CzmMap>
     </div>
@@ -23,7 +23,7 @@ const txOpt = {
     crs: 'WGS84',
 };
 const tcip = new TencentImageryProvider(txOpt);
-const wuhan = {
+const tx = {
     baseConfig: {
         navigationHelpButton: true,
         navigationInstructionsInitiallyVisible: true,

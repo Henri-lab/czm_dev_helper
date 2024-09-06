@@ -6,9 +6,9 @@ import * as Cesium from "cesium";
 export function collapse(tilesets, options, reset) {
     console.log('effect:transform:collapse')
     const defaultOptions = {
-        collapseHeight: -50.0,  // 模型坍塌的高度
-        duration: 10000,  // 动画持续时间（毫秒）
-        rotationSpeed: 0,  // 旋转速度（度/秒）
+        collapseHeight: 0.4,  // 模型坍塌的高度
+        duration: 5000,  // 动画持续时间（毫秒）
+        rotationSpeed: -50,  // 旋转速度
     };
 
     const settings = { ...defaultOptions, ...options };
@@ -24,18 +24,20 @@ export function collapse(tilesets, options, reset) {
 
         tilesets.root.children.forEach((tile) => {
             const heightOffset = settings.collapseHeight * progress;
-            const transCenter = Cesium.Cartesian3.fromElements(0.0, 0.0, heightOffset);
+            const transCenter = new Cesium.Cartesian3(0, 0, heightOffset); // 大楼底部位置
             const rotRadian = settings.rotationSpeed * progress * Cesium.Math.toRadians(1);
-            const rotMx = Cesium.Matrix3.fromRotationZ(rotRadian);
-            const rotQuat = Cesium.Quaternion.fromRotationMatrix(rotMx);
+            const rotMx = Cesium.Matrix3.fromRotationX(rotRadian);
 
             const scale = new Cesium.Cartesian3(1.0, 1.0, 1.0);
-            const trs = new Cesium.TranslationRotationScale(transCenter, rotQuat, scale);
+            const trs = new Cesium.TranslationRotationScale(transCenter, Cesium.Quaternion.IDENTITY, scale);
             const transformMatrix = Cesium.Matrix4.fromTranslationRotationScale(trs);
 
             // 基于现有的 tile.transform 进行变换
             const newModelMatrix = Cesium.Matrix4.clone(tile.transform);  // 保留之前的矩阵
-            Cesium.Matrix4.multiply(transformMatrix, newModelMatrix, newModelMatrix);  // 累加变换
+            // 累加变换
+            Math.random() > 0.5 ?
+                Cesium.Matrix4.multiply(transformMatrix, newModelMatrix, newModelMatrix) :
+                Cesium.Matrix4.setRotation(newModelMatrix, rotMx, newModelMatrix);
 
             tile.transform = newModelMatrix;
             tile._dirty = true;
