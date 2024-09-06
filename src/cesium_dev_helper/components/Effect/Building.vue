@@ -9,6 +9,7 @@ import { inject, watch } from 'vue';
 
 const $bus = inject('$bus');
 let _dP, _sM, _cM, _eM, _effecter, _editor
+let collapseFn
 $bus.on('czmEffectEvent@henrifox', (helpers) => {
     const { dP, sM, cM, eM, effecter, editor } = helpers
     _dP = dP
@@ -17,6 +18,7 @@ $bus.on('czmEffectEvent@henrifox', (helpers) => {
     _eM = eM
     _effecter = effecter
     _editor = editor
+    collapseFn = _effecter.useBuildingEffect('collapse')
 })
 const props = defineProps({
     option: {
@@ -69,7 +71,10 @@ watch(() => props.collapse,
     (n, o) => {
         if (n) {
             console.log('building collapse!')
+        } else {
+            console.log('building reset!')
         }
+        // collapseFn(_building_, !n)
     },
 )
 

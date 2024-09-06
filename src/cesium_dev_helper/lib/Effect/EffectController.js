@@ -1,6 +1,5 @@
 import * as Cesium from 'cesium';
-import { CoordTransformer } from '../Compute';
-import { RippleCircles, BlinkCircle, singleRippleCircle } from '../Editor/pencil/entities/advanced'
+import { CoordTransformer, RippleCircles, BlinkCircle, singleRippleCircle, collapse, } from './'
 
 class EffectController {
     constructor(viewer) {
@@ -122,6 +121,25 @@ class EffectController {
                 return null;
         }
     }
+
+    // -添加楼房特效
+    useBuildingEffect(type) {
+        switch (type.toLowerCase()) {
+            case 'collapse':
+                return collapse
+            default:
+                console.warn('Unknown building effect type:', type);
+                return null;    
+        }
+    }
+
+
+
+
+
+
+
+
     // -监听
     // 监听实体事件
     addEffectListener(entity, eventType, callback) {
