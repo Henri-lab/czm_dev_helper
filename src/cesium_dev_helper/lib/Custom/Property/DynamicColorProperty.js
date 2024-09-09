@@ -30,7 +30,7 @@ export default class DynamicColorProperty {
         // 使用定义函数计算属性值
         const color=this._definition(time)
         result.color =color;
-        console.log('Calculated color:', color); // 调试输出颜色
+        // console.log('Calculated color:', color); 
         return color;
     }
 
