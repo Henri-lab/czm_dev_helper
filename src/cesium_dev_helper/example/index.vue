@@ -14,7 +14,7 @@
             <ExCamera v-if="isEx == 'camera'" />
             <ExEditor v-if="isEx == 'editor'" />
             <ExBuilding v-if="isEx == 'building'" />
-            <ExEntity v-if="isEx == 'entity'" />
+            <ExPoint v-if="isEx == 'entity:point'" />
 
         </div>
     </div>
@@ -24,7 +24,7 @@ import ExMap from './ExMap/index.vue'
 import ExCamera from './ExCamera/index.vue'
 import ExEditor from './ExEditor/index.vue'
 import ExBuilding from './ExBuilding/index.vue'
-import ExEntity from './ExEntity/index.vue'
+import ExPoint from './ExPoint/index.vue'
 import { h, ref, watch } from 'vue';
 import {
     MailOutlined,
@@ -103,7 +103,7 @@ watch(() => selectedKeys.value,
         } else if (newV[0] == '/sub4/1') {
             isEx.value = 'building'
         } else if (newV[0] == '/sub4/2') {
-            isEx.value = 'entity'
+            isEx.value = 'entity:point'
         }
     }
 )

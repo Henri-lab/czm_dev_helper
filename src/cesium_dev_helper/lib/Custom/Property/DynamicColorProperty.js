@@ -9,6 +9,8 @@ export default class DynamicColorProperty {
       
         this._definition = definition;
         this._definitionChanged = new Cesium.Event();
+        this._cachedValue = null;
+        this._lastTime = null;
     }
 
     // 属性是否恒定
@@ -23,15 +25,20 @@ export default class DynamicColorProperty {
 
     // 获取属性值
     getValue(time, result) {
+        
         if (!Cesium.defined(result)) {
             result = {};
         }
-        
-        // 使用定义函数计算属性值
-        const color=this._definition(time)
-        result.color =color;
-        // console.log('Calculated color:', color); 
-        return color;
+
+        // 仅在时间发生变化时重新计算颜色
+        if (!this._lastTime || !Cesium.JulianDate.equals(time, this._lastTime)) {
+            this._lastTime = Cesium.JulianDate.clone(time, this._lastTime);
+            this._cachedValue = this._definition(time);
+        }
+
+        result.color = this._cachedValue;
+        return result.color;
+
     }
 
     // 属性比较
