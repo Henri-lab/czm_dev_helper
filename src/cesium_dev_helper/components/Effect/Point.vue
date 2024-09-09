@@ -7,14 +7,13 @@
 <script setup>
 import DynamicColorProperty from '../../lib/Custom/Property/DynamicColorProperty';
 import * as Cesium from 'cesium'
-import { watch } from 'vue';
-import { onBeforeUnmount } from 'vue';
+import { onBeforeUnmount, watch, createVNode, render } from 'vue';
 const $bus = inject('$bus')
-let _editor_, _viewer_
-$bus.on('czmEntityEvent@henrifox', ({ viewer, editor }) => {
+let _editor_, _viewer_, _eM_
+$bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM }) => {
     _editor_ = editor
     _viewer_ = viewer
-
+    _eM_ = eM
 })
 
 const props = defineProps({
@@ -93,7 +92,21 @@ const createDynamicPoint = (_viewer_) => {
     // 添加一个带有动态颜色的实体
     curEntity && _viewer_.entities.remove(curEntity)
     const entity = _viewer_.entities.add({
+        // meta:'可以直接添加新的字段',
+        properties: {
+            meta: 'Some additional meta information',
+            html: `<p>Point size- - -${props.size}</p>`
+        },
+        name: 'Point@henrifox' + Date.now(),
         position: positionProp,
+
+        // billboard: {
+        //     image: 'src/assets/images/system/bg.png', // 替换为您的图片路径
+        //     width: 300,
+        //     height: 160,
+        //     verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+        //     horizontalOrigin: Cesium.HorizontalOrigin.CENTER
+        // },
         point: {
             pixelSize: props.size,
             color: !props.color ? dynamicColorProperty : parsedColor(props.color), // 没有指定颜色 则使用动态颜色属性 ;动态属性不存在 则cesium使用默认白色
@@ -109,19 +122,56 @@ const createDynamicPoint = (_viewer_) => {
     });
 }
 
+let descNode
+let descDom = document.createElement('div');
+const bindEvent = (eM, type) => {
+    if (type = 'popup') {
+        eM.onMouseDoubleClick((e, pickedObjectPos, pickedObject) => {
+            console.log(e.position)
+            if (Cesium.defined(pickedObject)) {
+                if (pickedObject.primitive instanceof Cesium.PointPrimitive) {
+                    const primitive = pickedObject.primitive;
+                    const entity = pickedObject.id;
+                    // console.log('Picked a point primitive', primitive, entity);
+                    const container = document.getElementById('czm-container@henrifox');
+                    descNode = createVNode('div', {
+                        style: {
+                            color: 'red',
+                            backgroundColor: 'black',
+                            directives: [{ name: 'mouse-follow' }]
+                        }
+                    }, `<p>Point size - ${props.size}</p>`)
+                    container.appendChild(descDom)
+                    render(descNode, descDom)
+
+                }
+            } else {
+                console.log('No object picked.');
+            }
+        }
+        )
+    }
+}
+
+
+
+
+
+
 onMounted(() => {
     timer1 = setInterval(() => {
         curSec++
     }, 1000)
-    timer2 = setTimeout(() => createDynamicPoint(_viewer_), 10)
+    timer2 = setTimeout(() => {
+        createDynamicPoint(_viewer_)
+        bindEvent(_eM_, 'popup')
+    }, 0)
 })
 watch(() => props, (newV) => {
-    console.log(props.size)
+
     curEntity && _viewer_.entities.remove(curEntity)
     createDynamicPoint(_viewer_)
 }, { deep: true })
-
-
 
 onBeforeUnmount(() => {
     clearInterval(timer1)
