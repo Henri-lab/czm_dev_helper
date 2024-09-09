@@ -42,15 +42,13 @@ import {
 } from './Data'
 
 import {
-    MaterialCreator,
     TextureCreator,
     PopupCreator
 } from './Creator'
 
 
 import {
-    CustomMaterialProperty,
-    CreateCMP,
+    CustomMaterial,
 } from './Custom'
 
 
@@ -96,12 +94,10 @@ const EditorModule = {
 }
 
 const CustomModule = {
-    CustomMaterialProperty,
-    CreateCMP,
+    CustomMaterial,
 }
 
 const CreatorModule = {
-    MaterialCreator,
     TextureCreator,
     PopupCreator,
 }

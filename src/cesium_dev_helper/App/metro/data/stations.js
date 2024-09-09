@@ -7,7 +7,7 @@
 //     };
 
 import * as Cesium from "cesium";
-import { createCMP, get_ConeGlowBottomCircle, EffectController, changeDisplayBillBoard } from './index.js';
+import { CustomMaterial, get_ConeGlowBottomCircle, EffectController, changeDisplayBillBoard } from './index.js';
 
 
 let stations = [];

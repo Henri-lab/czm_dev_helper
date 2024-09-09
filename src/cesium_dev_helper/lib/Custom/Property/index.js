@@ -1,9 +1,6 @@
-import CreateCMP from "./CreateCMP";
-import CustomMaterialProperty from "./CustomMaterialProperty";
-
+import CustomMaterial from "../Materials/CustomMaterial";
 export {
-    CustomMaterialProperty,
-    CreateCMP,
+    CustomMaterial,
 }
 
 

@@ -7,7 +7,7 @@ import { onMounted, ref } from 'vue'
 import { lineOpt as defaultLineOpt } from '../lib/Editor';
 
 const $bus = inject('$bus')
-let editor
+let _editor_
 
 //快速启动画笔 :draw={line=true}
 const props = defineProps({
@@ -29,8 +29,8 @@ const props = defineProps({
 
 
 const emits = defineEmits(['edit'])
-$bus.on('czmEditorEvent@henrifox', (_editor_) => {
-    editor = _editor_
+$bus.on('czmEditorEvent@henrifox', (editor) => {
+    _editor_ = editor
     emits('edit', editor)
     props.draw.line && editor.startLines(props.lineOpt)
 })

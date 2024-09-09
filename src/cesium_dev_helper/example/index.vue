@@ -14,6 +14,7 @@
             <ExCamera v-if="isEx == 'camera'" />
             <ExEditor v-if="isEx == 'editor'" />
             <ExBuilding v-if="isEx == 'building'" />
+            <ExEntity v-if="isEx == 'entity'" />
 
         </div>
     </div>
@@ -23,6 +24,7 @@ import ExMap from './ExMap/index.vue'
 import ExCamera from './ExCamera/index.vue'
 import ExEditor from './ExEditor/index.vue'
 import ExBuilding from './ExBuilding/index.vue'
+import ExEntity from './ExEntity/index.vue'
 import { h, ref, watch } from 'vue';
 import {
     MailOutlined,
@@ -60,7 +62,7 @@ const items = ref([
     {
         key: 'sub4',
         icon: () => h(SettingOutlined),
-        label: '模型特效',
+        label: '模型/特效',
         title: 'Navigation Four',
         children: [
             {
@@ -69,9 +71,9 @@ const items = ref([
                 title: '',
             },
             {
-                key: '8',
-                label: 'Option 8',
-                title: 'Option 8',
+                key: '/sub4/2',
+                label: '实体闪烁',
+                title: '',
             },
             {
                 key: '9',
@@ -100,6 +102,8 @@ watch(() => selectedKeys.value,
             isEx.value = 'editor'
         } else if (newV[0] == '/sub4/1') {
             isEx.value = 'building'
+        } else if (newV[0] == '/sub4/2') {
+            isEx.value = 'entity'
         }
     }
 )

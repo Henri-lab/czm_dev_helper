@@ -1,9 +1,7 @@
 import {
-    CustomMaterialProperty,
-    CreateCMP,
+    CustomMaterial,
 } from './Property'
 
 export {
-    CustomMaterialProperty,
-    CreateCMP,
+    CustomMaterial,
 }

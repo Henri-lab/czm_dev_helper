@@ -11,7 +11,7 @@
 // }
 
 import * as Cesium from "cesium";
-import { createCMP, get_wallGradients } from "./index.js";
+import { CustomMaterial, get_wallGradients } from "./index.js";
 
 
 let cones = [];
@@ -61,7 +61,7 @@ export const addGradientCone = (viewer, options) => {
             positions: wallPositions,
             minimumHeights: minimumHeights,
             maximumHeights: maximumHeights,
-            material: new createCMP('WallGradients',
+            material: new CustomMaterial('WallGradients',
                 Opt_wallMaterial,
                 (time) => {
                     return {

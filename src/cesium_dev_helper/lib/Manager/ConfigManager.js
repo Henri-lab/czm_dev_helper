@@ -1,3 +1,4 @@
+import { render } from "vue";
 import { isValidProvider, isValidTerrianProviderType, isValidImageryProviderType, isValidViewerProperty } from "../util/isValid";
 import { parse_viewerConfig } from "../util/parse";
 import Manager from "./Manager";
@@ -36,7 +37,7 @@ export default class ConfigManager extends Manager {
      * @returns {Cesium.Viewer} - 返回初始化后的 Viewer 对象
      */
 
-    async initViewer(config) {
+    async initViewer(config, all = false) {
 
         const _config = parse_viewerConfig(config);
         // console.log(_config, 'parsed config')
@@ -75,7 +76,18 @@ export default class ConfigManager extends Manager {
         }
         this.viewer = viewer;
         console.log(viewer, ' created Viewer')
-        return viewer;
+        if (all) {
+            const scene = viewer.scene;
+            const renderer = viewer.renderer;
+            const camera = viewer.camera;
+            return {
+                viewer,
+                scene,
+                renderer,
+                camera
+            }
+        }
+        else return viewer;
     }
 }
 

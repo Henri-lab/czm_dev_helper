@@ -1,11 +1,9 @@
 // 本模块其实就是提供了 options💫 方便调用 addMatertial
 
-import MaterialCreator from "../../Creator/MaterialCreator";
 import TextureCreator from "../../Creator/TextureCreator";
 
 import { glsl_circleMapping, glsl_wallMapping } from "../../Effect";
 
-const mC = new MaterialCreator();
 const tC = new TextureCreator();
 
 // 常用材质 - ConeGlowBottomCircle
