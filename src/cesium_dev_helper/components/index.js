@@ -5,7 +5,9 @@ import CzmEditor from './CzmEditor.vue'
 import Building from './Effect/Building.vue'
 import Entity from './Entity.vue'
 import Point from './Effect/Point.vue'
+import Polygon from './Effect/Polygon.vue'
 import Material from './Material.vue'
+
 
 export {
     CzmMap,
@@ -15,5 +17,6 @@ export {
     Building,
     Entity,
     Point,
+    Polygon,
     Material
 }

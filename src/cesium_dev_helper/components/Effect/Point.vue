@@ -109,7 +109,7 @@ const createDynamicPoint = (_viewer_) => {
         },
     });
     curEntity = entity
-    $bus_Entity.emit('entityCreatedEvent@henrifox', { entity })
+    $bus_Entity.emit('entityCreatedEvent@henrifox', { entity, type: 'point' })
     props.zoom && _viewer_.zoomTo(entity);
     // 确保 Cesium 渲染循环正确地更新颜色
     _viewer_.scene.preRender.addEventListener(function (scene, time) {
@@ -148,11 +148,6 @@ const bindEvent = (eM, type) => {
         )
     }
 }
-
-
-
-
-
 
 onMounted(() => {
     timer1 = setInterval(() => {

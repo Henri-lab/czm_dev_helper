@@ -22,8 +22,8 @@ $bus_Entity.on('popupInfoEvent@henrifox', (pick) => {
     _primitive_.value = primitive
     _isPicked_.value = isPicked
 })
-$bus_Entity.on('entityCreatedEvent@henrifox', ({ entity }) => {
-    $bus_Entity.emit('materialEvent@henrifox', entity)
+$bus_Entity.on('entityCreatedEvent@henrifox', ({ entity, type }) => {
+    $bus_Entity.emit('materialEvent@henrifox', { entity, type })
 })
 
 </script>

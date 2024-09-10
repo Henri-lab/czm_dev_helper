@@ -13,6 +13,8 @@ declare module 'vue' {
     Editor: typeof import('./src/components/Editor/index.vue')['default']
     ElBu: typeof import('element-plus/es')['ElBu']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElOption: typeof import('element-plus/es')['ElOption']
+    ElSelect: typeof import('element-plus/es')['ElSelect']
     ElWatermark: typeof import('element-plus/es')['ElWatermark']
     Gltf: typeof import('./src/components/Panel/gltf.vue')['default']
     HlsLive: typeof import('./src/components/Charts/HlsLive.vue')['default']

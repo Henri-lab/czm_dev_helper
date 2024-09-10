@@ -15,7 +15,7 @@
             <ExEditor v-if="isEx == 'editor'" />
             <ExBuilding v-if="isEx == 'building'" />
             <ExPoint v-if="isEx == 'entity:point'" />
-
+            <ExPolygon v-if="isEx == 'entity:polygon'" />
         </div>
     </div>
 </template>
@@ -25,6 +25,7 @@ import ExCamera from './ExCamera/index.vue'
 import ExEditor from './ExEditor/index.vue'
 import ExBuilding from './ExBuilding/index.vue'
 import ExPoint from './ExPoint/index.vue'
+import ExPolygon from './ExPolygon/index.vue'
 import { h, ref, watch } from 'vue';
 import {
     MailOutlined,
@@ -100,7 +101,7 @@ const items = ref([
             },
             {
                 key: '/sub5/2',
-                label: '~~',
+                label: '多边形+自定义材质',
                 title: '',
             },
             {
@@ -132,6 +133,8 @@ watch(() => selectedKeys.value,
             isEx.value = 'building'
         } else if (newV[0] == '/sub5/1') {
             isEx.value = 'entity:point'
+        } else if (newV[0] == '/sub5/2') {
+            isEx.value = 'entity:polygon'
         }
     }
 )
