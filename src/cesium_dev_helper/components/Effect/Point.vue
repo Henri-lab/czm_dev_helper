@@ -1,9 +1,3 @@
-<template>
-    <div>
-
-    </div>
-</template>
-
 <script setup>
 import DynamicColorProperty from '../../lib/Custom/Property/DynamicColorProperty';
 import * as Cesium from 'cesium'
@@ -11,8 +5,8 @@ import { onBeforeUnmount, watch, createVNode, render } from 'vue';
 const $bus = inject('$bus')
 let _editor_, _viewer_, _eM_
 $bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM }) => {
-    _editor_ = editor
     _viewer_ = viewer
+    _editor_ = editor
     _eM_ = eM
 })
 
@@ -127,25 +121,25 @@ let descDom = document.createElement('div');
 const bindEvent = (eM, type) => {
     if (type = 'popup') {
         eM.onMouseDoubleClick((e, pickedObjectPos, pickedObject) => {
-            console.log(e.position)
             if (Cesium.defined(pickedObject)) {
                 if (pickedObject.primitive instanceof Cesium.PointPrimitive) {
                     const primitive = pickedObject.primitive;
                     const entity = pickedObject.id;
+                    $bus.emit('popupInfoEvent@henrifox', { entity, primitive, isPicked: true })
                     // console.log('Picked a point primitive', primitive, entity);
-                    const container = document.getElementById('czm-container@henrifox');
-                    descNode = createVNode('div', {
-                        style: {
-                            color: 'red',
-                            backgroundColor: 'black',
-                            directives: [{ name: 'mouse-follow' }]
-                        }
-                    }, `<p>Point size - ${props.size}</p>`)
-                    container.appendChild(descDom)
-                    render(descNode, descDom)
-
+                    // const container = document.getElementById('czm-container@henrifox');
+                    // descNode = createVNode('div', {
+                    //     style: {
+                    //         color: 'red',
+                    //         backgroundColor: 'black',
+                    //         directives: [{ name: 'mouse-follow' }]
+                    //     }
+                    // }, `<p>Point size - ${props.size}</p>`)
+                    // container.appendChild(descDom)
+                    // render(descNode, descDom)
                 }
             } else {
+                $bus.emit('popupInfoEvent@henrifox', { isPicked: false })
                 console.log('No object picked.');
             }
         }

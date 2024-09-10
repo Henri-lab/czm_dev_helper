@@ -7,7 +7,20 @@
             <el-button @click="handleSize('+')">增加半径</el-button>
             <el-button @click="handleSize('-')">减小半径</el-button>
             <CzmMap width="800px" height="1000px">
-                <Point :size="size" :color="fixedColor" :colors="colors" :position="position" :extraOpt="extraOpt"></Point>
+                <Entity>
+                    <Point :size="size" :color="fixedColor" :colors="colors" :position="position" :extraOpt="extraOpt" />
+                    <template #popup="scope">
+                        <div class="custom-popup"
+                            style="background-color: rgb(86, 86, 86); width: 400px;height: 360px; font-size: 20px;"
+                            v-if="scope.isPicked">
+                            <span style="color: blanchedalmond;">entity name :</span> <br> {{ scope.entity.name }}<br>
+                            <span style="color: blanchedalmond;">entity id :</span><br>{{ scope.entity.id }}<br>
+                            <span style="color: blanchedalmond;">entity color :</span><br>{{ scope.primitive.color }}<br>
+                            <span style="color: blanchedalmond;">entity position :</span><br> {{
+                                scope.primitive.position }}<br>
+                        </div>
+                    </template>
+                </Entity>
             </CzmMap>
         </div>
 
@@ -15,12 +28,14 @@
 </template>
 
 <script setup>
-import { Point, CzmMap } from '../../components'
+import { Point, CzmMap, Entity } from '../../components'
 import { marked } from 'marked'
 import codeString from './code.js'
 import { onMounted, ref } from 'vue'
 import * as Cesium from 'cesium';
 import axios from 'axios'
+
+const isPopup = ref(false)
 
 const size = ref(100)
 const handleSize = (type) => {

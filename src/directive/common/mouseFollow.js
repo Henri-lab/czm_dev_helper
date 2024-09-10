@@ -18,7 +18,7 @@ export default {
             el.style.left = `${newLeft - 120}px`;//?120 ?5
             el.style.top = `${newTop - 5}px`;
 
-            console.log(el);
+            // console.log(el);
         });
     }
 }
