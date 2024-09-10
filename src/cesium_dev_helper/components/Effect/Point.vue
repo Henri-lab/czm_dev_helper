@@ -126,10 +126,10 @@ const createDynamicPoint = (_viewer_) => {
                 Cesium.Color.GREEN,
                 Cesium.Color.BLUE
             ];
-            for (let i = 0; i < 100; i++) {
-                const longitudeOffset = (Math.random() - 0.5) * 0.001; // 经度偏移
-                const latitudeOffset = (Math.random() - 0.5) * 0.001; // 纬度偏移
-                const heightOffset = (Math.random() - 0.5) * 10
+            for (let i = 0; i < 10000; i++) {
+                const longitudeOffset = (Math.random() - 0.5) * 0.005; // 经度偏移
+                const latitudeOffset = (Math.random() - 0.5) * 0.005; // 纬度偏移
+                const heightOffset = (Math.random() - 0.5) * 500
                 // 构建点的位置和颜色
                 const position = Cesium.Cartesian3.fromDegrees(
                     baseLongitude + longitudeOffset,
@@ -142,7 +142,7 @@ const createDynamicPoint = (_viewer_) => {
                 let pointPrimitive = pointPrimitiveCollection.add({
                     position: position,
                     color: color,
-                    pixelSize: 10 + Math.random() * 10 // 随机大小
+                    pixelSize: 2 + Math.random() * 10 // 随机大小
                 });
             }
         } else {
