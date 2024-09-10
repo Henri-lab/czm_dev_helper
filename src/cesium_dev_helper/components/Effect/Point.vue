@@ -3,6 +3,7 @@ import DynamicColorProperty from '../../lib/Custom/Property/DynamicColorProperty
 import * as Cesium from 'cesium'
 import { onBeforeUnmount, watch, createVNode, render } from 'vue';
 const $bus = inject('$bus')
+const $bus_Entity = inject('$bus_Entity')
 let _editor_, _viewer_, _eM_
 $bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM }) => {
     _viewer_ = viewer
@@ -108,6 +109,7 @@ const createDynamicPoint = (_viewer_) => {
         },
     });
     curEntity = entity
+    $bus_Entity.emit('entityCreatedEvent@henrifox', { entity })
     props.zoom && _viewer_.zoomTo(entity);
     // 确保 Cesium 渲染循环正确地更新颜色
     _viewer_.scene.preRender.addEventListener(function (scene, time) {
@@ -125,7 +127,7 @@ const bindEvent = (eM, type) => {
                 if (pickedObject.primitive instanceof Cesium.PointPrimitive) {
                     const primitive = pickedObject.primitive;
                     const entity = pickedObject.id;
-                    $bus.emit('popupInfoEvent@henrifox', { entity, primitive, isPicked: true })
+                    $bus_Entity.emit('popupInfoEvent@henrifox', { entity, primitive, isPicked: true })
                     // console.log('Picked a point primitive', primitive, entity);
                     // const container = document.getElementById('czm-container@henrifox');
                     // descNode = createVNode('div', {
@@ -139,7 +141,7 @@ const bindEvent = (eM, type) => {
                     // render(descNode, descDom)
                 }
             } else {
-                $bus.emit('popupInfoEvent@henrifox', { isPicked: false })
+                $bus_Entity.emit('popupInfoEvent@henrifox', { isPicked: false })
                 console.log('No object picked.');
             }
         }

@@ -72,7 +72,7 @@ const items = ref([
             },
             {
                 key: '/sub4/2',
-                label: '实体闪烁',
+                label: '~~',
                 title: '',
             },
             {
@@ -87,6 +87,34 @@ const items = ref([
             },
         ],
     },
+    {
+        key: 'sub5',
+        icon: () => h(SettingOutlined),
+        label: '动态实体/弹窗/材质',
+        title: '',
+        children: [
+            {
+                key: '/sub5/1',
+                label: '动态点+自定义弹窗',
+                title: '',
+            },
+            {
+                key: '/sub5/2',
+                label: '~~',
+                title: '',
+            },
+            {
+                key: '9',
+                label: 'Option 9',
+                title: 'Option 9',
+            },
+            {
+                key: '10',
+                label: 'Option 10',
+                title: 'Option 10',
+            },
+        ],
+    }
 ]);
 const changeTheme = (checked) => {
     theme.value = checked ? 'dark' : 'light';
@@ -102,7 +130,7 @@ watch(() => selectedKeys.value,
             isEx.value = 'editor'
         } else if (newV[0] == '/sub4/1') {
             isEx.value = 'building'
-        } else if (newV[0] == '/sub4/2') {
+        } else if (newV[0] == '/sub5/1') {
             isEx.value = 'entity:point'
         }
     }

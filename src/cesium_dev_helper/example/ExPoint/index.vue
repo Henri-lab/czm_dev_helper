@@ -9,6 +9,7 @@
             <CzmMap width="800px" height="1000px">
                 <Entity>
                     <Point :size="size" :color="fixedColor" :colors="colors" :position="position" :extraOpt="extraOpt" />
+                    <Material />
                     <template #popup="scope">
                         <div class="custom-popup"
                             style="background-color: rgb(86, 86, 86); width: 400px;height: 360px; font-size: 20px;"
@@ -28,7 +29,7 @@
 </template>
 
 <script setup>
-import { Point, CzmMap, Entity } from '../../components'
+import { Point, CzmMap, Entity, Material } from '../../components'
 import { marked } from 'marked'
 import codeString from './code.js'
 import { onMounted, ref } from 'vue'

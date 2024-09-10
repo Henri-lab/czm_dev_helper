@@ -3,8 +3,9 @@ import CzmCtx from './CzmCtx.vue'
 import CzmCamera from './CzmCamera.vue'
 import CzmEditor from './CzmEditor.vue'
 import Building from './Effect/Building.vue'
-import Point from './Effect/Point.vue'
 import Entity from './Entity.vue'
+import Point from './Effect/Point.vue'
+import Material from './Material.vue'
 
 export {
     CzmMap,
@@ -12,6 +13,7 @@ export {
     CzmCamera,
     CzmEditor,
     Building,
-    Point,
     Entity,
+    Point,
+    Material
 }
