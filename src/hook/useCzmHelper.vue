@@ -17,7 +17,7 @@ import czmHelper from '@czmHelper';
 const defaultStore = useDefaultStore();
 const setMap = defaultStore.setMap;
 const managerModule = czmHelper.ManagerModule;
-const dataProcesser = new czmHelper.DataModule.DataPrepocesser();
+const DataPrepocesser = czmHelper.DataModule.DataPrepocesser;
 
 // 分发管理者
 let $viewer = computed(() => defaultStore.Viewer);
@@ -65,7 +65,7 @@ const add3DModel = (type, options, extraOpt) => {
       scale: 1.3,
     };
     if (type == '3dtiles')
-      dataProcesser.update3DtilesMaxtrix(tile, maxtrixOpt);
+      DataPrepocesser.update3DtilesMaxtrix(tile, maxtrixOpt);
   };
   SceneManagerRef.value?.add3DModel(
     type,

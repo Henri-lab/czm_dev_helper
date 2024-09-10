@@ -11,7 +11,7 @@ export const getLine = async (params) => {
                 const { xs, ys, stationsList } = metroLine;
                 const colorIndex = index % lineColors.length;
                 const color = lineColors[colorIndex];
-                const posArr = new DataPrepocesser().xsysLoader(xs, ys); // 整理坐标
+                const posArr = DataPrepocesser.xsysLoader(xs, ys); // 整理坐标
                 metroLine.color = color;
                 metroLine.checked = true;
                 metroLine.paths = posArr;

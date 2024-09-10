@@ -9,7 +9,7 @@ class TurfUser {
         this.viewer = viewer;
         this.handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
         this.entities = [];
-        this.$data = new DataPrepocesser(Cesium);
+        this.$dP = new DataPrepocesser();
     }
 
     _createPoint(position) {
@@ -120,7 +120,7 @@ class TurfUser {
                 break;
             case 'polyline':
                 // turf.LineString also works
-                geojson = this.$data.convertToGeoJSON(posArr, 'LineString');
+                geojson = DataPrepocesser.convertToGeoJSON(posArr, 'LineString');
                 res = turf.length(geojson, { units: 'kilometers' }) || 0;
                 break;
             case 'polygon':

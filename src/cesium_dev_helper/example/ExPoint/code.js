@@ -7,7 +7,13 @@ export default
             <el-button @click="handleSize('-')">减小半径</el-button>
             <CzmMap width="800px" height="1000px">
                 <Entity>
-                    <Point :size="size" :color="fixedColor" :colors="colors" :position="position" :extraOpt="extraOpt" />
+                     <Point 
+                      :size="size" 
+                      :color="fixedColor" 
+                      :colors="colors" 
+                      :position="position" 
+                      :extraOpt="extraOpt"
+                      zoom />
                     <template #popup="scope">
                         <div class="custom-popup"
                             style="background-color: rgb(86, 86, 86); width: 400px;height: 360px; font-size: 20px;"

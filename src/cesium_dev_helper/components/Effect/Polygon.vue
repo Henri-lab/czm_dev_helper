@@ -45,7 +45,7 @@ const props = defineProps({
     },
     zoom: {
         type: Boolean,
-        default: true
+        default: false
     },
     three: {
         type: Boolean,
@@ -84,8 +84,9 @@ const createDynamicPolygon = (_viewer_) => {
 const bindEvent = (eM, type) => {
     if (type = 'popup') {
         eM.onMouseDoubleClick((e, pickedObjectPos, pickedObject) => {
+            console.log(pickedObject, 'pick')
             if (Cesium.defined(pickedObject)) {
-                if (pickedObject.primitive instanceof Cesium.PointPrimitive) {
+                if (pickedObject.primitive) {
                     const primitive = pickedObject.primitive;
                     const entity = pickedObject.id;
                     $bus_Entity.emit('popupInfoEvent@henrifox', { entity, primitive, isPicked: true })

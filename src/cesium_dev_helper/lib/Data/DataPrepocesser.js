@@ -7,7 +7,7 @@ class DataPrepocesser {
 	  * @param {string[]} nameArray - 名称数组
 	  * @returns {string[]} - 静态资源的URL数组
 	  */
-	getImgUrls(nameArray) {
+	static getImgUrls(nameArray) {
 		let imgUrls = [];
 		nameArray.forEach(name => {
 			// If the dfSt object exists and contains the specified name,
@@ -39,7 +39,7 @@ class DataPrepocesser {
 	 * @returns {undefined} This function does not return a value.
 	 */
 	// 修改3dtiles位置
-	update3DtilesMaxtrix(tileSet, { tx = 0, ty = 0, tz = 0, rx = 0, ry = 0, rz = 0, scale = 1.0 }) {
+	static update3DtilesMaxtrix(tileSet, { tx = 0, ty = 0, tz = 0, rx = 0, ry = 0, rz = 0, scale = 1.0 }) {
 
 		const cartoDegree = this.getCenterDegreeFrom3dTiles(tileSet)
 
@@ -94,7 +94,7 @@ class DataPrepocesser {
 	 * @static
 	 */
 
-	update2DMaxtrix = (tx, ty, tile) => {
+	static update2DMaxtrix = (tx, ty, tile) => {
 		const center = tile.boundingSphere.center
 		// Get the vertical coordinate system based on the current model as the origin
 		const m = Cesium.Transforms.eastNorthUpToFixedFrame(center);
@@ -129,7 +129,7 @@ class DataPrepocesser {
 	 * @returns {Array<number>} An array of coordinates [x1, y1, x2, y2, ...].
 	 * @throws Will throw an error if the lengths of xs and ys are not equal.
 	 */
-	xsysLoader = (xs, ys) => {
+	static xsysLoader = (xs, ys) => {
 		let posArr = [];
 		if (typeof xs === 'string' && typeof ys === 'string') {
 			const xArr = xs.split(',').map(parseFloat);
@@ -153,7 +153,7 @@ class DataPrepocesser {
 	 * @param {String} type - Type of GeoJSON feature ('Point', 'LineString', 'Polygon').
 	 * @returns {Object} GeoJSON feature object.
 	 */
-	convertToGeoJSON(positions, type) {
+	static convertToGeoJSON(positions, type) {
 		let coordinates;
 
 		switch (type) {
@@ -203,7 +203,7 @@ class DataPrepocesser {
 		* @param {Object} tileset - The 3D Tiles tileset.
 		* @returns {Object} - The center(degree) of the tileset.
 		*/
-	getCenterDegreeFrom3dTiles(tileset) {
+	static getCenterDegreeFrom3dTiles(tileset) {
 
 		// 要获取 3D Tiles 的中心坐标，推荐的做法是通过 root 节点的 boundingVolume 获取。
 		// root 节点是 3D Tiles 集的根节点，它通常会包含 boundingVolume 属性。
@@ -251,7 +251,7 @@ class DataPrepocesser {
 	 * @returns {Rectangle} The bounding rectangle in longitude, latitude coordinates.
 	 */
 	// 从 positions 数组中提取边界值 west south east north
-	getRectangleFromPositions(positions) {
+	static getRectangleFromPositions(positions) {
 		// 与 Cesium.Rectangle.fromCartesianArray 功能基本一致
 		let west = Number.POSITIVE_INFINITY;
 		let south = Number.POSITIVE_INFINITY;
@@ -279,7 +279,7 @@ class DataPrepocesser {
 	 * @returns {Rectangle} The bounding rectangle in longitude, latitude coordinates.
 	 * @throws {Error} If the positions array does not contain exactly 2 positions.
 	 */
-	getRectangleFromDiagonal(positions) {
+	static getRectangleFromDiagonal(positions) {
 		if (positions.length !== 2) {
 			throw new Error("The positions array must contain exactly 2 positions.");
 		}
@@ -295,15 +295,33 @@ class DataPrepocesser {
 		);
 	}
 
-	markCluster(entities) {
-		if (!entities || entities.length === 0) {
-			return [];
-		}
-		const k = determineOptimalClusters(entities); // 假设有一个函数可以确定最佳聚类数量
-		const clusters = kMeansCluster(entities, k);
-		return clusters;
-	}
+	// markCluster(entities) {
+	// 	if (!entities || entities.length === 0) {
+	// 		return [];
+	// 	}
+	// 	const k = determineOptimalClusters(entities); // 假设有一个函数可以确定最佳聚类数量
+	// 	const clusters = kMeansCluster(entities, k);
+	// 	return clusters;
+	// }
 
+
+	static getCenterOfPrimitives(primitives) {
+    // 检查 primitives 是否为空
+    if (primitives.length === 0) {
+        throw new Error('Primitives array is empty');
+    }
+
+    // 初始化 boundingSphere 为第一个 primitive 的包围球
+    let boundingSphere = Cesium.BoundingSphere.fromPoints([primitives[0].position]);
+
+    // 遍历其余的 primitives 并扩展 boundingSphere
+    for (let i = 1; i < primitives.length; i++) {
+        const primitive = primitives[i];
+        Cesium.BoundingSphere.expand(boundingSphere, Cesium.BoundingSphere.fromPoints([primitive.position]));
+    }
+    
+    return boundingSphere.center;
+}
 
 
 

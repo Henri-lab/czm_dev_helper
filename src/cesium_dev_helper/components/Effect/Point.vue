@@ -1,17 +1,21 @@
 <script setup>
+import { DataPrepocesser } from '../../lib/Data';
 import DynamicColorProperty from '../../lib/Custom/Property/DynamicColorProperty';
 import * as Cesium from 'cesium'
 import { onBeforeUnmount, watch, createVNode, render } from 'vue';
 const $bus = inject('$bus')
 const $bus_Entity = inject('$bus_Entity')
-let _editor_, _viewer_, _eM_
+let _editor_, _viewer_, _eM_, pointPrimitiveCollection
 $bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM }) => {
     _viewer_ = viewer
     _editor_ = editor
     _eM_ = eM
+    pointPrimitiveCollection = _viewer_.scene.primitives.add(new Cesium.PointPrimitiveCollection());
+    console.log(pointPrimitiveCollection, 'pointPrimitiveCollection')
 })
 
 const props = defineProps({
+    // 单个实体点渲染
     size: {
         type: Number,
         default: 100
@@ -40,82 +44,133 @@ const props = defineProps({
     },
     zoom: {
         type: Boolean,
-        default: true
+        default: false
     },
     three: {
         type: Boolean,
         default: false
     },
-
-
+    // 大量图元点渲染
+    performance: {
+        type: Boolean,
+        default: false
+    },
+    points: {
+        type: Array,
+        default: () => ([])
+    }
 })
 
 let curSec = 0;
 let timer1, timer2
 let curEntity
 const createDynamicPoint = (_viewer_) => {
-    const colorsProp = props.colors
-    const positionProp = props.position
-    if (!_viewer_) return;
-
-    function parsedColor(string) {
-        return Cesium.Color.fromCssColorString(string)
-    }
-    // 定义动态颜色变化函数
-    let colorDefinition = function (time) {
-        if (!colorsProp) return;
-        const colorsData = colorsProp.data;
-        const endTime = colorsData[colorsData.length - 1].time + colorsProp.interval
-        for (let i = 0; i < colorsData.length; i++) {
-            const color = colorsData[i];
-            if (curSec < color.time) {
-                return parsedColor(colorsData[i == 0 ? colorsData.length - 1 : i - 1].value);
+    // 普通实体
+    if (!props.performance) {
+        const colorsProp = props.colors
+        const positionProp = props.position
+        if (!_viewer_) return;
+        function parsedColor(string) {
+            return Cesium.Color.fromCssColorString(string)
+        }
+        let colorDefinition = function (time) {  // 定义动态颜色变化函数
+            if (!colorsProp) return;
+            const colorsData = colorsProp.data;
+            const endTime = colorsData[colorsData.length - 1].time + colorsProp.interval
+            for (let i = 0; i < colorsData.length; i++) {
+                const color = colorsData[i];
+                if (curSec < color.time) {
+                    return parsedColor(colorsData[i == 0 ? colorsData.length - 1 : i - 1].value);
+                }
             }
-        }
 
-        if (colorsProp.type && colorsProp.type.toLowerCase() == 'infinate' && curSec >= endTime) {
-            curSec = curSec % endTime; // 模拟循环
-        } else {
-            // 如果没有设置无限循环，没有找到合适的颜色，返回最后一个颜色
-            return parsedColor(colorsData[colorsData.length - 1].value);
-        }
+            if (colorsProp.type && colorsProp.type.toLowerCase() == 'infinate' && curSec >= endTime) {
+                curSec = curSec % endTime; // 模拟循环
+            } else {
+                // 如果没有设置无限循环，没有找到合适的颜色，返回最后一个颜色
+                return parsedColor(colorsData[colorsData.length - 1].value);
+            }
 
+        }
+        let dynamicColorProperty;
+        colorDefinition && (dynamicColorProperty = new DynamicColorProperty(colorDefinition));// 动态颜色属性
+        curEntity && _viewer_.entities.remove(curEntity)
+        const entity = _viewer_.entities.add({
+            properties: {
+                meta: 'Some additional meta information',
+                html: `<p>Point size- - -${props.size}</p>`
+            },
+            name: 'Point@henrifox' + Date.now(),
+            position: positionProp,
+            point: {
+                pixelSize: props.size,
+                color: !props.color ? dynamicColorProperty : parsedColor(props.color), // 没有指定颜色 则使用动态颜色属性 ;动态属性不存在 则cesium使用默认白色
+                ...props.extraOpt,
+            },
+        });
+        curEntity = entity
+        props.zoom && _viewer_.zoomTo(curEntity);
     }
-    // 创建一个动态颜色属性
-    let dynamicColorProperty;
-    colorDefinition && (dynamicColorProperty = new DynamicColorProperty(colorDefinition));
-    // 添加一个带有动态颜色的实体
-    curEntity && _viewer_.entities.remove(curEntity)
-    const entity = _viewer_.entities.add({
-        // meta:'可以直接添加新的字段',
-        properties: {
-            meta: 'Some additional meta information',
-            html: `<p>Point size- - -${props.size}</p>`
-        },
-        name: 'Point@henrifox' + Date.now(),
-        position: positionProp,
-
-        // billboard: {
-        //     image: 'src/assets/images/system/bg.png', // 替换为您的图片路径
-        //     width: 300,
-        //     height: 160,
-        //     verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-        //     horizontalOrigin: Cesium.HorizontalOrigin.CENTER
-        // },
-        point: {
-            pixelSize: props.size,
-            color: !props.color ? dynamicColorProperty : parsedColor(props.color), // 没有指定颜色 则使用动态颜色属性 ;动态属性不存在 则cesium使用默认白色
-            ...props.extraOpt,
-        },
-    });
-    curEntity = entity
-    $bus_Entity.emit('entityCreatedEvent@henrifox', { entity, type: 'point' })
-    props.zoom && _viewer_.zoomTo(entity);
-    // 确保 Cesium 渲染循环正确地更新颜色
-    _viewer_.scene.preRender.addEventListener(function (scene, time) {
-        // 强制更新属性值
-        dynamicColorProperty.getValue(time);
-    });
+    // 增加性能 图元
+    else if (props.performance) {
+        let primitiveArr = []
+        let center
+        if (props.points.length == 0) {
+            // 默认生成100个示例点
+            // 基础位置
+            const baseLongitude = -75.59777;
+            const baseLatitude = 40.03883;
+            const height = 20; // 高度
+            const colorArray = [
+                Cesium.Color.RED,
+                Cesium.Color.GREEN,
+                Cesium.Color.BLUE
+            ];
+            for (let i = 0; i < 100; i++) {
+                const longitudeOffset = (Math.random() - 0.5) * 0.001; // 经度偏移
+                const latitudeOffset = (Math.random() - 0.5) * 0.001; // 纬度偏移
+                const heightOffset = (Math.random() - 0.5) * 10
+                // 构建点的位置和颜色
+                const position = Cesium.Cartesian3.fromDegrees(
+                    baseLongitude + longitudeOffset,
+                    baseLatitude + latitudeOffset,
+                    height + heightOffset
+                );
+                // 随机选择颜色
+                const color = colorArray[i % colorArray.length];
+                // 添加点到集合
+                let pointPrimitive = pointPrimitiveCollection.add({
+                    position: position,
+                    color: color,
+                    pixelSize: 10 + Math.random() * 10 // 随机大小
+                });
+            }
+        } else {
+            props.points.forEach(point => {
+                let pointPrimitive = pointPrimitiveCollection.add({
+                    position: Cesium.Cartesian3.fromDegrees(point.longitude, point.latitude, point.height),
+                    color: point.color,
+                    pixelSize: point.size,
+                    // ...props.extraOpt
+                });
+            });
+        }
+        center = DataPrepocesser.getCenterOfPrimitives(pointPrimitiveCollection._pointPrimitives)
+        _viewer_.camera.setView({
+            destination: center,
+            orientation: {
+                heading: Cesium.Math.toRadians(0.0),
+                pitch: Cesium.Math.toRadians(-45.0),
+                roll: 0.0
+            }
+        });
+        curEntity = curEntity = {
+            name: 'point@henrifox',
+            position: center,
+            data: pointPrimitiveCollection._pointPrimitives
+        };
+    }
+    $bus_Entity.emit('entityCreatedEvent@henrifox', { entity: curEntity, type: 'point' })
 }
 
 let descNode
@@ -158,6 +213,7 @@ onMounted(() => {
         bindEvent(_eM_, 'popup')
     }, 0)
 })
+
 watch(() => props, (newV) => {
 
     curEntity && _viewer_.entities.remove(curEntity)
@@ -167,6 +223,8 @@ watch(() => props, (newV) => {
 onBeforeUnmount(() => {
     clearInterval(timer1)
     clearTimeout(timer2)
+    // 清空所有点图元
+    pointPrimitiveCollection.removeAll();
 })
 </script>
 

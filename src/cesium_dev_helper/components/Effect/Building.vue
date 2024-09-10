@@ -6,6 +6,7 @@
 
 <script setup>
 import { inject, watch } from 'vue';
+import { DataPrepocesser } from '../../lib/Data';
 
 const $bus = inject('$bus');
 let _dP, _sM, _cM, _eM, _effecter, _editor
@@ -46,7 +47,7 @@ onMounted(() => {
             _callback_ = (resArr) => {
                 console.log(resArr, '<Building> :loaded building')
                 _building_ = resArr[0].model
-                props.option.extra.matrix && _dP.update3DtilesMaxtrix(_building_, props.option.extra.matrix)
+                props.option.extra.matrix && DataPrepocesser.update3DtilesMaxtrix(_building_, props.option.extra.matrix)
             }
             await _sM.add3DModel(props.option.type, props.option.building, props.option.extra, _callback_)
         }

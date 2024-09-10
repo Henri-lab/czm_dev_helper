@@ -96,7 +96,7 @@ const items = ref([
         children: [
             {
                 key: '/sub5/1',
-                label: '动态点+自定义弹窗',
+                label: '高性能+弹窗插槽 (以point为例)',
                 title: '',
             },
             {

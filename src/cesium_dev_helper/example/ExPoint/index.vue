@@ -4,11 +4,16 @@
             <div class="code" ref="code"
                 style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
             </div>
-            <el-button @click="handleSize('+')">增加半径</el-button>
-            <el-button @click="handleSize('-')">减小半径</el-button>
+            <div class="btns" style="display: flex;flex-direction:column;">
+                <el-button @click="handleSize('+')">增加半径</el-button>
+                <el-button @click="handleSize('-')">减小半径</el-button>
+                <el-button @click="handlePerformance">高性能切换</el-button>
+            </div>
+
             <CzmMap width="800px" height="1000px">
                 <Entity>
-                    <Point :size="size" :color="fixedColor" :colors="colors" :position="position" :extraOpt="extraOpt" />
+                    <Point :size="size" :color="fixedColor" :colors="colors" :position="position" :extraOpt="extraOpt" zoom
+                        :performance="isPerformance" />
                     <Material />
                     <template #popup="scope">
                         <div class="custom-popup"
@@ -37,6 +42,10 @@ import * as Cesium from 'cesium';
 import axios from 'axios'
 
 const isPopup = ref(false)
+const isPerformance = ref(false)
+const handlePerformance = () => {
+    isPerformance.value = !isPerformance.value
+}
 
 const size = ref(100)
 const handleSize = (type) => {
