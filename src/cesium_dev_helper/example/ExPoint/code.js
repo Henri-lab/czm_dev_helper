@@ -3,8 +3,11 @@ export default
 <template>
     <div class="ex2">
         <div class="ex1" style="display: flex;">
-            <el-button @click="handleSize('+')">增加半径</el-button>
-            <el-button @click="handleSize('-')">减小半径</el-button>
+            <div class="btns" style="display: flex;flex-direction:column;">
+                <el-button @click="handleSize('+')">增加半径</el-button>
+                <el-button @click="handleSize('-')">减小半径</el-button>
+                <el-button @click="handlePerformance">高性能切换</el-button>
+            </div>
             <CzmMap width="800px" height="1000px">
                 <Entity>
                      <Point 
@@ -13,7 +16,8 @@ export default
                       :colors="colors" 
                       :position="position" 
                       :extraOpt="extraOpt"
-                      zoom />
+                      zoom 
+                      :performance="isPerformance"/>
                     <template #popup="scope">
                         <div class="custom-popup"
                             style="background-color: rgb(86, 86, 86); width: 400px;height: 360px; font-size: 20px;"
@@ -35,10 +39,13 @@ export default
 import { Point, CzmMap, Entity, Material } from '../../components'
 import { onMounted, ref } from 'vue'
 import * as Cesium from 'cesium';
-const isPopup = ref(false)
 const size = ref(100)
 const handleSize = (type) => {
     size.value += type == '+' ? 10 : -10
+}
+const isPerformance = ref(false)
+const handlePerformance = () => {
+    isPerformance.value = !isPerformance.value
 }
 const fixedColor = ref()//如果指定一个固定颜色 则动态颜色失效
 const colors = ref()
