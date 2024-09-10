@@ -67,6 +67,9 @@ let curEntity
 const createDynamicPoint = (_viewer_) => {
     // 普通实体
     if (!props.performance) {
+        // if (pointPrimitiveCollection) {
+        //     _viewer_.scene.primitives.remove(pointPrimitiveCollection)
+        // }
         const colorsProp = props.colors
         const positionProp = props.position
         if (!_viewer_) return;
@@ -118,8 +121,8 @@ const createDynamicPoint = (_viewer_) => {
         if (props.points.length == 0) {
             // 默认生成100个示例点
             // 基础位置
-            const baseLongitude = -75.59777;
-            const baseLatitude = 40.03883;
+            const baseLongitude = 2.294481;
+            const baseLatitude = 48.858370;
             const height = 20; // 高度
             const colorArray = [
                 Cesium.Color.RED,
@@ -127,8 +130,8 @@ const createDynamicPoint = (_viewer_) => {
                 Cesium.Color.BLUE
             ];
             for (let i = 0; i < 10000; i++) {
-                const longitudeOffset = (Math.random() - 0.5) * 0.005; // 经度偏移
-                const latitudeOffset = (Math.random() - 0.5) * 0.005; // 纬度偏移
+                const longitudeOffset = (Math.random() - 0.5) * 0.01; // 经度偏移
+                const latitudeOffset = (Math.random() - 0.5) * 0.01; // 纬度偏移
                 const heightOffset = (Math.random() - 0.5) * 500
                 // 构建点的位置和颜色
                 const position = Cesium.Cartesian3.fromDegrees(
@@ -142,7 +145,8 @@ const createDynamicPoint = (_viewer_) => {
                 let pointPrimitive = pointPrimitiveCollection.add({
                     position: position,
                     color: color,
-                    pixelSize: 2 + Math.random() * 10 // 随机大小
+                    pixelSize: 2 + Math.random() * 10,// 随机大小
+                    scaleByDistance: new Cesium.NearFarScalar(1000, 1.0, 5000, 0.2),
                 });
             }
         } else {
@@ -151,12 +155,12 @@ const createDynamicPoint = (_viewer_) => {
                     position: Cesium.Cartesian3.fromDegrees(point.longitude, point.latitude, point.height),
                     color: point.color,
                     pixelSize: point.size,
-                    // ...props.extraOpt
+                    ...props.extraOpt
                 });
             });
         }
         center = DataPrepocesser.getCenterOfPrimitives(pointPrimitiveCollection._pointPrimitives)
-        _viewer_.camera.setView({
+        props.zoom && _viewer_.camera.setView({
             destination: center,
             orientation: {
                 heading: Cesium.Math.toRadians(0.0),
@@ -224,7 +228,7 @@ onBeforeUnmount(() => {
     clearInterval(timer1)
     clearTimeout(timer2)
     // 清空所有点图元
-    pointPrimitiveCollection.removeAll();
+
 })
 </script>
 

@@ -2,10 +2,10 @@ import CzmMap from "./CzmMap.vue";
 import CzmCtx from './CzmCtx.vue'
 import CzmCamera from './CzmCamera.vue'
 import CzmEditor from './CzmEditor.vue'
-import Building from './Effect/Building.vue'
+import Building from './Geometry/Building.vue'
 import Entity from './Entity.vue'
-import Point from './Effect/Point.vue'
-import Polygon from './Effect/Polygon.vue'
+import Point from './Geometry/Point.vue'
+import Polygon from './Geometry/Polygon.vue'
 import Material from './Material.vue'
 
 
