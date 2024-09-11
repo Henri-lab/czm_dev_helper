@@ -55,6 +55,10 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    test: {
+        type: Boolean,
+        default: false
+    },
     points: {
         type: Array,
         default: () => ([])
@@ -118,12 +122,11 @@ const createDynamicPoint = (_viewer_) => {
     else if (props.performance) {
         let primitiveArr = []
         let center
-        if (props.points.length == 0) {
-            // 默认生成100个示例点
-            // 基础位置
-            const baseLongitude = 2.294481;
+        if (props.test) {
+            // 测试模式 生成100个示例点 
+            const baseLongitude = 2.294481;//基准点 base
             const baseLatitude = 48.858370;
-            const height = 20; // 高度
+            const baseHeight = 20; 
             const colorArray = [
                 Cesium.Color.RED,
                 Cesium.Color.GREEN,
@@ -132,12 +135,12 @@ const createDynamicPoint = (_viewer_) => {
             for (let i = 0; i < 10000; i++) {
                 const longitudeOffset = (Math.random() - 0.5) * 0.01; // 经度偏移
                 const latitudeOffset = (Math.random() - 0.5) * 0.01; // 纬度偏移
-                const heightOffset = (Math.random() - 0.5) * 500
+                const heightOffset = (Math.random() - 0.5) * 2000
                 // 构建点的位置和颜色
                 const position = Cesium.Cartesian3.fromDegrees(
                     baseLongitude + longitudeOffset,
                     baseLatitude + latitudeOffset,
-                    height + heightOffset
+                    baseHeight + heightOffset
                 );
                 // 随机选择颜色
                 const color = colorArray[i % colorArray.length];

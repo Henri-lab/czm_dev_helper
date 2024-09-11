@@ -17,7 +17,9 @@ export default
                       :position="position" 
                       :extraOpt="extraOpt"
                       zoom 
-                      :performance="isPerformance"/>
+                      :performance="isPerformance"
+                      test          
+                      />
                     <template #popup="scope">
                         <div class="custom-popup"
                             style="background-color: rgb(86, 86, 86); width: 400px;height: 360px; font-size: 20px;"

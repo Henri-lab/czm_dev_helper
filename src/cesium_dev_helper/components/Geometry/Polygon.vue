@@ -1,30 +1,8 @@
 <script setup>
 import * as Cesium from 'cesium'
 import { onBeforeUnmount, watch, createVNode, render } from 'vue';
-const $bus = inject('$bus')
-const $bus_Entity = inject('$bus_Entity')
-let _editor_, _viewer_, _eM_
-$bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM }) => {
-    _viewer_ = viewer
-    _editor_ = editor
-    _eM_ = eM
-})
-// 定义多边形的顶点坐标
-const polygonPositions = Cesium.Cartesian3.fromDegreesArray([
-    -75.10, 39.57, // 第一个顶点
-    -75.10, 39.77, // 第二个顶点
-    -75.40, 39.77, // 第三个顶点
-    -75.40, 39.57  // 第四个顶点
-]);
-// 内部孔的顶点坐标
-const holePositions = Cesium.Cartesian3.fromDegreesArray([
-    -75.25, 39.65,
-    -75.25, 39.70,
-    -75.35, 39.70,
-    -75.35, 39.65
-]);
-const defHierachy = new Cesium.PolygonHierarchy(polygonPositions, [holePositions]);
 const props = defineProps({
+    // 单个实体多边形渲染
     hierarchy: {
         type: Object,
         default: () => null
@@ -51,17 +29,70 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    // 大量多边形图元点渲染
+    performance: {
+        type: Boolean,
+        default: false
+    },
+    test: {
+        type: Boolean,
+        default: false
+    },
+    hierarchys: {
+        type: Array,
+        default: () => ([])
+    }
 })
-
-let curSec = 0;
-let timer1, timer2
-let curEntity
-
 const hierarchyProp = props.hierarchy
 const extraOptProp = props.extraOpt
 const materialProp = props.material
 const zoomProp = props.zoom
+
+const $bus = inject('$bus')
+const $bus_Entity = inject('$bus_Entity')
+let _editor_, _viewer_, _eM_, primitiveCollection;
+$bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM }) => {
+    _viewer_ = viewer
+    _editor_ = editor
+    _eM_ = eM
+    primitiveCollection = _viewer_.scene.primitives.add(new Cesium.PrimitiveCollection());
+})
+// 定义多边形的顶点坐标
+const polygonPositions = Cesium.Cartesian3.fromDegreesArray([
+    -75.10, 39.57, // 第一个顶点
+    -75.10, 39.77, // 第二个顶点
+    -75.40, 39.77, // 第三个顶点
+    -75.40, 39.57  // 第四个顶点
+]);
+// 内部孔的顶点坐标
+const holePositions = Cesium.Cartesian3.fromDegreesArray([
+    -75.25, 39.65,
+    -75.25, 39.70,
+    -75.35, 39.70,
+    -75.35, 39.65
+]);
+const defHierachy = new Cesium.PolygonHierarchy(polygonPositions, [holePositions]);
+
+
+let curSec = 0;
+let timer1, timer2
+let curEntity
+const appearance = new Cesium.PerInstanceColorAppearance({
+    translucent: true,
+    closed: true
+});
 const createDynamicPolygon = (_viewer_) => {
+    if (props.performance) {
+        if (props.test) {
+            createTestData(primitiveCollection, 10000)
+            console.log(primitiveCollection)
+            return;
+        } else {
+            props.hierarchys.forEach(hi => {
+              
+            });
+        }
+    }
     curEntity && _viewer_.entities.remove(curEntity)
     const entity = _viewer_.entities.add({
         name: 'Polygon@henrifox' + Date.now(),
@@ -80,7 +111,6 @@ const createDynamicPolygon = (_viewer_) => {
     zoomProp && _viewer_.zoomTo(entity);
 }
 
-
 const bindEvent = (eM, type) => {
     if (type = 'popup') {
         eM.onMouseDoubleClick((e, pickedObjectPos, pickedObject) => {
@@ -98,6 +128,54 @@ const bindEvent = (eM, type) => {
         }
         )
     }
+}
+
+// 测试数据：批量创建几何体并批处理
+function createTestData(primitiveCollection, numPolygons) {
+    const instances = [];
+    function random(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    let base1 = -76, base2 = 37;
+    for (let i = 0; i < numPolygons; i++) {
+        // 随机生成一些经纬度点来作为多边形的顶点
+        const positions = Cesium.Cartesian3.fromDegreesArray([
+            base1 + random(0, 1), base2 + random(0, 1),
+            base1 + random(1, 2), base2 + random(1, 2),
+            base1 + random(2, 3), base2 + random(2, 3),
+            base1 + random(3, 4), base2 + random(3, 4),
+        ]);
+        base1 += random(0, 4);
+        base2 += random(0, 4);
+
+        // 创建 PolygonGeometry
+        const polygonGeometry = new Cesium.PolygonGeometry({
+            polygonHierarchy: new Cesium.PolygonHierarchy(positions),
+            height: 0,  // 多边形的高度
+            extrudedHeight: 10000, // 拉伸形成 3D 多边形
+            vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT // 顶点格式
+        });
+
+        // 创建几何体实例
+        const geometryInstance = new Cesium.GeometryInstance({
+            geometry: polygonGeometry,
+            attributes: {
+                color: Cesium.ColorGeometryInstanceAttribute.fromColor(
+                    Cesium.Color.fromRandom({ alpha: 0.5 }) // 随机颜色
+                )
+            }
+        });
+        instances.push(geometryInstance); // 将实例存入数组
+    }
+
+    // 将几何体批量添加到 Primitive
+    primitiveCollection.add(new Cesium.Primitive({
+        geometryInstances: instances,
+        appearance: appearance, // 使用共享的外观
+        asynchronous: true // 异步加载以优化性能
+    }));
 }
 
 onMounted(() => {

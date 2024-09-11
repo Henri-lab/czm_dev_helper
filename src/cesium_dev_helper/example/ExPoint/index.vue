@@ -13,7 +13,7 @@
             <CzmMap width="800px" height="1000px">
                 <Entity>
                     <Point :size="size" :color="fixedColor" :colors="colors" :position="position" :extraOpt="extraOpt" zoom
-                        :performance="isPerformance" />
+                        :performance="isPerformance" test />
                     <Material />
                     <template #popup="scope">
                         <div class="custom-popup"
