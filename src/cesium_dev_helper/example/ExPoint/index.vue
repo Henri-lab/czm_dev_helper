@@ -7,7 +7,7 @@
             <div class="btns" style="display: flex;flex-direction:column;">
                 <el-button @click="handleSize('+')">增加半径</el-button>
                 <el-button @click="handleSize('-')">减小半径</el-button>
-                <el-button @click="handlePerformance">高性能切换</el-button>
+                <el-button @click="handlePerformance">万级渲染</el-button>
             </div>
 
             <CzmMap width="800px" height="1000px">

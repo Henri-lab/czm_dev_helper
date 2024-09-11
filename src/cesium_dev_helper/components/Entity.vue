@@ -11,6 +11,7 @@ import { onMounted } from 'vue';
 import mitt from 'mitt';
 import * as Cesium from 'cesium';
 let test = 'this is a test popup'
+const $bus = inject('$bus')
 const $bus_Entity = mitt()
 provide('$bus_Entity', $bus_Entity)
 
@@ -22,8 +23,8 @@ $bus_Entity.on('popupInfoEvent@henrifox', (pick) => {
     _primitive_.value = primitive
     _isPicked_.value = isPicked
 })
-$bus_Entity.on('entityCreatedEvent@henrifox', ({ entity, type }) => {
-    $bus_Entity.emit('materialEvent@henrifox', { entity, type })
+$bus_Entity.on('entityCreatedEvent@henrifox', ({ target, type, isPrimitive}) => {
+    $bus_Entity.emit('materialEvent@henrifox', { target, type, isPrimitive})
 })
 
 </script>

@@ -1,4 +1,5 @@
 <script setup>
+import { EventManager } from '../../lib/Manager';
 import { DataPrepocesser } from '../../lib/Data';
 import DynamicColorProperty from '../../lib/Custom/Property/DynamicColorProperty';
 import * as Cesium from 'cesium'
@@ -11,7 +12,6 @@ $bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM }) => {
     _editor_ = editor
     _eM_ = eM
     pointPrimitiveCollection = _viewer_.scene.primitives.add(new Cesium.PointPrimitiveCollection());
-    console.log(pointPrimitiveCollection, 'pointPrimitiveCollection')
 })
 
 const props = defineProps({
@@ -126,7 +126,7 @@ const createDynamicPoint = (_viewer_) => {
             // 测试模式 生成100个示例点 
             const baseLongitude = 2.294481;//基准点 base
             const baseLatitude = 48.858370;
-            const baseHeight = 20; 
+            const baseHeight = 20;
             const colorArray = [
                 Cesium.Color.RED,
                 Cesium.Color.GREEN,
@@ -177,7 +177,7 @@ const createDynamicPoint = (_viewer_) => {
             data: pointPrimitiveCollection._pointPrimitives
         };
     }
-    $bus_Entity.emit('entityCreatedEvent@henrifox', { entity: curEntity, type: 'point' })
+    $bus_Entity.emit('entityCreatedEvent@henrifox', { target: curEntity, type: 'point' })
 }
 
 let descNode
@@ -217,7 +217,8 @@ onMounted(() => {
     }, 1000)
     timer2 = setTimeout(() => {
         createDynamicPoint(_viewer_)
-        bindEvent(_eM_, 'popup')
+        const eM_Point = new EventManager(_viewer_)//pointVue内部独立维护一个事件管理器
+        bindEvent(eM_Point, 'popup')
     }, 0)
 })
 

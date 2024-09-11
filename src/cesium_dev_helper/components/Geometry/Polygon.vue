@@ -1,4 +1,5 @@
 <script setup>
+import { EventManager } from '../../lib/Manager';
 import * as Cesium from 'cesium'
 import { onBeforeUnmount, watch, createVNode, render } from 'vue';
 const props = defineProps({
@@ -38,7 +39,7 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    hierarchys: {
+    polygons: {
         type: Array,
         default: () => ([])
     }
@@ -51,6 +52,7 @@ const zoomProp = props.zoom
 const $bus = inject('$bus')
 const $bus_Entity = inject('$bus_Entity')
 let _editor_, _viewer_, _eM_, primitiveCollection;
+let curEntity
 $bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM }) => {
     _viewer_ = viewer
     _editor_ = editor
@@ -76,41 +78,74 @@ const defHierachy = new Cesium.PolygonHierarchy(polygonPositions, [holePositions
 
 let curSec = 0;
 let timer1, timer2
-let curEntity
 const appearance = new Cesium.PerInstanceColorAppearance({
     translucent: true,
     closed: true
 });
 const createDynamicPolygon = (_viewer_) => {
+    primitiveCollection._primitives = []
     if (props.performance) {
         if (props.test) {
             createTestData(primitiveCollection, 10000)
-            console.log(primitiveCollection)
-            return;
-        } else {
-            props.hierarchys.forEach(hi => {
-              
+        } else if (props.polygons[0]) {
+            let positionArr = []
+            props.polygons.forEach(poly => {
+                positionArr.push(poly.positions)
+                const polygonGeometry = new Cesium.PolygonGeometry({
+                    polygonHierarchy: new Cesium.PolygonHierarchy(poly.positions),
+                    height: poly.height || 0,
+                    extrudedHeight: poly.extrudedHeight || 0,
+                    perPositionHeight: poly.perPositionHeight || false,
+                    closeTop: poly.closeTop || true,
+                    closeBottom: poly.closeBottom || true,
+                    arcType: poly.arcType || Cesium.ArcType.GEODESIC,
+                    vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT // 顶点格式
+                });
+                const geometryInstance = new Cesium.GeometryInstance({
+                    geometry: polygonGeometry,
+                    attributes: {
+                        color: Cesium.ColorGeometryInstanceAttribute.fromColor(parsedColor(poly.color))
+                    }
+                });
+                primitiveCollection.add(new Cesium.Primitive({
+                    geometryInstances: geometryInstance,
+                    appearance: new Cesium.PerInstanceColorAppearance({
+                        translucent: true,
+                        closed: true
+                    }),
+                    asynchronous: true
+                })
+                );
             });
+            props.zoom && _viewer_.camera.setView({
+                destination: getCenterCart3sArr(positionArr),
+                orientation: {
+                    heading: Cesium.Math.toRadians(0),
+                    pitch: Cesium.Math.toRadians(-90),
+                    roll: 0
+                }
+            });
+            $bus_Entity.emit('entityCreatedEvent@henrifox', { target: primitiveCollection, type: 'polygon', isPrimitive: true })
         }
+    } else {
+        curEntity && _viewer_.entities.remove(curEntity)
+        const entity = _viewer_.entities.add({
+            name: 'Polygon@henrifox' + Date.now(),
+            polygon: {
+                hierarchy: hierarchyProp || defHierachy,
+                material: materialProp,
+                ...extraOptProp
+            },
+            properties: {
+                meta: 'Some additional meta information',
+                html: `<p>Polygon</p>`
+            },
+        });
+        curEntity = entity
+        $bus_Entity.emit('entityCreatedEvent@henrifox', { target: curEntity, type: 'polygon', isPrimitive: false })
+        zoomProp && _viewer_.zoomTo(entity);
     }
-    curEntity && _viewer_.entities.remove(curEntity)
-    const entity = _viewer_.entities.add({
-        name: 'Polygon@henrifox' + Date.now(),
-        polygon: {
-            hierarchy: hierarchyProp || defHierachy,
-            material: materialProp,
-            ...extraOptProp
-        },
-        properties: {
-            meta: 'Some additional meta information',
-            html: `<p>Polygon</p>`
-        },
-    });
-    curEntity = entity
-    $bus_Entity.emit('entityCreatedEvent@henrifox', { entity, type: 'polygon' })
-    zoomProp && _viewer_.zoomTo(entity);
 }
-
 const bindEvent = (eM, type) => {
     if (type = 'popup') {
         eM.onMouseDoubleClick((e, pickedObjectPos, pickedObject) => {
@@ -128,8 +163,12 @@ const bindEvent = (eM, type) => {
         }
         )
     }
+    if (type === 'navigation') {
+        eM.onMouseClick((e) => {
+            console.log(e.position)
+        })
+    }
 }
-
 // 测试数据：批量创建几何体并批处理
 function createTestData(primitiveCollection, numPolygons) {
     const instances = [];
@@ -153,7 +192,7 @@ function createTestData(primitiveCollection, numPolygons) {
         // 创建 PolygonGeometry
         const polygonGeometry = new Cesium.PolygonGeometry({
             polygonHierarchy: new Cesium.PolygonHierarchy(positions),
-            height: 0,  // 多边形的高度
+            height: 10000,  // 多边形的高度
             extrudedHeight: 10000, // 拉伸形成 3D 多边形
             vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT // 顶点格式
         });
@@ -177,14 +216,33 @@ function createTestData(primitiveCollection, numPolygons) {
         asynchronous: true // 异步加载以优化性能
     }));
 }
+function parsedColor(string) {
+    if (!string) return Cesium.Color.BLUE;
+    return Cesium.Color.fromCssColorString(string)
+}
+function getCenterCart3sArr(cart3sArr) {//Primitive没有位置属性 PointPrimitive有 
+    let x = 0, y = 0, z = 0;
+    let totalPoints = 0;
 
+    cart3sArr.forEach(cart3s => {
+        cart3s.forEach(cart => {
+            x += cart.x;
+            y += cart.y;
+            z += cart.z;
+            totalPoints++;
+        });
+    });
+    return new Cesium.Cartesian3(x / totalPoints, y / totalPoints, z / totalPoints);
+}
 onMounted(() => {
     timer1 = setInterval(() => {
         curSec++
     }, 1000)
     timer2 = setTimeout(() => {
         createDynamicPolygon(_viewer_)
-        bindEvent(_eM_, 'popup')
+        const eM_Polygon = new EventManager(_viewer_)//polygonVue内部独立维护一个事件管理器
+        bindEvent(eM_Polygon, 'popup')
+        bindEvent(eM_Polygon, 'navigation')
     }, 0)
 })
 watch(() => props, (newV) => {

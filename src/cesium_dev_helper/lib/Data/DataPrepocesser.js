@@ -306,22 +306,23 @@ class DataPrepocesser {
 
 
 	static getCenterOfPrimitives(primitives) {
-    // 检查 primitives 是否为空
-    if (primitives.length === 0) {
-        throw new Error('Primitives array is empty');
-    }
+		// 检查 primitives 是否为空
+		if (primitives.length === 0) {
+			throw new Error('Primitives array is empty');
+		}
+		if (primitives.every(item => item instanceof Cesium.PointPrimitive)) {
+			// 初始化 boundingSphere 为第一个 primitive 的包围球
+			let boundingSphere = Cesium.BoundingSphere.fromPoints([primitives[0].position]);
 
-    // 初始化 boundingSphere 为第一个 primitive 的包围球
-    let boundingSphere = Cesium.BoundingSphere.fromPoints([primitives[0].position]);
+			// 遍历其余的 primitives 并扩展 boundingSphere
+			for (let i = 1; i < primitives.length; i++) {
+				const primitive = primitives[i];
+				Cesium.BoundingSphere.expand(boundingSphere, Cesium.BoundingSphere.fromPoints([primitive.position]));
+			}
 
-    // 遍历其余的 primitives 并扩展 boundingSphere
-    for (let i = 1; i < primitives.length; i++) {
-        const primitive = primitives[i];
-        Cesium.BoundingSphere.expand(boundingSphere, Cesium.BoundingSphere.fromPoints([primitive.position]));
-    }
-    
-    return boundingSphere.center;
-}
+			return boundingSphere.center;
+		}
+	}
 
 
 
