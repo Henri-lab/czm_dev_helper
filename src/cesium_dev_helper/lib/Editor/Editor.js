@@ -3,37 +3,48 @@
 
 import EntityDrawer from "./pencil/EntityDrawer";
 import { LayerManager } from "../Manager";
+import { lineOpt, polygonOpt } from './config/lineOpt'
 
 export default class Editor {
     constructor(viewer, $options) {
         console.log('new Editor class')
         this.viewer = viewer;
         this.$entityDrawer = new EntityDrawer(viewer);
-        this.$options = $options || {};
+        this.$options = $options || {
+            line: lineOpt,
+            polygon: polygonOpt
+        };
         this.currentLine = null;
         this.lines = [];//cache
         this.linesTrash = [];
-        this.isDone = false;
+        this.currentPolygon = null;
+        this.polygons = [];
+        this.polygonTrash = [];
     }
 
     //可以把配置单独传给startLine
     //也可以传给 Editor 
     startLines(options = this.$options.line) {
         let that = this;
-        that.isDone = false;
         let $entityDrawer = that.$entityDrawer;
         $entityDrawer.removeEventHandler();
         if (!that.viewer || !that.$options) return;
-        // 增加被调用函数的行为
-        const pluginFunction = (cb_currentLine, cb_curPosCollection) => {
-            that.isDone = true
-            that.currentLine = cb_currentLine
-            // 将当前绘制完成的线添加到 lines 数组中
-            that.lines.push(cb_currentLine);
-            // console.log(that.currentLine, 'line done')
-            // console.log(cb_curPosCollection, 'line pos')
+        const pluginFunction = (_currentLine, _curPosCollection) => {
+            that.currentLine = _currentLine
+            that.lines.push(_currentLine);
         }
         $entityDrawer.drawWithEvent('polyline', options, pluginFunction)
+    }
+    startPolygons(options = this.$options.polygon) {
+        let that = this;
+        let $entityDrawer = that.$entityDrawer;
+        $entityDrawer.removeEventHandler();
+        if (!that.viewer || !that.$options) return;
+        const pluginFunction = (_currentPolygon, _curPosCollection) => {
+            that.currentPolygon = _currentPolygon
+            that.polygons.push(_currentPolygon);
+        }
+        $entityDrawer.drawWithEvent('polygon', options, pluginFunction)
     }
     drawback(type, isHide) {
         let that = this
@@ -43,7 +54,7 @@ export default class Editor {
             that.linesTrash.push(last)
             let source = LayerManager.getOwnerOfEntity(last)
             isHide === 'hide' ? (last.show = false) : source.entities.remove(last)
-            console.log('last line removed , id:', last.id, 'from', source.entities.values)
+            // console.log('last line removed , id:', last.id, 'from', source.entities.values)
             return last
         }
     }

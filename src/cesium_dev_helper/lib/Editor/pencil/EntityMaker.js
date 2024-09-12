@@ -61,10 +61,15 @@ export default class EntityMaker extends DrawingManager {
   }
 
   //  创建一个czm帧刷新属性
-  czm_callbackProperty(data, isConst = false) {
+  CallBackProperty(data, isConst = false) {
     return new Cesium.CallbackProperty(() => {
+      // console.log(data, 'new data')
       return data;
     }, isConst)
+  }
+
+  Hierarchy = (carts) => {
+    return new Cesium.PolygonHierarchy(carts);
   }
 
   //  生成图形------------------------------------------------------------------------
@@ -192,23 +197,22 @@ export default class EntityMaker extends DrawingManager {
     let entityOpt = {};
     entityOpt[_type] = this.createGraphicsByType(_type, graphicOption); // bind graphics👻
     if (_type === 'polygon') {
-      const Hierarchy = (pos) => {
-        return new Cesium.PolygonHierarchy(pos);
-      }
-      entityOpt.polygon.hierarchy = this.czm_callbackProperty(Hierarchy(getNewPosition()))
+      entityOpt.polygon.hierarchy = this.CallBackProperty(
+        this.Hierarchy(getNewPosition())
+      )
     }
     else if (_type === 'rectangle') {
       const Rectangle = (posArr) => {  // rectangle 至少需要两个点
         if (posArr.length < 2) throw new TypeError('Invalid positions when creating rectangle');
         return Cesium.Rectangle.fromCartesianArray(posArr);//西南东北 w s e n
       }
-      entityOpt.rectangle.coordinates = this.czm_callbackProperty(Rectangle(getNewPosition()))
+      entityOpt.rectangle.coordinates = this.CallBackProperty(Rectangle(getNewPosition()))
     }
     else if (_type === 'polyline') {
-      entityOpt.polyline.positions = this.czm_callbackProperty(getNewPosition())
+      entityOpt.polyline.positions = this.CallBackProperty(getNewPosition())
     }
     else {
-      entityOpt.positions = this.czm_callbackProperty(getNewPosition())//core👻
+      entityOpt.positions = this.CallBackProperty(getNewPosition())//core👻
     }
     const finalOpt = {
       ...extraOption,

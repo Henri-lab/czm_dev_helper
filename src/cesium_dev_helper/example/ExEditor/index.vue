@@ -7,8 +7,12 @@
             <el-button @click="newLine('default')">新建（默认模式）</el-button>
             <el-button @click="newLine('follow')">新建（跟随模式）</el-button>
             <el-button @click="newLine('straight')">新建（直线模式）</el-button>
+            <br>
+            <el-button @click="newPoly">新建（多边形）</el-button>
+            <br>
             <el-button @click="drawbackLine">撤销</el-button>
             <el-button @click="recoverLine">恢复</el-button>
+            <br>
             <div>测量结果为：{{ measureRes }} Km</div>
         </div>
         <CzmMap width="800px" height="1000px">
@@ -41,9 +45,10 @@ const getEditor = (editor) => {
 // -----------------------------------------------------------------------------------
 const measureRes = ref(0)
 const lineOpt = {
+    datasource: null,
     t_id: Date.now(),  //timestamp as t_id
-    name: 'test-line', //图形名称
-    positions: [],  //坐标数组需要交互时添加
+    name: 'ex-line', //图形名称
+    positions: [],  //预坐标
     material: Cesium.Color.BLUE,  //配置线段材质
     width: 5,  //线宽
     mode: 'default',
@@ -57,6 +62,24 @@ const lineOpt = {
         console.log(screenXY, cartXY)
     }
 }
+const polyOpt = {
+    datasource: null,
+    t_id: Date.now(),
+    name: 'ex-poly',
+    positions: [],
+    material: Cesium.Color.BLUE,
+    width: 5,
+    mode: 'default',
+    clampToGround: true,
+    measure: true,
+    scaleByDistance: new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e7, 0.5),
+    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e7),
+    after: ({ entity, value, screenXY, cartXY }) => {
+        measureRes.value = value
+        console.log(screenXY, cartXY)
+        console.log(entity, 'polygon')
+    }
+}
 
 const newLine = (mode) => {
     lineOpt.mode = mode
@@ -67,6 +90,9 @@ const drawbackLine = () => {
 }
 const recoverLine = () => {
     _editor_.recover('polyline')
+}
+const newPoly = () => {
+    _editor_.startPolygons(polyOpt)
 }
 
 
