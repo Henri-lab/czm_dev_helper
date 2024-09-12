@@ -4,6 +4,7 @@ import { CoordTransformer } from "../../Compute";
 import { isValidCartesian3 } from "../../util/isValid";
 import TurfUser from "../../Compute/TurfUser";
 import * as Cesium from "cesium";
+import { get } from "@/util/methods";
 /**
  * EntityDrawer class for drawing entities with events on a Cesium viewer with event handling.
  * @class
@@ -20,10 +21,12 @@ export default class EntityDrawer extends DrawingManager {
         this.$turfer = new TurfUser(viewer);
         this.defaultImageUrl = '';
         this.currentHandler = null;//方便在removeEventHandler剔除
+        this.fakeLine = [];
     }
     initLayer(name) {
         const lM = new LayerManager(this.viewer)
         this._drawLayer = lM.addDatasourceByName(name);;//保证图层的唯一性
+        this._fakeLayer = lM.addDatasourceByName('fakeLayer@henriFox')
     }
     // --辅助函数-----------------------------------------
     // 获得屏幕位置的cartesian
@@ -181,6 +184,14 @@ export default class EntityDrawer extends DrawingManager {
                 pickedPosCollection = [];
                 that.drawWithEvent(buffer.Type, buffer.options, buffer.pluginFunction);
             }
+
+            if (type === 'polygon') {
+                if (pickedPosCollection.length == 2) {
+                    this.fakeLine.push(this.fakeDraw(getNewPosition, options))
+                } else if (pickedPosCollection.length == 3) {
+                    this._fakeLayer.entities.remove(this.fakeLine.pop())
+                }
+            }
         }
         const afterMouseMove = (movement) => { // mouse movement 
             let cartesian = that._getCartesian3FromPX(movement.endPosition);
@@ -227,6 +238,15 @@ export default class EntityDrawer extends DrawingManager {
         eM.onMouseClick(afterLeftClick);
         eM.onMouseMove(afterMouseMove);
         eM.onMouseRightClick(afterRightClick);
+    }
+
+    fakeDraw(getPos, option) {
+        return this._fakeLayer.entities.add(new Cesium.Entity({
+            position: getPos(),
+            polyline: {
+                ...option
+            }
+        }));
     }
     /**
      * 移除所有实体
