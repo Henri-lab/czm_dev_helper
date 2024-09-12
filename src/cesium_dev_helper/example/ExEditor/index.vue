@@ -3,18 +3,19 @@
         <div class="code" ref="code"
             style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
         </div>
-        <div class="btns" style="width: 5%; height: 20%; display: flex; flex-direction: column;">
-            <el-button @click="newLine">新建</el-button>
+        <div class="btns" style="width: 10%; height: 20%; display: flex; flex-direction: column;">
+            <el-button @click="newLine('default')">新建（默认模式）</el-button>
+            <el-button @click="newLine('follow')">新建（跟随模式）</el-button>
+            <el-button @click="newLine('straight')">新建（直线模式）</el-button>
             <el-button @click="drawbackLine">撤销</el-button>
-            <el-button @click="stopLine">停止</el-button>
+            <el-button @click="recoverLine">恢复</el-button>
         </div>
         <CzmMap width="800px" height="1000px">
             <CzmCamera :view="view"></CzmCamera>
-            <CzmEditor ref="__ExEditor_CzmEditor__" @edit="getEditor"></CzmEditor>
+            <CzmEditor @edit="getEditor"></CzmEditor>
         </CzmMap>
     </div>
 </template>
-import { Editor } from '@/Map';
 
 <script setup>
 import { marked } from 'marked'
@@ -22,7 +23,6 @@ import { onMounted } from 'vue';
 import codeString from './code.js'
 import { CzmEditor, CzmMap, CzmCamera } from '../../components'
 import * as Cesium from 'cesium'
-
 const view = {
     destination: {
         longitude: 17,
@@ -33,11 +33,9 @@ const view = {
     pitch: -90,
     roll: 0,
 }
-
-const __ExEditor_CzmEditor__ = ref(null)
-let editor
-const getEditor = (_editor_) => {
-    editor = _editor_
+let _editor_
+const getEditor = (editor) => {
+    _editor_ = editor
 }
 // -----------------------------------------------------------------------------------
 const lineOpt = {
@@ -46,8 +44,7 @@ const lineOpt = {
     positions: [],  //坐标数组需要交互时添加
     material: Cesium.Color.BLUE,  //配置线段材质
     width: 5,  //线宽
-    straight: false, // //两点直线模式
-    mouseFollow: false, // 鼠标跟随模式
+    mode: 'default',
     clampToGround: true,  //是否贴地
     measure: true, //开启测量?
     scaleByDistance: new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e7, 0.5),//缩放
@@ -58,15 +55,51 @@ const lineOpt = {
         console.log('polyline-positions', pos)
     },
 }
-
-const newLine = () => {
-    editor.startLines(lineOpt)
+const lineOpt2 = {
+    t_id: Date.now(),
+    name: 'test-line',
+    positions: [],
+    material: Cesium.Color.BLUE,
+    width: 5,
+    mode: 'straight',
+    clampToGround: true,
+    measure: true,
+    scaleByDistance: new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e7, 0.5),
+    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e7),
+    after: (entity, pos) => {
+        console.log('polyline-entity', entity)
+        console.log('polyline-positions', pos)
+    },
 }
-const closeLine = () => {
-    editor.stopLines(false)
+const lineOpt3 = {
+    t_id: Date.now(),
+    name: 'test-line',
+    positions: [],
+    material: Cesium.Color.BLUE,
+    width: 5,
+    mode: 'follow',
+    clampToGround: true,
+    measure: true,
+    scaleByDistance: new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e7, 0.5),
+    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e7),
+    after: (entity, pos) => {
+        console.log('polyline-entity', entity)
+        console.log('polyline-positions', pos)
+    },
+}
+const newLine = (mode) => {
+    if (mode === 'follow')
+        _editor_.startLines(lineOpt3)
+    else if (mode === 'straight')
+        _editor_.startLines(lineOpt2)
+    else
+        _editor_.startLines(lineOpt)
 }
 const drawbackLine = () => {
-    editor.drawback('polyline')
+    _editor_.drawback('polyline')
+}
+const recoverLine = () => {
+    _editor_.recover('polyline')
 }
 
 

@@ -138,8 +138,9 @@ export default class EntityDrawer extends DrawingManager {
      * @returns {Cesium.Entity|null} - The created entity or null if viewer or options are not provided.
      */
     drawWithEvent(Type, options, pluginFunction) {
+        console.log('wait drawing:', Type, '-mode:', options.mode)
+        let clickFlag = 0
         const buffer = { Type, options, pluginFunction }
-        console.log('drawWithEvent-type:', Type)
         if (!this.viewer || !options) return null;
 
         // --数据准备--
@@ -169,6 +170,7 @@ export default class EntityDrawer extends DrawingManager {
         // --EVENT--
         // set callback function
         const afterLeftClick = (movement, pickedPos, pickedObj) => {   // left click
+            clickFlag = 1
             // 点击处的直角坐标
             const cartesian = pickedPos;
             // 检查格式
@@ -177,24 +179,28 @@ export default class EntityDrawer extends DrawingManager {
             pickedPosCollection.push(cartesian); // 更新实体的坐标
             // 特殊处理 
             // 1.绘制两点直线
-            if (options.straight && type === 'polyline' && pickedPosCollection.length == 2) {
-                // 销毁事件处理程序 结束绘制
-                _handler_.destroy();
-                _handler_ = null;
-                // 绘制后的回调 
-                if (typeof options.after === "function") {
-                    options.after(currentEntity, that._transformCartesianToWGS84(pickedPosCollection),);
+            if (type === 'polyline' && options.mode === 'straight' && pickedPosCollection.length == 2) {
+                // 执行额外的程序
+                if (typeof pluginFunction === "function") {
+                    pluginFunction(currentEntity, pickedPosCollection);
                 }
+                // 画下一条
+                if (_handler_) {
+                    _handler_.destroy();
+                    _handler_ = null;
+                }
+                pickedPosCollection = [];
+                that.drawWithEvent(buffer.Type, buffer.options, buffer.pluginFunction);
             }
         }
         const afterMouseMove = (movement) => { // mouse movement 
             let cartesian = that._getCartesian3FromPX(movement.endPosition);
-            //shadow跟踪 持续更新坐标选项 动态实体会每帧读取 
+            //shadow follow 持续更新坐标选项 动态实体会每帧读取 
             if (!cartesian || !isValidCartesian3(cartesian)) return;
-            (options.mouseFollow) && pickedPosCollection.push(cartesian);
+            (options.mode === 'follow' && clickFlag) && pickedPosCollection.push(cartesian);
         }
         const afterRightClick = (movement) => { // right click 
-
+            clickFlag = 0
             // 更新图形
             const isClose = true;
             that._updatePosByType(type, pickedPosCollection, {}, options, isClose);
@@ -211,26 +217,19 @@ export default class EntityDrawer extends DrawingManager {
                     cartoXY: endPos,
                 });
             }
-
-
-            // 结束绘制
-            _handler_.destroy();
-            _handler_ = null;
-
             // callback with Entity and Positions
             if (typeof options.after === "function") {
-                options.after(currentEntity, that._transformCartesianToWGS84(pickedPosCollection));
+                options.after(currentEntity, (pickedPosCollection));
             }
-
             // 执行额外的程序
-            const _currentEntity = currentEntity;//当前绘制的实体
-            const _currentPosArr = pickedPosCollection
             if (typeof pluginFunction === "function") {
-                // 交给pluginFunction处理数据
-                pluginFunction(_currentEntity, _currentPosArr);
+                pluginFunction(currentEntity, pickedPosCollection);
             }
-
-            // 画下一条
+            // 画下一条前要销毁事件处理程序
+            if (_handler_) {
+                _handler_.destroy();
+                _handler_ = null;
+            }
             pickedPosCollection = [];
             that.drawWithEvent(buffer.Type, buffer.options, buffer.pluginFunction);
         }
@@ -258,6 +257,13 @@ export default class EntityDrawer extends DrawingManager {
             _handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
             _handler.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
             _handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        }
+    }
+
+    destroyHandler() {
+        const _handler = this.currentHandler;
+        if (_handler && !_handler.isDestroyed()) {
+            _handler.destroy();
         }
     }
 }

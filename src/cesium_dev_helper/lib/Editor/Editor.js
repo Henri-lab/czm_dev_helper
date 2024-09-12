@@ -12,6 +12,7 @@ export default class Editor {
         this.$options = $options || {};
         this.currentLine = null;
         this.lines = [];//cache
+        this.linesTrash = [];
         this.isDone = false;
     }
 
@@ -21,6 +22,7 @@ export default class Editor {
         let that = this;
         that.isDone = false;
         let $entityDrawer = that.$entityDrawer;
+        $entityDrawer.removeEventHandler();
         if (!that.viewer || !that.$options) return;
         // 增加被调用函数的行为
         const pluginFunction = (cb_currentLine, cb_curPosCollection) => {
@@ -38,9 +40,23 @@ export default class Editor {
         let _type = type.toLowerCase()
         if (_type === 'polyline' && that.lines.length) {
             const last = that.lines.pop()
-            let source = LayerManager.getOwnerOfEntity(last) || that.$entityDrawer._drawLayer
+            that.linesTrash.push(last)
+            let source = LayerManager.getOwnerOfEntity(last)
             isHide === 'hide' ? (last.show = false) : source.entities.remove(last)
-            console.log('last line removed , id:', last.id)
+            console.log('last line removed , id:', last.id, 'from', source.entities.values)
+            return last
+        }
+    }
+
+    recover(type) {
+        let that = this
+        let _type = type.toLowerCase()
+        if (_type === 'polyline' && that.linesTrash.length) {
+            const last = that.linesTrash.pop()
+            let source = LayerManager.getOwnerOfEntity(last)
+            source.entities.add(last)
+            that.lines.push(last)
+            console.log('last line recovered , id:', last.id)
             return last
         }
     }

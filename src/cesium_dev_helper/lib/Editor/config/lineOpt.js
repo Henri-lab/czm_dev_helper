@@ -10,7 +10,7 @@ const lineOpt = {
     width: 2,  //线宽
     clampToGround: true,  //是否贴地?
     measure: true, //开启测量?
-    straight: false, //直线模式?
+    mode: 'default',
     scaleByDistance: new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e7, 0.5),//缩放
     distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e7),//可视距离
     //绘制结束后
