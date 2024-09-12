@@ -14,10 +14,7 @@ const lineOpt = {
     scaleByDistance: new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e7, 0.5),//缩放
     distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e7),//可视距离
     //绘制结束后
-    after: (entity, pos) => {
-        console.log('polyline-entity', entity)
-        console.log('polyline-positions', pos)
-    },
+    after: ({ entity, value, screenXY, cartoXY }) => {}
 
 }
 export {

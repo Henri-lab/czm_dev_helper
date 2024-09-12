@@ -9,6 +9,7 @@
             <el-button @click="newLine('straight')">新建（直线模式）</el-button>
             <el-button @click="drawbackLine">撤销</el-button>
             <el-button @click="recoverLine">恢复</el-button>
+            <div>测量结果为：{{ measureRes }} Km</div>
         </div>
         <CzmMap width="800px" height="1000px">
             <CzmCamera :view="view"></CzmCamera>
@@ -38,6 +39,7 @@ const getEditor = (editor) => {
     _editor_ = editor
 }
 // -----------------------------------------------------------------------------------
+const measureRes = ref(0)
 const lineOpt = {
     t_id: Date.now(),  //timestamp as t_id
     name: 'test-line', //图形名称
@@ -50,50 +52,15 @@ const lineOpt = {
     scaleByDistance: new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e7, 0.5),//缩放
     distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e7),//可视距离
     //绘制结束后
-    after: (entity, pos) => {
-        console.log('polyline-entity', entity)
-        console.log('polyline-positions', pos)
-    },
+    after: ({ entity, value, screenXY, cartXY }) => {
+        measureRes.value = value
+        console.log(screenXY, cartXY)
+    }
 }
-const lineOpt2 = {
-    t_id: Date.now(),
-    name: 'test-line',
-    positions: [],
-    material: Cesium.Color.BLUE,
-    width: 5,
-    mode: 'straight',
-    clampToGround: true,
-    measure: true,
-    scaleByDistance: new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e7, 0.5),
-    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e7),
-    after: (entity, pos) => {
-        console.log('polyline-entity', entity)
-        console.log('polyline-positions', pos)
-    },
-}
-const lineOpt3 = {
-    t_id: Date.now(),
-    name: 'test-line',
-    positions: [],
-    material: Cesium.Color.BLUE,
-    width: 5,
-    mode: 'follow',
-    clampToGround: true,
-    measure: true,
-    scaleByDistance: new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e7, 0.5),
-    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e7),
-    after: (entity, pos) => {
-        console.log('polyline-entity', entity)
-        console.log('polyline-positions', pos)
-    },
-}
+
 const newLine = (mode) => {
-    if (mode === 'follow')
-        _editor_.startLines(lineOpt3)
-    else if (mode === 'straight')
-        _editor_.startLines(lineOpt2)
-    else
-        _editor_.startLines(lineOpt)
+    lineOpt.mode = mode
+    _editor_.startLines(lineOpt)
 }
 const drawbackLine = () => {
     _editor_.drawback('polyline')

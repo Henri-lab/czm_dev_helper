@@ -4,7 +4,6 @@ import { CoordTransformer } from "../../Compute";
 import { isValidCartesian3 } from "../../util/isValid";
 import TurfUser from "../../Compute/TurfUser";
 import * as Cesium from "cesium";
-
 /**
  * EntityDrawer class for drawing entities with events on a Cesium viewer with event handling.
  * @class
@@ -22,7 +21,6 @@ export default class EntityDrawer extends DrawingManager {
         this.defaultImageUrl = '';
         this.currentHandler = null;//方便在removeEventHandler剔除
     }
-
     initLayer(name) {
         const lM = new LayerManager(this.viewer)
         this._drawLayer = lM.addDatasourceByName(name);;//保证图层的唯一性
@@ -38,12 +36,6 @@ export default class EntityDrawer extends DrawingManager {
             return data;
         }, false)
     }
-
-    // 处理(展示)测量结果
-    _measureResultHandle = (res) => {
-        console.log('the measure result:', res.value, 'km');
-    }
-
     _parseConfig(entityOption) {
         const { t_id, name, description/*可随意添加*/, datasource, ...rest } = entityOption;
         const parsedEntityOpt = {
@@ -72,7 +64,6 @@ export default class EntityDrawer extends DrawingManager {
             return;
         };
     }
-
     // 更新 用于绘制实体的 配置选项的 坐标选项 
     _updatePos(options, newPos) {
         options.positions = newPos;
@@ -128,8 +119,6 @@ export default class EntityDrawer extends DrawingManager {
         this._updatePos(entityOptions, pickedPosCollection);
         return true;
     }
-
-    // 核心
     /**
      * Entity an entity with event handling.
      * @param {String} Type - The type of the entity.
@@ -205,21 +194,22 @@ export default class EntityDrawer extends DrawingManager {
             const isClose = true;
             that._updatePosByType(type, pickedPosCollection, {}, options, isClose);
 
-            //开启测量功能
-            if (options.measure) {
-                let endPos/*右键点击处地理坐标*/ = that._getCartesian3FromPX(movement.position);
-                const res /*测量结果*/ = that.$turfer.measureSimple(type, pickedPosCollection);
-                that._measureResultHandle({
-                    /*...*/
-                    entity: currentEntity,
-                    value: res,
-                    screenXY: movement.position,
-                    cartoXY: endPos,
-                });
-            }
             // callback with Entity and Positions
             if (typeof options.after === "function") {
-                options.after(currentEntity, (pickedPosCollection));
+                if (options.measure) {
+                    let endPos/*右键点击处catr坐标*/ = that._getCartesian3FromPX(movement.position);
+                    const res /*测量结果*/ = that.$turfer.measureSimple(type, pickedPosCollection);
+                    options.after({
+                        entity: currentEntity,
+                        value: res,
+                        screenXY: movement.position,
+                        cartXY: endPos,
+                    });
+                } else {
+                    options.after({
+                        entity: currentEntity,
+                    });
+                }
             }
             // 执行额外的程序
             if (typeof pluginFunction === "function") {
@@ -238,8 +228,6 @@ export default class EntityDrawer extends DrawingManager {
         eM.onMouseMove(afterMouseMove);
         eM.onMouseRightClick(afterRightClick);
     }
-
-
     /**
      * 移除所有实体
      * @function
@@ -259,7 +247,6 @@ export default class EntityDrawer extends DrawingManager {
             _handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
         }
     }
-
     destroyHandler() {
         const _handler = this.currentHandler;
         if (_handler && !_handler.isDestroyed()) {
@@ -267,30 +254,3 @@ export default class EntityDrawer extends DrawingManager {
         }
     }
 }
-
-
-// this.handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-// 为什么放弃创建一个总handler？
-// -在 Cesium 中，ScreenSpaceEventHandler 允许你为不同的鼠标和触摸事件设置回调函数。
-// --如果你在同一个 ScreenSpaceEventHandler 对象上为同一个事件类型（如 LEFT_CLICK、LEFT_DOUBLE_CLICK 等）设置多个回调函数，这些回调函数不会相互干扰，但后一个会覆盖前一个。
-// --也就是说，同一个事件类型只能有一个回调函数，因此如果你需要对同一个事件类型执行多个操作，你需要在一个回调函数中处理所有逻辑。
-// -或者! 仍然创建一个公共handler,但是调用之前先清空添加的事件
-
-
-
-// test
-// PointWithEvent(options, pluginFunction) {
-//     this.drawWithEvent('point', options, pluginFunction)
-// }
-// LineWithEvent(options, pluginFunction) {
-//     this.drawWithEvent('polyline', options, pluginFunction);
-// }
-// PolygonWithEvent(options, pluginFunction) {
-//     this.drawWithEvent('polygon', options, pluginFunction)
-// }
-// RectangleWithEvent(options, pluginFunction) {
-//     this.drawWithEvent('rectangle', options, pluginFunction)
-// }
-// CircleWithEvent(options, pluginFunction) {
-//     this.drawWithEvent('ellipse', options, pluginFunction)
-// }
