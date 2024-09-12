@@ -2,6 +2,7 @@
 //增加：重置 收集点 数组，并创建新的线实体以准备绘制下一条线。
 
 import EntityDrawer from "./pencil/EntityDrawer";
+import { LayerManager } from "../Manager";
 
 export default class Editor {
     constructor(viewer, $options) {
@@ -32,14 +33,14 @@ export default class Editor {
         }
         $entityDrawer.drawWithEvent('polyline', options, pluginFunction)
     }
-    drawback(type, isHide = false) {
+    drawback(type, isHide) {
         let that = this
-        let collection = that.viewer.entities
         let _type = type.toLowerCase()
         if (_type === 'polyline' && that.lines.length) {
             const last = that.lines.pop()
-            isHide ? (last.show = false) : collection.remove(last)
-            console.log('last line removed')
+            let source = LayerManager.getOwnerOfEntity(last) || that.$entityDrawer._drawLayer
+            isHide === 'hide' ? (last.show = false) : source.entities.remove(last)
+            console.log('last line removed , id:', last.id)
             return last
         }
     }

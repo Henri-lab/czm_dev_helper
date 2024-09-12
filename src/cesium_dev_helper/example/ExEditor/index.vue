@@ -66,7 +66,7 @@ const closeLine = () => {
     editor.stopLines(false)
 }
 const drawbackLine = () => {
-    editor.drawback('polyline', true)
+    editor.drawback('polyline')
 }
 
 

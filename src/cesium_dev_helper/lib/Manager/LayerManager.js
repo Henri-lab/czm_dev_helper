@@ -68,6 +68,10 @@ class LayerManager extends Manager {
         // _viewer.zoomTo(ds)
         return uniqueDatasource//unique
     }
+
+    static getOwnerOfEntity(entity) {
+        return entity.entityCollection.owner
+    }
 }
 
 

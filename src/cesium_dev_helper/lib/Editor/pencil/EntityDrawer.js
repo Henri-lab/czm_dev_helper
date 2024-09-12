@@ -53,7 +53,7 @@ export default class EntityDrawer extends DrawingManager {
                 description,
             },
             graphicOption: rest,
-            datasource: this._drawLayer,//指定特定图层
+            datasource: datasource || this._drawLayer,//默认加载图层
         }
         return parsedEntityOpt;
     }
