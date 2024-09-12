@@ -1,4 +1,4 @@
-import { render, createVNode, ComponentInstance,VNode } from 'vue';
+import { render, createVNode, ComponentInstance, VNode } from 'vue';
 import * as Cesium from 'cesium';
 import { Viewer } from 'cesium';
 import {
@@ -12,7 +12,7 @@ import {
  */
 class PopupCreator implements PopupCreatorInterface {
   viewer: Viewer;
-  vnode!: VNode;//!来表示非空断言。
+  vnode!: VNode; //!来表示非空断言。
   position: Cesium.Cartesian3;
   label: string;
   isShow: boolean;
@@ -30,9 +30,8 @@ class PopupCreator implements PopupCreatorInterface {
 
   // 点击popup的回调
   clickHandler: () => void;
-
   constructor(
-    viewer: Viewer,
+    viewer: Cesium.Viewer,
     options: PopupOptions,
     pathOfVueComponentMap: Record<string, () => Promise<{ default: any }>>,
     clickHandler: () => void
@@ -60,10 +59,6 @@ class PopupCreator implements PopupCreatorInterface {
     );
     this.clickHandler = clickHandler;
   }
-    ['constructor'](viewer: Cesium.Viewer, options: PopupOptions, pathOfVueComponentMap: Record<string, () => Promise<{ default: any; }>>, clickHandler: () => void): void {
-        throw new Error('Method not implemented.');
-    }
-
   // 手动根据距离计算显示级别
   calcaluteGrade(curValue: number, stdNearFar: Cesium.NearFarScalar): number {
     let curPara = 0;
@@ -100,13 +95,11 @@ class PopupCreator implements PopupCreatorInterface {
     const elWidth = this.vnode.el.offsetWidth;
     this.vnode.el.style.left =
       windowPosition.x - elWidth / 2 + this.offset[0] + 'px';
-
     const cameraHeight = Math.ceil(
       this.viewer.camera.positionCartographic.height
     );
     const scaleSize = this.calcaluteGrade(cameraHeight, this.scaleByDistance);
     this.vnode.el.style.transform = `scale(${scaleSize},${scaleSize})`;
-
     if (this.isDisplay) {
       const condition1 =
         windowPosition.y < 0 || windowPosition.y > canvasHeight;
@@ -138,28 +131,36 @@ class PopupCreator implements PopupCreatorInterface {
     if (!this.popupRoutes[type]) {
       return null;
     }
-    const res = await this.popupRoutes[type]();//异步的 动态import
-    const vnode = createVNode(res.default /*type*/, {
-      /*props*/
-      label: this.label,
-      color: this.color,
-      position: this.position,
-      attr: this.attr,
-      clickCallback: () => {
-        this.clickHandler();
-      },
-      closePopup: () => {
-        this.removeMarker();
-      },
-      fields: this.fields,
-      values: this.values,
-    });
+    const _import_ = await this.popupRoutes[type](); //异步的 动态import
+    const vnode = createVNode(
+      _import_.default /*export default Vue Component */,
+      {
+        // 传递所有可用的属性，组件内部使用$attrs调用
+        // 在 Vue 3 中，$attrs 依然存在并且功能与 Vue 2 类似。它可以捕获从父组件传递但没有在子组件中定义为 props 的属性。
+
+        // 作用：$attrs 会收集传递到子组件但未在 props 中显式声明的所有属性。
+        // 典型用途：用于高阶组件或包装组件，它们需要将未知的属性传递给内部组件。
+        ...{
+          label: this.label,
+          color: this.color,
+          position: this.position,
+          attr: this.attr,
+          clickCallback: () => {
+            this.clickHandler();
+          },
+          closePopup: () => {
+            this.removeMarker();
+          },
+          fields: this.fields,
+          values: this.values,
+        },
+      }
+    );
     const mountNode = document.createElement('div');
     render(vnode, mountNode);
     this.viewer.cesiumWidget.container.appendChild(mountNode);
     this.addPostRender();
-    vnode.el &&
-      (vnode.el.style.display = options?.isShow ? 'block' : 'none');
+    vnode.el && (vnode.el.style.display = options?.isShow ? 'block' : 'none');
     this.vnode = vnode;
     this.mountNode = mountNode;
     return mountNode;
@@ -168,8 +169,9 @@ class PopupCreator implements PopupCreatorInterface {
   // 移除HTML元素
   removeMarker(): void {
     if (this.mountNode) {
-      this.viewer.cesiumWidget.container.removeChild(this.mountNode); // 删除DOM
-      this.viewer.scene.postRender.removeEventListener(this.postRender, this); // 移除事件监听
+      render(null, this.mountNode); // 销毁 VNode
+      this.viewer.cesiumWidget.container.removeChild(this.mountNode);
+      this.viewer.scene.postRender.removeEventListener(this.postRender, this);
       this.mountNode = null;
     }
   }

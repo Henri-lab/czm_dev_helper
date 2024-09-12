@@ -1,19 +1,7 @@
 import * as Cesium from 'cesium';
 
 export interface PopupCreator {
-  /**
-   * Creates a new instance of the PopupCreator.
-   * @param viewer - The Cesium Viewer instance.
-   * @param options - Options for the popup.
-   * @param pathOfVueComponentMap - Map of component paths.
-   * @param clickHandler - Callback when the popup is clicked.
-   */
-  constructor(
-    viewer: Cesium.Viewer,
-    options: PopupOptions,
-    pathOfVueComponentMap: Record<string, () => Promise<{ default: any }>>,
-    clickHandler: () => void
-  ): void;
+  // 接口不需要constructor
 
   /**
    * Calculates the display grade based on distance.
@@ -39,7 +27,10 @@ export interface PopupCreator {
    * @param options - Additional options for the label.
    * @returns The DOM element representing the label.
    */
-  addLabel(type: string, options?: Partial<PopupOptions>): Promise<HTMLElement | null>;
+  addLabel(
+    type: string,
+    options?: Partial<PopupOptions>
+  ): Promise<HTMLElement | null>;
 
   /**
    * Removes the popup from the scene.
