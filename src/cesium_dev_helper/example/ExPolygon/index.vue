@@ -17,8 +17,8 @@
                 <Entity>
                     <Polygon zoom :hierarchy="hierarchy1" :performance="isPerformance" :test="isTest"
                         :polygons="polygons1" />
-                    <Material :image="imgUrl" :custom="isCustom" :material="customMaterial" :update="updateMaterial"
-                        :shader="shaderSource" />
+                    <Material :image="imgUrl" :custom="isCustom" :material="customMaterial" :update="updateFn"
+                        :shader="customShader" />
                 </Entity>
             </CzmMap>
         </div>
@@ -45,7 +45,7 @@ const hierarchy1 = new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArra
     -75.40, 39.77,
     -75.40, 39.57
 ]))
-let customMaterial, updateMaterial, shaderSource, imgUrl
+let customMaterial, updateFn, customShader, imgUrl
 const changeSel = (val) => {
     if (val === 'custom') {
         isCustom.value = true
@@ -86,12 +86,12 @@ const changeSel = (val) => {
             }
         });
         let time = 0
-        updateMaterial = (material) => {
+        updateFn = () => {
             time += 0.01;
             const red = Math.abs(Math.sin(time));
             const green = Math.abs(Math.sin(time + 1.0));
             const blue = Math.abs(Math.sin(time + 2.0));
-            material.uniforms.color = new Cesium.Color(red, green, blue, 1.0);
+            customMaterial.uniforms.color = new Cesium.Color(red, green, blue, 1.0);
         }
     } else if (val === 'custom2') {
         polygons1.value = []
@@ -128,25 +128,33 @@ const changeSel = (val) => {
                 height: 100,
             },
         )
-        shaderSource = {
+        customShader = new Cesium.CustomShader({
             uniforms: {
-                u_color: {
-                    type: Cesium.UniformType.VEC4,
-                    value: new Cesium.Color(0, 0.0, 1.0, 1.0)
-                },
-                u_time: {
+                time: {
                     type: Cesium.UniformType.FLOAT,
-                    value: 0.0 // 用于时间动画
+                    value: 0.0
                 }
             },
+            vertexShaderText: `
+              attribute vec3 position;  // 声明顶点位置
+              void main() {
+              gl_Position = czm_modelViewProjection * czm_model * vec4(position, 1.0);
+              }
+            `,
             fragmentShaderText: `
-            uniform vec4 u_color;
-            uniform float u_time;
-            void main() {
-                vec4 animatedColor = vec4(abs(sin(u_time)), u_color.g, u_color.b, 1.0);
-                gl_FragColor = animatedColor; // 动态颜色动画
-            }
-        `
+              uniform float time;
+              void main() {
+              float r = 0.5 + 0.5 * sin(time);
+              float g = 0.5 + 0.5 * cos(time);
+              float b = 0.5 + 0.5 * sin(time + 1.0);
+              gl_FragColor = vec4(r, g, b, 1.0);
+              }
+            `
+        });
+        let time
+        updateFn = () => {
+            time += 0.01;
+            customShader.uniforms.time.value = time;
         }
     }
     else {

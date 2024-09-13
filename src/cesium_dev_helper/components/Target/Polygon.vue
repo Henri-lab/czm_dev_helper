@@ -95,6 +95,8 @@ const createDynamicPolygon = (_viewer_, layerName) => {
             createTestData(primitiveCollection, 1000)
         } else if (props.polygons[0]) {
             let positionArr = []
+            let instances = []
+            let instances2 = []
             props.polygons.forEach(poly => {
                 positionArr.push(poly.positions)
                 const polygonGeometry = new Cesium.PolygonGeometry({
@@ -110,19 +112,42 @@ const createDynamicPolygon = (_viewer_, layerName) => {
                 const geometryInstance = new Cesium.GeometryInstance({
                     geometry: polygonGeometry,
                     attributes: {
-                        color: Cesium.ColorGeometryInstanceAttribute.fromColor(parsedColor(poly.color))
+                        color: Cesium.ColorGeometryInstanceAttribute.fromColor(parsedColor(poly.color)),
+                        // batchId: new Cesium.GeometryInstanceAttribute({
+                        //     type: Cesium.AttributeType.SCALAR,
+                        //     value: [0] // Example value, you can set different values for different instances
+                        // })
                     }
                 });
-                primitiveCollection.add(new Cesium.Primitive({
-                    geometryInstances: geometryInstance,
-                    appearance: new Cesium.PerInstanceColorAppearance({
-                        translucent: true,
-                        closed: true
-                    }),
-                    asynchronous: true
-                })
-                );
+                instances.push(geometryInstance);
+                // const geometryInstance2 = new Cesium.GeometryInstance({
+                //     geometry: polygonGeometry,
+                //     attributes: {
+                //         color: Cesium.ColorGeometryInstanceAttribute.fromColor(parsedColor(poly.color)),
+                //         batchId: Cesium.Batched3DModel3DTileContent.fromBatchId(1)
+                //     }
+                // });
+                // instances2.push(geometryInstance2);
+
             });
+            let pri1 = new Cesium.Primitive({
+                geometryInstances: instances,
+                appearance: new Cesium.PerInstanceColorAppearance({
+                    translucent: true,
+                    closed: true
+                }),
+                asynchronous: true
+            })
+            // let pri2 = new Cesium.Primitive({
+            //     geometryInstances: instances2,
+            //     appearance: new Cesium.PerInstanceColorAppearance({
+            //         translucent: true,
+            //         closed: true
+            //     }),
+            //     asynchronous: true
+            // })
+            primitiveCollection.add(pri1);
+            // primitiveCollection.add(pri2);
             props.zoom && _viewer_.camera.setView({
                 destination: getCenterCart3sArr(positionArr),
                 orientation: {

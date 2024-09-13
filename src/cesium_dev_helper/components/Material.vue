@@ -40,8 +40,8 @@ const handelShaderProp = () => {
                 fragmentShaderSource: props.shader.fragmentShaderText,
                 vertexShaderSource: props.shader.vertexShaderText
             })
-
         })
+        _viewer_.clock.onTick.addEventListener(() => props.update());
         return
     }
 }
@@ -54,7 +54,7 @@ const handelMaterialProp = () => {
             })
         })
         if (!props.update) return
-        _viewer_.clock.onTick.addEventListener(() => props.update(props.material, _time_));
+        _viewer_.clock.onTick.addEventListener(() => props.update(/* sth want */));
         return
     }
 }
@@ -67,7 +67,7 @@ const handleImgProp = (url) => {
     })
     return
 }
-let _time_ = 0;
+
 let _target_, _type_, _isPrimitive_
 $bus_Entity.on('materialEvent@henrifox', ({ target, type, isPrimitive }) => {
     _target_ = target
