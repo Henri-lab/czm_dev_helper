@@ -11,7 +11,7 @@
             </div>
 
             <CzmMap width="800px" height="1000px">
-                <Entity>
+                <Entity layerName="point123">
                     <Point :size="size" :color="fixedColor" :colors="colors" :position="position" :extraOpt="extraOpt" zoom
                         :performance="isPerformance" test />
                     <Material />

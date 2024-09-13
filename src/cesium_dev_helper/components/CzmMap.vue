@@ -81,7 +81,7 @@ let $store = useStore();
 let $viewer
 // 分发管理者
 let cfgM, dP;
-let sM, cM, eM, dM, editor, effecter;
+let sM, cM, eM, dM, lM, editor, effecter;
 let managerModule = czmHelper.ManagerModule;
 let editorModule = czmHelper.EditorModule;
 let effectModule = czmHelper.EffectModule;
@@ -92,6 +92,7 @@ function _updateViewerManager_(viewer) {
     sM = new managerModule.SceneManager(viewer);
     eM = new managerModule.EventManager(viewer);
     dM = new managerModule.DrawingManager(viewer);
+    lM = new managerModule.LayerManager(viewer)
     effecter = new effectModule.EffectController(viewer)
     editor = new editorModule.Editor(viewer)
 }
@@ -205,7 +206,7 @@ onMounted(async () => {
     $bus.emit('czmCameraEvent@henrifox', cM)
     $bus.emit('czmEditorEvent@henrifox', editor)
     $bus.emit('czmEffectEvent@henrifox', { dP, sM, cM, eM, effecter, editor })
-    $bus.emit('czmEntityEvent@henrifox', { viewer: curViewer, editor, eM })
+    $bus.emit('czmEntityEvent@henrifox', { viewer: curViewer, editor, eM, lM })
 })
 </script>
 

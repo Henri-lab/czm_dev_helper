@@ -51,12 +51,14 @@ const zoomProp = props.zoom
 
 const $bus = inject('$bus')
 const $bus_Entity = inject('$bus_Entity')
-let _editor_, _viewer_, _eM_, primitiveCollection;
+const layerNameProp = inject('layerNameProp')
+let _editor_, _viewer_, _eM_, _lM_, primitiveCollection;
 let curEntity
-$bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM }) => {
+$bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM, lM }) => {
     _viewer_ = viewer
     _editor_ = editor
     _eM_ = eM
+    _lM_ = lM
     primitiveCollection = _viewer_.scene.primitives.add(new Cesium.PrimitiveCollection());
 })
 // 定义多边形的顶点坐标
@@ -82,7 +84,8 @@ const appearance = new Cesium.PerInstanceColorAppearance({
     translucent: true,
     closed: true
 });
-const createDynamicPolygon = (_viewer_) => {
+let curDatasource
+const createDynamicPolygon = (_viewer_, layerName) => {
     primitiveCollection._primitives = []
     if (props.performance) {
         if (props.test) {
@@ -128,7 +131,8 @@ const createDynamicPolygon = (_viewer_) => {
             $bus_Entity.emit('entityCreatedEvent@henrifox', { target: primitiveCollection, type: 'polygon', isPrimitive: true })
         }
     } else {
-        curEntity && _viewer_.entities.remove(curEntity)
+        curDatasource = _lM_.getDatasourceByName(layerName) || _viewer_
+        curEntity && curDatasource.entities.remove(curEntity)
         const entity = _viewer_.entities.add({
             name: 'Polygon@henrifox' + Date.now(),
             polygon: {
@@ -239,7 +243,7 @@ onMounted(() => {
         curSec++
     }, 1000)
     timer2 = setTimeout(() => {
-        createDynamicPolygon(_viewer_)
+        createDynamicPolygon(_viewer_, layerNameProp)
         const eM_Polygon = new EventManager(_viewer_)//polygonVue内部独立维护一个事件管理器
         bindEvent(eM_Polygon, 'popup')
         bindEvent(eM_Polygon, 'navigation')

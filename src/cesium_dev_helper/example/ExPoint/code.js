@@ -9,7 +9,7 @@ export default
                 <el-button @click="handlePerformance">高性能切换</el-button>
             </div>
             <CzmMap width="800px" height="1000px">
-                <Entity>
+                <Entity layerName="point123">
                      <Point 
                       :size="size" 
                       :color="fixedColor" 
