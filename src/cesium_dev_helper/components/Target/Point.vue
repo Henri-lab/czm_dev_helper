@@ -15,7 +15,6 @@ $bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM, lM }) => {
     _lM_ = lM
     pointPrimitiveCollection = _viewer_.scene.primitives.add(new Cesium.PointPrimitiveCollection());
 })
-
 const props = defineProps({
     // 单个实体点渲染
     size: {
@@ -66,15 +65,16 @@ const props = defineProps({
         default: () => ([])
     }
 })
-
 let curSec = 0;
 let timer1, timer2
 let curEntity
 let curDatasource
 const createDynamicPoint = (_viewer_, layerName) => {
-
+    if (!_viewer_) return
+    pointPrimitiveCollection.removeAll();
+    curDatasource = _lM_.getDatasourceByName(layerName) || _viewer_
+    curEntity && curDatasource.entities.remove(curEntity)
     if (props.performance) { // 增加性能 图元
-        let primitiveArr = []
         let center
         if (props.test) {
             // 测试模式 生成100个示例点 
@@ -86,10 +86,10 @@ const createDynamicPoint = (_viewer_, layerName) => {
                 Cesium.Color.GREEN,
                 Cesium.Color.BLUE
             ];
-            for (let i = 0; i < 10000; i++) {
-                const longitudeOffset = (Math.random() - 0.5) * 0.01; // 经度偏移
-                const latitudeOffset = (Math.random() - 0.5) * 0.01; // 纬度偏移
-                const heightOffset = (Math.random() - 0.5) * 2000
+            for (let i = 0; i < 1000000; i++) {
+                const longitudeOffset = (Math.random() - 0.5) * 5; // 经度偏移
+                const latitudeOffset = (Math.random() - 0.5) * 5; // 纬度偏移
+                const heightOffset = (Math.random() - 0.5) * 750000;
                 // 构建点的位置和颜色
                 const position = Cesium.Cartesian3.fromDegrees(
                     baseLongitude + longitudeOffset,
@@ -159,9 +159,6 @@ const createDynamicPoint = (_viewer_, layerName) => {
         }
         let dynamicColorProperty;
         colorDefinition && (dynamicColorProperty = new DynamicColorProperty(colorDefinition));// 动态颜色属性
-        curEntity && _viewer_.entities.remove(curEntity)
-        curDatasource = _lM_.getDatasourceByName(layerName) || _viewer_
-
         const entity = curDatasource.entities.add({
             properties: {
                 meta: 'Some additional meta information',
@@ -180,9 +177,6 @@ const createDynamicPoint = (_viewer_, layerName) => {
     }
     $bus_Entity.emit('entityCreatedEvent@henrifox', { target: curEntity, type: 'point' })
 }
-
-let descNode
-let descDom = document.createElement('div');
 const bindEvent = (eM, type) => {
     if (type = 'popup') {
         eM.onMouseDoubleClick((e, pickedObjectPos, pickedObject) => {
@@ -211,7 +205,6 @@ const bindEvent = (eM, type) => {
         )
     }
 }
-
 onMounted(() => {
     timer1 = setInterval(() => {
         curSec++
@@ -222,21 +215,16 @@ onMounted(() => {
         bindEvent(eM_Point, 'popup')
     }, 0)
 })
-
 watch(() => props, (newV) => {
     setTimeout(() => {
-        curDatasource = _lM_.getDatasourceByName(layerNameProp) || _viewer_
-        curEntity && curDatasource.entities.remove(curEntity)
         createDynamicPoint(_viewer_, layerNameProp)
     }, 0)
 }, { deep: true })
-
 onBeforeUnmount(() => {
     clearInterval(timer1)
     clearTimeout(timer2)
-    // 清空所有点图元
-
+    // 清空所有点图元和实体
+    pointPrimitiveCollection.removeAll();
+    curEntity && curDatasource.entities.remove(curEntity)
 })
 </script>
-
-<style lang="scss" scoped></style>
