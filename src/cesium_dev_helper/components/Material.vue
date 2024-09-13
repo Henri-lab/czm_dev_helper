@@ -35,13 +35,15 @@ $bus.on('czmViewerEvent@henrifox', (viewer) => {
 })
 const handelShaderProp = () => {
     if (props.shader) {
-        _target_._primitives.forEach((pri) => {
-            pri.appearance = new Cesium.EllipsoidSurfaceAppearance({
-                fragmentShaderSource: props.shader.fragmentShaderText,
-                vertexShaderSource: props.shader.vertexShaderText
-            })
-        })
-        _viewer_.clock.onTick.addEventListener(() => props.update());
+        console.log(_target_)
+        // _target_._primitives[0].readyPromise.then(res => console.log(res))
+        // _target_._primitives.forEach((pri) => {
+        //     pri.appearance = new Cesium.EllipsoidSurfaceAppearance({
+        //         fragmentShaderSource: props.shader.fragmentShaderText,
+        //         vertexShaderSource: props.shader.vertexShaderText
+        //     })
+        // })
+        // _viewer_.clock.onTick.addEventListener(() => props.update());
         return
     }
 }

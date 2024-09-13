@@ -113,10 +113,11 @@ const createDynamicPolygon = (_viewer_, layerName) => {
                     geometry: polygonGeometry,
                     attributes: {
                         color: Cesium.ColorGeometryInstanceAttribute.fromColor(parsedColor(poly.color)),
-                        // batchId: new Cesium.GeometryInstanceAttribute({
-                        //     type: Cesium.AttributeType.SCALAR,
-                        //     value: [0] // Example value, you can set different values for different instances
-                        // })
+                        batchId: new Cesium.GeometryInstanceAttribute({
+                            componentDatatype: Cesium.ComponentDatatype.UNSIGNED_SHORT,
+                            componentsPerAttribute: 1,
+                            value: [0, 1] // Example batchIds for different instances
+                        })
                     }
                 });
                 instances.push(geometryInstance);
@@ -124,7 +125,7 @@ const createDynamicPolygon = (_viewer_, layerName) => {
                 //     geometry: polygonGeometry,
                 //     attributes: {
                 //         color: Cesium.ColorGeometryInstanceAttribute.fromColor(parsedColor(poly.color)),
-                //         batchId: Cesium.Batched3DModel3DTileContent.fromBatchId(1)
+                //         batchId: ?
                 //     }
                 // });
                 // instances2.push(geometryInstance2);
