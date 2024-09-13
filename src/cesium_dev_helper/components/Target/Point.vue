@@ -63,7 +63,8 @@ const props = defineProps({
     points: {
         type: Array,
         default: () => ([])
-    }
+    },
+    // 交互
 })
 let curSec = 0;
 let timer1, timer2
@@ -177,27 +178,21 @@ const createDynamicPoint = (_viewer_, layerName) => {
     }
     $bus_Entity.emit('entityCreatedEvent@henrifox', { target: curEntity, type: 'point' })
 }
+let pointVueDocClick
 const bindEvent = (eM, type) => {
     if (type = 'popup') {
-        eM.onMouseDoubleClick((e, pickedObjectPos, pickedObject) => {
-            if (Cesium.defined(pickedObject)) {
-                if (pickedObject.primitive instanceof Cesium.PointPrimitive) {
-                    const primitive = pickedObject.primitive;
-                    const entity = pickedObject.id;
-                    $bus_Entity.emit('popupInfoEvent@henrifox', { entity, primitive, isPicked: true })
-                    // console.log('Picked a point primitive', primitive, entity);
-                    // const container = document.getElementById('czm-container@henrifox');
-                    // descNode = createVNode('div', {
-                    //     style: {
-                    //         color: 'red',
-                    //         backgroundColor: 'black',
-                    //         directives: [{ name: 'mouse-follow' }]
-                    //     }
-                    // }, `<p>Point size - ${props.size}</p>`)
-                    // container.appendChild(descDom)
-                    // render(descNode, descDom)
-                }
-            } else {
+        pointVueDocClick = document.addEventListener('click', (e) => {
+            if (e.target instanceof HTMLCanvasElement) {/**bug if (!e.target instanceof HTMLCanvasElement) */ }
+            else $bus_Entity.emit('popupInfoEvent@henrifox', { isPicked: false })
+        })
+        eM.onMouseClick((e, pickedObjectPos, pickedObject) => {
+            if (Cesium.defined(pickedObject) && pickedObject.primitive instanceof Cesium.PointPrimitive) {
+                console.log('object picked.', pickedObject);
+                const primitive = pickedObject.primitive;
+                const entity = pickedObject.id;
+                $bus_Entity.emit('popupInfoEvent@henrifox', { entity, primitive, isPicked: true })
+            }
+            else {
                 $bus_Entity.emit('popupInfoEvent@henrifox', { isPicked: false })
                 console.log('No object picked.');
             }
@@ -223,6 +218,7 @@ watch(() => props, (newV) => {
 onBeforeUnmount(() => {
     clearInterval(timer1)
     clearTimeout(timer2)
+    pointVueDocClick && document.removeEventListener('click', pointVueDocClick)
     // 清空所有点图元和实体
     pointPrimitiveCollection.removeAll();
     curEntity && curDatasource.entities.remove(curEntity)

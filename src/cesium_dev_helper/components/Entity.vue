@@ -1,9 +1,8 @@
 <template>
     <slot></slot>
     <slot></slot>
-    <div class="popup@henrifox" v-mouse-follow>
-        <slot name="popup" :isPicked="_isPicked_" :entity="_entity_" :primitive="_primitive_" :test="test" />
-    </div>
+    <slot class="popup@henrifox" name="popup" :isPicked="_isPicked_" :entity="_entity_" :primitive="_primitive_"
+        :test="test" />
 </template>
 
 <script setup>

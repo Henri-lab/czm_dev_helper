@@ -86,7 +86,10 @@ const appearance = new Cesium.PerInstanceColorAppearance({
 });
 let curDatasource
 const createDynamicPolygon = (_viewer_, layerName) => {
-    primitiveCollection._primitives = []
+    if (!_viewer_) return
+    primitiveCollection.removeAll();
+    curDatasource = _lM_.getDatasourceByName(layerName) || _viewer_
+    curEntity && curDatasource.entities.remove(curEntity)
     if (props.performance) {
         if (props.test) {
             createTestData(primitiveCollection, 10000)
@@ -250,13 +253,14 @@ onMounted(() => {
     }, 0)
 })
 watch(() => props, (newV) => {
-    curEntity && _viewer_.entities.remove(curEntity)
     createDynamicPolygon(_viewer_)
 }, { deep: true })
 
 onBeforeUnmount(() => {
     clearInterval(timer1)
     clearTimeout(timer2)
+    primitiveCollection.removeAll();
+    curEntity && curDatasource.entities.remove(curEntity)
 })
 </script>
 
