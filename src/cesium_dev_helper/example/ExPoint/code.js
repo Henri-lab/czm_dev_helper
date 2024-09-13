@@ -23,7 +23,7 @@ export default
                     <template #popup="scope">
                         <div class="custom-popup"
                             style="background-color: rgb(86, 86, 86); width: 400px;height: 360px; font-size: 20px;"
-                            v-if="scope.isPicked">
+                            v-if="scope.isPicked" v-mouse-follow>
                             <span style="color: blanchedalmond;">entity name :</span> <br> {{ scope.entity.name }}<br>
                             <span style="color: blanchedalmond;">entity id :</span><br>{{ scope.entity.id }}<br>
                             <span style="color: blanchedalmond;">entity color :</span><br>{{ scope.primitive.color }}<br>

@@ -5,8 +5,9 @@
                 style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
             </div>
             <div class="btns" style="display: flex;flex-direction:column;">
-                <el-button @click="handleSize('+')">增加半径</el-button>
-                <el-button @click="handleSize('-')">减小半径</el-button>
+                <el-button @click="handleSize('+')" v-show="isBtn">增加半径</el-button>
+                <el-button @click="handleSize('-')" v-show="isBtn">减小半径</el-button>
+                <br>
                 <el-button @click="handlePerformance">百万级渲染</el-button>
             </div>
             <CzmMap width="800px" height="1000px">
@@ -41,10 +42,11 @@ import { onMounted, ref } from 'vue'
 import * as Cesium from 'cesium';
 import axios from 'axios'
 
-const isPopup = ref(false)
+const isBtn = ref(true)
 const isPerformance = ref(false)
 const handlePerformance = () => {
     isPerformance.value = !isPerformance.value
+    isBtn.value = !isBtn.value
 }
 
 const size = ref(100)

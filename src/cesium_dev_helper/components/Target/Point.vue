@@ -103,7 +103,7 @@ const createDynamicPoint = (_viewer_, layerName) => {
                 let pointPrimitive = pointPrimitiveCollection.add({
                     position: position,
                     color: color,
-                    pixelSize: 2 + Math.random() * 10,// 随机大小
+                    pixelSize: 5,
                     scaleByDistance: new Cesium.NearFarScalar(1000, 1.0, 5000, 0.2),
                 });
             }
@@ -187,7 +187,7 @@ const bindEvent = (eM, type) => {
         })
         eM.onMouseClick((e, pickedObjectPos, pickedObject) => {
             if (Cesium.defined(pickedObject) && pickedObject.primitive instanceof Cesium.PointPrimitive) {
-                console.log('object picked.', pickedObject);
+                // console.log('object picked.', pickedObject);
                 const primitive = pickedObject.primitive;
                 const entity = pickedObject.id;
                 $bus_Entity.emit('popupInfoEvent@henrifox', { entity, primitive, isPicked: true })

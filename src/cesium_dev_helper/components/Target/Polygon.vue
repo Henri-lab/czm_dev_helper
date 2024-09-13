@@ -92,7 +92,7 @@ const createDynamicPolygon = (_viewer_, layerName) => {
     curEntity && curDatasource.entities.remove(curEntity)
     if (props.performance) {
         if (props.test) {
-            createTestData(primitiveCollection, 10000)
+            createTestData(primitiveCollection, 1000)
         } else if (props.polygons[0]) {
             let positionArr = []
             props.polygons.forEach(poly => {
@@ -134,9 +134,7 @@ const createDynamicPolygon = (_viewer_, layerName) => {
             $bus_Entity.emit('entityCreatedEvent@henrifox', { target: primitiveCollection, type: 'polygon', isPrimitive: true })
         }
     } else {
-        curDatasource = _lM_.getDatasourceByName(layerName) || _viewer_
-        curEntity && curDatasource.entities.remove(curEntity)
-        const entity = _viewer_.entities.add({
+        const entity = curDatasource.entities.add({
             name: 'Polygon@henrifox' + Date.now(),
             polygon: {
                 hierarchy: hierarchyProp || defHierachy,
@@ -150,7 +148,7 @@ const createDynamicPolygon = (_viewer_, layerName) => {
         });
         curEntity = entity
         $bus_Entity.emit('entityCreatedEvent@henrifox', { target: curEntity, type: 'polygon', isPrimitive: false })
-        zoomProp && _viewer_.zoomTo(entity);
+        zoomProp && _viewer_.zoomTo(curEntity);
     }
 }
 const bindEvent = (eM, type) => {
@@ -253,7 +251,7 @@ onMounted(() => {
     }, 0)
 })
 watch(() => props, (newV) => {
-    createDynamicPolygon(_viewer_)
+    createDynamicPolygon(_viewer_, layerNameProp)
 }, { deep: true })
 
 onBeforeUnmount(() => {

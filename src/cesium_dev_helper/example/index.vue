@@ -96,12 +96,12 @@ const items = ref([
         children: [
             {
                 key: '/sub5/1',
-                label: '高性能+弹窗插槽 (以point为例)',
+                label: '高性能&弹窗插槽',
                 title: '',
             },
             {
                 key: '/sub5/2',
-                label: '多边形+自定义材质',
+                label: '自定义&扩展材质',
                 title: '',
             },
             {
