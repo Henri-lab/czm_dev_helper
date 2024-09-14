@@ -1,6 +1,6 @@
-import CustomMaterial from "../Materials/CustomMaterial";
+import DynamicColorProperty from "./DynamicColorProperty"
 export {
-    CustomMaterial,
+    DynamicColorProperty,
 }
 
 

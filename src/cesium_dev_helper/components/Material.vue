@@ -1,5 +1,7 @@
 <script setup>
 import * as Cesium from 'cesium'
+import { onMounted } from 'vue';
+import test from '../lib/Custom/Materials/test'
 const props = defineProps({
     image: {
         type: String,
@@ -82,6 +84,11 @@ $bus_Entity.on('materialEvent@henrifox', ({ target, type, isPrimitive }) => {
     }
     handleImgProp(props.image)
 })
+
+onMounted(() => {
+    console.log(Cesium.Material._materialCache)
+})
+
 
 // image属性生成图片材质 优先级低于custom
 watch(() => props.image, (newV, oldV) => {
