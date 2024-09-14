@@ -1,23 +1,44 @@
 import * as Cesium from "cesium";
-
+// const customMaterial = new CustomMaterial('myCustomMaterial', {
+//     type: 'dynamicColorMaterial',
+//     uniforms: {
+//         color: Cesium.Color.RED, // 初始颜色
+//         time: 0.0               // 时间控制 uniform
+//     },
+//     source: `
+//     uniform vec4 color;
+//     uniform float time;
+//     czm_material czm_getMaterial(czm_materialInput materialInput) {
+//         czm_material material = czm_getDefaultMaterial(materialInput);
+//         material.diffuse = vec3(sin(time), cos(time), color.b);
+//         material.alpha = color.a;
+//         return material;
+//     }
+//     `,
+//     translucent: false,  // 材质不透明
+//     textures: {
+//         image: 'path/to/texture.png'
+//     },
+//     definition: (time) => {
+//         // 随着时间变化，动态改变颜色
+//         return {
+//             color: new Cesium.Color(Math.sin(time), Math.cos(time), 0.5, 1.0),
+//             time: time
+//         };
+//     }
+// });
 export default class CustomMaterial {
     constructor(type, options, definition) {
         // 自动注册的材质类型，如果未提供则使用默认值
         const _type = type || 'customMaterial@henrifox';
-
         // 定义如何基于时间动态生成材质属性
         const _definition = definition || ((time) => {
             return {
                 color: Cesium.Color.RED // 使用 Cesium 提供的颜色类，直接用 Cesium.Color.RED
             };
         });
-
-        // 调用父类构造函数
-        // super(_definition, _type);
-
         // 初始化材质对象
         this.materials = {};
-
         // 自动注册材质
         this.registerMaterial(options);
     }
@@ -27,13 +48,6 @@ export default class CustomMaterial {
         if (!Cesium.defined(result)) {
             result = {};
         }
-
-        // 调用父类的 getValue 方法，执行基础的材质计算
-        const baseValue = super.getValue(time, result);
-
-        // 将父类计算的值和自定义属性合并
-        Object.assign(result, baseValue);
-
         // 在注册时，将图像存储为 Cesium.Material 的属性
         result.image = Cesium.Material[this._type + 'Image'];
 
@@ -47,7 +61,6 @@ export default class CustomMaterial {
             console.error('Invalid material type provided');
             return;
         }
-
         // 注册自定义材质
         this._addCustomMaterial(options);
     }
