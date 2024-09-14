@@ -1,10 +1,10 @@
 import {
-    CustomMaterial,
+    MaterialRegister,
 } from './Materials'
 
 import { DynamicColorProperty } from "./Property"
 
 export {
-    CustomMaterial,
+    MaterialRegister,
     DynamicColorProperty,
 }

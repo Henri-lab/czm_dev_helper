@@ -7,8 +7,9 @@
             <div style="display: flex;flex-direction: column;">
                 <el-select style="width: 260px;" placeholder="请选择示例材质" v-model="selectValue" @change="changeSel">
                     <el-option label="示例图片" value="images/img1.jpg">.jpg</el-option>
-                    <el-option label="示例着色器" value="custom">shader1(需打开高性能)</el-option>
-                    <el-option label="示例着色器" value="custom2">shader2(需打开高性能)</el-option>
+                    <el-option label="普通着色器" value="custom">shader(需打开高性能)</el-option>
+                    <el-option label="定制着色器" value="custom2">shaderPlus(需打开高性能)</el-option>
+                    <el-option label="内置着色器" value="custom3">动态贴图(需打开高性能)</el-option>
                 </el-select>
                 <el-button @click="isPerformance = !isPerformance">高性能{{ isPerformance ? '已开启' : '已关闭' }}</el-button>
                 <el-button @click="isTest = !isTest">测试数据{{ isTest ? '已开启' : '已关闭' }}</el-button>
@@ -18,7 +19,7 @@
                     <Polygon zoom :hierarchy="hierarchy1" :performance="isPerformance" :test="isTest"
                         :polygons="polygons1" />
                     <Material :image="imgUrl" :custom="isCustom" :material="customMaterial" :update="updateFn"
-                        :shader="customShader" />
+                        :shader="customShader" :name="materialName" />
                 </Entity>
             </CzmMap>
         </div>
@@ -45,13 +46,26 @@ const hierarchy1 = new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArra
     -75.40, 39.77,
     -75.40, 39.57
 ]))
-let customMaterial, updateFn, customShader, imgUrl
+
+const openCustom = () => {
+    isCustom.value = true
+    isPerformance.value = true
+    isTest.value = false//
+    polygons1.value = []
+    materialName = ''
+    customMaterial = null
+    customShader = null
+}
+const closeCustom = () => {
+    isCustom.value = false
+    isPerformance.value = false
+    isTest.value = false//
+    polygons1.value = []
+}
+let customMaterial, updateFn, customShader, imgUrl, materialName
 const changeSel = (val) => {
     if (val === 'custom') {
-        isCustom.value = true
-        isPerformance.value = true
-        isTest.value = false
-        polygons1.value = []
+        openCustom()
         polygons1.value.push(
             {
                 positions: Cesium.Cartesian3.fromDegreesArray([
@@ -94,7 +108,7 @@ const changeSel = (val) => {
             customMaterial.uniforms.color = new Cesium.Color(red, green, blue, 1.0);
         }
     } else if (val === 'custom2') {
-        polygons1.value = []
+        openCustom()
         polygons1.value.push(
             {
                 positions: Cesium.Cartesian3.fromDegreesArray([
@@ -156,13 +170,30 @@ const changeSel = (val) => {
             time += 0.01;
             customShader.uniforms.time.value = time;
         }
+    } else if (val === 'custom3') {
+        openCustom()
+        polygons1.value.push(
+            {
+                positions: Cesium.Cartesian3.fromDegreesArray([
+                    -75.0, 40.0,
+                    -75.1, 40.2,
+                    -75.15, 40.3,
+                    -75.1, 40.4,
+                    -75.0, 40.5,
+                    -74.9, 40.4,
+                    -74.85, 40.3,
+                    -74.9, 40.2,
+                    -75.0, 40.0,
+                ]),
+                color: 'purple',
+                height: 100,
+            },
+        )
+        materialName = '#DynamicTexture'
     }
     else {
         imgUrl = val
-        polygons1.value = []
-        isCustom.value = false
-        isPerformance.value = false
-        isTest.value = false
+        closeCustom()
     }
 }
 

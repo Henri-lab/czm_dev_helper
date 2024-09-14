@@ -3,10 +3,6 @@ import TextureCreator from "../Creator/TextureCreator";
 import { CoordTransformer } from '../Compute';
 import { RippleCircles, BlinkCircle, singleRippleCircle } from '../Editor/pencil/entities/advanced'
 
-// 需要相关的 vitePlugin 进行glsl加载
-import glsl_Ripple from './glsl/ripple.glsl';
-import glsl_circleMapping from './glsl/shader0.glsl';
-import glsl_wallMapping from './glsl/shader2.glsl';
 
 import { collapse } from './transform/collapse'
 
@@ -17,13 +13,6 @@ export {
     RippleCircles,
     BlinkCircle,
     singleRippleCircle,
-
-    // string - shader source
-    glsl_Ripple,
-    glsl_circleMapping,
-    glsl_wallMapping,
-
-
     collapse,
 }
 

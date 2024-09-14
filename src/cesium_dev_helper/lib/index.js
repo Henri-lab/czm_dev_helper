@@ -48,7 +48,7 @@ import {
 
 
 import {
-    CustomMaterial,
+    MaterialRegister,
 } from './Custom'
 
 
@@ -94,7 +94,7 @@ const EditorModule = {
 }
 
 const CustomModule = {
-    CustomMaterial,
+    MaterialRegister,
 }
 
 const CreatorModule = {

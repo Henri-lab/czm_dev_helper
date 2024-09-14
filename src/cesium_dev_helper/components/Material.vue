@@ -1,7 +1,10 @@
 <script setup>
 import * as Cesium from 'cesium'
 import { onMounted } from 'vue';
-import test from '../lib/Custom/Materials/test'
+import { registerMaterial, getMaterial } from '../lib/Custom/Materials'
+onMounted(() => {
+    registerMaterial()
+})
 const props = defineProps({
     image: {
         type: String,
@@ -23,6 +26,10 @@ const props = defineProps({
         type: Object,
         default: null
     },
+    name: {
+        type: String,
+        default: ''
+    },
     extraOpt: {
         type: Object,
         default: () => ({})
@@ -35,9 +42,23 @@ let _viewer_
 $bus.on('czmViewerEvent@henrifox', (viewer) => {
     _viewer_ = viewer
 })
+
+const handleNameProp = () => {
+    if (props.name) {
+        if (props.name == '#DynamicTexture') {
+            getMaterial('#DynamicTexture').uniforms.u_time = 0
+            _target_._primitives.forEach((pri) => {
+                pri.appearance = new Cesium.MaterialAppearance({
+                    material: getMaterial('#DynamicTexture'),
+                })
+            })
+        }
+    }
+}
+
 const handelShaderProp = () => {
     if (props.shader) {
-        console.log(_target_)
+        console.log('shader deving')
         // _target_._primitives[0].readyPromise.then(res => console.log(res))
         // _target_._primitives.forEach((pri) => {
         //     pri.appearance = new Cesium.EllipsoidSurfaceAppearance({
@@ -48,6 +69,7 @@ const handelShaderProp = () => {
         // _viewer_.clock.onTick.addEventListener(() => props.update());
         return
     }
+
 }
 const handelMaterialProp = () => {
     if (props.material) {
@@ -81,15 +103,10 @@ $bus_Entity.on('materialEvent@henrifox', ({ target, type, isPrimitive }) => {
     if (_isPrimitive_ && props.custom) {
         handelShaderProp()
         handelMaterialProp()
+        handleNameProp()
     }
     handleImgProp(props.image)
 })
-
-onMounted(() => {
-    console.log(Cesium.Material._materialCache)
-})
-
-
 // image属性生成图片材质 优先级低于custom
 watch(() => props.image, (newV, oldV) => {
     if (!_target_ || !_type_ || !newV || newV == oldV) return
@@ -104,6 +121,10 @@ watch(() => props.material, (newV, oldV) => {
 watch(() => props.shader, (newV, oldV) => {
     if (!_target_ || !_type_ || !newV || !newV || newV == oldV) return
     _isPrimitive_ && newV instanceof Cesium.CustomShader && handelShaderProp()
+})
+watch(() => props.name, (newV, oldV) => {
+    if (!_target_ || !_type_ || !newV || !newV || newV == oldV) return
+    _isPrimitive_ && handleNameProp()
 })
 </script>
 

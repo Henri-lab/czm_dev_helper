@@ -1,0 +1,205 @@
+{
+  "asset": {
+    "generatetool": "cesiumlab2@www.cesiumlab.com/model2tiles",
+    "version": "1.0"
+  },
+  "extras": { "scenetree": "scenetree.json" },
+  "geometricError": 37655.831820999,
+  "properties": {
+    "AREA": {
+      "extras": {
+        "group": "",
+        "id": "b813ba46c563c37a77807067db593737",
+        "name": "AREA",
+        "type": "double",
+        "unittype": ""
+      },
+      "maximum": 351517.450913936,
+      "minimum": 0.58720535452
+    },
+    "CATEGORY": {
+      "extras": {
+        "group": "",
+        "id": "8bd6f5de2ab8bcf6b8579a1459200e32",
+        "name": "CATEGORY",
+        "type": "string",
+        "unittype": ""
+      },
+      "maximum": -2147483647.0,
+      "minimum": 2147483647.0
+    },
+    "CITY": {
+      "extras": {
+        "group": "",
+        "id": "ac55553af6c5a9a0ee1e19b633281858",
+        "name": "CITY",
+        "type": "string",
+        "unittype": ""
+      },
+      "maximum": -2147483647.0,
+      "minimum": 2147483647.0
+    },
+    "FIREGRADE": {
+      "extras": {
+        "group": "",
+        "id": "4e7c94382e4f30764505b266fb44a330",
+        "name": "FIREGRADE",
+        "type": "string",
+        "unittype": ""
+      },
+      "maximum": -2147483647.0,
+      "minimum": 2147483647.0
+    },
+    "HEIGHT": {
+      "extras": {
+        "group": "",
+        "id": "373ef0429462d16005366a94aeff7eb8",
+        "name": "HEIGHT",
+        "type": "double",
+        "unittype": ""
+      },
+      "maximum": 100.0,
+      "minimum": 0.01
+    },
+    "LATITUDE": {
+      "extras": {
+        "group": "",
+        "id": "060aef07c214cd6d43196d53cac41e35",
+        "name": "LATITUDE",
+        "type": "double",
+        "unittype": ""
+      },
+      "maximum": 13.6453638622,
+      "minimum": 13.30998151224
+    },
+    "LENGTH": {
+      "extras": {
+        "group": "",
+        "id": "3709c6192651ae343f15d52f9063652f",
+        "name": "LENGTH",
+        "type": "double",
+        "unittype": ""
+      },
+      "maximum": 4043.441,
+      "minimum": 0.874
+    },
+    "LONGITUDE": {
+      "extras": {
+        "group": "",
+        "id": "38d47169ef2c913673f2fe7e0ee5348a",
+        "name": "LONGITUDE",
+        "type": "double",
+        "unittype": ""
+      },
+      "maximum": 144.94564381257,
+      "minimum": 144.6195753
+    },
+    "MATERIAL": {
+      "extras": {
+        "group": "",
+        "id": "d826063bbaf5a6c3448d0fae80fea286",
+        "name": "MATERIAL",
+        "type": "string",
+        "unittype": ""
+      },
+      "maximum": -2147483647.0,
+      "minimum": 2147483647.0
+    },
+    "RESISTANCE": {
+      "extras": {
+        "group": "",
+        "id": "e17737604291ef4fbb961e193c28285c",
+        "name": "RESISTANCE",
+        "type": "string",
+        "unittype": ""
+      },
+      "maximum": -2147483647.0,
+      "minimum": 2147483647.0
+    },
+    "SG": {
+      "extras": {
+        "group": "",
+        "id": "0abb456c56eaca206d50def5d2d5e9b8",
+        "name": "SG",
+        "type": "string",
+        "unittype": ""
+      },
+      "maximum": -2147483647.0,
+      "minimum": 2147483647.0
+    },
+    "STATUS": {
+      "extras": {
+        "group": "",
+        "id": "4a54ec03a567554467b4469b1c5253a6",
+        "name": "STATUS",
+        "type": "string",
+        "unittype": ""
+      },
+      "maximum": -2147483647.0,
+      "minimum": 2147483647.0
+    },
+    "STRUCTURE": {
+      "extras": {
+        "group": "",
+        "id": "40af094190faae20975be7cbf26c701a",
+        "name": "STRUCTURE",
+        "type": "string",
+        "unittype": ""
+      },
+      "maximum": -2147483647.0,
+      "minimum": 2147483647.0
+    },
+    "WIDTH": {
+      "extras": {
+        "group": "",
+        "id": "45c54e3e68db0fdcfa052561dd8ee8d3",
+        "name": "WIDTH",
+        "type": "double",
+        "unittype": ""
+      },
+      "maximum": 455.434,
+      "minimum": 0.855
+    },
+    "_ID": {
+      "extras": {
+        "group": "",
+        "id": "2df781bac7f92c08b90ba428950aa2ca",
+        "name": "_ID",
+        "type": "int32_t",
+        "unittype": ""
+      },
+      "maximum": 3668.0,
+      "minimum": 1.0
+    }
+  },
+  "refine": "REPLACE",
+  "root": {
+    "boundingVolume": {
+      "box": [
+        4.65661287307739e-10, 6.06798202067148, 51.0168659221381,
+        17794.4226002991, 0, 0, 0, 18827.9159104995, 0, 0, 0, 50.0166235985234
+      ]
+    },
+    "children": [
+      {
+        "boundingVolume": {
+          "box": [
+            -5.30378384282812, 1.07564930361696, 74.0669780797325,
+            17778.8721531057, 0, 0, 0, 18828.1012097995, 0, 0, 0,
+            56.7124434844591
+          ]
+        },
+        "content": { "uri": "NoLod_0.b3dm" },
+        "geometricError": 0.0,
+        "refine": "REPLACE"
+      }
+    ],
+    "geometricError": 37655.831820999,
+    "transform": [
+      -0.576663818360164, -0.816981542382859, 0.0, 0.0, 0.19044378370636,
+      -0.134424137875567, 0.972451189728315, 0.0, -0.794474672876285,
+      0.560777416237615, 0.233106592776747, 0.0, -5068147.47588258,
+      3577335.74608135, 1477088.90527251, 1.0
+    ]
+  }
+}
