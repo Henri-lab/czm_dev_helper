@@ -5,25 +5,26 @@
                 style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
             </div>
             <div class="btns" style="display: flex;flex-direction:column;">
-                <el-button @click="handleSize('+')">增加半径</el-button>
-                <el-button @click="handleSize('-')">减小半径</el-button>
-                <el-button @click="handlePerformance">万级渲染</el-button>
+                <el-button @click="handleSize('+')" v-show="isBtn">增加半径</el-button>
+                <el-button @click="handleSize('-')" v-show="isBtn">减小半径</el-button>
+                <br>
+                <el-button @click="handlePerformance">百万级渲染</el-button>
             </div>
-
             <CzmMap width="800px" height="1000px">
-                <Entity>
+                <Entity layerName="point123">
                     <Point :size="size" :color="fixedColor" :colors="colors" :position="position" :extraOpt="extraOpt" zoom
                         :performance="isPerformance" test />
                     <Material />
-                    <template #popup="scope">
+                    <template #popup="scope" class="custom-popup">
                         <div class="custom-popup"
                             style="background-color: rgb(86, 86, 86); width: 400px;height: 360px; font-size: 20px;"
-                            v-if="scope.isPicked">
-                            <span style="color: blanchedalmond;">entity name :</span> <br> {{ scope.entity.name }}<br>
-                            <span style="color: blanchedalmond;">entity id :</span><br>{{ scope.entity.id }}<br>
-                            <span style="color: blanchedalmond;">entity color :</span><br>{{ scope.primitive.color }}<br>
+                            v-if="scope.isPicked" v-mouse-follow>
+                            <span style="color: blanchedalmond;">entity name :</span> <br> {{ scope.entity.name || '' }}<br>
+                            <span style="color: blanchedalmond;">entity id :</span><br>{{ scope.entity.id || '' }}<br>
+                            <span style="color: blanchedalmond;">entity color :</span><br>{{ scope.primitive.color
+                                || '' }}<br>
                             <span style="color: blanchedalmond;">entity position :</span><br> {{
-                                scope.primitive.position }}<br>
+                                scope.primitive.position || '' }}<br>
                         </div>
                     </template>
                 </Entity>
@@ -41,10 +42,11 @@ import { onMounted, ref } from 'vue'
 import * as Cesium from 'cesium';
 import axios from 'axios'
 
-const isPopup = ref(false)
+const isBtn = ref(true)
 const isPerformance = ref(false)
 const handlePerformance = () => {
     isPerformance.value = !isPerformance.value
+    isBtn.value = !isBtn.value
 }
 
 const size = ref(100)
@@ -95,4 +97,11 @@ onMounted(() => {
 
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.custom-popup {
+    position: absolute;
+    z-index: 2;
+    border-radius: 5%;
+    box-shadow: 5px 5px 5px 5px #2a2a2a;
+}
+</style>

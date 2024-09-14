@@ -51,12 +51,14 @@ const zoomProp = props.zoom
 
 const $bus = inject('$bus')
 const $bus_Entity = inject('$bus_Entity')
-let _editor_, _viewer_, _eM_, primitiveCollection;
+const layerNameProp = inject('layerNameProp')
+let _editor_, _viewer_, _eM_, _lM_, primitiveCollection;
 let curEntity
-$bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM }) => {
+$bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM, lM }) => {
     _viewer_ = viewer
     _editor_ = editor
     _eM_ = eM
+    _lM_ = lM
     primitiveCollection = _viewer_.scene.primitives.add(new Cesium.PrimitiveCollection());
 })
 // 定义多边形的顶点坐标
@@ -82,13 +84,19 @@ const appearance = new Cesium.PerInstanceColorAppearance({
     translucent: true,
     closed: true
 });
-const createDynamicPolygon = (_viewer_) => {
-    primitiveCollection._primitives = []
+let curDatasource
+const createDynamicPolygon = (_viewer_, layerName) => {
+    if (!_viewer_) return
+    primitiveCollection.removeAll();
+    curDatasource = _lM_.getDatasourceByName(layerName) || _viewer_
+    curEntity && curDatasource.entities.remove(curEntity)
     if (props.performance) {
         if (props.test) {
-            createTestData(primitiveCollection, 10000)
+            createTestData(primitiveCollection, 1000)
         } else if (props.polygons[0]) {
             let positionArr = []
+            let instances = []
+            let instances2 = []
             props.polygons.forEach(poly => {
                 positionArr.push(poly.positions)
                 const polygonGeometry = new Cesium.PolygonGeometry({
@@ -104,19 +112,43 @@ const createDynamicPolygon = (_viewer_) => {
                 const geometryInstance = new Cesium.GeometryInstance({
                     geometry: polygonGeometry,
                     attributes: {
-                        color: Cesium.ColorGeometryInstanceAttribute.fromColor(parsedColor(poly.color))
+                        color: Cesium.ColorGeometryInstanceAttribute.fromColor(parsedColor(poly.color)),
+                        batchId: new Cesium.GeometryInstanceAttribute({
+                            componentDatatype: Cesium.ComponentDatatype.UNSIGNED_SHORT,
+                            componentsPerAttribute: 1,
+                            value: [0, 1] // Example batchIds for different instances
+                        })
                     }
                 });
-                primitiveCollection.add(new Cesium.Primitive({
-                    geometryInstances: geometryInstance,
-                    appearance: new Cesium.PerInstanceColorAppearance({
-                        translucent: true,
-                        closed: true
-                    }),
-                    asynchronous: true
-                })
-                );
+                instances.push(geometryInstance);
+                // const geometryInstance2 = new Cesium.GeometryInstance({
+                //     geometry: polygonGeometry,
+                //     attributes: {
+                //         color: Cesium.ColorGeometryInstanceAttribute.fromColor(parsedColor(poly.color)),
+                //         batchId: ?
+                //     }
+                // });
+                // instances2.push(geometryInstance2);
+
             });
+            let pri1 = new Cesium.Primitive({
+                geometryInstances: instances,
+                appearance: new Cesium.PerInstanceColorAppearance({
+                    translucent: true,
+                    closed: true
+                }),
+                asynchronous: true
+            })
+            // let pri2 = new Cesium.Primitive({
+            //     geometryInstances: instances2,
+            //     appearance: new Cesium.PerInstanceColorAppearance({
+            //         translucent: true,
+            //         closed: true
+            //     }),
+            //     asynchronous: true
+            // })
+            primitiveCollection.add(pri1);
+            // primitiveCollection.add(pri2);
             props.zoom && _viewer_.camera.setView({
                 destination: getCenterCart3sArr(positionArr),
                 orientation: {
@@ -128,8 +160,7 @@ const createDynamicPolygon = (_viewer_) => {
             $bus_Entity.emit('entityCreatedEvent@henrifox', { target: primitiveCollection, type: 'polygon', isPrimitive: true })
         }
     } else {
-        curEntity && _viewer_.entities.remove(curEntity)
-        const entity = _viewer_.entities.add({
+        const entity = curDatasource.entities.add({
             name: 'Polygon@henrifox' + Date.now(),
             polygon: {
                 hierarchy: hierarchyProp || defHierachy,
@@ -143,7 +174,7 @@ const createDynamicPolygon = (_viewer_) => {
         });
         curEntity = entity
         $bus_Entity.emit('entityCreatedEvent@henrifox', { target: curEntity, type: 'polygon', isPrimitive: false })
-        zoomProp && _viewer_.zoomTo(entity);
+        zoomProp && _viewer_.zoomTo(curEntity);
     }
 }
 const bindEvent = (eM, type) => {
@@ -239,20 +270,21 @@ onMounted(() => {
         curSec++
     }, 1000)
     timer2 = setTimeout(() => {
-        createDynamicPolygon(_viewer_)
+        createDynamicPolygon(_viewer_, layerNameProp)
         const eM_Polygon = new EventManager(_viewer_)//polygonVue内部独立维护一个事件管理器
         bindEvent(eM_Polygon, 'popup')
         bindEvent(eM_Polygon, 'navigation')
     }, 0)
 })
 watch(() => props, (newV) => {
-    curEntity && _viewer_.entities.remove(curEntity)
-    createDynamicPolygon(_viewer_)
+    createDynamicPolygon(_viewer_, layerNameProp)
 }, { deep: true })
 
 onBeforeUnmount(() => {
     clearInterval(timer1)
     clearTimeout(timer2)
+    primitiveCollection.removeAll();
+    curEntity && curDatasource.entities.remove(curEntity)
 })
 </script>
 

@@ -6,14 +6,15 @@ import * as Cesium from 'cesium'
 import { onBeforeUnmount, watch, createVNode, render } from 'vue';
 const $bus = inject('$bus')
 const $bus_Entity = inject('$bus_Entity')
-let _editor_, _viewer_, _eM_, pointPrimitiveCollection
-$bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM }) => {
+const layerNameProp = inject('layerNameProp')
+let _editor_, _viewer_, _eM_, _lM_, pointPrimitiveCollection
+$bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM, lM }) => {
     _viewer_ = viewer
     _editor_ = editor
     _eM_ = eM
+    _lM_ = lM
     pointPrimitiveCollection = _viewer_.scene.primitives.add(new Cesium.PointPrimitiveCollection());
 })
-
 const props = defineProps({
     // 单个实体点渲染
     size: {
@@ -62,18 +63,76 @@ const props = defineProps({
     points: {
         type: Array,
         default: () => ([])
-    }
+    },
+    // 交互
 })
-
 let curSec = 0;
 let timer1, timer2
 let curEntity
-const createDynamicPoint = (_viewer_) => {
-    // 普通实体
-    if (!props.performance) {
-        // if (pointPrimitiveCollection) {
-        //     _viewer_.scene.primitives.remove(pointPrimitiveCollection)
-        // }
+let curDatasource
+const createDynamicPoint = (_viewer_, layerName) => {
+    if (!_viewer_) return
+    pointPrimitiveCollection.removeAll();
+    curDatasource = _lM_.getDatasourceByName(layerName) || _viewer_
+    curEntity && curDatasource.entities.remove(curEntity)
+    if (props.performance) { // 增加性能 图元
+        let center
+        if (props.test) {
+            // 测试模式 生成100个示例点 
+            const baseLongitude = 2.294481;//基准点 base
+            const baseLatitude = 48.858370;
+            const baseHeight = 20;
+            const colorArray = [
+                Cesium.Color.RED,
+                Cesium.Color.GREEN,
+                Cesium.Color.BLUE
+            ];
+            for (let i = 0; i < 1000000; i++) {
+                const longitudeOffset = (Math.random() - 0.5) * 5; // 经度偏移
+                const latitudeOffset = (Math.random() - 0.5) * 5; // 纬度偏移
+                const heightOffset = (Math.random() - 0.5) * 750000;
+                // 构建点的位置和颜色
+                const position = Cesium.Cartesian3.fromDegrees(
+                    baseLongitude + longitudeOffset,
+                    baseLatitude + latitudeOffset,
+                    baseHeight + heightOffset
+                );
+                // 随机选择颜色
+                const color = colorArray[i % colorArray.length];
+                // 添加点到集合
+                let pointPrimitive = pointPrimitiveCollection.add({
+                    position: position,
+                    color: color,
+                    pixelSize: 5,
+                    scaleByDistance: new Cesium.NearFarScalar(1000, 1.0, 5000, 0.2),
+                });
+            }
+        } else { // 普通实体
+            props.points.forEach(point => {
+                let pointPrimitive = pointPrimitiveCollection.add({
+                    position: Cesium.Cartesian3.fromDegrees(point.longitude, point.latitude, point.height),
+                    color: point.color,
+                    pixelSize: point.size,
+                    ...props.extraOpt
+                });
+            });
+        }
+        center = DataPrepocesser.getCenterOfPrimitives(pointPrimitiveCollection._pointPrimitives)
+        props.zoom && _viewer_.camera.setView({
+            destination: center,
+            orientation: {
+                heading: Cesium.Math.toRadians(0.0),
+                pitch: Cesium.Math.toRadians(-45.0),
+                roll: 0.0
+            }
+        });
+        curEntity = curEntity = {
+            name: 'point@henrifox',
+            position: center,
+            data: pointPrimitiveCollection._pointPrimitives
+        };
+    }
+    else {
         const colorsProp = props.colors
         const positionProp = props.position
         if (!_viewer_) return;
@@ -101,8 +160,7 @@ const createDynamicPoint = (_viewer_) => {
         }
         let dynamicColorProperty;
         colorDefinition && (dynamicColorProperty = new DynamicColorProperty(colorDefinition));// 动态颜色属性
-        curEntity && _viewer_.entities.remove(curEntity)
-        const entity = _viewer_.entities.add({
+        const entity = curDatasource.entities.add({
             properties: {
                 meta: 'Some additional meta information',
                 html: `<p>Point size- - -${props.size}</p>`
@@ -118,91 +176,23 @@ const createDynamicPoint = (_viewer_) => {
         curEntity = entity
         props.zoom && _viewer_.zoomTo(curEntity);
     }
-    // 增加性能 图元
-    else if (props.performance) {
-        let primitiveArr = []
-        let center
-        if (props.test) {
-            // 测试模式 生成100个示例点 
-            const baseLongitude = 2.294481;//基准点 base
-            const baseLatitude = 48.858370;
-            const baseHeight = 20;
-            const colorArray = [
-                Cesium.Color.RED,
-                Cesium.Color.GREEN,
-                Cesium.Color.BLUE
-            ];
-            for (let i = 0; i < 10000; i++) {
-                const longitudeOffset = (Math.random() - 0.5) * 0.01; // 经度偏移
-                const latitudeOffset = (Math.random() - 0.5) * 0.01; // 纬度偏移
-                const heightOffset = (Math.random() - 0.5) * 2000
-                // 构建点的位置和颜色
-                const position = Cesium.Cartesian3.fromDegrees(
-                    baseLongitude + longitudeOffset,
-                    baseLatitude + latitudeOffset,
-                    baseHeight + heightOffset
-                );
-                // 随机选择颜色
-                const color = colorArray[i % colorArray.length];
-                // 添加点到集合
-                let pointPrimitive = pointPrimitiveCollection.add({
-                    position: position,
-                    color: color,
-                    pixelSize: 2 + Math.random() * 10,// 随机大小
-                    scaleByDistance: new Cesium.NearFarScalar(1000, 1.0, 5000, 0.2),
-                });
-            }
-        } else {
-            props.points.forEach(point => {
-                let pointPrimitive = pointPrimitiveCollection.add({
-                    position: Cesium.Cartesian3.fromDegrees(point.longitude, point.latitude, point.height),
-                    color: point.color,
-                    pixelSize: point.size,
-                    ...props.extraOpt
-                });
-            });
-        }
-        center = DataPrepocesser.getCenterOfPrimitives(pointPrimitiveCollection._pointPrimitives)
-        props.zoom && _viewer_.camera.setView({
-            destination: center,
-            orientation: {
-                heading: Cesium.Math.toRadians(0.0),
-                pitch: Cesium.Math.toRadians(-45.0),
-                roll: 0.0
-            }
-        });
-        curEntity = curEntity = {
-            name: 'point@henrifox',
-            position: center,
-            data: pointPrimitiveCollection._pointPrimitives
-        };
-    }
     $bus_Entity.emit('entityCreatedEvent@henrifox', { target: curEntity, type: 'point' })
 }
-
-let descNode
-let descDom = document.createElement('div');
+let pointVueDocClick
 const bindEvent = (eM, type) => {
     if (type = 'popup') {
-        eM.onMouseDoubleClick((e, pickedObjectPos, pickedObject) => {
-            if (Cesium.defined(pickedObject)) {
-                if (pickedObject.primitive instanceof Cesium.PointPrimitive) {
-                    const primitive = pickedObject.primitive;
-                    const entity = pickedObject.id;
-                    $bus_Entity.emit('popupInfoEvent@henrifox', { entity, primitive, isPicked: true })
-                    // console.log('Picked a point primitive', primitive, entity);
-                    // const container = document.getElementById('czm-container@henrifox');
-                    // descNode = createVNode('div', {
-                    //     style: {
-                    //         color: 'red',
-                    //         backgroundColor: 'black',
-                    //         directives: [{ name: 'mouse-follow' }]
-                    //     }
-                    // }, `<p>Point size - ${props.size}</p>`)
-                    // container.appendChild(descDom)
-                    // render(descNode, descDom)
-                }
-            } else {
+        pointVueDocClick = document.addEventListener('click', (e) => {
+            if (e.target instanceof HTMLCanvasElement) {/**bug if (!e.target instanceof HTMLCanvasElement) */ }
+            else $bus_Entity.emit('popupInfoEvent@henrifox', { isPicked: false })
+        })
+        eM.onMouseClick((e, pickedObjectPos, pickedObject) => {
+            if (Cesium.defined(pickedObject) && pickedObject.primitive instanceof Cesium.PointPrimitive) {
+                // console.log('object picked.', pickedObject);
+                const primitive = pickedObject.primitive;
+                const entity = pickedObject.id;
+                $bus_Entity.emit('popupInfoEvent@henrifox', { entity, primitive, isPicked: true })
+            }
+            else {
                 $bus_Entity.emit('popupInfoEvent@henrifox', { isPicked: false })
                 console.log('No object picked.');
             }
@@ -210,30 +200,27 @@ const bindEvent = (eM, type) => {
         )
     }
 }
-
 onMounted(() => {
     timer1 = setInterval(() => {
         curSec++
     }, 1000)
     timer2 = setTimeout(() => {
-        createDynamicPoint(_viewer_)
+        createDynamicPoint(_viewer_, layerNameProp)
         const eM_Point = new EventManager(_viewer_)//pointVue内部独立维护一个事件管理器
         bindEvent(eM_Point, 'popup')
     }, 0)
 })
-
 watch(() => props, (newV) => {
-
-    curEntity && _viewer_.entities.remove(curEntity)
-    createDynamicPoint(_viewer_)
+    setTimeout(() => {
+        createDynamicPoint(_viewer_, layerNameProp)
+    }, 0)
 }, { deep: true })
-
 onBeforeUnmount(() => {
     clearInterval(timer1)
     clearTimeout(timer2)
-    // 清空所有点图元
-
+    pointVueDocClick && document.removeEventListener('click', pointVueDocClick)
+    // 清空所有点图元和实体
+    pointPrimitiveCollection.removeAll();
+    curEntity && curDatasource.entities.remove(curEntity)
 })
 </script>
-
-<style lang="scss" scoped></style>

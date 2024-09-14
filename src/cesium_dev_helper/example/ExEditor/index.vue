@@ -7,13 +7,13 @@
             <el-button @click="newLine('default')">新建（默认模式）</el-button>
             <el-button @click="newLine('follow')">新建（跟随模式）</el-button>
             <el-button @click="newLine('straight')">新建（直线模式）</el-button>
+            <el-button @click="drawbackLine">撤销</el-button>
+            <el-button @click="recoverLine">恢复</el-button>
+            <div>测量结果为：{{ measureRes }} Km</div>
             <br>
             <el-button @click="newPoly">新建（多边形）</el-button>
             <br>
-            <el-button @click="drawbackLine">撤销</el-button>
-            <el-button @click="recoverLine">恢复</el-button>
             <br>
-            <div>测量结果为：{{ measureRes }} Km</div>
         </div>
         <CzmMap width="800px" height="1000px">
             <CzmCamera :view="view"></CzmCamera>

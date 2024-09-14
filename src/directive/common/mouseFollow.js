@@ -1,6 +1,6 @@
 export default {
     // @bug 移动限制
-    mounted(el) {
+    mounted(el, bind) {
         document.addEventListener('click', (e) => {
             // Get the mouse click position
             const mouseX = e.clientX;
@@ -15,8 +15,8 @@ export default {
             const newTop = Math.min(Math.max(0, mouseY), maxTop);
 
             // Update the element's position
-            el.style.left = `${newLeft - 120}px`;//?120 ?5
-            el.style.top = `${newTop - 5}px`;
+            el.style.left = `${newLeft + 2}px`;
+            el.style.top = `${newTop + 2}px`;
 
             // console.log(el);
         });
