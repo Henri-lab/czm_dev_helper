@@ -6,6 +6,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import * as THREE from 'three';
+import * as Cesium from 'cesium';
 import { onBeforeUnmount } from 'vue';
 import { getGlOfViewer } from '../../lib/util/versionOf';
 let _cM_, _viewer_
@@ -52,12 +53,12 @@ const initThree = (threeCanvas, czm_gl) => {
         // threeCanvas.classList.add('three@henrifox')
         threeCanvas = document.getElementById('three@henrifox')
     }
-    console.log(threeCanvas)
+    // console.log(threeCanvas)
     threeRenderer = new THREE.WebGLRenderer({
         canvas: threeCanvas,
-        context: czm_gl,
-        // alpha: true,
-        // premultipliedAlpha: false
+        // context: czm_gl,
+        alpha: true,
+        premultipliedAlpha: false
     });
 
     threeRenderer.setPixelRatio(window.devicePixelRatio);
@@ -178,8 +179,8 @@ onMounted(() => {
         () => {
             console.log(_viewer_.canvas, '_viewer_.canvas')
             if (!__three__.value) return
-            initThree(_viewer_.canvas, getGlOfViewer(_viewer_))
-            console.log(_viewer_)
+            initThree(__three__.value)
+            // initThree(_viewer_.canvas, getGlOfViewer(_viewer_))
             initParticles()
             updateParticles()
             render();// 开始渲染循环

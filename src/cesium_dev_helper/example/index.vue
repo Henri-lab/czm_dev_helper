@@ -17,6 +17,7 @@
             <ExPoint v-if="isEx == 'entity:point'" />
             <ExPolygon v-if="isEx == 'entity:polygon'" />
             <ExThree v-if="isEx == 'three'" />
+            <ExParticle v-if="isEx == 'particle'" />
         </div>
     </div>
 </template>
@@ -28,6 +29,7 @@ import ExBuilding from './ExBuilding/index.vue'
 import ExPoint from './ExPoint/index.vue'
 import ExPolygon from './ExPolygon/index.vue'
 import ExThree from './ExThree/index.vue'
+import ExParticle from './ExParticle/index.vue'
 import { h, ref, watch } from 'vue';
 
 const isEx = ref(false)
@@ -108,8 +110,12 @@ const items = ref([
     },
     {
         key: '6',
-        label: 'three',
-    }
+        label: 'THREE扩展',
+    },
+    {
+        key: '7',
+        label: '粒子特效',
+    },
 ]);
 const changeTheme = (checked) => {
     theme.value = checked ? 'dark' : 'light';
@@ -131,6 +137,8 @@ watch(() => selectedKeys.value,
             isEx.value = 'entity:polygon'
         } else if (newV[0] == '6') {
             isEx.value = 'three'
+        } else if (newV[0] == '7') {
+            isEx.value = 'particle'
         }
     }
 )

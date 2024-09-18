@@ -10,6 +10,19 @@
 <body>
     <!-- 文件上传选择窗口 -->
     <div onclick="window.showOpenFilePicker()">openFilePicker</div>
+    <script>
+        if (window.WebGL2RenderingContext) {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl2');
+            if (gl) {
+                console.log('WebGL 2 is supported');
+            } else {
+                console.log('WebGL 2 is not supported');
+            }
+        } else {
+            console.log('WebGL 2 is not available');
+        }
+    </script>
 </body>
 
 </html>
