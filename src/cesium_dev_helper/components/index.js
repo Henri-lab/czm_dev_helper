@@ -7,6 +7,7 @@ import Entity from './Entity.vue'
 import Point from './Target/Point.vue'
 import Polygon from './Target/Polygon.vue'
 import Material from './Material.vue'
+import Three from './Third/Three.vue'
 
 
 export {
@@ -18,5 +19,6 @@ export {
     Entity,
     Point,
     Polygon,
-    Material
+    Material,
+    Three,
 }
