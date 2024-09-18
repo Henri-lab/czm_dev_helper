@@ -32,6 +32,19 @@ export function getNewCzm(lib) {
     }
 }
 
+export function getGlOfViewer(viewer) {
+    // 获取 WebGL 上下文
+    const gl = viewer.scene.context._gl;
+    // 检查是否为 WebGL 2
+    if (gl instanceof WebGL2RenderingContext) {
+        console.log("Cesium is using WebGL 2.");
+    } else if (gl instanceof WebGLRenderingContext) {
+        console.log("Cesium is using WebGL 1.");
+    } else {
+        console.log("Cesium is not using a valid WebGL context.");
+    }
+    return gl;
+}
 
 // Cesium 的不同版本之间有时会引入一些显著的变化，特别是在主要版本升级时。以下是一些主要的版本更新以及企业中常见的版本：
 

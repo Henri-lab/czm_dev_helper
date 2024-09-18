@@ -84,7 +84,8 @@ const viewerProperties = [
     'tracking',
     'useDefaultRenderLoop',
     'viewerContainer',
-    'vrButton'
+    'vrButton',
+    'contextOptions'
 ];
 
 

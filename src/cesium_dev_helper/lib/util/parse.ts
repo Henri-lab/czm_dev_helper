@@ -19,9 +19,15 @@ import * as Cesium from 'cesium';
 let vConfig_native = /**@default*/ {
   contextOptions: {
     webgl: {
-      alpha: false,
+      alpha: true,
+      depth: true,
+      stencil: true,
+      antialias: true,
+      powerPreference: 'high-performance',
+      webgl2: WebGL2RenderingContext ? true : false, // 启用 WebGL 2
     },
   },
+  // useDefaultRenderLoop: false,
   animation: false,
   timeline: false,
   fullscreenButton: false,
@@ -46,17 +52,13 @@ export const parse_viewerConfig = (viewerConfig: viewerConfig) => {
     extraConfig['AccessToken'] || import.meta.env.VITE_CESIUM_KEY;
   // 过滤无效配置
   for (const key in baseConfig) {
-    if (
-      baseConfig[key] === undefined ||
-      !isValidViewerProperty(baseConfig[key])
-    )
+    if (baseConfig[key] === undefined || !isValidViewerProperty(key))
       delete baseConfig[key];
   }
   vConfig_native = Object.assign(vConfig_native, baseConfig);
   if (providerConfig) {
     const info /*地形数据和影像数据的配置信息*/ =
       parseProviderConfig(providerConfig);
-
     // 地形数据配置(viewer)
     let terrian: any = {};
     // 加载地形列表 -通过配置选项
@@ -69,9 +71,7 @@ export const parse_viewerConfig = (viewerConfig: viewerConfig) => {
         option,
       }) as TerrainProvider;
     }
-
     const parsed = { ...vConfig_native, ...terrian };
-
     //根据 影像配置 生成 provider
     const images = [];
     for (const type in info.iMap) {
@@ -90,7 +90,6 @@ export const parse_viewerConfig = (viewerConfig: viewerConfig) => {
         }
       }
     }
-
     return {
       id: containerId,
       parsed,

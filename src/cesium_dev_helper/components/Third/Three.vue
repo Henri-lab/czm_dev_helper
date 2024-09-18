@@ -1,20 +1,24 @@
 <template>
-    <canvas class="three@henrifox" ref="__three__"
-        style="position: absolute;right: -50%; top:0; width:20% ;height: 20%; z-index: 999;"></canvas>
+    <canvas id="three@henrifox" class="three@henrifox" ref="__three__"
+        style="position: absolute;right: 0; top:0; width:100% ;height: 100%; z-index: 999;"></canvas>
 </template>
 
 <script setup>
 import { onMounted } from 'vue';
 import * as THREE from 'three';
 import { onBeforeUnmount } from 'vue';
-let _cM_
+import { getGlOfViewer } from '../../lib/util/versionOf';
+let _cM_, _viewer_
 let threeCamera, threeScene, threeRenderer
 let lastTime = performance.now();
 const $bus = inject('$bus')
 $bus.on('czmCameraEvent@henrifox', (cM) => {
     _cM_ = cM
 })
-
+$bus.on('czmViewerEvent@henrifox', (viewer) => {
+    _viewer_ = viewer
+}
+)
 function testNaN(positionArray) {
     let hasNaN = false;
     for (let i = 0; i < positionArray.length; i++) {
@@ -42,20 +46,25 @@ function setPositions(data, geometry) {
     }
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 }
-const initThree = (threeCanvas) => {
+const initThree = (threeCanvas, czm_gl) => {
     if (!threeCanvas) {
-        threeCanvas = document.createElement('canvas')
-        threeCanvas.classList.add('three@henrifox')
+        // threeCanvas = document.createElement('canvas')
+        // threeCanvas.classList.add('three@henrifox')
+        threeCanvas = document.getElementById('three@henrifox')
     }
+    console.log(threeCanvas)
     threeRenderer = new THREE.WebGLRenderer({
         canvas: threeCanvas,
-        alpha: true,
-        premultipliedAlpha: false
+        context: czm_gl,
+        // alpha: true,
+        // premultipliedAlpha: false
     });
+
     threeRenderer.setPixelRatio(window.devicePixelRatio);
-    threeRenderer.setSize(window.innerWidth, window.innerHeight);
-    threeRenderer.autoClear = true;
+    threeRenderer.setSize(200, 200);
+    threeRenderer.autoClear = false;
     threeScene = new THREE.Scene();
+    threeScene.background = new THREE.Color(0, 0, 0);
     threeCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     threeCamera.position.z = 50;
     threeCamera.position.x = -5;
@@ -167,37 +176,15 @@ const __three__ = ref();
 onMounted(() => {
     timer = setTimeout(
         () => {
+            console.log(_viewer_.canvas, '_viewer_.canvas')
             if (!__three__.value) return
-            initThree(__three__.value)
-            window.addEventListener('resize', () => {// 处理窗口调整大小
-                threeRenderer.setSize(window.innerWidth, window.innerHeight);
-            });
+            initThree(_viewer_.canvas, getGlOfViewer(_viewer_))
+            console.log(_viewer_)
             initParticles()
             updateParticles()
             render();// 开始渲染循环
-            console.log('three ready', threeCamera, threeScene, threeRenderer)
+            // console.log('three ready', threeCamera, threeScene, threeRenderer)
         }
-        // () => {
-        //     // 创建场景
-        //     initThree(__three__.value)
-        //     threeRenderer.setSize(window.innerWidth, window.innerHeight);
-        //     const geometry = new THREE.BoxGeometry();
-        //     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        //     const cube = new THREE.Mesh(geometry, material);
-        //     threeScene.add(cube);
-        //     function animate() {
-        //         requestAnimationFrame(animate);
-        //         cube.rotation.x += 0.01;
-        //         cube.rotation.y += 0.01;
-        //         threeRenderer.render(threeScene, threeCamera);
-        //     }
-        //     window.addEventListener('resize', () => {
-        //         threeRenderer.setSize(window.innerWidth, window.innerHeight);
-        //         threeCamera.aspect = window.innerWidth / window.innerHeight;
-        //         threeCamera.updateProjectionMatrix();
-        //     })
-        //     animate();
-        // }
         , 0)
 })
 

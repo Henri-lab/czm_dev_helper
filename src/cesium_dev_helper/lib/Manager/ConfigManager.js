@@ -38,9 +38,8 @@ export default class ConfigManager extends Manager {
      */
 
     async initViewer(config, all = false) {
-
         const _config = parse_viewerConfig(config);
-        // console.log(_config, 'parsed config')
+        console.log(_config, 'parsed config')
         // 核心
         let viewer = new Cesium.Viewer(_config.id, _config.parsed);
 
@@ -75,7 +74,7 @@ export default class ConfigManager extends Manager {
             viewer.resize();
         }
         this.viewer = viewer;
-        console.log(viewer, ' created Viewer')
+        // console.log(viewer, ' created Viewer')
         if (all) {
             const scene = viewer.scene;
             const renderer = viewer.renderer;

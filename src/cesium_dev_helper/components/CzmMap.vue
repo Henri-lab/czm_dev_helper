@@ -1,6 +1,6 @@
 <!-- 给其他组件分发视图的管理者 -->
 <template>
-    <div id="czm-container@henrifox" ref="__CzmMap__" style="position: relative;">
+    <div id="czm-container@henrifox" class="czm-container@henrifox" ref="__CzmMap__" style="position: relative;">
         <slot></slot>
     </div>
 </template>
@@ -11,6 +11,7 @@ import { defineStore } from 'pinia'
 import czmHelper from '../lib';
 import mitt from 'mitt'
 import * as Cesium from 'cesium';
+import { getGlOfViewer } from '../lib/util/versionOf';
 const props = defineProps({
     width: {
         type: String,
@@ -139,6 +140,25 @@ const _toDefaultViewer_ = async () => {
         baseConfig: {
             navigationHelpButton: true,
             navigationInstructionsInitiallyVisible: true,
+            contextOptions: {
+                webgl: {
+                    webgl2: true // 强制启用 WebGL 2
+                }
+            },
+            useDefaultRenderLoop: false
+        },
+        baseConfig: {
+            contextOptions: {
+                webgl: {
+                    alpha: false,
+                    depth: true,
+                    stencil: true,
+                    antialias: true,
+                    powerPreference: 'high-performance',
+                    webgl2: true
+                }
+            },
+            useDefaultRenderLoop: true
         },
         providerConfig: {
             terrainProvider: [],
