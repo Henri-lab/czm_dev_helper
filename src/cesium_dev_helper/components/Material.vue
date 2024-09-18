@@ -47,6 +47,7 @@ const handleNameProp = () => {
     if (props.name) {
         if (props.name == '#DynamicTexture') {
             getMaterial('#DynamicTexture').uniforms.u_time = 0
+            // getMaterial('#DynamicTexture').uniforms.u_texture = 'images/texture1.jpg'
             _target_._primitives.forEach((pri) => {
                 pri.appearance = new Cesium.MaterialAppearance({
                     material: getMaterial('#DynamicTexture'),
