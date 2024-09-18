@@ -1,6 +1,8 @@
 <template>
     <canvas id="three@henrifox" class="three@henrifox" ref="__three__"
         style="position: absolute;right: 0; top:0; width:100% ;height: 100%; z-index: 999;"></canvas>
+
+    <div id="test"></div>
 </template>
 
 <script setup>
@@ -49,8 +51,6 @@ function setPositions(data, geometry) {
 }
 const initThree = (threeCanvas, czm_gl) => {
     if (!threeCanvas) {
-        // threeCanvas = document.createElement('canvas')
-        // threeCanvas.classList.add('three@henrifox')
         threeCanvas = document.getElementById('three@henrifox')
     }
     // console.log(threeCanvas)
@@ -60,31 +60,14 @@ const initThree = (threeCanvas, czm_gl) => {
         alpha: true,
         premultipliedAlpha: false
     });
-
     threeRenderer.setPixelRatio(window.devicePixelRatio);
     threeRenderer.setSize(200, 200);
     threeRenderer.autoClear = false;
     threeScene = new THREE.Scene();
     threeScene.background = new THREE.Color(0, 0, 0);
     threeCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    threeCamera.position.z = 50;
-    threeCamera.position.x = -5;
-}
-const render = () => {
-    const currentTime = performance.now();
-    const delta = (currentTime - lastTime) / 1000;
-    lastTime = currentTime;
-    // 同步相机
-    syncCamera()
-    //  _cM_.syncWithThree(threeCamera);//bug
-    // 更新粒子
-    updateParticles(delta);
-    // 清除Three.js渲染器
-    threeRenderer.clearDepth();
-    // 渲染Three.js内容
-    threeRenderer.render(threeScene, threeCamera);
-    // 请求下一帧
-    requestAnimationFrame(render);
+    threeCamera.position.z = 5;
+    threeCamera.position.x = 0;
 }
 
 // 粒子系统设置
@@ -98,21 +81,14 @@ const initParticles = () => {
         positions[i * 3] = 0;
         positions[i * 3 + 1] = 0;
         positions[i * 3 + 2] = 0;
-
         velocities[i * 3] = (Math.random() - 0.5) * 1.5;
         velocities[i * 3 + 1] = Math.random() * 1.5;
         velocities[i * 3 + 2] = (Math.random() - 0.5) * 1.5;
     }
-
     setPositions(positions, particles);
-
-
     const positionArray = particles.attributes.position.array;
     testNaN(positionArray)
-    console.log(positionArray)
-
     particles.userData = { velocities };
-
     const particleMaterial = new THREE.PointsMaterial({
         color: 0x888888,
         size: 10,
@@ -125,11 +101,25 @@ const initParticles = () => {
 
     particleSystem = new THREE.Points(particles, particleMaterial);
     threeScene.add(particleSystem);
+    function render() {
+        const currentTime = performance.now();
+        const delta = (currentTime - lastTime) / 1000;
+        lastTime = currentTime;
+        //  _cM_.syncWithThree(threeCamera);//bug
+        // 更新粒子
+        updateParticles(delta);
+        // 清除Three.js渲染器
+        threeRenderer.clearDepth();
+        // 渲染Three.js内容
+        threeRenderer.render(threeScene, threeCamera);
+        // 请求下一帧
+        requestAnimationFrame(render);
+    } render();
+
 }
 const updateParticles = (delta) => {
     const positions = particleSystem.geometry.attributes.position.array;
     const velocities = particleSystem.geometry.userData.velocities;
-
     for (let i = 0; i < particleCount; i++) {
         positions[i * 3] += velocities[i * 3] * delta;
         positions[i * 3 + 1] += velocities[i * 3 + 1] * delta;
@@ -152,41 +142,73 @@ const updateParticles = (delta) => {
             positions[i * 3 + 2] = 0;
         }
     }
-
     particleSystem.geometry.attributes.position.needsUpdate = true;
 }
+const initCube = () => {
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    threeScene.add(cube);
+    function animate() {
+        requestAnimationFrame(animate);
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+        threeRenderer.render(threeScene, threeCamera);
+    } animate();
+}
+
+
 
 const syncCamera = () => {
-    // 获取Cesium相机的视图矩阵和投影矩阵
     const viewMatrix = _cM_.camera.viewMatrix;
     const projectionMatrix = _cM_.camera.frustum.projectionMatrix;
-    // Cesium,Three.js使用的都是列主序，可以直接使用Cesium的矩阵数据
-    // 更新投影矩阵
-    threeCamera.projectionMatrix.fromArray(projectionMatrix);
-    threeCamera.projectionMatrixInverse.copy(threeCamera.projectionMatrix).invert();
-    // 更新世界矩阵
-    threeCamera.matrixWorldInverse.fromArray(viewMatrix);
-    threeCamera.matrixWorld.copy(threeCamera.matrixWorldInverse).invert();
-    // 标记更新
-    threeCamera.projectionMatrix.needsUpdate = true;
-    threeCamera.matrixWorld.needsUpdate = true;
-}
+
+    if (viewMatrix && projectionMatrix) {
+        // Convert Cesium's matrix (which is column-major) to Three.js matrix (also column-major)
+        threeCamera.projectionMatrix.fromArray(projectionMatrix);
+        threeCamera.projectionMatrixInverse.copy(threeCamera.projectionMatrix).invert();
+
+        threeCamera.matrixWorldInverse.fromArray(viewMatrix);
+        threeCamera.matrixWorld.copy(threeCamera.matrixWorldInverse).invert();
+
+        // Mark the matrices as updated
+        threeCamera.projectionMatrix.needsUpdate = true;
+        threeCamera.matrixWorld.needsUpdate = true;
+    } else {
+        console.warn('Cesium camera matrices are not ready.');
+    }
+};
 
 let timer
 const __three__ = ref();
 onMounted(() => {
     timer = setTimeout(
         () => {
-            console.log(_viewer_.canvas, '_viewer_.canvas')
             if (!__three__.value) return
+            _viewer_.camera.changed.addEventListener(() => {
+                syncCamera(); // sync the Cesium camera with Three.js
+                _viewer_.camera.update(_viewer_.scene.frameState);
+
+            });
+
             initThree(__three__.value)
             // initThree(_viewer_.canvas, getGlOfViewer(_viewer_))
-            initParticles()
-            updateParticles()
-            render();// 开始渲染循环
+            // initParticles()
+            initCube();
+
             // console.log('three ready', threeCamera, threeScene, threeRenderer)
         }
         , 0)
+
+
+    // test 开启webgl2失败
+    // Cesium.Ion.defaultAccessToken = import.meta.env.VITE_CESIUM_KEY;
+    // const viewer2 = new Cesium.Viewer('test', {
+    //     contextOptions: {
+    //         webgl2: true
+    //     }
+    // })
+    // console.log(viewer2)
 })
 
 onBeforeUnmount(() => {

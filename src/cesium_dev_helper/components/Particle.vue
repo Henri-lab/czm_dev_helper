@@ -45,7 +45,6 @@ onMounted(() => {
                 particleSystem.startScale = Math.max(1.0, scaleFactor * 100);
                 particleSystem.endScale = Math.max(4.0, scaleFactor * 50);
             });
-
         },
         0)
 

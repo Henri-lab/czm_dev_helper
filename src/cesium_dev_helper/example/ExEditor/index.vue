@@ -83,7 +83,7 @@ const polyOpt = {
 
 const newLine = (mode) => {
     lineOpt.mode = mode
-    _editor_.startLines(lineOpt)
+    _editor_.start('polyline', lineOpt)
 }
 const drawbackLine = () => {
     _editor_.drawback('polyline')
@@ -92,7 +92,7 @@ const recoverLine = () => {
     _editor_.recover('polyline')
 }
 const newPoly = () => {
-    _editor_.startPolygons(polyOpt)
+    _editor_.start('polygon', polyOpt)
 }
 
 

@@ -11,7 +11,7 @@ export default class Editor {
         this.viewer = viewer;
         this.$entityDrawer = new EntityDrawer(viewer);
         this.$options = $options || {
-            line: lineOpt,
+            polyline: lineOpt,
             polygon: polygonOpt
         };
         this.currentLine = null;
@@ -22,30 +22,25 @@ export default class Editor {
         this.polygonTrash = [];
     }
 
-    //可以把配置单独传给startLine
-    //也可以传给 Editor 
-    startLines(options = this.$options.line) {
+    start(type, options) {
         let that = this;
+        let _type = type.toLowerCase();
+        let _options = options || this.$options[_type]
         let $entityDrawer = that.$entityDrawer;
         $entityDrawer.removeEventHandler();
         if (!that.viewer || !that.$options) return;
-        const pluginFunction = (_currentLine, _curPosCollection) => {
-            that.currentLine = _currentLine
-            that.lines.push(_currentLine);
+        const pluginFunction = (_current, _curPosCollection) => {
+            if (_type === 'polyline') {
+                that.currentLine = _current
+                that.lines.push(_current);
+            } else if (_type === 'polygon') {
+                that.currentPolygon = _current
+                that.polygons.push(_current);
+            }
         }
-        $entityDrawer.drawWithEvent('polyline', options, pluginFunction)
+        $entityDrawer.drawWithDefaultEvent(_type, _options, pluginFunction)
     }
-    startPolygons(options = this.$options.polygon) {
-        let that = this;
-        let $entityDrawer = that.$entityDrawer;
-        $entityDrawer.removeEventHandler();
-        if (!that.viewer || !that.$options) return;
-        const pluginFunction = (_currentPolygon, _curPosCollection) => {
-            that.currentPolygon = _currentPolygon
-            that.polygons.push(_currentPolygon);
-        }
-        $entityDrawer.drawWithEvent('polygon', options, pluginFunction)
-    }
+
     drawback(type, isHide) {
         let that = this
         let _type = type.toLowerCase()

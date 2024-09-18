@@ -32,7 +32,7 @@ const emits = defineEmits(['edit'])
 $bus.on('czmEditorEvent@henrifox', (editor) => {
     _editor_ = editor
     emits('edit', editor)
-    props.draw.line && editor.startLines(props.lineOpt)
+    props.draw.line && editor.start('polyline', props.lineOpt)
 })
 
 

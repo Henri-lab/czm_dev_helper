@@ -129,7 +129,7 @@ export default class EntityDrawer extends DrawingManager {
      * @param {Function} pluginFunction - Optional plugin function for additional processing.
      * @returns {Cesium.Entity|null} - The created entity or null if viewer or options are not provided.
      */
-    drawWithEvent(Type, options, pluginFunction) {
+    drawWithDefaultEvent(Type, options, pluginFunction) {
         console.log('wait drawing:', Type, '-mode:', options.mode)
         let clickFlag = 0
         const buffer = { Type, options, pluginFunction }
@@ -182,7 +182,7 @@ export default class EntityDrawer extends DrawingManager {
                     _handler_ = null;
                 }
                 pickedPosCollection = [];
-                that.drawWithEvent(buffer.Type, buffer.options, buffer.pluginFunction);
+                that.drawWithDefaultEvent(buffer.Type, buffer.options, buffer.pluginFunction);
             }
 
             if (type === 'polygon') {
@@ -232,7 +232,7 @@ export default class EntityDrawer extends DrawingManager {
                 _handler_ = null;
             }
             pickedPosCollection = [];
-            that.drawWithEvent(buffer.Type, buffer.options, buffer.pluginFunction);
+            that.drawWithDefaultEvent(buffer.Type, buffer.options, buffer.pluginFunction);
         }
         // bind events
         eM.onMouseClick(afterLeftClick);
