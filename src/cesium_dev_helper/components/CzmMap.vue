@@ -120,13 +120,13 @@ async function createMap(name) {
     if (props.option == {} || !name) {
         console.log('default viewer creating')
         curViewer = await _toDefaultViewer_()
-        console.log('default viewer created')
+        console.log('default viewer created', curViewer)
         curName = 'global@henrifox'
 
     } else {
         console.log(`custom viewer-${name} creating`)
         curViewer = await _toCustomViewer_(props.option);
-        console.log(`custom viewer-${name} created`)
+        console.log(`custom viewer-${name} created`, curViewer)
         curName = name
     }
     $store.setMap(curName)//MapUpdatedCount ++
@@ -142,7 +142,12 @@ const _toDefaultViewer_ = async () => {
             navigationInstructionsInitiallyVisible: true,
             contextOptions: {
                 webgl: {
-                    webgl2: true // 强制启用 WebGL 2
+                    webgl2: true,  // 强制启用 WebGL 2
+                    alpha: false,
+                    depth: true,
+                    stencil: true,
+                    antialias: true,
+                    powerPreference: 'high-performance'
                 }
             },
             useDefaultRenderLoop: false

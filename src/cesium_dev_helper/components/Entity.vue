@@ -43,5 +43,3 @@ $bus_Entity.on('entityCreatedEvent@henrifox', ({ target, type, isPrimitive }) =>
 })
 
 </script>
-
-<style lang="scss" scoped></style>
