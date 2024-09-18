@@ -16,6 +16,7 @@
             <ExBuilding v-if="isEx == 'building'" />
             <ExPoint v-if="isEx == 'entity:point'" />
             <ExPolygon v-if="isEx == 'entity:polygon'" />
+            <ExThree v-if="isEx == 'three'" />
         </div>
     </div>
 </template>
@@ -26,14 +27,8 @@ import ExEditor from './ExEditor/index.vue'
 import ExBuilding from './ExBuilding/index.vue'
 import ExPoint from './ExPoint/index.vue'
 import ExPolygon from './ExPolygon/index.vue'
+import ExThree from './ExThree/index.vue'
 import { h, ref, watch } from 'vue';
-import {
-    MailOutlined,
-    CalendarOutlined,
-    AppstoreOutlined,
-    SettingOutlined,
-} from '@ant-design/icons-vue';
-
 
 const isEx = ref(false)
 const isTest = ref(false)
@@ -44,25 +39,21 @@ const openKeys = ref([]);
 const items = ref([
     {
         key: '1',
-        icon: () => h(MailOutlined),
         label: '创建地图',
         title: '',
     },
     {
         key: '2',
-        icon: () => h(CalendarOutlined),
         label: '相机控制',
         title: '',
     },
     {
         key: '3',
-        icon: () => h(AppstoreOutlined),
         label: '画笔工具',
         title: '',
     },
     {
         key: 'sub4',
-        icon: () => h(SettingOutlined),
         label: '模型/特效',
         title: 'Navigation Four',
         children: [
@@ -90,7 +81,6 @@ const items = ref([
     },
     {
         key: 'sub5',
-        icon: () => h(SettingOutlined),
         label: '动态实体/弹窗/材质',
         title: '',
         children: [
@@ -115,6 +105,10 @@ const items = ref([
                 title: 'Option 10',
             },
         ],
+    },
+    {
+        key: '6',
+        label: 'three',
     }
 ]);
 const changeTheme = (checked) => {
@@ -135,6 +129,8 @@ watch(() => selectedKeys.value,
             isEx.value = 'entity:point'
         } else if (newV[0] == '/sub5/2') {
             isEx.value = 'entity:polygon'
+        } else if (newV[0] == '6') {
+            isEx.value = 'three'
         }
     }
 )

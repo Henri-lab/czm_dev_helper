@@ -1,6 +1,6 @@
 <!-- 给其他组件分发视图的管理者 -->
 <template>
-    <div id="czm-container@henrifox" ref="__CzmMap__">
+    <div id="czm-container@henrifox" ref="__CzmMap__" style="position: relative;">
         <slot></slot>
     </div>
 </template>

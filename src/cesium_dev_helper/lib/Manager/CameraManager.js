@@ -223,7 +223,7 @@ export default class CameraManager extends Manager {
     rotateEarth(angle, speed) {
         let that = this,
             scene = that.scene,
-            camera = that.camera,
+            camera = czmCamera,
             _angle = angle || CesiumMath.toRadians(that.rotatedEarthAngleSum)//开启无限自转时 angle=0 ,_angle取出之前的累积角度
 
         if (angle) {
@@ -289,6 +289,30 @@ export default class CameraManager extends Manager {
             // requestAnimationFrame(that.rotateEarth().bind(that)); //--传函数返回结果--👺栈溢出了
             // requestAnimationFrame(that.rotateEarth.bind(that));//--传函数 👺没效果 
         }
+    }
+
+
+    syncWithThree(threeCamera, czmCamera) {
+        if (!threeCamera) return
+        let that = this
+        let camera
+        if (!czmCamera) {
+            camera = that.camera// Cesium相机在viewer中scence中是同一个引用
+        }
+        camera = czmCamera
+        // 获取Cesium相机的视图矩阵和投影矩阵
+        const viewMatrix = czmCamera.viewMatrix;
+        const projectionMatrix = czmCamera.frustum.projectionMatrix;
+        // Cesium,Three.js使用的都是列主序，可以直接使用Cesium的矩阵数据
+        // 更新投影矩阵
+        threeCamera.projectionMatrix.fromArray(projectionMatrix);
+        threeCamera.projectionMatrixInverse.copy(threeCamera.projectionMatrix).invert();
+        // 更新世界矩阵
+        threeCamera.matrixWorldInverse.fromArray(viewMatrix);
+        threeCamera.matrixWorld.copy(threeCamera.matrixWorldInverse).invert();
+        // 标记更新
+        threeCamera.projectionMatrix.needsUpdate = true;
+        threeCamera.matrixWorld.needsUpdate = true;
     }
 }
 

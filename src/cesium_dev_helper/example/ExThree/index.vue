@@ -7,6 +7,7 @@
 
         <CzmMap width="800px" height="1000px">
             <CzmCtx></CzmCtx>
+            <Three></Three>
         </CzmMap>
     </div>
 </template>
@@ -14,7 +15,8 @@
 <script setup>
 import { marked } from 'marked'
 import codeString from './code.js'
-import { CzmCtx, CzmMap } from '../../components'
+import { CzmCtx, CzmMap, Three } from '../../components'
+
 
 const code = ref(null)
 
