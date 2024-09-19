@@ -8,6 +8,7 @@
             <CzmMap name="wuhan123" :option="tecent" width="800px" height="1000px">
                 <!-- <Building :option="option" :tileset="tileset"></Building> -->
                 <Building :option="option" :collapse="collapse"></Building>
+                <Sphere :options="sphereOpts" fly :center="center"></Sphere>
             </CzmMap>
         </div>
 
@@ -15,7 +16,7 @@
 </template>
 
 <script setup>
-import { Building, CzmMap } from '../../components'
+import { Building, CzmMap, Sphere } from '../../components'
 import { marked } from 'marked'
 import codeString from './code.js'
 import { onMounted, ref } from 'vue'
@@ -33,7 +34,6 @@ const tecent = {
     baseConfig: {
         navigationHelpButton: true,
         navigationInstructionsInitiallyVisible: true,
-        // skyAtmosphere: new Cesium.SkyAtmosphere(),
     },
     providerConfig: {
         terrainProvider: [],
@@ -58,7 +58,7 @@ const option =
 {
     type: '3dtiles',
     building: {
-        url: '/static/3dtiles/Tile_+002_+005/tileset.json',
+        url: '/static/3dtiles/mono/tileset.json',
     },
     extra: {
         matrix: {
@@ -79,17 +79,29 @@ const handleCollapse = () => {
     collapse.value = !collapse.value
 }
 
+const sphereOpts = []
+let center
+onMounted(() => {
+    axios.get('/static/3dtiles/mono/scenetree.json').then((res) => {
+        // console.log(res.data, 'data')
+        // res.data.scenes[0].children.length = 100
+        center = new Cesium.Cartesian3(res.data.scenes[0].sphere[0], res.data.scenes[0].sphere[1], res.data.scenes[0].sphere[2])
+        res.data.scenes.forEach(area => {
+            const childrens = area.children
+            childrens.forEach(child => {
+                sphereOpts.push({
+                    id: child.id,
+                    name: child.name,
+                    center: new Cesium.Cartesian3(child.sphere[0], child.sphere[1], child.sphere[2]),
+                    radius: child.sphere[3],
+                    type: child.type || 'element',
+                })
+            })
+        })
+        // console.log(sphereOpts, 'sphereOpts')
+    })
 
-
-
-
-
-// const tileset = ref()
-// onMounted(async () => {
-//     await axios.get('/static/3dtiles/Tile_+000_+000/tileset.json').then(res => {
-//         tileset.value = res.data
-//     })
-// })
+})
 
 
 const code = ref(null)

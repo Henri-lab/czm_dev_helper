@@ -5,6 +5,11 @@
             style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
         </div>
 
+        <!-- <CzmMap width="800px" height="1000px">
+            <CzmCtx></CzmCtx>
+            <Three></Three>
+        </CzmMap> -->
+
         <CzmMap name='threeSync123' :option="opt" width="800px" height="1000px">
             <CzmCtx></CzmCtx>
             <Three></Three>
@@ -24,6 +29,9 @@ const opt = {
         depthTest: true,
     },
     baseConfig: {
+        contextOptions: {
+            requestWebgl2: true,
+        },
         useDefaultRenderLoop: false,
         selectionIndicator: false,
         homeButton: false,
@@ -34,17 +42,6 @@ const opt = {
         fullscreenButton: false,
         navigationInstructionsInitiallyVisible: false,
         allowTextureFilterAnisotropic: false,
-        contextOptions: {
-            webgl: {
-                alpha: false,
-                antialias: true,
-                preserveDrawingBuffer: true,
-                failIfMajorPerformanceCaveat: false,
-                depth: true,
-                stencil: false,
-                anialias: false
-            }
-        },
         targetFrameRate: 60,
         resolutionScale: 0.1,
         orderIndependentTranslucency: true,

@@ -121,14 +121,15 @@ async function createMap(name) {
         console.log('default viewer creaitng')
         curViewer = await _toDefaultViewer_()
         // curViewer.scene.highDynamicRange = false;
-        console.log('default viewer created', curViewer)
         curName = 'global@henrifox'
+        console.log('default viewer created', curViewer)
 
     } else {
         console.log(`custom viewer-${name} creating`)
         curViewer = await _toCustomViewer_(props.option);
-        console.log(`custom viewer-${name} created`, curViewer)
         curName = name
+        console.log(`custom viewer-${name} created`, curViewer)
+        getGlOfViewer(curViewer)
     }
     $store.setMap(curName)//MapUpdatedCount ++
     return curViewer;

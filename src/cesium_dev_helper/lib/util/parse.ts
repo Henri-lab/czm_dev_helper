@@ -56,6 +56,7 @@ export const parse_viewerConfig = (viewerConfig: viewerConfig) => {
   // 过滤无效配置
   for (const key in baseConfig) {
     if (baseConfig[key] === undefined || !isValidViewerProperty(key))
+      //  if (baseConfig[key] === undefined)
       delete baseConfig[key];
   }
   vConfig_native = Object.assign(vConfig_native, baseConfig);
