@@ -16,7 +16,7 @@ declare module 'vue' {
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElWatermark: typeof import('element-plus/es')['ElWatermark']
     Gltf: typeof import('./src/components/Panel/gltf.vue')['default']
-    HlsLive: typeof import('./src/components/Charts/HlsLive.vue')['default']
+    HlsLive: typeof import('./src/components/charts/HlsLive.vue')['default']
     'Index copy': typeof import('./src/components/ColorPicker/index copy.vue')['default']
     Me: typeof import('./src/components/me.vue')['default']
     Mono: typeof import('./src/components/Panel/mono.vue')['default']

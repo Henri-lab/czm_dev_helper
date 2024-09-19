@@ -118,8 +118,9 @@ async function createMap(name) {
     }
     // 缓存没有，则初始化
     if (props.option == {} || !name) {
-        console.log('default viewer creating')
+        console.log('default viewer creaitng')
         curViewer = await _toDefaultViewer_()
+        // curViewer.scene.highDynamicRange = false;
         console.log('default viewer created', curViewer)
         curName = 'global@henrifox'
 
@@ -138,30 +139,8 @@ const _toDefaultViewer_ = async () => {
     const def_vcfg_global = {
         containerId: 'czm-container@henrifox',
         baseConfig: {
-            navigationHelpButton: true,
-            navigationInstructionsInitiallyVisible: true,
             contextOptions: {
-                webgl: {
-                    webgl2: true,  // 强制启用 WebGL 2
-                    alpha: false,
-                    depth: true,
-                    stencil: true,
-                    antialias: true,
-                    powerPreference: 'high-performance'
-                }
-            },
-            useDefaultRenderLoop: false
-        },
-        baseConfig: {
-            contextOptions: {
-                webgl: {
-                    alpha: false,
-                    depth: true,
-                    stencil: true,
-                    antialias: true,
-                    powerPreference: 'high-performance',
-                    webgl2: true
-                }
+                requestWebgl2: true,
             },
             useDefaultRenderLoop: true
         },

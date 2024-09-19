@@ -18,13 +18,14 @@ import * as Cesium from 'cesium';
 // viewer默认配置 原生
 let vConfig_native = /**@default*/ {
   contextOptions: {
+    requestWebgl2: true,
     webgl: {
       alpha: true,
       depth: true,
       stencil: true,
       antialias: true,
       powerPreference: 'high-performance',
-      webgl2: WebGL2RenderingContext ? true : false, // 启用 WebGL 2
+      webgl2: WebGL2RenderingContext ? true : false, // 启用 WebGL 2 失败
     },
   },
   // useDefaultRenderLoop: false,
