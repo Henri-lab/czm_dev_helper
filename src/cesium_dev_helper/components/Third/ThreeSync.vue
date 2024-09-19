@@ -88,12 +88,12 @@ const initCube = () => {
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     const cube = new THREE.Mesh(geometry, material);
     threeScene.add(cube);
-    function animate() {
-        requestAnimationFrame(animate);
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
-        threeRenderer.render(threeScene, threeCamera);
-    } animate();
+    // function animate() {
+    //     requestAnimationFrame(animate);
+    //     cube.rotation.x += 0.01;
+    //     cube.rotation.y += 0.01;
+    //     threeRenderer.render(threeScene, threeCamera);
+    // } animate();
 }
 
 let timer
