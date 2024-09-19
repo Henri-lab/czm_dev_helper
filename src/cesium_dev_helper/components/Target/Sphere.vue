@@ -1,3 +1,4 @@
+<template></template>
 <script setup>
 import { onBeforeUnmount } from 'vue';
 import { onMounted } from 'vue';
@@ -37,6 +38,10 @@ const props = defineProps({
     threshold: {// Cluster threshold in meters
         type: Number,
         default: 100
+    },
+    clear: {
+        type: Boolean,
+        default: false
     }
 })
 
@@ -57,7 +62,7 @@ let clusters = [];
 let clusterCache = []
 let thresholdCache = []
 let collectionCache = []
-const createCollectionWithCluster = (primitivePositions) => {
+const addToCollectionWithCluster = (primitivePositions) => {
     // Iterate over all primitives and cluster them
     primitivePositions.forEach((position) => {
         let addedToCluster = false;
@@ -154,7 +159,7 @@ const getCollectionFromCacheByThreshold = (threshold) => {
     }
     return last
 }
-const createCollection = (center, radius) => {
+const addToCollection = (center, radius) => {
     const sphereGeometry = new Cesium.SphereGeometry({
         center: center,
         radius: radius,
@@ -183,17 +188,19 @@ const createCollection = (center, radius) => {
     collection.add(primitive);
 }
 
-
 const main = () => {
-    if (!_viewer_) return
+    if (!_viewer_ || props.threshold < 0) {
+        collection.show = false
+        return
+    }
     let last = collection
     clusters = getClustersFromCacheByThreshold(props.threshold)
     last.show = false
     collection = getCollectionFromCacheByThreshold(props.threshold)
     collection.show = true
     _viewer_.render()
+
     if (props.options.length) {
-        // console.log(props.options, 'options');
         if (props.cluster) {
             let posArr = []
             let radiusArr = []
@@ -203,14 +210,14 @@ const main = () => {
             })
             let maxR = Math.max(...radiusArr)
             if (!thresholdCache.includes(props.threshold)) {// 没有缓存
-                createCollectionWithCluster(posArr)
+                addToCollectionWithCluster(posArr)
                 cache(props.threshold, clusters, collection)
-                console.log(collection, 'curCollection', collectionCache, 'cache')
+                // console.log(collection, 'curCollection', collectionCache, 'cache')
             }
         }
         else {
             props.options.forEach(item => {
-                createCollection(item.center, item.radius)
+                addToCollection(item.center, item.radius)
             })
         }
         _viewer_.scene.primitives.add(collection);
@@ -223,6 +230,7 @@ const main = () => {
 
 let timer
 onMounted(() => {
+    console.log('sphere mounted')
     timer = setTimeout(() => {
         let timer2 = setInterval(() => {
             main()
@@ -235,7 +243,12 @@ watch(() => props, () => {
     main()
 }, { deep: true })
 onBeforeUnmount(() => {
+    console.log('sphere unmounted')
     clearTimeout(timer)
+})
+
+defineExpose({
+    getCollection: () => collection
 })
 
 

@@ -56,12 +56,12 @@ const items = ref([
     },
     {
         key: 'sub4',
-        label: '模型/特效',
+        label: '模型/管理',
         title: 'Navigation Four',
         children: [
             {
                 key: '/sub4/1',
-                label: '楼房坍塌',
+                label: '图元聚合/选中效果',
                 title: '',
             },
             {

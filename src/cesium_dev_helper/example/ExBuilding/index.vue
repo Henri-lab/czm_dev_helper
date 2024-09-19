@@ -4,18 +4,27 @@
             <div class="code" ref="code"
                 style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
             </div>
-            <div class="btns" style="display: flex; flex-direction: column;">
+            <div class="btns" style="display: flex; flex-direction: column; width: 200px;">
                 <el-button @click="handleCollapse">坍塌切换</el-button>
-                聚合阈值
+                <br>
+                Sphere聚合阈值
                 <el-input v-model="input" placeholder="1000" />
                 <el-button @click="handleThreshold" round>确认</el-button>
+                <br>
+                Label聚合阈值
+                <el-input v-model="input2" placeholder="1000" />
+                <el-button @click="handleThreshold2" round>确认</el-button>
+                <br>
+                <span style="background-color: antiquewhite;"> 坍塌的模型ID: {{ ids }}</span>
+
             </div>
             <CzmMap name="wuhan123" :option="tecent" width="800px" height="1000px">
                 <Entity>
                     <!-- <Building :option="option" :tileset="tileset"></Building> -->
                     <Building :option="option" :collapse="collapse"></Building>
                     <Sphere :options="sphereOpts" :center="center" cluster :threshold="threshold"></Sphere>
-                    <!-- <Label :options="labelOpts"></Label> -->
+                    <Label :options="labelOpts" cluster :threshold="threshold2"></Label>
+                    <Particle group :positions="particlePos" :image="particleImg"></Particle>
                 </Entity>
             </CzmMap>
         </div>
@@ -24,13 +33,24 @@
 </template>
 
 <script setup>
-import { Building, CzmMap, Sphere, Label, Entity } from '../../components'
+import { Building, CzmMap, Sphere, Label, Entity, Particle } from '../../components'
 import { marked } from 'marked'
 import codeString from './code.js'
 import { onMounted, ref } from 'vue'
 import * as Cesium from 'cesium';
-import axios from 'axios'
+import axios, { all } from 'axios'
 import { TencentImageryProvider } from '../../lib/Plugin/mapPlugin';
+
+const ids = ref([])
+function createIdsBetween(min, max, count) {
+    ids.value = [];
+    while (count -= 1) {
+        let res = Math.floor(Math.random() * (max - min + 1) + min)
+        ids.value.push(res)
+    }
+    ids.value.sort()
+    console.log('坍塌的模型ID:', ids.value)
+}
 
 //腾讯底图
 const txOpt = {
@@ -84,12 +104,16 @@ const option =
 
 const collapse = ref(false)
 const handleCollapse = () => {
+
     collapse.value = !collapse.value
 }
 
 let sphereOpts = []
 let labelOpts = []
+let particlePos = []
+let particleImg = 'images/texture1.jpg'
 let center
+let childrenSel = []
 onMounted(() => {
     axios.get('/static/3dtiles/mono/scenetree.json').then((res) => {
         // console.log(res.data, 'data')
@@ -97,6 +121,7 @@ onMounted(() => {
         center = new Cesium.Cartesian3(res.data.scenes[0].sphere[0], res.data.scenes[0].sphere[1], res.data.scenes[0].sphere[2])
         res.data.scenes.forEach(area => {
             const childrens = area.children
+            childrenSel = childrens
             childrens.forEach(child => {
                 sphereOpts.push({
                     id: child.id,
@@ -114,16 +139,28 @@ onMounted(() => {
                     type: child.type || 'element',
                 })
             })
+            // 模拟请求到的特殊数据
+            createIdsBetween(0, 3667, 10)
+            childrenSel = childrenSel.filter(item => ids.value.includes(item.id * 1))
+            childrenSel.forEach(child => {
+                particlePos.push(new Cesium.Cartesian3(child.sphere[0], child.sphere[1], child.sphere[2]))
+            })
+            console.log(particlePos, 'particlePos')
         })
 
     })
 
 })
 
-const threshold = ref(1000)
+const threshold = ref(-1)
+const threshold2 = ref(-1)
 const input = ref()
+const input2 = ref()
 const handleThreshold = (e) => {
     threshold.value = input.value * 1
+}
+const handleThreshold2 = (e) => {
+    threshold2.value = input2.value * 1
 }
 
 

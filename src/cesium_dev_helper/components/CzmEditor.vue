@@ -39,5 +39,3 @@ $bus.on('czmEditorEvent@henrifox', (editor) => {
 
 
 </script>
-
-<style lang="scss" scoped></style>
