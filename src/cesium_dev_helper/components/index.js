@@ -6,6 +6,7 @@ import Building from './Target/Building.vue'
 import Entity from './Entity.vue'
 import Point from './Target/Point.vue'
 import Polygon from './Target/Polygon.vue'
+import Sphere from "./Target/Sphere.vue";
 import Material from './Material.vue'
 // import Three from './Third/Three.vue'
 import Three from './Third/ThreeSync.vue';
@@ -21,7 +22,8 @@ export {
     Entity,
     Point,
     Polygon,
+    Sphere,
     Material,
     Three,
-    Particle
+    Particle,
 }
