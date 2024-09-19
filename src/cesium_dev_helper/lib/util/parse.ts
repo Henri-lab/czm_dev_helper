@@ -48,6 +48,8 @@ let vConfig_native = /**@default*/ {
 };
 export const parse_viewerConfig = (viewerConfig: viewerConfig) => {
   let { containerId, baseConfig, providerConfig, extraConfig } = viewerConfig;
+  let images = [];
+  let terrian: any = {};
   // 配置token
   Cesium.Ion.defaultAccessToken =
     extraConfig['AccessToken'] || import.meta.env.VITE_CESIUM_KEY;
@@ -61,7 +63,6 @@ export const parse_viewerConfig = (viewerConfig: viewerConfig) => {
     const info /*地形数据和影像数据的配置信息*/ =
       parseProviderConfig(providerConfig);
     // 地形数据配置(viewer)
-    let terrian: any = {};
     // 加载地形列表 -通过配置选项
     // 一般来说地形provider只有一个就够,多个可能是有切地形需求
     for (const type in info.tMap) {
@@ -72,9 +73,7 @@ export const parse_viewerConfig = (viewerConfig: viewerConfig) => {
         option,
       }) as TerrainProvider;
     }
-    const parsed = { ...vConfig_native, ...terrian };
     //根据 影像配置 生成 provider
-    const images = [];
     for (const type in info.iMap) {
       const option = info.iMap[type];
       if (isValidImageryProviderType(type)) {
@@ -91,13 +90,13 @@ export const parse_viewerConfig = (viewerConfig: viewerConfig) => {
         }
       }
     }
-    return {
-      id: containerId,
-      parsed,
-      images, //影像数据集合
-      extra: extraConfig,
-    };
   }
+  return {
+    id: containerId,
+    parsed: { ...vConfig_native, ...terrian },
+    images,
+    extra: extraConfig,
+  };
 };
 
 /**

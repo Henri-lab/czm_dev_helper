@@ -38,15 +38,16 @@ export default class ConfigManager extends Manager {
      */
 
     async initViewer(config, all = false) {
+        console.log(config, 'config')
         const _config = parse_viewerConfig(config);
-        // console.log(_config, 'parsed config')
+        console.log(_config, 'parsed config')
         // 核心
+
         let viewer = new Cesium.Viewer(_config.id, _config.parsed);
 
         // 加载影像图层列表 -通过 viewer.imageryLayers.addImageryProvider方法
-        _config.images.forEach(image => viewer.imageryLayers.addImageryProvider(image));
-
-
+        _config.images && _config.images.forEach(image => viewer.imageryLayers.addImageryProvider(image));
+        
         // 设置viewer的其他属性
         const extra = _config.extra;
         if (extra['name']) {

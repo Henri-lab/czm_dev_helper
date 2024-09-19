@@ -27,7 +27,6 @@ const tx = {
     baseConfig: {
         navigationHelpButton: true,
         navigationInstructionsInitiallyVisible: true,
-        // skyAtmosphere: new Cesium.SkyAtmosphere(),
     },
     providerConfig: {
         terrainProvider: [],

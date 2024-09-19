@@ -7,7 +7,8 @@ import Entity from './Entity.vue'
 import Point from './Target/Point.vue'
 import Polygon from './Target/Polygon.vue'
 import Material from './Material.vue'
-import Three from './Third/Three.vue'
+// import Three from './Third/Three.vue'
+import Three from './Third/ThreeSync.vue';
 import Particle from "./Particle.vue";
 
 
