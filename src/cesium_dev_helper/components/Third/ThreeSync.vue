@@ -39,6 +39,50 @@ const initThree = (threeCanvas) => {
     const cameraHelper = new THREE.CameraHelper(threeCamera);
     threeScene.add(cameraHelper)
 }
+
+const syncCamera = (czmCamera, threeCamera, threeCanvas) => {
+    console.log('syncing camera...')
+    threeCamera.fov = Cesium.Math.toDegrees(czmCamera.frustum.fovy) // ThreeJS FOV is vertical
+    threeCamera.updateProjectionMatrix();
+    threeCamera.matrixAutoUpdate = false;
+    let cvm = czmCamera.viewMatrix;
+    let civm = czmCamera.inverseViewMatrix;
+    threeCamera.matrixWorld.set(
+        civm[0], civm[4], civm[8], civm[12],
+        civm[1], civm[5], civm[9], civm[13],
+        civm[2], civm[6], civm[10], civm[14],
+        civm[3], civm[7], civm[11], civm[15]
+    );
+    threeCamera.matrixWorldInverse.set(
+        cvm[0], cvm[4], cvm[8], cvm[12],
+        cvm[1], cvm[5], cvm[9], cvm[13],
+        cvm[2], cvm[6], cvm[10], cvm[14],
+        cvm[3], cvm[7], cvm[11], cvm[15]
+    );
+    // threeCamera.matrixWorld.set(
+    //     civm[0], civm[1], civm[2], civm[3],
+    //     civm[4], civm[5], civm[6], civm[7],
+    //     civm[8], civm[9], civm[10], civm[11],
+    //     civm[12], civm[13], civm[14], civm[15]
+    // );
+
+    // threeCamera.matrixWorldInverse.set(
+    //     cvm[0], cvm[1], cvm[2], cvm[3],
+    //     cvm[4], cvm[5], cvm[6], cvm[7],
+    //     cvm[8], cvm[9], cvm[10], cvm[11],
+    //     cvm[12], cvm[13], cvm[14], cvm[15]
+    // );
+    threeCamera.lookAt(new THREE.Vector3(0, 0, 0));
+    if (!threeCanvas) {
+        threeCamera.aspect = 2;
+    } else {
+        let width = threeCanvas.clientWidth;
+        let height = threeCanvas.clientHeight;
+        let aspect = width / height;
+        threeCamera.aspect = aspect;
+    }
+    threeCamera.updateProjectionMatrix();
+}
 const initCube = () => {
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
@@ -58,7 +102,10 @@ onMounted(() => {
         () => {
             if (!__three__.value) return
             _viewer_.useDefaultRenderLoop = false;
-            initThree(_viewer_.canvas)
+            initThree(__three__.value)
+            _viewer_.camera.changed.addEventListener(() => {
+                syncCamera(_viewer_.camera, threeCamera, __three__.value);
+            });
             initCube();
             function render() {
                 requestAnimationFrame(render);
@@ -67,6 +114,7 @@ onMounted(() => {
                 threeRenderer.render(threeScene, threeCamera);
             }
             render();
+
         }
         , 0)
 })
