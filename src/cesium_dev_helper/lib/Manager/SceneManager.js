@@ -168,14 +168,17 @@ export default class SceneManager extends Manager {
    *
    * @returns {undefined} This function does not return any value.
    */
-  addToScene(loaded = {}, Type) {
+  addToScene(loaded = {}, Type, collectionOrSource) {
     let viewer = this.viewer;
     let scene = viewer.scene;
     const type = Type.toLowerCase();
-    if (type === '3dtiles' || type === 'gltf' || type === 'primitive')
-      return scene.primitives.add(loaded);
+    if (type === '3dtiles' || type === 'gltf' || type === 'primitive') {
+      if (collectionOrSource) { return collectionOrSource.add(loaded); }
+      else { return scene.primitives.add(loaded); }
+    }
     else
-      return viewer.dataSources.add(loaded);
+      if (collectionOrSource) { return collectionOrSource.entities.add(loaded); }
+      else { return viewer.entities.add(loaded); }
   }
 
   /**
@@ -192,7 +195,7 @@ export default class SceneManager extends Manager {
     const $dL = that.$dL;
     let res = arr || [];
     function afterLoaded(loaded, type) {
-      that.addToScene(loaded, type);
+      that.addToScene(loaded, type, extraOpt.layer);
       res.push({ t_id: Date.now(), model: loaded });//添加model的附属信息
       cb && cb(res);
       if (extraOpt && extraOpt.isZoom) {

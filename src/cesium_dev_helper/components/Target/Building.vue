@@ -1,7 +1,5 @@
 <template>
-    <div class="building@henrifox">
-
-    </div>
+    <div class="building@henrifox"></div>
 </template>
 
 <script setup>
@@ -33,8 +31,11 @@ const props = defineProps({
     collapse: {
         type: Boolean,
         default: false
+    },
+    zoom: {
+        type: Boolean,
+        default: true
     }
-
 })
 
 let timer
@@ -49,6 +50,7 @@ onMounted(() => {
                 _building_ = resArr[0].model
                 props.option.extra.matrix && DataPrepocesser.update3DtilesMaxtrix(_building_, props.option.extra.matrix)
             }
+            props.zoom && (props.option.extra.isZoom = true)
             await _sM.add3DModel(props.option.type, props.option.building, props.option.extra, _callback_)
         }
         clearTimeout(timer)

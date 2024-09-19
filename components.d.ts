@@ -12,6 +12,7 @@ declare module 'vue' {
     Draw: typeof import('./src/components/Panel/draw.vue')['default']
     Editor: typeof import('./src/components/Editor/index.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElInput: typeof import('element-plus/es')['ElInput']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElWatermark: typeof import('element-plus/es')['ElWatermark']

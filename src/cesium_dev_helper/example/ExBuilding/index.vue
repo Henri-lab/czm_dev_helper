@@ -4,11 +4,19 @@
             <div class="code" ref="code"
                 style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
             </div>
-            <el-button @click="handleCollapse">坍塌切换</el-button>
+            <div class="btns" style="display: flex; flex-direction: column;">
+                <el-button @click="handleCollapse">坍塌切换</el-button>
+                聚合阈值
+                <el-input v-model="input" placeholder="1000" />
+                <el-button @click="handleThreshold" round>确认</el-button>
+            </div>
             <CzmMap name="wuhan123" :option="tecent" width="800px" height="1000px">
-                <!-- <Building :option="option" :tileset="tileset"></Building> -->
-                <Building :option="option" :collapse="collapse"></Building>
-                <Sphere :options="sphereOpts" fly :center="center"></Sphere>
+                <Entity>
+                    <!-- <Building :option="option" :tileset="tileset"></Building> -->
+                    <Building :option="option" :collapse="collapse"></Building>
+                    <Sphere :options="sphereOpts" :center="center" cluster :threshold="threshold"></Sphere>
+                    <!-- <Label :options="labelOpts"></Label> -->
+                </Entity>
             </CzmMap>
         </div>
 
@@ -16,7 +24,7 @@
 </template>
 
 <script setup>
-import { Building, CzmMap, Sphere } from '../../components'
+import { Building, CzmMap, Sphere, Label, Entity } from '../../components'
 import { marked } from 'marked'
 import codeString from './code.js'
 import { onMounted, ref } from 'vue'
@@ -79,7 +87,8 @@ const handleCollapse = () => {
     collapse.value = !collapse.value
 }
 
-const sphereOpts = []
+let sphereOpts = []
+let labelOpts = []
 let center
 onMounted(() => {
     axios.get('/static/3dtiles/mono/scenetree.json').then((res) => {
@@ -96,12 +105,26 @@ onMounted(() => {
                     radius: child.sphere[3],
                     type: child.type || 'element',
                 })
+
+                labelOpts.push({
+                    id: child.id,
+                    name: child.name,
+                    position: new Cesium.Cartesian3(child.sphere[0], child.sphere[1], child.sphere[2]),
+                    text: child.name,
+                    type: child.type || 'element',
+                })
             })
         })
-        // console.log(sphereOpts, 'sphereOpts')
+
     })
 
 })
+
+const threshold = ref(1000)
+const input = ref()
+const handleThreshold = (e) => {
+    threshold.value = input.value * 1
+}
 
 
 const code = ref(null)
