@@ -116,7 +116,7 @@ const addToCollectionWithCluster = (primitivePositions) => {
                 geometry: geometry,
                 modelMatrix: Cesium.Matrix4.fromTranslation(cluster.position),
                 attributes: {
-                    color: Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.BLUE.withAlpha(0.5))
+                    color: Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.YELLOW.withAlpha(0.5))
                 }
             });
             const primitive = new Cesium.Primitive({
@@ -230,7 +230,7 @@ const main = () => {
 
 let timer
 onMounted(() => {
-    console.log('sphere mounted')
+    // console.log('sphere mounted')
     timer = setTimeout(() => {
         let timer2 = setInterval(() => {
             main()
@@ -243,7 +243,7 @@ watch(() => props, () => {
     main()
 }, { deep: true })
 onBeforeUnmount(() => {
-    console.log('sphere unmounted')
+    // console.log('sphere unmounted')
     clearTimeout(timer)
 })
 

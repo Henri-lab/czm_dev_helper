@@ -8,12 +8,14 @@
                 <el-button @click="handleCollapse">坍塌切换</el-button>
                 <br>
                 Sphere聚合阈值
-                <el-input v-model="input" placeholder="1000" />
+                <el-input v-model="input" placeholder=">=0" />
                 <el-button @click="handleThreshold" round>确认</el-button>
+                <el-button @click="threshold = -1" round>取消</el-button>
                 <br>
                 Label聚合阈值
-                <el-input v-model="input2" placeholder="1000" />
+                <el-input v-model="input2" placeholder=">=0" />
                 <el-button @click="handleThreshold2" round>确认</el-button>
+                <el-button @click="threshold = -1" round>取消</el-button>
                 <br>
                 <span style="background-color: antiquewhite;">
                     一级损伤：{{ ids }}
@@ -29,6 +31,7 @@
                     <!-- <Building :option="option" :tileset="tileset"></Building> -->
                     <Building :option="option" :collapse="collapse"></Building>
                     <Sphere :options="sphereOpts" :center="center" cluster :threshold="threshold"></Sphere>
+                    <Label :options="labelSelOpts" v-show="threshold2 < 0"></Label>
                     <Label :options="labelOpts" cluster :threshold="threshold2"></Label>
                     <Particle group :positions="particlePos" :image="particleImg"></Particle>
                     <Particle group :positions="particlePos2" :image="particleImg2"></Particle>
@@ -136,6 +139,7 @@ const handleCollapse = () => {
 
 let sphereOpts = []
 let labelOpts = []
+let labelSelOpts = []
 let particlePos = []
 let particleImg = 'images/fire.png'
 let particlePos2 = []
@@ -169,8 +173,8 @@ onMounted(() => {
                 })
             })
             // 模拟请求到的特殊数据
-            // 一级损伤
             let childrenSel
+            // 一级损伤
             createIdsBetween(0, 3667, 10)
             childrenSel = childrens.filter(item => ids.value.includes(item.id * 1))
             childrenSel.forEach(child => {
@@ -188,6 +192,18 @@ onMounted(() => {
             childrenSel.forEach(child => {
                 particlePos3.push(new Cesium.Cartesian3(child.sphere[0], child.sphere[1], child.sphere[2]))
             })
+            let allIds = ids.value.concat(ids2.value).concat(ids3.value)
+            childrenSel = childrens.filter(item => allIds.includes(item.id * 1))
+            childrenSel.forEach((sel) => {
+                labelSelOpts.push({
+                    id: sel.id,
+                    name: sel.name,
+                    position: new Cesium.Cartesian3(sel.sphere[0], sel.sphere[1], sel.sphere[2]),
+                    text: sel.name || 'UNKOWN',
+                    type: sel.type || 'element',
+                })
+            })
+
 
         })
 
@@ -195,7 +211,7 @@ onMounted(() => {
 
 })
 
-const threshold = ref(-1)
+const threshold = ref(0)
 const threshold2 = ref(-1)
 const input = ref()
 const input2 = ref()

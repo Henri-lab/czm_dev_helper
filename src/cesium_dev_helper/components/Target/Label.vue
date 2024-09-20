@@ -78,13 +78,19 @@ const addToCollectionWithCluster = (primitivePositions, primitiveTexts) => {
             const labelPresent = collection.add({
                 position: cluster.position,
                 text: textByPosition,  // The text to display 
-                font: '10px sans-serif',
+                font: '14px sans-serif',
                 fillColor: Cesium.Color.WHITE,
                 outlineColor: Cesium.Color.BLACK,
                 outlineWidth: 2,  // Outline width
                 style: Cesium.LabelStyle.FILL_AND_OUTLINE,
                 verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
                 // pixelOffset: new Cesium.Cartesian2(0, -50)
+            });
+            // Pre-render event to adjust label size based on camera distance
+            _viewer_.scene.preRender.addEventListener(function () {
+                const cameraPosition = _viewer_.camera.position;
+                // Call the function to adjust label size
+                adjustLabelSize(labelPresent, cameraPosition);
             });
         } else {
             addToCollection({
@@ -128,7 +134,7 @@ const addToCollection = (info) => {
     const label = collection.add({
         position: info.position,
         text: info.text,  // The text to display
-        font: '6px sans-serif', // Font size and type
+        font: '12px sans-serif', // Font size and type
         fillColor: Cesium.Color.WHITE,  // Text color
         outlineColor: Cesium.Color.BLACK,  // Outline color for better readability
         outlineWidth: 2,  // Outline width
@@ -136,6 +142,22 @@ const addToCollection = (info) => {
         verticalOrigin: Cesium.VerticalOrigin.BOTTOM,  // Anchor point at the bottom
         // pixelOffset: new Cesium.Cartesian2(0, -50)  // Offset to adjust position in screen space
     });
+    // Pre-render event to adjust label size based on camera distance
+    _viewer_.scene.preRender.addEventListener(function () {
+        const cameraPosition = _viewer_.camera.position;
+        // Call the function to adjust label size
+        adjustLabelSize(label, cameraPosition);
+    });
+}
+
+// Function to adjust label size based on camera distance
+function adjustLabelSize(label, cameraPosition) {
+    const labelPosition = label.position;
+    const distance = Cesium.Cartesian3.distance(cameraPosition, labelPosition);
+    // Calculate scale factor (adjust 10000 divisor as needed to fine-tune scaling)
+    const scaleFactor = Math.max(0.5, 100000 / distance);
+    // Update label's font size dynamically
+    label.font = `${Math.min(16, scaleFactor * 3)}px sans-serif`;
 }
 
 
@@ -168,7 +190,7 @@ const main = () => {
                 addToCollection(item)
             })
         }
-        console.log(collection, 'collection')
+        // console.log(collection, 'collection')
         _viewer_.scene.primitives.add(collection);
     }
 }
