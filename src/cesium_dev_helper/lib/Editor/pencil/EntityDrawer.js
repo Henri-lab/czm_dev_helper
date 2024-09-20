@@ -5,6 +5,7 @@ import { isValidCartesian3 } from "../../util/isValid";
 import TurfUser from "../../Compute/TurfUser";
 import * as Cesium from "cesium";
 import { get } from "@/util/methods";
+import CallbackProperty from "cesium/Source/DataSources/CallbackProperty";
 
 /**
  * EntityDrawer class for drawing entities with events on a Cesium viewer with event handling.
@@ -246,7 +247,7 @@ export default class EntityDrawer extends DrawingManager {
         let polyline
         let start, end
         if (_type === 'polyline') {
-            const afterClick = (movement) => {
+            let afterClick = (movement) => {
                 console.log('click2')
                 start = () => that._getCartesian3FromPX(movement.position)
                 if (start) {
@@ -262,25 +263,34 @@ export default class EntityDrawer extends DrawingManager {
                     }));
                 }
             }
-            const afterMouseMove = (movement) => {
-                // start = () => that._getCartesian3FromPX(movement.startPosition)
+            let afterMouseMove = (movement) => {
+                start = () => that._getCartesian3FromPX(movement.startPosition)
                 end = () => that._getCartesian3FromPX(movement.endPosition)
+                // that._fakeLayer.entities.add(new Cesium.Entity({
+                //     position: [start(), end()],
+                //     polyline: {
+                //         width: 5,
+                //         material: Cesium.Color.RED
+                //     }
+                // }));
                 if (!polyline && end && start) {
                     polyline = that._fakeLayer.entities.add(new Cesium.Entity({
-                        position: that._CallBack([start(), end()]),
+                        position: new CallbackProperty(() => [start(), end()], false),
                         polyline: {
                             width: 5,
                             material: Cesium.Color.RED
                         }
                     }));
                 }
-                // console.log(polyline.position)
+
             }
             const afterRightClick = () => {
-                eM.destroy()
+                afterClick = () => { }
+                afterMouseMove = () => { }
+                console.log(that._fakeLayer.entities.values)
             }
             eM.onMouseMove(afterMouseMove, 1)
-            // eM.onMouseRightClick(afterRightClick, 1)
+            eM.onMouseRightClick(afterRightClick, 1)
             eM.onMouseClick(afterClick, 1)
         }
     }
