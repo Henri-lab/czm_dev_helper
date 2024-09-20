@@ -43,6 +43,7 @@
     "ant-design-vue": "^4.2.1",
     "axios": "^1.6.8",
     "cesium": "1.99",
+    "cesiummeshvisualizer": "^1.0.2",
     "element-plus": "^2.7.8",
     "file-saver": "^2.0.5",
     "flv.js": "^1.6.2",
