@@ -5,6 +5,7 @@ import { isValidCartesian3 } from "../../util/isValid";
 import TurfUser from "../../Compute/TurfUser";
 import * as Cesium from "cesium";
 import { get } from "@/util/methods";
+
 /**
  * EntityDrawer class for drawing entities with events on a Cesium viewer with event handling.
  * @class
@@ -19,6 +20,7 @@ export default class EntityDrawer extends DrawingManager {
         this.$entityMaker = new EntityMaker(viewer, this._drawLayer);
         this.$coords = new CoordTransformer();
         this.$turfer = new TurfUser(viewer);
+        this.$eM = new EventManager(viewer);
         this.defaultImageUrl = '';
         this.currentHandler = null;//方便在removeEventHandler剔除
         this.fakeLine = [];
@@ -34,7 +36,7 @@ export default class EntityDrawer extends DrawingManager {
         return this.$coords.getCartesianFromScreenPosition(position, this.viewer);
     }
     // 给data设置动态属性 则实体options更改时重新render实体
-    _setDynamic(data) {
+    _CallBack(data) {
         return new Cesium.CallbackProperty(() => {
             return data;
         }, false)
@@ -109,7 +111,7 @@ export default class EntityDrawer extends DrawingManager {
             if (pickedPosCollection.length === 1) {
                 const _center = pickedPosCollection[0];
                 const _radius = Cesium.Cartesian3.distance(_center, newPickPos);
-                const dynamicRadius = this._setDynamic(_radius);//每帧都调用
+                const dynamicRadius = this._CallBack(_radius);//每帧都调用
                 entityOptions.semiMajorAxis = dynamicRadius
                 entityOptions.semiMinorAxis = dynamicRadius
             }
@@ -138,7 +140,7 @@ export default class EntityDrawer extends DrawingManager {
         // --数据准备--
         const type = Type.toLowerCase()
         let that = this
-        let eM = new EventManager(that.viewer),
+        let eM = that.$eM,
             // 收集click处的坐标
             pickedPosCollection = [],
             // 获取 ~新~ 事件handler程序 ,防止事件绑定间的冲突
@@ -160,8 +162,13 @@ export default class EntityDrawer extends DrawingManager {
         // console.log(currentEntity, 'currentEntity')
 
         // --EVENT--
+        // fake
+        if (type === 'polygon') {
+            that.fakeDraw(null, options, 'polyline')
+        }
         // set callback function
         const afterLeftClick = (movement, pickedPos, pickedObj) => {   // left click
+            // console.log('click1')
             clickFlag = 1
             // 点击处的直角坐标
             const cartesian = pickedPos;
@@ -183,14 +190,6 @@ export default class EntityDrawer extends DrawingManager {
                 }
                 pickedPosCollection = [];
                 that.drawWithDefaultEvent(buffer.Type, buffer.options, buffer.pluginFunction);
-            }
-
-            if (type === 'polygon') {
-                if (pickedPosCollection.length == 2) {
-                    this.fakeLine.push(this.fakeDraw(getNewPosition, options))
-                } else if (pickedPosCollection.length == 3) {
-                    this._fakeLayer.entities.remove(this.fakeLine.pop())
-                }
             }
         }
         const afterMouseMove = (movement) => { // mouse movement 
@@ -240,13 +239,50 @@ export default class EntityDrawer extends DrawingManager {
         eM.onMouseRightClick(afterRightClick);
     }
 
-    fakeDraw(getPos, option) {
-        return this._fakeLayer.entities.add(new Cesium.Entity({
-            position: getPos(),
-            polyline: {
-                ...option
+    fakeDraw(getPos, option, type) {
+        let that = this
+        const _type = type.toLowerCase()
+        let eM = that.$eM
+        let polyline
+        let start, end
+        if (_type === 'polyline') {
+            const afterClick = (movement) => {
+                console.log('click2')
+                start = () => that._getCartesian3FromPX(movement.position)
+                if (start) {
+                    console.log(start(), '--->', end())
+                }
+                if (start) {
+                    that._fakeLayer.entities.add(new Cesium.Entity({
+                        position: start(),
+                        point: {
+                            color: Cesium.Color.GREEN,
+                            pixelSize: 15,
+                        }
+                    }));
+                }
             }
-        }));
+            const afterMouseMove = (movement) => {
+                // start = () => that._getCartesian3FromPX(movement.startPosition)
+                end = () => that._getCartesian3FromPX(movement.endPosition)
+                if (!polyline && end && start) {
+                    polyline = that._fakeLayer.entities.add(new Cesium.Entity({
+                        position: that._CallBack([start(), end()]),
+                        polyline: {
+                            width: 5,
+                            material: Cesium.Color.RED
+                        }
+                    }));
+                }
+                // console.log(polyline.position)
+            }
+            const afterRightClick = () => {
+                eM.destroy()
+            }
+            eM.onMouseMove(afterMouseMove, 1)
+            // eM.onMouseRightClick(afterRightClick, 1)
+            eM.onMouseClick(afterClick, 1)
+        }
     }
     /**
      * 移除所有实体

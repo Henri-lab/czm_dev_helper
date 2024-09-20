@@ -48,7 +48,7 @@ const lineOpt = {
     datasource: null,
     t_id: Date.now(),  //timestamp as t_id
     name: 'ex-line', //图形名称
-    positions: [],  //预坐标
+    // positions: [],  //预坐标
     material: Cesium.Color.BLUE,  //配置线段材质
     width: 5,  //线宽
     mode: 'default',
@@ -66,7 +66,7 @@ const polyOpt = {
     datasource: null,
     t_id: Date.now(),
     name: 'ex-poly',
-    positions: [],
+    // positions: [],
     material: Cesium.Color.BLUE,
     width: 5,
     mode: 'default',

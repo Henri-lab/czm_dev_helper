@@ -211,7 +211,7 @@ onMounted(() => {
 
 })
 
-const threshold = ref(0)
+const threshold = ref(-1)
 const threshold2 = ref(-1)
 const input = ref()
 const input2 = ref()
