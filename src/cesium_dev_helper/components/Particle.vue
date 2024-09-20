@@ -48,7 +48,8 @@ function createParticles(image, position) {
         emissionRate: 5.0, // 每秒发射的粒子数量
         lifetime: 16.0, // 整个粒子系统的生命周期
         emitter: new Cesium.CircleEmitter(5.0), // 粒子发射器的形状，这里是圆形
-        modelMatrix: Cesium.Transforms.eastNorthUpToFixedFrame(position) // 确定粒子系统的位置
+        modelMatrix: Cesium.Transforms.eastNorthUpToFixedFrame(position), // 确定粒子系统的位置
+        // disableDepthTestDistance: Number.POSITIVE_INFINITY
     });
     _viewer_.scene.primitives.add(particleSystem);
 
@@ -60,16 +61,16 @@ function createParticlesGroup(positions) {
     })
 }
 
-function emissionRateEvent() {
-    _viewer_.scene.preUpdate.addEventListener((scene, time) => {
-        const distance = Cesium.Cartesian3.distance(_viewer_.camera.position, particleSystem.modelMatrix[12]);
-        if (distance > 100000) {
-            particleSystem.emissionRate = 5; // Lower particle count when far away
-        } else {
-            particleSystem.emissionRate = 50; // Higher particle count when close
-        }
-    });
-}
+// function emissionRateEvent() {
+//     _viewer_.scene.preUpdate.addEventListener((scene, time) => {
+//         const distance = Cesium.Cartesian3.distance(_viewer_.camera.position, particleSystem.modelMatrix[12]);
+//         if (distance > 100000) {
+//             particleSystem.emissionRate = 5; // Lower particle count when far away
+//         } else {
+//             particleSystem.emissionRate = 50; // Higher particle count when close
+//         }
+//     });
+// }
 
 function scaleEvent() {
     _viewer_.scene.preUpdate.addEventListener((scene, time) => {// 监听每帧更新 根据距离调整粒子的缩放比例
@@ -77,9 +78,15 @@ function scaleEvent() {
         const particlePosition = new Cesium.Cartesian3(); // 使用 Matrix4.getTranslation 获取粒子的世界坐标
         Cesium.Matrix4.getTranslation(particleSystem.modelMatrix, particlePosition);
         const distance = Cesium.Cartesian3.distance(cameraPosition, particlePosition);// 计算相机和粒子之间的距离
+        if (distance > 100000) {
+            particleSystem.emissionRate = 5; // Lower particle count when far away
+        } else {
+            particleSystem.emissionRate = 50; // Higher particle count when close
+        }
         const scaleFactor = 1.0 / distance;  // 距离越远，缩放比例越小
-        particleSystem.startScale = Math.max(1.0, scaleFactor * 100);
-        particleSystem.endScale = Math.max(4.0, scaleFactor * 50);
+        // console.log(scaleFactor,'scaleFactor;;;;;;;;;;;')
+        particleSystem.startScale = Math.max(1.0, scaleFactor * 10000);
+        particleSystem.endScale = Math.max(5.0, scaleFactor * 5000);
     });
 }
 function main() {
@@ -93,7 +100,7 @@ function main() {
         // console.log('group particles', props.positions)
         createParticlesGroup(props.positions)
         // emissionRateEvent()
-        scaleEvent()
+        // scaleEvent()
     }
     else {
         console.error('Please set single or group when using Particles')

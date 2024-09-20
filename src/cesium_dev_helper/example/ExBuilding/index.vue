@@ -15,7 +15,13 @@
                 <el-input v-model="input2" placeholder="1000" />
                 <el-button @click="handleThreshold2" round>确认</el-button>
                 <br>
-                <span style="background-color: antiquewhite;"> 坍塌的模型ID: {{ ids }}</span>
+                <span style="background-color: antiquewhite;">
+                    一级损伤：{{ ids }}
+                    <br>
+                    二级损伤：{{ ids2 }}
+                    <br>
+                    三级损伤：{{ ids3 }}
+                </span>
 
             </div>
             <CzmMap name="wuhan123" :option="tecent" width="800px" height="1000px">
@@ -25,6 +31,8 @@
                     <Sphere :options="sphereOpts" :center="center" cluster :threshold="threshold"></Sphere>
                     <Label :options="labelOpts" cluster :threshold="threshold2"></Label>
                     <Particle group :positions="particlePos" :image="particleImg"></Particle>
+                    <Particle group :positions="particlePos2" :image="particleImg2"></Particle>
+                    <Particle group :positions="particlePos3" :image="particleImg3"></Particle>
                 </Entity>
             </CzmMap>
         </div>
@@ -42,6 +50,9 @@ import axios, { all } from 'axios'
 import { TencentImageryProvider } from '../../lib/Plugin/mapPlugin';
 
 const ids = ref([])
+const ids2 = ref([])
+const ids3 = ref([])
+
 function createIdsBetween(min, max, count) {
     ids.value = [];
     while (count -= 1) {
@@ -49,7 +60,22 @@ function createIdsBetween(min, max, count) {
         ids.value.push(res)
     }
     ids.value.sort()
-    console.log('坍塌的模型ID:', ids.value)
+}
+function createIds2Between(min, max, count) {
+    ids2.value = [];
+    while (count -= 1) {
+        let res = Math.floor(Math.random() * (max - min + 1) + min)
+        ids2.value.push(res)
+    }
+    ids2.value.sort()
+}
+function createIds3Between(min, max, count) {
+    ids3.value = [];
+    while (count -= 1) {
+        let res = Math.floor(Math.random() * (max - min + 1) + min)
+        ids3.value.push(res)
+    }
+    ids3.value.sort()
 }
 
 //腾讯底图
@@ -111,7 +137,11 @@ const handleCollapse = () => {
 let sphereOpts = []
 let labelOpts = []
 let particlePos = []
-let particleImg = 'images/texture1.jpg'
+let particleImg = 'images/fire.png'
+let particlePos2 = []
+let particleImg2 = 'images/fire2.png'
+let particlePos3 = []
+let particleImg3 = 'images/fire3.png'
 let center
 let childrenSel = []
 onMounted(() => {
@@ -121,7 +151,6 @@ onMounted(() => {
         center = new Cesium.Cartesian3(res.data.scenes[0].sphere[0], res.data.scenes[0].sphere[1], res.data.scenes[0].sphere[2])
         res.data.scenes.forEach(area => {
             const childrens = area.children
-            childrenSel = childrens
             childrens.forEach(child => {
                 sphereOpts.push({
                     id: child.id,
@@ -140,12 +169,26 @@ onMounted(() => {
                 })
             })
             // 模拟请求到的特殊数据
+            // 一级损伤
+            let childrenSel
             createIdsBetween(0, 3667, 10)
-            childrenSel = childrenSel.filter(item => ids.value.includes(item.id * 1))
+            childrenSel = childrens.filter(item => ids.value.includes(item.id * 1))
             childrenSel.forEach(child => {
                 particlePos.push(new Cesium.Cartesian3(child.sphere[0], child.sphere[1], child.sphere[2]))
             })
-            console.log(particlePos, 'particlePos')
+            // 二级损伤
+            createIds2Between(0, 3667, 10)
+            childrenSel = childrens.filter(item => ids2.value.includes(item.id * 1))
+            childrenSel.forEach(child => {
+                particlePos2.push(new Cesium.Cartesian3(child.sphere[0], child.sphere[1], child.sphere[2]))
+            })
+            // 三级损伤
+            createIds3Between(0, 3667, 10)
+            childrenSel = childrens.filter(item => ids3.value.includes(item.id * 1))
+            childrenSel.forEach(child => {
+                particlePos3.push(new Cesium.Cartesian3(child.sphere[0], child.sphere[1], child.sphere[2]))
+            })
+
         })
 
     })
