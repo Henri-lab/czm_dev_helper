@@ -5,7 +5,7 @@
                 style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
             </div>
             <el-button @click="handleCollapse">坍塌切换</el-button>
-            <CzmMap name="wuhan123" :option="tecent" width="800px" height="1000px">
+            <CzmMap name="collapseBuildings" :option="tecent" width="800px" height="1000px">
                 <!-- <Building :option="option" :tileset="tileset"></Building> -->
                 <Building :option="option" :collapse="collapse"></Building>
                 <Sphere :options="sphereOpts" fly :center="center"></Sphere>
@@ -47,7 +47,7 @@ const tecent = {
         ],
     },
     extraConfig: {
-        name: 'wuhan',
+        name: 'cllapseBuildings',
         AccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiMDk4NmM5OS03MmNlLTRiNWItOTUzNy1hYzhkMTUwYjgwNmQiLCJpZCI6MjE3MTc3LCJpYXQiOjE3MTcwNTUwMTh9.C3dvJjK0cBUhb87AI_EnpLPUwxD3ORI8sGcntlhCAmw',
         logo: false,
         depthTest: true,

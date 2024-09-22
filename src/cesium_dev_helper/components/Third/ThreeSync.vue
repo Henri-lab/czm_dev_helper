@@ -43,7 +43,7 @@ const initThree = (threeCanvas) => {
 }
 
 const syncCamera = (czmCamera, threeCamera, threeCanvas) => {
-    console.log('syncing camera...')
+    // console.log('syncing camera...')
     threeCamera.fov = Cesium.Math.toDegrees(czmCamera.frustum.fovy) // ThreeJS FOV is vertical
     threeCamera.updateProjectionMatrix();
     threeCamera.matrixAutoUpdate = false;

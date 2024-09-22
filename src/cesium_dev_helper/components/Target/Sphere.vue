@@ -68,14 +68,14 @@ onMounted(() => {
         let timer2 = setInterval(() => {
             if (props.options.length) {
                 // console.log(props.options, '=============================');
-                // props.options.forEach(item => {
-                //     create(item.center, item.radius)
-                // })
+                props.options.forEach(item => {
+                    create(item.center, item.radius)
+                })
                 _viewer_.scene.primitives.add(collection);
-                props.fly && _viewer_.camera.flyTo({
-                    destination: props.center,
-                    duration: 2
-                });
+                // props.fly && _viewer_.camera.flyTo({
+                //     destination: props.center,
+                //     duration: 2
+                // });
                 clearInterval(timer2)
             }
         }, 1)
