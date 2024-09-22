@@ -34,8 +34,8 @@ class EventManager extends Manager {
         );
         // 获取这个eventType需要做什么动作（action）
         const actions = this.eventHandlers.get(eventType);
-        //降序 action的优先度越大 越先遍历到 越先执行
-        actions.sort((a, b) => b.priority - a.priority);
+        //降序 action的优先度越小 越先遍历到 越先执行
+        actions.sort((a, b) => a.priority - b.priority);
         // 依次执行action的操作
         actions.forEach(({ callback }) => {
           // 传回 事件和pick的位置和pick的对象

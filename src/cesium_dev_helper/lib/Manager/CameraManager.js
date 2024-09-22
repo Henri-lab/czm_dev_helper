@@ -223,7 +223,7 @@ export default class CameraManager extends Manager {
     rotateEarth(angle, speed) {
         let that = this,
             scene = that.scene,
-            camera = czmCamera,
+            camera = that.camera,
             _angle = angle || CesiumMath.toRadians(that.rotatedEarthAngleSum)//开启无限自转时 angle=0 ,_angle取出之前的累积角度
 
         if (angle) {

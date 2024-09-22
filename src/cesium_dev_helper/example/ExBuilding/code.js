@@ -2,42 +2,41 @@ export default
     `
 <template>
     <div class="ex2">
-        <el-button @click="handleCollapse">坍塌切换</el-button>
-        <CzmMap width="100%" height="80%">
-            <Building 
-              :option="option" 
-              :collapse="collapse">
-            </Building>
-        </CzmMap>
+        <div class="ex1" style="display: flex;">
+            <div class="btns" style="display: flex; flex-direction: column; width: 200px;">
+                <el-button @click="handleCollapse">坍塌切换</el-button>
+                <br>
+                Sphere聚合阈值
+                <el-input v-model="input" placeholder=">=0" />
+                <el-button @click="handleThreshold" round>确认</el-button>
+                <el-button @click="threshold = -1" round>取消</el-button>
+                <br>
+                Label聚合阈值
+                <el-input v-model="input2" placeholder=">=0" />
+                <el-button @click="handleThreshold2" round>确认</el-button>
+                <el-button @click="threshold = -1" round>取消</el-button>
+                <br>
+                <span style="background-color: antiquewhite;">
+                    一级损伤：{{ ids }}
+                    <br>
+                    二级损伤：{{ ids2 }}
+                    <br>
+                    三级损伤：{{ ids3 }}
+                </span>
+            </div>
+            <CzmMap name="wuhan123" :option="tecent" width="800px" height="1000px">
+                <Entity>
+                    <!-- <Building :option="option" :tileset="tileset"></Building> -->
+                    <Building :option="option" :collapse="collapse"></Building>
+                    <Sphere :options="sphereOpts" :center="center" cluster :threshold="threshold"></Sphere>
+                    <Label :options="labelOpts" cluster :threshold="threshold2"></Label>
+                    <Particle group :positions="particlePos" :image="particleImg"></Particle>
+                    <Particle group :positions="particlePos2" :image="particleImg2"></Particle>
+                    <Particle group :positions="particlePos3" :image="particleImg3"></Particle>
+                </Entity>
+            </CzmMap>
+        </div>
+
     </div>
 </template>
-
-<script setup>
-import { Building, CzmMap } from '../../components'
-import { onMounted, ref } from 'vue'
-//楼房数据
-const option ={
-    type: '3dtiles',
-    building: {
-        url: '/static/3dtiles/Tile_+002_+005/tileset.json',
-    },
-    extra: {
-        matrix: {//加载后自动校正模型位置
-            tx: 0,
-            ty: 0,
-            tz: -70,
-            rx: 0,
-            ry: 0,
-            rz: 0,
-            scale: 1.3,
-        },
-        isZoom: true//加载后自动缩放至模型
-    },
-}
-//楼房坍塌切换
-const collapse = ref(false)
-const handleCollapse = () => {
-    collapse.value = !collapse.value
-}
-</script>
 `

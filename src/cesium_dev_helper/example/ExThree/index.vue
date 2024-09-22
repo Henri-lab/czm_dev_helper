@@ -31,6 +31,11 @@ const opt = {
     baseConfig: {
         contextOptions: {
             requestWebgl2: true,
+            webgl: {
+                antialias: true,
+                preserveDrawingBuffer: true,
+                stencil: false
+            }
         },
         useDefaultRenderLoop: false,
         selectionIndicator: false,

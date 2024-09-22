@@ -6,7 +6,7 @@ import * as Cesium from "cesium";
 export function collapse(tilesets, options, reset) {
     console.log('effect:transform:collapse')
     const defaultOptions = {
-        collapseHeight: 0.4,  // 模型坍塌的高度
+        collapseHeight: -0.4,  // 模型坍塌的高度
         duration: 5000,  // 动画持续时间（毫秒）
         rotationSpeed: -50,  // 旋转速度
     };
@@ -35,10 +35,12 @@ export function collapse(tilesets, options, reset) {
             // 基于现有的 tile.transform 进行变换
             const newModelMatrix = Cesium.Matrix4.clone(tile.transform);  // 保留之前的矩阵
             // 累加变换
-            Math.random() > 0.5 ?
-                Cesium.Matrix4.multiply(transformMatrix, newModelMatrix, newModelMatrix) :
-                Cesium.Matrix4.setRotation(newModelMatrix, rotMx, newModelMatrix);
+            // Math.random() > 0.5 ?
+            //     Cesium.Matrix4.multiply(transformMatrix, newModelMatrix, newModelMatrix) :
+            //     Cesium.Matrix4.setRotation(newModelMatrix, rotMx, newModelMatrix);
 
+            Cesium.Matrix4.multiply(transformMatrix, newModelMatrix, newModelMatrix)
+            
             tile.transform = newModelMatrix;
             tile._dirty = true;
         });

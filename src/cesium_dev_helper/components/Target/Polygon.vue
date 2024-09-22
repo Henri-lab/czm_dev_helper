@@ -1,3 +1,4 @@
+<template></template>
 <script setup>
 import { EventManager } from '../../lib/Manager';
 import * as Cesium from 'cesium'

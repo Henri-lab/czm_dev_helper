@@ -47,6 +47,9 @@ importers:
       cesium:
         specifier: '1.99'
         version: 1.99.0
+      cesiummeshvisualizer:
+        specifier: ^1.0.2
+        version: 1.0.2
       element-plus:
         specifier: ^2.7.8
         version: 2.7.8(vue@3.4.30(typescript@5.5.4))
@@ -2247,6 +2250,9 @@ packages:
     resolution: {integrity: sha512-bVN7Bskd9PVhQe9Ak9DEr7wEckbCJc0UPq58MKWGWAkQfiYob8odh6luqY5Yz26trr3tWwni1xWjsCe94y37jw==}
     engines: {node: '>=14.0.0'}
 
+  cesiummeshvisualizer@1.0.2:
+    resolution: {integrity: sha512-7DtfcNBo71W9ipbDavNNs6080OUx7XdV3juzdz6cNNUjPPgqzJsFKWM1gOxfnk1HVcjGtF7vJ0dCTbwOHF0ydA==}
+
   chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
     engines: {node: '>=4'}
@@ -2406,6 +2412,9 @@ packages:
   cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
+
+  csg@1.0.1:
+    resolution: {integrity: sha512-9pBlmnjgGaNdHzLrcnEZ+cXMVTsAJmHnFuBkwB9Zar20I+ujUSqfB9UM7mtS1s6P/ZQxLi79YMnhST7Kpx9jOA==}
 
   cssfilter@0.0.10:
     resolution: {integrity: sha512-FAaLDaplstoRsDR8XGYH51znUN0UY7nMc6Z9/fvE8EXGwvJE9hu7W2vHwx1+bd6gCYnln9nLbzxFTrcO9YQDZw==}
@@ -8244,6 +8253,10 @@ snapshots:
       topojson-client: 3.1.0
       urijs: 1.19.11
 
+  cesiummeshvisualizer@1.0.2:
+    dependencies:
+      csg: 1.0.1
+
   chalk@2.4.2:
     dependencies:
       ansi-styles: 3.2.1
@@ -8401,6 +8414,8 @@ snapshots:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+
+  csg@1.0.1: {}
 
   cssfilter@0.0.10: {}
 

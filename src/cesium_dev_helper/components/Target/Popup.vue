@@ -1,3 +1,4 @@
+<template></template>
 <script setup>
 import { inject } from 'vue';
 import { PopupCreator } from '../../lib/Creator';

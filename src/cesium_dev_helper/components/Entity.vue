@@ -1,6 +1,5 @@
 <template>
     <slot></slot>
-    <slot></slot>
     <slot class="popup@henrifox" name="popup" :isPicked="_isPicked_" :entity="_entity_" :primitive="_primitive_"
         :test="test" />
 </template>

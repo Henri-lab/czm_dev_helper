@@ -1,5 +1,6 @@
+<template></template>
 <script setup>
-import { onMounted } from 'vue';
+import { onBeforeUnmount, onMounted } from 'vue';
 import { Math as CesiumMath } from 'cesium'
 import { watch } from 'vue';
 
@@ -72,6 +73,11 @@ $bus.on('czmCameraEvent@henrifox', (_cM_) => {
 watch(() => props, () => {
     $bus.emit('czmCameraEvent@henrifox', cM)
 }, { deep: true })
+
+onBeforeUnmount(() => {
+    clearTimeout(timer)
+    clearTimeout(timer2)
+})
 
 </script>
 
