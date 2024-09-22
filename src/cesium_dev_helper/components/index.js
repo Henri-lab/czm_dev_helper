@@ -9,8 +9,8 @@ import Polygon from './Target/Polygon.vue'
 import Sphere from "./Target/Sphere.vue";
 import Label from './Target/Label.vue'
 import Material from './Material.vue'
-import Three from './Third/Three.vue'
-// import Three from './Third/ThreeSync.vue';
+// import Three from './Third/Three.vue'
+import Three from './Third/ThreeSync.vue';
 import Particle from "./Particle.vue";
 
 
