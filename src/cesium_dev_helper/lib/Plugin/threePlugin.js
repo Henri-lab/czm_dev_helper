@@ -1,18 +1,125 @@
 import * as _Cesium from 'cesium';
 import * as _THREE from 'three';
-function initThreeSceneClass({ viewer, THREE = _THREE, Cesium = _Cesium }) {
-    class Scene extends THREE.Scene {
+import { geometryToBufferGeometry } from '../util/cesiumToThree';
+//参考@https://github.com/dengxiaoning/cesium_dev_kit.git
+
+let Cesium, THREE;
+export default class threePlugin {
+    constructor(viewer, threeConf, defaultStatic) {
+        if (viewer && threeConf) {
+            Cesium = threeConf.cesiumGlobal || _Cesium
+            THREE = threeConf.threeGlobal || _THREE
+            this._three = {
+                renderer: null,
+                camera: null,
+                scene: null
+            }
+            this._threeDiv = this._getDom(threeConf.threeDom, 'div')
+            this._viewer = viewer
+            this._czm3Scene = useThreeCesiumScene({ viewer, THREE, Cesium })
+            if (threeConf.initStyle) this._initStyleThree()
+        }
+    }
+
+    _getDom(dom, typeDef = 'div') {
+        let res
+        if (typeof dom === 'string') {
+            res = document.getElementById(dom)
+        } else if (dom instanceof HTMLElement) {
+            res = dom
+        } else {
+            res = document.createElement(typeDef)
+            document.getElementsByTagName('body')[0].appendChild(res)
+        }
+        return res
+    }
+    _initStyleThree() {
+        let threeContainer = this._threeDiv
+        threeContainer.style.position = 'absolute'
+        threeContainer.style.top = 0
+        threeContainer.style.left = 0
+        threeContainer.style.height = '100%'
+        threeContainer.style.width = '100%'
+        threeContainer.style.margin = 0
+        threeContainer.style.overflow = 'hidden'
+        threeContainer.style.padding = 0
+        threeContainer.style.fontFamily = 'sans-serif'
+        threeContainer.style.pointerEvents = 'none'
+        this._threeDiv = threeContainer
+    }
+    install() {
+        let that = this
+        let _fov = options.fov || 45,
+            _aspect = options.aspect || window.innerWidth / window.innerHeight,
+            _near = options.near || 1,
+            _far = options.far || 10 * 1000 * 1000
+        that._three.camera = new THREE.PerspectiveCamera(_fov, _aspect, _near, _far)
+        that._three.renderer = new THREE.WebGLRenderer({
+            alpha: true,
+            antialias: true,
+            logarithmicDepthBuffer: true,
+            stencil: true,
+            depth: true
+        })
+        that._three.renderer.outputEncoding = THREE.sRGBEncoding
+        that._three.renderer.shadowMap.enabled = true
+        that._three.renderer.shadowMap.type = THREE.PCFSoftShadowMap
+        that._three.scene = new that._czm3Scene({
+            threeHabit: options.threeHabit || true,
+            enableLighting: options.enableLightinh || false,
+            axesHelper: options.axesHelper || true,
+            camera: that._three.camera,
+            renderer: that._three.renderer,
+            lngLat: options.center,
+        })
+        if (that._threeDiv) {
+            that._threeDiv.appendChild(that._three.renderer.domElement)
+        }
+        return that._three
+    }
+    loop(callback) {
+        const _loop = function () {
+            let frame = requestAnimationFrame(_loop)
+            callback && callback(frame)
+        }
+        _loop()
+    }
+}
+
+// 目的主要有以下几点：
+// 同步地球表面：
+// 创建一个与 Cesium 地球相同的球体（或多个球体）在 Three.js 场景中，作为地球表面的代表。这样，Three.js 的对象可以正确地放置在地球表面上，位置和缩放都与 Cesium 地球一致。
+// 处理坐标系和单位差异：
+// Cesium 使用的是地理坐标系，单位为米，而 Three.js 的默认坐标系和单位可能不同。通过创建这些几何体，并进行相应的位移和旋转调整，可以使两者的坐标系对齐。
+// 视觉效果和渲染同步：
+// 添加太阳光源和地球表面的补偿球体，可以使 Three.js 中的对象在视觉上与 Cesium 场景融为一体，光照和阴影效果一致，增强整体的真实感。
+// 提供放置对象的基准：
+// childGroup 作为一个容器，用户可以将自己的 Three.js 对象添加到其中。通过同步 childGroup 的位置和旋转，可以确保这些对象在 Cesium 场景中正确显示。
+function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
+    class czm3Scene extends THREE.Scene {
         constructor(options = {}) {
             super()
             this.type = 'ThreeCesiumScene'
-
-            if (!options.cesiumDom) {
-                throw new Error('THREE.ThreeCesiumScene not found cesiumDom.')
-            }
-            if (
-                !options.camera ||
-                !(options.camera instanceof THREE.PerspectiveCamera)
-            ) {
+            this.check()
+            this.options = options
+            this.cesiumViewer = viewer
+            this.ellipsoid = this.cesiumViewer.scene.globe.ellipsoid  //cesium地球椭球体
+            !!options.threeHabit && this.syncOperation()
+            this.camera = options.camera
+            this.cameraOffset = new THREE.Vector3()
+            this.renderer = options.renderer// 渲染器必须开启 logarithmicDepthBuffer,stencil
+            this.lngLat = options.lngLat && options.lngLat.length > 1 ? options.lngLat : [114.23, 31.55]
+            this.cameraCenter = new THREE.Vector3(0, 0, 0)
+            this.initEarth()//模拟地球
+            this.sunGroup = new THREE.Group()//模拟太阳
+            this.initSunGroup()
+            this.syncGroup = new THREE.Group()//3D同步
+            this.initSyncGroup()
+            this._enableLighting = true  //太阳光设置
+            this.lightSetting()
+        }
+        check() {
+            if (!options.camera || !(options.camera instanceof THREE.PerspectiveCamera)) {
                 throw new Error(
                     'THREE.ThreeCesiumScene (not found cesiumDom) OR ( not THREE.PerspectiveCamera ).'
                 )
@@ -20,69 +127,25 @@ function initThreeSceneClass({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             if (!options.renderer) {
                 throw new Error('THREE.ThreeCesiumScene not found THREE.WebGLRender.')
             }
-
-            this.options = options
-
-            //cesium视图
-            this.cesiumViewer = viewer
-
-            const doms =
-                typeof options.cesiumDom === 'string'
-                    ? document.getElementById(options.cesiumDom)
-                    : options.cesiumDom
-            const children = doms.children[0].children
-            for (let i = 0; i < children.length; i++) {
-                if (i === 0) continue
-                children[i].style.zIndex = '100'
-            }
-
-            //cesium地球椭球体
-            this.ellipsoid = this.cesiumViewer.scene.globe.ellipsoid
-
-            //操作方式
-            if (!!options.threeHabit) {
-                // 倾斜视图 鼠标左键旋转
-                this.cesiumViewer.scene.screenSpaceCameraController.tiltEventTypes = [
-                    Cesium.CameraEventType.LEFT_DRAG
-                ]
-
-                // 缩放设置 重新设置缩放成员
-                this.cesiumViewer.scene.screenSpaceCameraController.zoomEventTypes = [
-                    Cesium.CameraEventType.MIDDLE_DRAG,
-                    Cesium.CameraEventType.WHEEL,
-                    Cesium.CameraEventType.PINCH
-                ]
-
-                // 平移 添加鼠标右键  鼠标右键平移
-                this.cesiumViewer.scene.screenSpaceCameraController.rotateEventTypes = [
-                    Cesium.CameraEventType.RIGHT_DRAG
-                ]
-            }
-
-            //透视相机
-            this.camera = options.camera
-            this.cameraOffset = new THREE.Vector3()
-
-            /* 渲染器必须开启 logarithmicDepthBuffer,stencil
-                  {
-                      alpha: true,
-                      antialias: true,
-                      logarithmicDepthBuffer: true,
-                      stencil:true
-                   }
-                  */
-            this.renderer = options.renderer
-
-            //经纬度区间
-            this.lngLat =
-                options.lngLat && options.lngLat.length > 1
-                    ? options.lngLat
-                    : [114.23, 31.55]
-
-            //相机朝向
-            this.cameraCenter = new THREE.Vector3(0, 0, 0)
-
-            const ellipsoid = new Cesium.EllipsoidGeometry({
+        }
+        syncOperation() {
+            // 倾斜视图 鼠标左键旋转
+            this.cesiumViewer.scene.screenSpaceCameraController.tiltEventTypes = [
+                Cesium.CameraEventType.LEFT_DRAG
+            ]
+            // 缩放设置 重新设置缩放成员
+            this.cesiumViewer.scene.screenSpaceCameraController.zoomEventTypes = [
+                Cesium.CameraEventType.MIDDLE_DRAG,
+                Cesium.CameraEventType.WHEEL,
+                Cesium.CameraEventType.PINCH
+            ]
+            // 平移 添加鼠标右键  鼠标右键平移
+            this.cesiumViewer.scene.screenSpaceCameraController.rotateEventTypes = [
+                Cesium.CameraEventType.RIGHT_DRAG
+            ]
+        }
+        initEarth() {
+            const ellipsoid = new Cesium.EllipsoidGeometry({// Create a sphere geometry to simulate the Earth
                 vertexFormat: Cesium.VertexFormat.POSITION_ONLY,
                 radii: new Cesium.Cartesian3(
                     this.ellipsoid.maximumRadius - 1,
@@ -92,11 +155,9 @@ function initThreeSceneClass({ viewer, THREE = _THREE, Cesium = _Cesium }) {
                 slicePartitions: 1024, //8132,
                 stackPartitions: 1024
             })
-            const geometry = cesium2threeBufferGeometry(
+            const geometry = geometryToBufferGeometry(
                 Cesium.EllipsoidGeometry.createGeometry(ellipsoid)
             )
-
-            //模拟球
             const material = new THREE.MeshBasicMaterial({
                 color: '#ff00ff',
                 blending: THREE.MultiplyBlending
@@ -104,21 +165,18 @@ function initThreeSceneClass({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             const sphere = new THREE.Mesh(geometry, material)
             if (options.axesHelper) sphere.add(new THREE.AxesHelper(8000000))
             super.add(sphere)
-            this.sphere = sphere
-            //模拟球地下
-            // const sphere2 = sphere.clone()
-            // sphere2.material = new THREE.MeshBasicMaterial({
-            //   color: '#000',
-            //   side: THREE.BackSide
-            // })
-            // super.add(sphere2)
-
+            this.earth = sphere
+        }
+        initSyncGroup() {
             const syncGroup = new THREE.Group()
             super.add(syncGroup)
-            this.syncGroup = syncGroup
+            syncGroup.add(this.sunUp)
 
-            //补偿地板覆盖
-            const geometry3 = new THREE.SphereGeometry(
+            const childGroup = new THREE.Group()
+            childGroup.rotateX((-90 * Math.PI) / 180)
+            childGroup.position.z = -1
+
+            const geometry = new THREE.SphereGeometry(
                 this.ellipsoid.minimumRadius,
                 512,
                 256,
@@ -127,25 +185,21 @@ function initThreeSceneClass({ viewer, THREE = _THREE, Cesium = _Cesium }) {
                 3.1,
                 Math.PI - 3.1
             )
-            const material3 = new THREE.MeshBasicMaterial({
+            const material = new THREE.MeshBasicMaterial({
                 color: '#fff00f',
                 blending: THREE.MultiplyBlending
             })
-            const sphere3 = new THREE.Mesh(geometry3, material3)
-            sphere3.rotateX((90 * Math.PI) / 180)
-            sphere3.position.z = this.ellipsoid.minimumRadius
+            const sphere = new THREE.Mesh(geometry, material)
+            sphere.rotateX((90 * Math.PI) / 180)
+            sphere.position.z = this.ellipsoid.minimumRadius
 
-            const threeGroup = new THREE.Group()
-            threeGroup.rotateX((-90 * Math.PI) / 180)
-            threeGroup.position.z = -1
+            childGroup.add(sphere)
+            syncGroup.add(childGroup)
 
+            this.childrenGroup = childGroup
             this.syncGroup = syncGroup
-            this.childrenGroup = threeGroup
-
-            //日光系统
-
-            this.sunUp = new THREE.Group()
-
+        }
+        initSunGroup() {
             this.sunLightColor = new THREE.Color()
             this.sunLightIntensity = 1
 
@@ -165,15 +219,9 @@ function initThreeSceneClass({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             this.sun.shadow.camera.far = Math.pow(10, 14)
             this.sun.position.set(0, 0, this.ellipsoid.maximumRadius * 2 + 1000)
             this.sun.target = this.childrenGroup
-            this.sunUp.add(this.sun)
-
-            // syncGroup.add(sphere2)
-            syncGroup.add(sphere3)
-            syncGroup.add(threeGroup)
-            syncGroup.add(this.sunUp)
-
-            this._enableLighting = false
-
+            this.sunGroup.add(this.sun)
+        }
+        lightSetting() {
             Object.defineProperty(this, 'enableLighting', {
                 get() {
                     return this._enableLighting
@@ -188,34 +236,16 @@ function initThreeSceneClass({ viewer, THREE = _THREE, Cesium = _Cesium }) {
                     this.sun.visible = false
                 }
             })
-
-            if (
-                options.enableLighting !== undefined &&
-                options.enableLighting !== null
-            ) {
-                this.enableLighting = options.enableLighting
-            }
-
-            if (options.cesiumLayers && options.cesiumLayers.length > 0) {
-                for (let i = 0; i < options.cesiumLayers.length; i++) {
-                    this.addImageryProvider(
-                        options.cesiumLayers[i].type,
-                        options.cesiumLayers[i].option
-                    )
-                }
-            }
+            if (enableLighting) this.enableLighting = enableLighting
         }
-
         renderCesium() {
             this.cesiumViewer.render()
             return this
         }
-
         renderThree() {
             this.renderer.render(this, this.camera)
             return this
         }
-
         updateSunMatrix() {
             const cc = this.cesiumViewer.scene.sun._boundingVolume.center
             const c3 = this.cartesian3ToVector(cc)
@@ -228,7 +258,6 @@ function initThreeSceneClass({ viewer, THREE = _THREE, Cesium = _Cesium }) {
 
             return this
         }
-
         updateCameraMatrix() {
             //同步相机
             this.camera.fov = Cesium.Math.toDegrees(
@@ -286,7 +315,6 @@ function initThreeSceneClass({ viewer, THREE = _THREE, Cesium = _Cesium }) {
 
             return this
         }
-
         updateGroupMatrixWorld() {
             // 得到面向模型的前向方向
             const center = this.cartesian3ToVector(
@@ -528,23 +556,8 @@ function initThreeSceneClass({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             return new THREE.Vector3(cart.x, cart.y, cart.z)
         }
     }
-    Scene.prototype.isScene = true
-    Scene.prototype.isGIS = true
+    czm3Scene.prototype.isScene = true
+    czm3Scene.prototype.isGIS = true
 
-    return Scene
-}
-let Cesium, THREE;
-class threePlugin {
-    constructor(viewer, threeConf, defaultStatic,¸) {
-        if (viewer && threeConf) {
-            const { containerId, threeContainerId } = threeConf
-            Cesium = threeConf.cesiumGlobal || _Cesium
-            THREE = threeConf.threeGlobal || _THREE
-            this._viewer = viewer
-            this._containerId = containerId
-            this._threeContainerId = threeContainerId
-            this._Scene = initThreeSceneClass({ viewer, THREE, Cesium })
-            this._initContainer()
-        }
-    }
+    return czm3Scene
 }
