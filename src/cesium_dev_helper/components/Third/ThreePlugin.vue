@@ -31,8 +31,10 @@ const main = () => {
     }
     const _3Plugin = new threePlugin(_viewer_, _3Config)
     _3Plugin.install()
-    _3Plugin.loop(() => _viewer_.render())
-    console.log(_3Plugin)
+    _3Plugin.loop(() => {
+        // console.log(_3Plugin._three.camera.matrixWorld.elements[12])
+    })
+
 }
 
 

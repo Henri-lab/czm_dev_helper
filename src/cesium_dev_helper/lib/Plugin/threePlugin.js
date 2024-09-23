@@ -78,12 +78,14 @@ export default class threePlugin {
         return that._three
     }
     loop(callback) {
+        let that = this
         //callback自带this问题处理
         if (callback.toString().includes('this')) {
             console.error('callback function have wrong "this" scope')
             return
         }
         const _loop = function () {
+            that._three.scene.update()
             let frame = requestAnimationFrame(_loop)
             callback && callback(frame)
         }
