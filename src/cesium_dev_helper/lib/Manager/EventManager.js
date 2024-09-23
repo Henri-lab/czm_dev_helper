@@ -25,9 +25,16 @@ class EventManager extends Manager {
       // 调用cesium事件处理程序
       this.handler.setInputAction((event) => {
         // 点击处的笛卡尔坐标🗽
-        const pickedPos = this.viewer.scene.pickPosition(
-          event.position || event.endPosition
-        );
+        let pickedPos
+        if (this.viewer.scene.pickPositionSupported) {
+          pickedPos = this.viewer.scene.pickPosition(
+            event.position ||
+            event.endPosition);
+        } else {
+          pickedPos = this.viewer.scene.camera.pickEllipsoid(
+            event.position ||
+            event.endPosition, this.viewer.scene.globe.ellipsoid);
+        }
         // 点击处或者移动处的物体
         const pickedObj = this.viewer.scene.pick(
           event.position || event.endPosition

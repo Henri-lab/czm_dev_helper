@@ -6,7 +6,6 @@ import TurfUser from "../../Compute/TurfUser";
 import * as Cesium from "cesium";
 import { get } from "@/util/methods";
 import CallbackProperty from "cesium/Source/DataSources/CallbackProperty";
-
 /**
  * EntityDrawer class for drawing entities with events on a Cesium viewer with event handling.
  * @class
@@ -133,7 +132,7 @@ export default class EntityDrawer extends DrawingManager {
      * @returns {Cesium.Entity|null} - The created entity or null if viewer or options are not provided.
      */
     drawWithDefaultEvent(Type, options, pluginFunction) {
-        console.log('wait drawing:', Type, '-mode:', options.mode)
+        // console.log('wait drawing:', Type, '-mode:', options.mode)
         let clickFlag = 0
         const buffer = { Type, options, pluginFunction }
         if (!this.viewer || !options) return null;
@@ -230,6 +229,7 @@ export default class EntityDrawer extends DrawingManager {
             if (_handler_) {
                 _handler_.destroy();
                 _handler_ = null;
+                console.log('handler destroy')
             }
             pickedPosCollection = [];
             that.drawWithDefaultEvent(buffer.Type, buffer.options, buffer.pluginFunction);
@@ -237,62 +237,75 @@ export default class EntityDrawer extends DrawingManager {
         // bind events
         eM.onMouseClick(afterLeftClick);
         eM.onMouseMove(afterMouseMove);
-        eM.onMouseRightClick(afterRightClick);
+        eM.onMouseRightClick(afterRightClick, 100);
     }
 
     fakeDraw(getPos, option, type) {
-        let that = this
         const _type = type.toLowerCase()
+        if (_type === 'polyline') this.fakeDrawPolyLine(getPos, option)
+    }
+    fakeDrawPolyLine(getPos, option) {
+        let that = this
+        let index = 0
         let eM = that.$eM
-        let polyline
-        let start, end
-        if (_type === 'polyline') {
-            let afterClick = (movement) => {
-                console.log('click2')
-                start = () => that._getCartesian3FromPX(movement.position)
-                if (start) {
-                    console.log(start(), '--->', end())
-                }
-                if (start) {
-                    that._fakeLayer.entities.add(new Cesium.Entity({
-                        position: start(),
-                        point: {
-                            color: Cesium.Color.GREEN,
-                            pixelSize: 15,
-                        }
-                    }));
-                }
+        let polylines = []
+        let getStart, getCurrent
+        let startPointOfStraightLine
+        let isDrawing = false;
+        let alreadyCreatePolyline = false
+        let points = []
+        let afterClick2 = (movement) => {
+            isDrawing = true;
+            alreadyCreatePolyline = false
+            // console.log('click2')
+            getStart = () => that._getCartesian3FromPX(movement.position)
+            if (getStart) {
+                // console.log(getStart(), '--->', end())
+                startPointOfStraightLine = getStart();
+                let point = that._fakeLayer.entities.add(new Cesium.Entity({
+                    position: getStart(),
+                    point: {
+                        color: Cesium.Color.GREEN,
+                        pixelSize: 15,
+                    }
+                }));
+                points.push(point)
             }
-            let afterMouseMove = (movement) => {
-                start = () => that._getCartesian3FromPX(movement.startPosition)
-                end = () => that._getCartesian3FromPX(movement.endPosition)
-                // that._fakeLayer.entities.add(new Cesium.Entity({
-                //     position: [start(), end()],
-                //     polyline: {
-                //         width: 5,
-                //         material: Cesium.Color.RED
-                //     }
-                // }));
-                if (!polyline && end && start) {
-                    polyline = that._fakeLayer.entities.add(new Cesium.Entity({
-                        position: new CallbackProperty(() => [start(), end()], false),
-                        polyline: {
-                            width: 5,
-                            material: Cesium.Color.RED
-                        }
-                    }));
-                }
-
-            }
-            const afterRightClick = () => {
-                afterClick = () => { }
-                afterMouseMove = () => { }
-                console.log(that._fakeLayer.entities.values)
-            }
-            eM.onMouseMove(afterMouseMove, 1)
-            eM.onMouseRightClick(afterRightClick, 1)
-            eM.onMouseClick(afterClick, 1)
         }
+        let afterMouseMove2 = (movement) => {
+            getCurrent = () => that._getCartesian3FromPX(movement.endPosition)
+            // console.log(getCurrent().x - startPointOfStraightLine.x)
+            if (isDrawing && !alreadyCreatePolyline && startPointOfStraightLine) {
+                let polyline = that._fakeLayer.entities.add(new Cesium.Entity({
+                    name: 'fakeline' + index++,
+                    polyline: {
+                        //   positions: this._CallBack([startPointOfStraightLine, getCurrent() || startPointOfStraightLine]),
+                        positions: new CallbackProperty(
+                            () => [
+                                startPointOfStraightLine,
+                                getCurrent() || points[0].position
+                            ],
+                            false),
+                        width: option.width || 0.5,
+                        material: option.color || Cesium.Color.RED,
+                        clampToGround: option.clampToGround || true
+                    }
+                }))
+                alreadyCreatePolyline = true
+                // console.log(polylines)
+                polylines.push(polyline);
+            }
+        }
+        const afterRightClick2 = () => {
+            isDrawing = false;
+            const last = polylines.pop()
+            last.polyline.show = false
+            that._fakeLayer.entities.remove(last);
+        }
+        eM.onMouseClick(afterClick2, 1)
+        eM.onMouseMove(afterMouseMove2, 1)
+        eM.onMouseRightClick(afterRightClick2, 1)
+
     }
     /**
      * 移除所有实体
