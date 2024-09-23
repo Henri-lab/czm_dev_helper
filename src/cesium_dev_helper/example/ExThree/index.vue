@@ -1,4 +1,3 @@
-
 <template>
     <div class="ex1" style="display: flex;">
         <div class="code" ref="code"
@@ -34,7 +33,9 @@ const opt = {
             webgl: {
                 antialias: true,
                 preserveDrawingBuffer: true,
-                stencil: false
+                stencil: true,
+                logarithmicDepthBuffer: true,
+                alpha: true,
             }
         },
         useDefaultRenderLoop: false,

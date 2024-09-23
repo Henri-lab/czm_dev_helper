@@ -144,7 +144,7 @@ onMounted(() => {
             // _viewer_.camera.changed.addEventListener(() => syncCamera(_viewer_.camera, threeCamera, __three__.value))
             function renderLoop() {
                 requestAnimationFrame(renderLoop);
-                // _viewer_.render();
+                _viewer_.render();
                 threeRenderer.clearDepth();
                 threeRenderer.render(threeScene, threeCamera);
                 syncCamera(_viewer_.camera, threeCamera, __three__.value)
