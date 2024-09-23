@@ -55,7 +55,7 @@ export default class threePlugin {
             _far = options.far || 10 * 1000 * 1000
         that._three.camera = new THREE.PerspectiveCamera(_fov, _aspect, _near, _far)
         that._three.renderer = new THREE.WebGLRenderer({
-            alpha: true,
+            alpha: false,
             antialias: true,
             logarithmicDepthBuffer: true,
             stencil: true,
@@ -73,7 +73,7 @@ export default class threePlugin {
             lngLat: options.center,
         })
         if (that._threeDiv) {
-            console.log(that._three.renderer.domElement, that._threeDiv)
+            // console.log(that._three.renderer.domElement, that._threeDiv)
             that._threeDiv.appendChild(that._three.renderer.domElement)
         }
         return that._three
