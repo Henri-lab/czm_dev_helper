@@ -12,7 +12,7 @@ export default class threePlugin {
             this._three = {
                 renderer: null,
                 camera: null,
-                scene: null
+                scene: null//custom
             }
             this._threeDiv = this._getDom(threeConf.threeDom, 'div')
             this._viewer = viewer
@@ -78,11 +78,19 @@ export default class threePlugin {
         return that._three
     }
     loop(callback) {
+        //callback自带this问题处理
+        if (callback.toString().includes('this')) {
+            console.error('callback function have wrong "this" scope')
+            return
+        }
         const _loop = function () {
             let frame = requestAnimationFrame(_loop)
             callback && callback(frame)
         }
         _loop()
+    }
+    destroy() {
+        this._three.scene.dispose()
     }
 }
 
@@ -340,7 +348,6 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
 
             return this
         }
-
         update() {
             this.updateSunMatrix()
             this.updateGroupMatrixWorld()
@@ -348,7 +355,6 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             this.renderThree()
             this.renderCesium()
         }
-
         add(object) {
             if (arguments.length > 1) {
                 for (let i = 0; i < arguments.length; i++) {
@@ -383,7 +389,6 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
 
             return this
         }
-
         remove(object) {
             if (arguments.length > 1) {
                 for (let i = 0; i < arguments.length; i++) {
@@ -403,7 +408,6 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
 
             return this
         }
-
         clear() {
             for (let i = 0; i < this.childrenGroup.children.length; i++) {
                 const object = this.childrenGroup.children[i]
@@ -414,7 +418,6 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             this.childrenGroup.children.length = 0
             return this
         }
-
         traverse(callback) {
             callback(this.childrenGroup)
             const children = this.childrenGroup.children
@@ -423,7 +426,6 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
                 children[i].traverse(callback)
             }
         }
-
         traverseVisible(callback) {
             if (this.visible === false || this.childrenGroup.visible === false) return
             callback(this.childrenGroup)
@@ -433,7 +435,6 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
                 children[i].traverseVisible(callback)
             }
         }
-
         toJSON(meta) {
             const isRootObject = meta === undefined || typeof meta === 'string'
             const output = {}
@@ -551,7 +552,6 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             this.cesiumViewer.destroy()
             // super.dispose()
         }
-
         cartesian3ToVector(cart) {
             return new THREE.Vector3(cart.x, cart.y, cart.z)
         }
