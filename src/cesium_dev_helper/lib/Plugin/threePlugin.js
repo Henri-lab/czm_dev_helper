@@ -73,6 +73,7 @@ export default class threePlugin {
             lngLat: options.center,
         })
         if (that._threeDiv) {
+            console.log(that._three.renderer.domElement, that._threeDiv)
             that._threeDiv.appendChild(that._three.renderer.domElement)
         }
         return that._three
@@ -122,8 +123,16 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             this.cameraCenter = new THREE.Vector3(0, 0, 0)
             this.earth = null
             this.initEarth()//模拟地球
-            if (options.axesHelper)
-                this.earth.add(new THREE.AxesHelper(8000000))
+            if (options.axesHelper) {
+                let helper = new THREE.AxesHelper(8000000)
+                // helper.position.set(0, 0, 0)
+                this.earth.add(helper)
+                // let camera = new THREE.PerspectiveCamera(45, 1, 1, 1000000)
+                // camera.position.set(0, 0, 0)
+                // let helper2 = new THREE.CameraHelper(camera)
+                // this.earth.add(helper2)
+                // console.log(this.earth, 'earth')
+            }
             this.sunGroup = new THREE.Group()//模拟太阳
             this.initSunGroup()
             this.syncGroup = new THREE.Group()//3D同步
@@ -174,7 +183,7 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
                 THREE
             )
             const material = new THREE.MeshBasicMaterial({
-                color: '#ff00ff',
+                color: '0xadd8e6',
                 blending: THREE.MultiplyBlending
             })
             const sphere = new THREE.Mesh(geometry, material)
@@ -284,40 +293,16 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             const civm = this.cesiumViewer.camera.inverseViewMatrix
             this.camera.lookAt(this.cameraCenter)
             this.camera.matrixWorld.set(
-                civm[0],
-                civm[4],
-                civm[8],
-                civm[12] - this.cameraOffset.x,
-                civm[1],
-                civm[5],
-                civm[9],
-                civm[13] - this.cameraOffset.y,
-                civm[2],
-                civm[6],
-                civm[10],
-                civm[14] - this.cameraOffset.z,
-                civm[3],
-                civm[7],
-                civm[11],
-                civm[15]
+                civm[0], civm[4], civm[8], civm[12] - this.cameraOffset.x,
+                civm[1], civm[5], civm[9], civm[13] - this.cameraOffset.y,
+                civm[2], civm[6], civm[10], civm[14] - this.cameraOffset.z,
+                civm[3], civm[7], civm[11], civm[15]
             )
             this.camera.matrixWorldInverse.set(
-                cvm[0],
-                cvm[4],
-                cvm[8],
-                cvm[12] - this.cameraOffset.x,
-                cvm[1],
-                cvm[5],
-                cvm[9],
-                cvm[13] - this.cameraOffset.y,
-                cvm[2],
-                cvm[6],
-                cvm[10],
-                cvm[14] - this.cameraOffset.z,
-                cvm[3],
-                cvm[7],
-                cvm[11],
-                cvm[15]
+                cvm[0], cvm[4], cvm[8], cvm[12] - this.cameraOffset.x,
+                cvm[1], cvm[5], cvm[9], cvm[13] - this.cameraOffset.y,
+                cvm[2], cvm[6], cvm[10], cvm[14] - this.cameraOffset.z,
+                cvm[3], cvm[7], cvm[11], cvm[15]
             )
 
             const width = this.cesiumViewer.scene.canvas.clientWidth
