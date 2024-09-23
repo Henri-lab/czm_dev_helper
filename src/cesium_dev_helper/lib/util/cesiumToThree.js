@@ -3,7 +3,8 @@
 // 如果存在st属性，则重命名为uv并删除原st属性。
 // 若几何体包含索引，则创建索引缓冲属性并设置到结果几何体上。
 // 若几何体有边界球，则复制其中心和半径至结果几何体的边界球属性中。
-export const geometryToBufferGeometry = (geometry, result) => {//geometry ,not graphic
+import * as _THREE from 'three'
+export const geometryToBufferGeometry = (geometry, result, THREE = _THREE) => {//geometry ,not graphic
     if (!result) result = new THREE.BufferGeometry();
     const attributes = geometry.attributes;
 

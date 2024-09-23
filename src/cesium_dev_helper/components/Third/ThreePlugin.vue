@@ -29,9 +29,10 @@ const main = () => {
     const _3Config = {
         threeDom: __threeDiv__.value,
     }
-    const _3 = new threePlugin(_viewer_, _3Config)
-    _3.loop(() => _viewer_.render())
-    console.log(_3)
+    const _3Plugin = new threePlugin(_viewer_, _3Config)
+    _3Plugin.install()
+    _3Plugin.loop(() => _viewer_.render())
+    console.log(_3Plugin)
 }
 
 

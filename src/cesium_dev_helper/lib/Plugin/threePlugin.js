@@ -47,7 +47,7 @@ export default class threePlugin {
         threeContainer.style.pointerEvents = 'none'
         this._threeDiv = threeContainer
     }
-    install() {
+    install(options = {}) {
         let that = this
         let _fov = options.fov || 45,
             _aspect = options.aspect || window.innerWidth / window.innerHeight,
@@ -108,7 +108,7 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
         constructor(options = {}) {
             super()
             this.type = 'ThreeCesiumScene'
-            this.check()
+            this.check(options)
             this.options = options
             this.cesiumViewer = viewer
             this.ellipsoid = this.cesiumViewer.scene.globe.ellipsoid  //cesium地球椭球体
@@ -118,15 +118,18 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             this.renderer = options.renderer// 渲染器必须开启 logarithmicDepthBuffer,stencil
             this.lngLat = options.lngLat && options.lngLat.length > 1 ? options.lngLat : [114.23, 31.55]
             this.cameraCenter = new THREE.Vector3(0, 0, 0)
+            this.earth = null
             this.initEarth()//模拟地球
+            if (options.axesHelper)
+                this.earth.add(new THREE.AxesHelper(8000000))
             this.sunGroup = new THREE.Group()//模拟太阳
             this.initSunGroup()
             this.syncGroup = new THREE.Group()//3D同步
             this.initSyncGroup()
             this._enableLighting = true  //太阳光设置
-            this.lightSetting()
+            this.lightSettingProxy()
         }
-        check() {
+        check(options) {
             if (!options.camera || !(options.camera instanceof THREE.PerspectiveCamera)) {
                 throw new Error(
                     'THREE.ThreeCesiumScene (not found cesiumDom) OR ( not THREE.PerspectiveCamera ).'
@@ -164,21 +167,22 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
                 stackPartitions: 1024
             })
             const geometry = geometryToBufferGeometry(
-                Cesium.EllipsoidGeometry.createGeometry(ellipsoid)
+                Cesium.EllipsoidGeometry.createGeometry(ellipsoid),
+                new THREE.BufferGeometry(),
+                THREE
             )
             const material = new THREE.MeshBasicMaterial({
                 color: '#ff00ff',
                 blending: THREE.MultiplyBlending
             })
             const sphere = new THREE.Mesh(geometry, material)
-            if (options.axesHelper) sphere.add(new THREE.AxesHelper(8000000))
             super.add(sphere)
             this.earth = sphere
         }
         initSyncGroup() {
             const syncGroup = new THREE.Group()
             super.add(syncGroup)
-            syncGroup.add(this.sunUp)
+            syncGroup.add(this.sunGroup)
 
             const childGroup = new THREE.Group()
             childGroup.rotateX((-90 * Math.PI) / 180)
@@ -229,7 +233,7 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             this.sun.target = this.childrenGroup
             this.sunGroup.add(this.sun)
         }
-        lightSetting() {
+        lightSettingProxy() {
             Object.defineProperty(this, 'enableLighting', {
                 get() {
                     return this._enableLighting
@@ -244,7 +248,7 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
                     this.sun.visible = false
                 }
             })
-            if (enableLighting) this.enableLighting = enableLighting
+            this.enableLighting = false
         }
         renderCesium() {
             this.cesiumViewer.render()
@@ -258,7 +262,7 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             const cc = this.cesiumViewer.scene.sun._boundingVolume.center
             const c3 = this.cartesian3ToVector(cc)
 
-            this.sunUp.lookAt(
+            this.sunGroup.lookAt(
                 c3.x - this.cameraOffset.x,
                 c3.y - this.cameraOffset.y,
                 -(c3.z - this.cameraOffset.z)
