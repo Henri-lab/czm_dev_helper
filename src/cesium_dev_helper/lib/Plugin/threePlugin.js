@@ -114,6 +114,8 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             this.check(options)
             this.options = options
             this.cesiumViewer = viewer
+            this.canvasWidth = this.cesiumViewer.scene.canvas.clientWidth
+            this.canvasHeight = this.cesiumViewer.scene.canvas.clientHeight
             this.ellipsoid = this.cesiumViewer.scene.globe.ellipsoid  //cesium地球椭球体
             !!options.threeHabit && this.syncOperation()
             this.camera = options.camera
@@ -183,7 +185,7 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
                 THREE
             )
             const material = new THREE.MeshBasicMaterial({
-                color: '0xadd8e6',
+                color: new THREE.Color(1, 0, 0),
                 blending: THREE.MultiplyBlending
             })
             const sphere = new THREE.Mesh(geometry, material)
@@ -266,6 +268,7 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             return this
         }
         renderThree() {
+            this.renderer.setSize(this.canvasWidth, this.canvasHeight)
             this.renderer.render(this, this.camera)
             return this
         }
@@ -286,8 +289,8 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             this.camera.fov = Cesium.Math.toDegrees(
                 this.cesiumViewer.camera.frustum.fovy
             ) // ThreeJS FOV is vertical
+            this.camera.aspect = this.canvasWidth / this.canvasHeight
             this.camera.updateProjectionMatrix()
-
             this.camera.matrixAutoUpdate = false
             const cvm = this.cesiumViewer.camera.viewMatrix
             const civm = this.cesiumViewer.camera.inverseViewMatrix
@@ -304,15 +307,53 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
                 cvm[2], cvm[6], cvm[10], cvm[14] - this.cameraOffset.z,
                 cvm[3], cvm[7], cvm[11], cvm[15]
             )
-
-            const width = this.cesiumViewer.scene.canvas.clientWidth
-            const height = this.cesiumViewer.scene.canvas.clientHeight
-            this.camera.aspect = width / height
             this.camera.updateProjectionMatrix()
 
-            this.renderer.setSize(width, height)
+
 
             return this
+        }
+        updateCameraMatrixInverse() {
+            // 获取 Cesium 相机
+            const cesiumCamera = this.cesiumViewer.camera
+            this.camera.fov = Cesium.Math.toDegrees(cesiumCamera.frustum.fovy);
+            this.camera.aspect = this.canvasWidth / this.canvasHeight
+            this.camera.updateProjectionMatrix();
+            this.camera.matrixAutoUpdate = false
+            // 获取 Cesium 相机的位置和方向
+            const position = cesiumCamera.positionWC.clone();
+            const direction = cesiumCamera.directionWC.clone();
+            const up = cesiumCamera.upWC.clone();
+            // 反转相机的位置和方向
+            const inversePosition = new Cesium.Cartesian3(
+                -position.x,
+                -position.y,
+                -position.z
+            );
+            const inverseDirection = new Cesium.Cartesian3(
+                -direction.x,
+                -direction.y,
+                -direction.z
+            );
+
+            // 转换为 Three.js 向量
+            const threePosition = new THREE.Vector3(
+                inversePosition.x,
+                inversePosition.y,
+                inversePosition.z
+            );
+            const threeTarget = new THREE.Vector3(
+                inversePosition.x + inverseDirection.x,
+                inversePosition.y + inverseDirection.y,
+                inversePosition.z + inverseDirection.z
+            );
+            const threeUp = new THREE.Vector3(up.x, up.y, up.z); // 保持 up 方向不变
+            // 设置 Three.js 相机的位置和朝向
+            this.camera.position.copy(threePosition);
+            this.camera.up.copy(threeUp);
+            this.camera.lookAt(threeTarget);
+            // 更新相机矩阵
+            this.camera.updateMatrixWorld();
         }
         updateGroupMatrixWorld() {
             // 得到面向模型的前向方向
@@ -343,6 +384,7 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             this.updateSunMatrix()
             this.updateGroupMatrixWorld()
             this.updateCameraMatrix()
+            // this.updateCameraMatrixInverse()
             this.renderThree()
             this.renderCesium()
         }
