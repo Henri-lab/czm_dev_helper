@@ -50,6 +50,9 @@ importers:
       cesiummeshvisualizer:
         specifier: ^1.0.2
         version: 1.0.2
+      dompurify:
+        specifier: ^3.1.6
+        version: 3.1.6
       element-plus:
         specifier: ^2.7.8
         version: 2.7.8(vue@3.4.30(typescript@5.5.4))
@@ -83,6 +86,9 @@ importers:
       pinia:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.5.4)(vue@3.4.30(typescript@5.5.4))
+      prismjs:
+        specifier: ^1.29.0
+        version: 1.29.0
       proj4js:
         specifier: ^10.0.0
         version: 10.0.0
@@ -2553,6 +2559,9 @@ packages:
 
   dompurify@2.5.5:
     resolution: {integrity: sha512-FgbqnEPiv5Vdtwt6Mxl7XSylttCC03cqP5ldNT2z+Kj0nLxPHJH4+1Cyf5Jasxhw93Rl4Oo11qRoUV72fmya2Q==}
+
+  dompurify@3.1.6:
+    resolution: {integrity: sha512-cTOAhc36AalkjtBpfG6O8JimdTMWNXjiePT2xQH/ppBGi/4uIpmj8eKyIkMJErXWARyINV/sB38yf8JCLF5pbQ==}
 
   download-git-repo@3.0.2:
     resolution: {integrity: sha512-N8hWXD4hXqmEcNoR8TBYFntaOcYvEQ7Bz90mgm3bZRTuteGQqwT32VDMnTyD0KTEvb8BWrMc1tVmzuV9u/WrAg==}
@@ -8567,6 +8576,8 @@ snapshots:
   dom-walk@0.1.2: {}
 
   dompurify@2.5.5: {}
+
+  dompurify@3.1.6: {}
 
   download-git-repo@3.0.2:
     dependencies:

@@ -286,9 +286,11 @@ export default class EntityDrawer extends DrawingManager {
                                 getCurrent() || points[0].position
                             ],
                             false),
-                        width: option.width || 0.5,
+                        width: option.width || 2,
                         material: option.color || Cesium.Color.RED,
-                        clampToGround: option.clampToGround || true
+                        clampToGround: option.clampToGround || true,
+                        scaleByDistance: new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e7, 0.5),//缩放
+                        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e7),//可视距离
                     }
                 }))
                 alreadyCreatePolyline = true
