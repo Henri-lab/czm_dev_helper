@@ -305,7 +305,6 @@ export default class EntityDrawer extends DrawingManager {
         eM.onMouseClick(afterClick2, 1)
         eM.onMouseMove(afterMouseMove2, 1)
         eM.onMouseRightClick(afterRightClick2, 1)
-
     }
     /**
      * 移除所有实体
