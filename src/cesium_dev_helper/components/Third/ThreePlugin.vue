@@ -1,6 +1,6 @@
 <template>
     <div id="three@henrifox" class="three@henrifox" ref="__threeDiv__"
-        style="position: absolute;right: 0; top:0; width:100% ;height: 100%; z-index: 100;pointer-events: none;"></div>
+        style="position: absolute;right: 0; top:0; width:100% ;height: 100%; z-index: 2;pointer-events: none;"></div>
 </template>
 
 <script setup>
@@ -48,7 +48,6 @@ const main = () => {
     _3Plugin.install()
     $bus.emit('czmThreeEvent@henrifox', _3Plugin._three)
     let { renderer, scene } = _3Plugin._three
-    // renderer.setClearColor(0x00ff00, 0.3); // 设置背景颜色为不透明的绿色
     props.children.forEach(obj3 => {
         scene.add(obj3)
     })

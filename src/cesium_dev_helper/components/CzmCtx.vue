@@ -1,10 +1,13 @@
 <!-- 创建ceisum地图视图 并且加载对应视图的管理者 -->
 <template>
-  <div class="czm-context@henrifox" ref="__CzmCtx__">
+  <div class="czm-context@henrifox" ref="__CzmCtx__" style="position: relative;">
     <div class="debug" v-show="props.debug" style="background-color: blanchedalmond; color: red;">
       pickPosition: {{ pickPosition }}<br>
       screenCoord:{{ screenCoord }}<br>
       threeObjCoord:{{ threeObjCoord }}
+    </div>
+    <div class="three-debug-viewer" ref="__threeDebugViewer__" v-draggable
+      style="position: absolute;width: 500px;height: 500px; z-index: 100;background-color: rgba(128, 255, 0, 0.402);">
     </div>
   </div>
 </template>
@@ -16,6 +19,8 @@ import * as THREE from 'three';
 import _ from 'lodash';
 import { onBeforeUnmount } from 'vue';
 
+const __CzmCtx__ = ref()
+const __threeDebugViewer__ = ref()
 const $bus = inject('$bus');
 const $store = inject('$store');
 const props = defineProps({
@@ -36,9 +41,7 @@ $bus.on('czmViewerEvent@henrifox', (viewer) => {
   $viewer = viewer
   $scene = $viewer.scene
   $camera = $viewer.camera
-  console.log(debugs)
   if (debugs.indexOf('cesium') > -1) {
-    console.log('sfsfsfsfsf')
     const handler = new Cesium.ScreenSpaceEventHandler($scene.canvas);
     handler.setInputAction(function (event) {
       screenCoord.value = event.startPosition
@@ -61,12 +64,15 @@ $bus.on('czmThreeEvent@henrifox', (three) => {
   _renderer_ = _three_.renderer
   _scene_ = _three_.scene
   if (debugs.indexOf('three') > -1) {
-    createThreeDebug()
+    // createThreeCoord()
+    // addCamera(_scene_)
+    copyThreeScene(_scene_)
   }
+  // console.log(_scene_)
 })
 
 const threeObjCoord = ref()
-const createThreeDebug = () => {
+const createThreeCoord = () => {
   // 鼠标位置变量
   const mouse = new THREE.Vector2();
   // 添加鼠标移动事件监听器
@@ -79,16 +85,17 @@ const createThreeDebug = () => {
   const raycaster = new THREE.Raycaster();
   // 创建一个小球来表示交点位置
   const sphereGeometry = new THREE.SphereGeometry(5, 16, 16);
-  const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xffa500 });
   const intersectionSphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  intersectionSphere.name = '_intersectionSphere_'
   _scene_.add(intersectionSphere);
-  // console.log(_scene_)
 
   function animate() {
     requestAnimationFrame(animate);
 
     raycaster.setFromCamera(mouse, _camera_);
     const intersects = raycaster.intersectObjects(_scene_.children, true);
+    console.log(intersects.length)
 
     if (intersects.length > 0) {
       const intersect = intersects[0];
@@ -108,6 +115,31 @@ const createThreeDebug = () => {
     _renderer_.render(_scene_, _camera_);
   }
 
+  animate();
+}
+const addCamera = (_scene_) => {
+  let width = _scene_.canvasWidth
+  let height = _scene_.canvasHeight
+  let camera = new THREE.PerspectiveCamera(45, width / height, 1, 10 * 1000 * 100);
+  camera.position.set(0, 0, 0);
+  let helper = new THREE.CameraHelper(camera)
+  _scene_.superAdd(camera)
+  _scene_.superAdd(helper)
+  return camera
+}
+const copyThreeScene = (_scene_) => {//three debug canvas
+  if (!__threeDebugViewer__.value) return
+  const renderer = new THREE.WebGLRenderer()
+  const scene = (_scene_)
+  const camera = addCamera(scene)
+  const canvas = renderer.domElement
+  canvas.style.width = '100%'
+  canvas.style.height = '100%'
+  __threeDebugViewer__.value.appendChild(canvas)
+  function animate() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+  }
   animate();
 }
 

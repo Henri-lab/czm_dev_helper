@@ -1,10 +1,10 @@
 <template>
     <div class="ex1" style="display: flex;">
         <div class="code" ref="__code__"
-            style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
+            style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 20%; height: 20%; overflow: scroll; font-size: 16px;">
         </div>
         <CzmMap name='threeSync123' :option="opt" width="800px" height="1000px">
-            <CzmCtx debug="cesium"></CzmCtx>
+            <CzmCtx debug="cesium&three"></CzmCtx>
             <Three :children="threeObjs"></Three>
         </CzmMap>
     </div>
