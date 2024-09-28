@@ -59,7 +59,7 @@ export default class threePlugin {
             antialias: true,
             logarithmicDepthBuffer: true,
             stencil: true,
-            depth: true
+            depth: options.rendererDepth || false
         })
         that._three.renderer.outputEncoding = THREE.sRGBEncoding
         that._three.renderer.shadowMap.enabled = true
@@ -71,6 +71,7 @@ export default class threePlugin {
             camera: that._three.camera,
             renderer: that._three.renderer,
             lngLat: options.center,
+            key: options.scenekey || ''
         })
         if (that._threeDiv) {
             // console.log(that._three.renderer.domElement, that._threeDiv)
@@ -110,6 +111,7 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
     class czm3Scene extends THREE.Scene {
         constructor(options = {}) {
             super()
+            this.key = options.key
             this.type = 'ThreeCesiumScene'
             this.check(options)
             this.options = options
@@ -126,14 +128,8 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             this.earth = null
             this.initEarth()//模拟地球
             if (options.axesHelper) {
-                let helper = new THREE.AxesHelper(8000000)
-                // helper.position.set(0, 0, 0)
-                this.earth.add(helper)
-                // let camera = new THREE.PerspectiveCamera(45, 1, 1, 1000000)
-                // camera.position.set(0, 0, 0)
-                // let helper2 = new THREE.CameraHelper(camera)
-                // this.earth.add(helper2)
-                // console.log(this.earth, 'earth')
+                let helperA = new THREE.AxesHelper(8000000)
+                this.earth.add(helperA)
             }
             this.sunGroup = new THREE.Group()//模拟太阳
             this.initSunGroup()
@@ -191,6 +187,9 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             const sphere = new THREE.Mesh(geometry, material)
             super.add(sphere)
             this.earth = sphere
+        }
+        superAdd(mesh) {
+            super.add(mesh)
         }
         initSyncGroup() {
             const syncGroup = new THREE.Group()
