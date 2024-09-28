@@ -24,6 +24,11 @@ const testRoutes = [
     path: '/login',
     component: () => import('@/views/login/index.vue'),
   },
+  {
+    path:'/tf',
+    name: 'tf',
+    component: () => import('@/cesium_dev_helper/Tensorflow/index.vue'),
+  }
 ]
 
 const router = createRouter({

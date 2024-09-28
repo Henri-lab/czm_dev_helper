@@ -32,6 +32,7 @@
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
     "@simonwep/pickr": "^1.9.1",
+    "@tensorflow/tfjs": "^4.21.0",
     "@tresjs/cientos": "^4.0.2",
     "@tresjs/core": "^4.2.10",
     "@turf/turf": "^7.0.0",

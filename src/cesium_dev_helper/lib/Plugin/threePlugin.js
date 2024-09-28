@@ -55,7 +55,7 @@ export default class threePlugin {
             _far = options.far || 10 * 1000 * 1000
         that._three.camera = new THREE.PerspectiveCamera(_fov, _aspect, _near, _far)
         that._three.renderer = new THREE.WebGLRenderer({
-            alpha: false,
+            alpha: true,
             antialias: true,
             logarithmicDepthBuffer: true,
             stencil: true,
@@ -186,7 +186,7 @@ function useThreeCesiumScene({ viewer, THREE = _THREE, Cesium = _Cesium }) {
             )
             const material = new THREE.MeshBasicMaterial({
                 color: new THREE.Color(1, 0, 0),
-                blending: THREE.MultiplyBlending
+                blending: THREE.NormalBlending
             })
             const sphere = new THREE.Mesh(geometry, material)
             super.add(sphere)

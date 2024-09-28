@@ -9,8 +9,7 @@ import * as THREE from 'three';
 import * as Cesium from 'cesium';
 import { onBeforeUnmount } from 'vue';
 import threePlugin from '../../lib/Plugin/threePlugin'
-import { render } from 'vue';
-import { destination } from '@turf/turf';
+
 
 const __threeDiv__ = ref();
 let _cM_, _viewer_
@@ -131,7 +130,7 @@ const main = () => {
     const _3Plugin = new threePlugin(_viewer_, _3Config)
     _3Plugin.install()
     let { renderer, scene } = _3Plugin._three
-    renderer.setClearColor(0x00ff00, 0.3); // 设置背景颜色为不透明的绿色
+    // renderer.setClearColor(0x00ff00, 0.3); // 设置背景颜色为不透明的绿色
     initMeshes(scene)
     initLight(scene)
     console.log(scene)
