@@ -115,7 +115,7 @@ const option =
 {
     type: '3dtiles',
     building: {
-        url: '/static/3dtiles/mono/tileset.json',
+        url: '/static/3dtiles/mono/test1/tileset.json',
     },
     extra: {
         matrix: {
