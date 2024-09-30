@@ -28,8 +28,8 @@
             </div>
             <CzmMap name="wuhan123" :option="tecent" width="800px" height="1000px">
                 <Entity>
-                    <!-- <Building :option="option" :tileset="tileset"></Building> -->
-                    <Building :option="option" :collapse="collapse"></Building>
+                    <!-- <Model :option="option" :tileset="tileset"></Model> -->
+                    <Model :option="option" :collapse="collapse"></Model>
                     <Sphere :options="sphereOpts" :center="center" cluster :threshold="threshold"></Sphere>
                     <Label :options="labelSelOpts" v-show="threshold2 < 0"></Label>
                     <Label :options="labelOpts" cluster :threshold="threshold2"></Label>
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { Building, CzmMap, Sphere, Label, Entity, Particle } from '../../components'
+import { Model, CzmMap, Sphere, Label, Entity, Particle } from '../../components'
 import { marked } from 'marked'
 import codeString from './code.js'
 import { onMounted, ref } from 'vue'
@@ -114,10 +114,11 @@ const tecent = {
 const option =
 {
     type: '3dtiles',
-    building: {
+    model: {
         url: '/static/3dtiles/mono/test1/tileset.json',
     },
     extra: {
+        transform: true,
         matrix: {
             tx: 0,
             ty: 0,

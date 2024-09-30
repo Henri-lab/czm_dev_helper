@@ -26,8 +26,8 @@ export default
             </div>
             <CzmMap name="wuhan123" :option="tecent" width="800px" height="1000px">
                 <Entity>
-                    <!-- <Building :option="option" :tileset="tileset"></Building> -->
-                    <Building :option="option" :collapse="collapse"></Building>
+                    <!-- <Model :option="option" :tileset="tileset"></Model> -->
+                    <Model :option="option" :collapse="collapse"></Model>
                     <Sphere :options="sphereOpts" :center="center" cluster :threshold="threshold"></Sphere>
                     <Label :options="labelOpts" cluster :threshold="threshold2"></Label>
                     <Particle group :positions="particlePos" :image="particleImg"></Particle>
