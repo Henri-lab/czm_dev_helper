@@ -1,5 +1,5 @@
 <template>
-    <div class="building@henrifox"></div>
+    <div class="model@henrifox"></div>
 </template>
 
 <script setup>
@@ -39,19 +39,21 @@ const props = defineProps({
 })
 
 let timer
-let _building_, _callback_
+let _model_, _callback_
 onMounted(() => {
     timer = setTimeout(async () => {
         // 添加模型
         // 异步添加
         if (props.option) {
             _callback_ = (resArr) => {
-                console.log(resArr, '<Building> :loaded building')
-                _building_ = resArr[0].model
-                props.option.extra.matrix && DataPrepocesser.update3DtilesMaxtrix(_building_, props.option.extra.matrix)
+                console.log(resArr, '<Model> :loaded models')
+                _model_ = resArr[0].model;
+                (props.option.extra.transform) &&
+                    (props.option.extra.matrix) &&
+                    DataPrepocesser.update3DtilesMaxtrix(_model_, props.option.extra.matrix)
             }
             props.zoom && (props.option.extra.isZoom = true)
-            await _sM.add3DModel(props.option.type, props.option.building, props.option.extra, _callback_)
+            await _sM.add3DModel(props.option.type, props.option.model, props.option.extra, _callback_)
         }
         clearTimeout(timer)
     }, 0)
@@ -62,7 +64,7 @@ watch(
     (loaded) => {
         // 直接添加
         loaded &&
-            console.log(loaded, '<Building> :tileset') &&
+            console.log(loaded, '<Model> :tileset') &&
             _sM.addToScene(loaded, '3dtiles') &&
             _cM.flyTo(loaded)
 
@@ -72,12 +74,12 @@ watch(
 
 watch(() => props.collapse,
     (n, o) => {
-        collapseFn(_building_, null, !n)
+        collapseFn(_model_, null, !n)
 
         // if (n) {
-        //     console.log('building collapse!')
+        //     console.log('model collapse!')
         // } else {
-        //     console.log('building reset!')
+        //     console.log('model reset!')
         // }
 
     },

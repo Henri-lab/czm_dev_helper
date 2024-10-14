@@ -2,7 +2,7 @@ import CzmMap from "./CzmMap.vue";
 import CzmCtx from './CzmCtx.vue'
 import CzmCamera from './CzmCamera.vue'
 import CzmEditor from './CzmEditor.vue'
-import Building from './Target/Building.vue'
+import Model from './Target/Model.vue'
 import Entity from './Entity.vue'
 import Point from './Target/Point.vue'
 import Polygon from './Target/Polygon.vue'
@@ -20,7 +20,7 @@ export {
     CzmCtx,
     CzmCamera,
     CzmEditor,
-    Building,
+    Model,
     Entity,
     Point,
     Polygon,

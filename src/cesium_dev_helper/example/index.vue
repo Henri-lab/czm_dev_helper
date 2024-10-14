@@ -18,6 +18,7 @@
             <ExPolygon v-if="isEx == 'entity:polygon'" />
             <ExThree v-if="isEx == 'three'" />
             <ExParticle v-if="isEx == 'particle'" />
+            <ExVehicle v-if="isEx == 'vehicle'" />
         </div>
     </div>
 </template>
@@ -30,6 +31,7 @@ import ExPoint from './ExPoint/index.vue'
 import ExPolygon from './ExPolygon/index.vue'
 import ExThree from './ExThree/index.vue'
 import ExParticle from './ExParticle/index.vue'
+import ExVehicle from './ExVehicle/index.vue'
 import { h, ref, watch } from 'vue';
 
 const isEx = ref(false)
@@ -66,7 +68,7 @@ const items = ref([
             },
             {
                 key: '/sub4/2',
-                label: '~~',
+                label: '漫游',
                 title: '',
             },
             {
@@ -131,6 +133,8 @@ watch(() => selectedKeys.value,
             isEx.value = 'editor'
         } else if (newV[0] == '/sub4/1') {
             isEx.value = 'building'
+        } else if (newV[0] == '/sub4/2') {
+            isEx.value = 'vehicle'
         } else if (newV[0] == '/sub5/1') {
             isEx.value = 'entity:point'
         } else if (newV[0] == '/sub5/2') {
