@@ -6,7 +6,7 @@ import 'prismjs/components/prism-markup';
 const codeString =
     `
 <template>
-    <div class="ex1" style="display: flex;">
+    <div class="ex1" style="display: flex;flex-direction: column;">
         <CzmMap name='threeSync123' :option="opt" width="800px" height="1000px">
             <CzmCtx></CzmCtx>
             <Three :children="threeObjs"></Three>

@@ -46,7 +46,7 @@ $bus.on('czmViewerEvent@henrifox', (viewer) => {
 })
 
 
-// 图元聚合
+// 建筑变形/图元聚合
 function calculateDistance(pos1, pos2) {
     return Cesium.Cartesian3.distance(pos1, pos2);
 }

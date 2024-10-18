@@ -2,7 +2,7 @@ export default
     `
 <template>
     <div class="ex2">
-        <div class="ex1" style="display: flex;">
+        <div class="ex1" style="display: flex;flex-direction: column;">
             <div class="btns" style="display: flex; flex-direction: column; width: 200px;">
                 <el-button @click="handleCollapse">坍塌切换</el-button>
                 <br>

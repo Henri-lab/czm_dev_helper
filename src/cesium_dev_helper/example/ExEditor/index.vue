@@ -1,21 +1,18 @@
 <template>
-    <div class="ex1" style="display: flex;">
+    <div class="ex1" style="display: flex;flex-direction: column;">
         <div class="code" ref="code"
             style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
         </div>
-        <div class="btns" style="width: 10%; height: 20%; display: flex; flex-direction: column;">
+        <div class="btns" style="width: 100%; height: 20%; display: flex; flex-direction: row;">
             <el-button @click="newLine('default')">新建（默认模式）</el-button>
             <el-button @click="newLine('follow')">新建（跟随模式）</el-button>
             <el-button @click="newLine('straight')">新建（直线模式）</el-button>
             <el-button @click="drawbackLine">撤销</el-button>
             <el-button @click="recoverLine">恢复</el-button>
-            <div>测量结果为：{{ measureRes }} Km</div>
-            <br>
-            <el-button @click="newPoly">新建（多边形）</el-button>
-            <br>
-            <br>
+            <el-button @click="newPoly">新建（多边形）</el-button>&nbsp;&nbsp;&nbsp;
+            <div style="background-color: violet;">测量结果为：{{ measureRes }} Km</div>
         </div>
-        <CzmMap width="800px" height="1000px">
+        <CzmMap width="1600px" height="1000px">
             <CzmCamera :view="view"></CzmCamera>
             <CzmEditor @edit="getEditor"></CzmEditor>
         </CzmMap>
@@ -127,7 +124,6 @@ ${codeString}
 \`\`\`
 `)
 onMounted(() => {
-    code.value.innerHTML = md
 })
 
 </script>

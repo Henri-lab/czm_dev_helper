@@ -1,10 +1,19 @@
 <template>
     <div class="ex2">
-        <div class="ex1" style="display: flex;">
+        <div class="ex1" style="display: flex;flex-direction: column;">
             <div class="code" ref="code"
                 style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
             </div>
-            <div class="btns" style="display: flex; flex-direction: column; width: 200px;">
+            <div class="btns" style="display: flex;
+                flex-direction: column; 
+                width: 10%; 
+                position: absolute;
+                z-index: 100;
+                color:cornflowerblue;
+                background-color:black;
+                font-size: 20px;
+                font-weight: 1000;
+                border: 5px solid red;">
                 <el-button @click="handleCollapse">坍塌切换</el-button>
                 <br>
                 Sphere聚合阈值
@@ -26,7 +35,7 @@
                 </span>
 
             </div>
-            <CzmMap name="wuhan123" :option="tecent" width="800px" height="1000px">
+            <CzmMap name="wuhan123" :option="tecent" width="1600px" height="1000px">
                 <Entity>
                     <!-- <Model :option="option" :tileset="tileset"></Model> -->
                     <Model :option="option" :collapse="collapse"></Model>
@@ -38,6 +47,7 @@
                     <Particle group :positions="particlePos3" :image="particleImg3"></Particle>
                 </Entity>
             </CzmMap>
+
         </div>
 
     </div>
@@ -51,7 +61,7 @@ import { onMounted, ref } from 'vue'
 import * as Cesium from 'cesium';
 import axios, { all } from 'axios'
 import { TencentImageryProvider } from '../../lib/Plugin/mapPlugin';
-
+import CodeEditor from '@/components/CodeEditor/index.vue'
 const ids = ref([])
 const ids2 = ref([])
 const ids3 = ref([])
@@ -150,7 +160,7 @@ let particleImg3 = 'images/fire3.png'
 let center
 let childrenSel = []
 onMounted(() => {
-    axios.get('/static/3dtiles/mono/scenetree.json').then((res) => {
+    axios.get('/static/3dtiles/mono/test1/scenetree.json').then((res) => {
         // console.log(res.data, 'data')
         // res.data.scenes[0].children.length = 100
         center = new Cesium.Cartesian3(res.data.scenes[0].sphere[0], res.data.scenes[0].sphere[1], res.data.scenes[0].sphere[2])
@@ -232,7 +242,6 @@ ${codeString}
 `)
 
 onMounted(() => {
-    code.value.innerHTML = md
 })
 
 </script>

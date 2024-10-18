@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Breadcrumb: typeof import('./src/components/Breadcrumb/index.vue')['default']
+    CodeEditor: typeof import('./src/components/CodeEditor/index.vue')['default']
     copy: typeof import('./src/components/ColorPicker/index copy.vue')['default']
     Draw: typeof import('./src/components/Panel/draw.vue')['default']
     Editor: typeof import('./src/components/Editor/index.vue')['default']
@@ -18,7 +19,6 @@ declare module 'vue' {
     ElWatermark: typeof import('element-plus/es')['ElWatermark']
     Gltf: typeof import('./src/components/Panel/gltf.vue')['default']
     HlsLive: typeof import('./src/components/charts/HlsLive.vue')['default']
-    'Index copy': typeof import('./src/components/ColorPicker/index copy.vue')['default']
     Me: typeof import('./src/components/me.vue')['default']
     Mono: typeof import('./src/components/Panel/mono.vue')['default']
     Pagination: typeof import('./src/components/Pagination/index.vue')['default']

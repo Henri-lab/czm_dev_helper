@@ -32,6 +32,9 @@ const config = (context) => {
       input: './src/main.ts', // 确保打包时使用 main.ts
     }
   }
+  const optimizeDeps = {
+    include: ['codemirror']
+  }
 
   return {
     mode,
@@ -42,6 +45,7 @@ const config = (context) => {
     css,
     server,
     build,
+    optimizeDeps,
   }
 };
 

@@ -63,7 +63,7 @@ const items = ref([
         children: [
             {
                 key: '/sub4/1',
-                label: '图元聚合',
+                label: '建筑变形/图元聚合',
                 title: '',
             },
             {

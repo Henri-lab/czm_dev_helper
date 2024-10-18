@@ -5,7 +5,7 @@
             style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
         </div>
 
-        <CzmMap width="800px" height="1000px">
+        <CzmMap width="1600px" height="1000px">
             <Particle></Particle>
         </CzmMap>
     </div>
@@ -25,7 +25,6 @@ ${codeString}
 \`\`\`
 `)
 onMounted(() => {
-    code.value.innerHTML = md
 })
 
 </script>

@@ -1,6 +1,6 @@
 <template>
     <div class="ex2">
-        <div class="ex1" style="display: flex;">
+        <div class="ex1" style="display: flex;flex-direction: column;">
             <div class="code" ref="code"
                 style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
             </div>
@@ -10,7 +10,7 @@
                 <br>
                 <el-button @click="handlePerformance">百万级渲染</el-button>
             </div>
-            <CzmMap width="800px" height="1000px">
+            <CzmMap width="1600px" height="1000px">
                 <Entity layerName="point123">
                     <Point :size="size" :color="fixedColor" :colors="colors" :position="position" :extraOpt="extraOpt" zoom
                         :performance="isPerformance" test />
@@ -92,7 +92,6 @@ ${codeString}
 `)
 
 onMounted(() => {
-    code.value.innerHTML = md
 })
 
 </script>

@@ -2,13 +2,13 @@ export default
     `
 <template>
     <div class="ex2">
-        <div class="ex1" style="display: flex;">
+        <div class="ex1" style="display: flex;flex-direction: column;">
             <div class="btns" style="display: flex;flex-direction:column;">
                 <el-button @click="handleSize('+')">增加半径</el-button>
                 <el-button @click="handleSize('-')">减小半径</el-button>
                 <el-button @click="handlePerformance">高性能切换</el-button>
             </div>
-            <CzmMap width="800px" height="1000px">
+            <CzmMap width="1600px" height="1000px">
                 <Entity layerName="point123">
                      <Point 
                       :size="size" 

@@ -2,7 +2,7 @@ export default
     `
 <template>
     <div class="ex2">
-        <div class="ex1" style="display: flex;">
+        <div class="ex1" style="display: flex;flex-direction: column;">
             <div style="display: flex;flex-direction: column;">
                 <el-select style="width: 260px;" placeholder="请选择示例材质" v-model="selectValue" @change="changeSel">
                     <el-option label="示例图片" value="images/img1.jpg">.jpg</el-option>
@@ -12,7 +12,7 @@ export default
                 <el-button @click="isPerformance = !isPerformance">高性能{{ isPerformance ? '已开启' : '已关闭' }}</el-button>
                 <el-button @click="isTest = !isTest">测试数据{{ isTest ? '已开启' : '已关闭' }}</el-button>
             </div>
-            <CzmMap width="800px" height="1000px">
+            <CzmMap width="1600px" height="1000px">
                 <Entity>
                     <Polygon 
                       :hierarchy="hierarchy1" 

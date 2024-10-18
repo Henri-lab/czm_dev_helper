@@ -49,7 +49,7 @@ $bus.on('czmViewerEvent@henrifox', (viewer) => {
     _viewer_ = viewer
     collection = new Cesium.PrimitiveCollection()
 })
-// 图元聚合
+// 建筑变形/图元聚合
 // 遍历所有原始位置，检查是否可加入现有聚类。
 // 若与某个聚类中心距离小于阈值，则加入该聚类；否则创建新聚类。
 
