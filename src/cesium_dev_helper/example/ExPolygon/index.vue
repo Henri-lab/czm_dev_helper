@@ -1,10 +1,7 @@
 <template>
     <div class="ex2">
-        <div class="ex1" style="display: flex;flex-direction: column;">
-            <div class="code" ref="code"
-                style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
-            </div>
-            <div style="display: flex;flex-direction: column;">
+        <div class="ex1" style="display: flex;flex-direction: row;">
+            <div style="display: flex;flex-direction: column;position: absolute;z-index: 100;">
                 <el-select style="width: 260px;" placeholder="请选择示例材质" v-model="selectValue" @change="changeSel">
                     <el-option label="示例图片" value="images/img1.jpg">.jpg</el-option>
                     <el-option label="普通着色器" value="custom">shader(需打开高性能)</el-option>
@@ -23,16 +20,18 @@
                 </Entity>
             </CzmMap>
         </div>
+        <CodeEditor :value="codeString" style="width: 1600px;height: 500px;"></CodeEditor>
     </div>
 </template>
 
 <script setup>
 import { Polygon, CzmMap, Entity, Material } from '../../components'
-import { marked } from 'marked'
+
 import codeString from './code.js'
 import { onMounted, ref } from 'vue'
 import * as Cesium from 'cesium';
 import axios from 'axios'
+import CodeEditor from '@/components/CodeEditor/index.vue'
 
 
 const selectValue = ref('')
@@ -201,11 +200,7 @@ const changeSel = (val) => {
 
 
 const code = ref(null)
-const md = marked(`
-\`\`\` js
-${codeString}
-\`\`\`
-`)
+
 
 onMounted(() => {
 })

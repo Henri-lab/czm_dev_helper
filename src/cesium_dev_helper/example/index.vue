@@ -146,5 +146,8 @@ watch(() => selectedKeys.value,
         }
     }
 )
+onMounted(()=>{
+    // console.log(window.CodeMirror)
+})
 </script>
 

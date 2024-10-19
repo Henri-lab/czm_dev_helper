@@ -1,5 +1,5 @@
 import { fileURLToPath } from "url";
-require('path')
+import path from 'path'
 
 export const resolveOption = {
     alias: {

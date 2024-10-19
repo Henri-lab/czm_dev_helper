@@ -1,20 +1,20 @@
 <template>
-    <div class="ex1" style="display: flex;flex-direction: column;">
-        <div class="code" ref="__code__"
-            style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 20%; height: 20%; overflow: scroll; font-size: 16px;">
-        </div>
+    <div class="ex1" style="display: flex;flex-direction: row;">
         <CzmMap name='threeSync123' :option="opt" width="1600px" height="1000px">
             <CzmCtx debug="cesium&three"></CzmCtx>
             <Three :children="threeObjs"></Three>
         </CzmMap>
     </div>
+    <CodeEditor :value="codeString" style="width: 1600px;height: 500px;"></CodeEditor>
 </template>
 
 <script setup>
 // import exampleCode from './exampleCode'
 import { CzmCtx, CzmMap, Three } from '../../components'
+import CodeEditor from '@/components/CodeEditor/index.vue'
 import * as THREE from 'three'
 import { onMounted } from 'vue';
+import codeString from './code'
 const opt = {
     extraConfig: {
         name: 'threeSync123',

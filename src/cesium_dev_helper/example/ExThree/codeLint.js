@@ -1,20 +1,23 @@
-export default `
+import { marked } from 'marked';
+import Prism from 'prismjs';
+import DOMPurify from 'dompurify';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-markup';
+const codeString =
+    `
 <template>
-    <div class="ex1" style="display: flex;flex-direction: row;">
-        <CzmMap name='threeSync123' :option="opt" width="1600px" height="1000px">
-            <CzmCtx debug="cesium&three"></CzmCtx>
+    <div class="ex1" style="display: flex;flex-direction: column;">
+        <CzmMap name='threeSync123' :option="opt" width="800px" height="1000px">
+            <CzmCtx></CzmCtx>
             <Three :children="threeObjs"></Three>
         </CzmMap>
     </div>
-    <CodeEditor :value="codeString" style="width: 1600px;height: 500px;"></CodeEditor>
 </template>
 
 <script setup>
 import { CzmCtx, CzmMap, Three } from '../../components'
-import CodeEditor from '@/components/CodeEditor/index.vue'
 import * as THREE from 'three'
 import { onMounted } from 'vue';
-import codeString from './code'
 const opt = {
     extraConfig: {
         name: 'threeSync123',
@@ -34,10 +37,28 @@ const opt = {
             }
         },
         useDefaultRenderLoop: false,
+        selectionIndicator: false,
+        homeButton: false,
+        sceneModePicker: false,
+        navigationHelpButton: false,
+        animate: false,
+        timeline: false,
+        fullscreenButton: false,
+        navigationInstructionsInitiallyVisible: false,
+        allowTextureFilterAnisotropic: false,
+        targetFrameRate: 60,
+        resolutionScale: 0.1,
+        orderIndependentTranslucency: true,
+        baseLayerPicker: true,
+        geocoder: false,
+        automaticallyTrackDataSourceClocks: false,
+        dataSources: null,
+        clock: null,
+        terrainShadows: Cesium.ShadowMode.DISABLED
     },
 }
 const threeObjs = []
-function initMeshes(arr) {//🥹
+function initMeshes(arr) {
     // 环形 extrude
     const closedSpline = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-60, 30, 60), // 左下
@@ -127,15 +148,84 @@ function initLight(arr) {
     hemiLight.position.set(0, 1, 0);
     arr.push(hemiLight);
 }
-const __code__ = ref()
-onMounted(() => {
-    // console.log(exampleCode)
-    // exampleCode(__code__.value)
+onMounted(()=>{
     initMeshes(threeObjs)
     initLight(threeObjs)
 })
-
-
-
 </script>
 `
+
+// 创建一个自定义渲染器
+const renderer = new marked.Renderer();
+
+// 重写代码块的渲染方法
+renderer.code = function (code, language) {
+    // 如果语言是 'html'，将其替换为 'markup'
+    let prismLanguage = language === 'html' ? 'markup' : language;
+    // if (!Prism.languages[prismLanguage]) {
+    //     try {
+    //         require(`prismjs/components/prism-${prismLanguage}`);
+    //     } catch (e) {
+    //         console.warn(`未找到 Prism.js 对应的语言组件：${prismLanguage}，将使用纯文本显示。`);
+    //         prismLanguage = 'plaintext';
+    //     }
+    // }
+    // 高亮代码
+    const highlighted = Prism.highlight(code, Prism.languages[prismLanguage] || Prism.languages.javascript, prismLanguage);
+
+    // 创建一个容器，包含预览和代码展示
+    return `
+    <div class="code-demo">
+      <div class="preview">
+        ${executeCode(code)}
+      </div>
+      <pre class="code-block"><code class="language-${language}">${highlighted}</code></pre>
+      <button class="toggle-code">显示/隐藏代码</button>
+    </div>
+  `;
+};
+function executeCode(code) {
+    // 使用 DOMPurify 清理代码，防止 XSS 攻击
+    const cleanCode = DOMPurify.sanitize(code);
+
+    // 创建一个包含代码的 <script> 标签
+    // 这里假设代码是 HTML 或者可以在浏览器中执行的 JavaScript
+    return `<div class="code-output">${cleanCode}</div>`;
+}
+// 设置 marked 的渲染器
+marked.setOptions({
+    renderer: renderer,
+    // 开启 HTML 支持
+    gfm: true,
+    breaks: true,
+    smartypants: true,
+});
+
+
+
+// 示例 Markdown 内容
+const markdownContent = `
+这是一个示例：
+
+\`\`\`html
+<div style="color: red;">这是红色的文字。</div>
+\`\`\`
+
+更多内容...
+`;
+
+// 将 Markdown 转换为 HTML
+const htmlContent = marked(markdownContent);
+export default exampleCode = (dom) => {
+    dom.innerHTML = htmlContent
+    document.addEventListener('click', function (event) {
+        if (event.target.matches('.toggle-code')) {
+            const codeBlock = event.target.previousElementSibling;
+            if (codeBlock.style.display === 'none') {
+                codeBlock.style.display = 'block';
+            } else {
+                codeBlock.style.display = 'none';
+            }
+        }
+    });
+}

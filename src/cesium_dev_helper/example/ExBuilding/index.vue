@@ -1,9 +1,6 @@
 <template>
     <div class="ex2">
-        <div class="ex1" style="display: flex;flex-direction: column;">
-            <div class="code" ref="code"
-                style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
-            </div>
+        <div class="ex1" style="display: flex;flex-direction: row;">
             <div class="btns" style="display: flex;
                 flex-direction: column; 
                 width: 10%; 
@@ -37,7 +34,7 @@
             </div>
             <CzmMap name="wuhan123" :option="tecent" width="1600px" height="1000px">
                 <Entity>
-                    <!-- <Model :option="option" :tileset="tileset"></Model> -->
+                    <Model :option="option" :tileset="tileset"></Model>
                     <Model :option="option" :collapse="collapse"></Model>
                     <Sphere :options="sphereOpts" :center="center" cluster :threshold="threshold"></Sphere>
                     <Label :options="labelSelOpts" v-show="threshold2 < 0"></Label>
@@ -47,15 +44,15 @@
                     <Particle group :positions="particlePos3" :image="particleImg3"></Particle>
                 </Entity>
             </CzmMap>
-
         </div>
+        <CodeEditor :value="codeString" style="width: 1600px;height: 500px;"></CodeEditor>
 
     </div>
 </template>
 
 <script setup>
 import { Model, CzmMap, Sphere, Label, Entity, Particle } from '../../components'
-import { marked } from 'marked'
+
 import codeString from './code.js'
 import { onMounted, ref } from 'vue'
 import * as Cesium from 'cesium';
@@ -235,11 +232,7 @@ const handleThreshold2 = (e) => {
 
 
 const code = ref(null)
-const md = marked(`
-\`\`\` js
-${codeString}
-\`\`\`
-`)
+
 
 onMounted(() => {
 })

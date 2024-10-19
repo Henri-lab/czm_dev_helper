@@ -1,10 +1,7 @@
 <template>
     <div class="ex2">
-        <div class="ex1" style="display: flex;flex-direction: column;">
-            <div class="code" ref="code"
-                style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
-            </div>
-            <div class="btns" style="display: flex;flex-direction:column;">
+        <div class="ex1" style="display: flex;flex-direction: row;">
+            <div class="btns" style="display: flex;flex-direction:column;position: absolute;z-index: 100;">
                 <el-button @click="handleSize('+')" v-show="isBtn">增加半径</el-button>
                 <el-button @click="handleSize('-')" v-show="isBtn">减小半径</el-button>
                 <br>
@@ -12,14 +9,15 @@
             </div>
             <CzmMap width="1600px" height="1000px">
                 <Entity layerName="point123">
-                    <Point :size="size" :color="fixedColor" :colors="colors" :position="position" :extraOpt="extraOpt" zoom
-                        :performance="isPerformance" test />
+                    <Point :size="size" :color="fixedColor" :colors="colors" :position="position" :extraOpt="extraOpt"
+                        zoom :performance="isPerformance" test />
                     <Material />
                     <template #popup="scope" class="custom-popup">
                         <div class="custom-popup"
                             style="background-color: rgb(86, 86, 86); width: 400px;height: 360px; font-size: 20px;"
                             v-if="scope.isPicked" v-mouse-follow>
-                            <span style="color: blanchedalmond;">entity name :</span> <br> {{ scope.entity.name || '' }}<br>
+                            <span style="color: blanchedalmond;">entity name :</span> <br> {{ scope.entity.name || ''
+                            }}<br>
                             <span style="color: blanchedalmond;">entity id :</span><br>{{ scope.entity.id || '' }}<br>
                             <span style="color: blanchedalmond;">entity color :</span><br>{{ scope.primitive.color
                                 || '' }}<br>
@@ -30,18 +28,19 @@
                 </Entity>
             </CzmMap>
         </div>
+        <CodeEditor :value="codeString" style="width: 1600px;height: 500px;"></CodeEditor>
 
     </div>
 </template>
 
 <script setup>
 import { Point, CzmMap, Entity, Material } from '../../components'
-import { marked } from 'marked'
+
 import codeString from './code.js'
 import { onMounted, ref } from 'vue'
 import * as Cesium from 'cesium';
 import axios from 'axios'
-
+import CodeEditor from '@/components/CodeEditor/index.vue'
 const isBtn = ref(true)
 const isPerformance = ref(false)
 const handlePerformance = () => {
@@ -85,11 +84,7 @@ onMounted(() => {
 })
 
 const code = ref(null)
-const md = marked(`
-\`\`\` js
-${codeString}
-\`\`\`
-`)
+
 
 onMounted(() => {
 })

@@ -1,6 +1,5 @@
 export default
-    `
-<template>
+`<template>
     <div class="ex2">
         <div class="ex1" style="display: flex;flex-direction: column;">
             <div style="display: flex;flex-direction: column;">

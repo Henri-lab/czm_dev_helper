@@ -1,15 +1,14 @@
 <template>
     <div class="ex2">
-        <div class="ex1" style="display: flex;flex-direction: column;">
-            <div class="code" ref="code"
-                style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
-            </div>
+        <div class="ex1" style="display: flex;flex-direction: row;">
             <CzmMap width="1600px" height="1000px">
                 <Entity>
                     <!-- <Model :option="option" :tileset="tileset"></Model> -->
                     <Model :option="option"></Model>
                 </Entity>
             </CzmMap>
+            <CodeEditor :value="codeString" style="width: 1600px;height: 500px;"></CodeEditor>
+
         </div>
 
     </div>
@@ -17,12 +16,13 @@
 
 <script setup>
 import { Model, CzmMap, Sphere, Label, Entity, Particle } from '../../components'
-import { marked } from 'marked'
+
 import codeString from './code.js'
 import { onMounted, ref } from 'vue'
 import * as Cesium from 'cesium';
 import axios, { all } from 'axios'
 import { TencentImageryProvider } from '../../lib/Plugin/mapPlugin';
+import CodeEditor from '@/components/CodeEditor/index.vue'
 
 const ids = ref([])
 const ids2 = ref([])
@@ -43,11 +43,7 @@ const option = {
 
 
 const code = ref(null)
-const md = marked(`
-\`\`\` js
-${codeString}
-\`\`\`
-`)
+
 
 onMounted(() => {
 })

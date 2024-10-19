@@ -1,23 +1,23 @@
 <template>
     <div class="ex2">
-        <div class="ex1" style="display: flex;flex-direction: column;">
-            <div class="code" ref="code"
-                style="color:antiquewhite; background-color: rgb(25, 27, 22); width: 50%; height: 20%; overflow: scroll; font-size: 16px;">
-            </div>
+        <div class="ex1" style="display: flex;flex-direction: row;">
             <CzmMap width="1600px" height="1000px">
-                <CzmCamera :view="view" :position="position" :animation="animation" :rotation="rotation" :reset="reset" />
+                <CzmCamera :view="view" :position="position" :animation="animation" :rotation="rotation"
+                    :reset="reset" />
             </CzmMap>
         </div>
+        <CodeEditor :value="codeString" style="width: 1600px;height: 500px;"></CodeEditor>
 
     </div>
 </template>
 
 <script setup>
 import { CzmCamera, CzmMap } from '../../components'
-import { marked } from 'marked'
+
 import codeString from './code.js'
 import { onMounted, ref } from 'vue'
 import { Math as CesiumMath } from 'cesium';
+import CodeEditor from '@/components/CodeEditor/index.vue'
 const reset = ref(false)
 const view = {
     destination: {
@@ -55,11 +55,7 @@ const rotation = {
 
 
 const code = ref(null)
-const md = marked(`
-\`\`\` js
-${codeString}
-\`\`\`
-`)
+
 
 onMounted(() => {
 
