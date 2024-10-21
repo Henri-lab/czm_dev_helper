@@ -7,6 +7,7 @@
                     <el-option label="普通着色器" value="custom">shader(需打开高性能)</el-option>
                     <el-option label="定制着色器" value="custom2">shaderPlus(需打开高性能)</el-option>
                     <el-option label="内置着色器" value="custom3">动态贴图(需打开高性能)</el-option>
+                    <el-option label="水面动态贴图" value="custom4">动态水面(需打开高性能)</el-option>
                 </el-select>
                 <el-button @click="isPerformance = !isPerformance">高性能{{ isPerformance ? '已开启' : '已关闭' }}</el-button>
                 <el-button @click="isTest = !isTest">测试数据{{ isTest ? '已开启' : '已关闭' }}</el-button>
@@ -189,6 +190,21 @@ const changeSel = (val) => {
             },
         )
         materialName = '#DynamicTexture'
+    } else if (val === 'custom4') {
+        openCustom()
+        polygons1.value.push(
+            {
+                positions: Cesium.Cartesian3.fromDegreesArray([
+                    -75.10, 39.57,
+                    -75.10, 39.77,
+                    -75.40, 39.77,
+                    -75.40, 39.57
+                ]),
+                color: 'purple',
+                height: 100,
+            },
+        )
+        materialName = '#DynamicTexture:CustomWater'
     }
     else {
         imgUrl = val
@@ -206,4 +222,3 @@ onMounted(() => {
 })
 
 </script>
-

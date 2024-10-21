@@ -3,8 +3,9 @@
 import * as Cesium from 'cesium'
 import { onMounted } from 'vue';
 import { registerMaterial, getMaterial } from '../lib/Custom/Materials'
+let defaultMaterials
 onMounted(() => {
-    registerMaterial()
+    defaultMaterials = registerMaterial('default')
 })
 const props = defineProps({
     image: {
@@ -43,7 +44,21 @@ let _viewer_
 $bus.on('czmViewerEvent@henrifox', (viewer) => {
     _viewer_ = viewer
 })
+let _target_, _type_, _isPrimitive_
+$bus_Entity.on('materialEvent@henrifox', ({ target, type, isPrimitive }) => {
+    _target_ = target
+    _type_ = type
+    _isPrimitive_ = isPrimitive
+    if (!_target_ || !_type_) return
+    if (_isPrimitive_ && props.custom) {
+        handelShaderProp()
+        handelMaterialProp()
+        handleNameProp()
+    }
+    handleImgProp(props.image)
+})
 
+// material type name
 const handleNameProp = () => {
     if (props.name) {
         if (props.name == '#DynamicTexture') {
@@ -52,6 +67,13 @@ const handleNameProp = () => {
             _target_._primitives.forEach((pri) => {
                 pri.appearance = new Cesium.MaterialAppearance({
                     material: getMaterial('#DynamicTexture'),
+                })
+            })
+        }
+        else if (props.name == '#DynamicTexture:CustomWater') {
+            _target_._primitives.forEach((pri) => {
+                pri.appearance = new Cesium.MaterialAppearance({
+                    material: defaultMaterials.water,
                 })
             })
         }
@@ -86,6 +108,7 @@ const handelMaterialProp = () => {
         return
     }
 }
+// 贴图
 const handleImgProp = (url) => {
     if (!_target_ || !_type_ || !props.image) return
     _target_[_type_.toLowerCase()].material = new Cesium.ImageMaterialProperty({
@@ -96,19 +119,7 @@ const handleImgProp = (url) => {
     return
 }
 
-let _target_, _type_, _isPrimitive_
-$bus_Entity.on('materialEvent@henrifox', ({ target, type, isPrimitive }) => {
-    _target_ = target
-    _type_ = type
-    _isPrimitive_ = isPrimitive
-    if (!_target_ || !_type_) return
-    if (_isPrimitive_ && props.custom) {
-        handelShaderProp()
-        handelMaterialProp()
-        handleNameProp()
-    }
-    handleImgProp(props.image)
-})
+
 // image属性生成图片材质 优先级低于custom
 watch(() => props.image, (newV, oldV) => {
     if (!_target_ || !_type_ || !newV || newV == oldV) return

@@ -46,6 +46,9 @@ export default class MaterialRegister {
 
     // 注册材质
     registerMaterial(options) {
+        //filter options
+        //options分为用于fabric内部和外部的属性
+        //属性为函数的则取运行结果作为属性
         for (let key in options) {
             if (options.hasOwnProperty(key)) {
                 if (key == 'translucent') {

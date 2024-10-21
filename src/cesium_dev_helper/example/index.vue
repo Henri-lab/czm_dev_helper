@@ -10,6 +10,9 @@
 
         <div class="doc-content"
             style="width: 80%;height: 100%; background-color: rgba(24, 24, 23, 0.3); overflow: scroll;">
+
+            <Test></Test>
+
             <ExMap v-if="isEx == 'map'" />
             <ExCamera v-if="isEx == 'camera'" />
             <ExEditor v-if="isEx == 'editor'" />
@@ -23,6 +26,7 @@
     </div>
 </template>
 <script setup>
+import Test from './test/index.vue'
 import ExMap from './ExMap/index.vue'
 import ExCamera from './ExCamera/index.vue'
 import ExEditor from './ExEditor/index.vue'
@@ -146,8 +150,7 @@ watch(() => selectedKeys.value,
         }
     }
 )
-onMounted(()=>{
+onMounted(() => {
     // console.log(window.CodeMirror)
 })
 </script>
-
