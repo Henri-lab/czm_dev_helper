@@ -71,6 +71,7 @@ const handleNameProp = () => {
             })
         }
         else if (props.name == '#DynamicTexture:CustomWater') {
+            console.log('CustomWater deving',defaultMaterials.water)
             _target_._primitives.forEach((pri) => {
                 pri.appearance = new Cesium.MaterialAppearance({
                     material: defaultMaterials.water,

@@ -32,13 +32,13 @@ let uniforms_def = {
     update_def = (uniforms) => { uniforms.u_time += 0.01; }
 
 //viewer暂时不是需要的
-export const registerDynamicTexture = (options, viewer) => {
+export const registerDynamicTexture = (type, options, viewer) => {
     const def_options = { uniforms: uniforms_def, source: glsl_def, update: update_def };
     if (!options) {
         options = def_options;
     }
     const { uniforms, source, update } = options;
-    dynamicTextureMaterial = new MaterialRegister('#DynamicTexture', {
+    dynamicTextureMaterial = new MaterialRegister(type ? '#DynamicTexture' : `#DynamicTexture:${type}`, {
         uniforms,
         source,
         update,

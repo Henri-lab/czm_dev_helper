@@ -18,7 +18,7 @@ const registerMaterial = (type, options, viewer) => {
         return dynamicTexture;
     }
     if (type == 'texture:water') {
-        customWaterMaterial = registerMaterials_CustomWater(options, viewer);
+        customWaterMaterial = registerMaterials_CustomWater('customWater', options, viewer);
         return customWaterMaterial;
     }
 }
@@ -52,7 +52,7 @@ const registerMaterials_CustomWater = (options, viewer) => {
         options.glsl && (glsl = options.glsl)
     }
     const custom_water_options = optionsHookOfDynamicTextureMaterial.water({ uniforms, glsl })
-    customWaterMaterial = registerDynamicTexture(custom_water_options/*give custom-options to MaterialRegister*/, viewer)
+    customWaterMaterial = registerDynamicTexture('customWater',custom_water_options/*give custom-options to MaterialRegister*/, viewer)
     return customWaterMaterial;
 }
 

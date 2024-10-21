@@ -1,0 +1,49 @@
+{
+  "czmHelper": {
+    "ComputeModule": {
+      "CoordTransformer": null,
+      "TurfUser": null,
+      "generateCirclePoints": null,
+      "getCirclePoint": null,
+      "pointsToPositions": null,
+      "flattenPositions": null,
+      "getPositions": null,
+      "getSiteTimes": null,
+      "spaceDistance": null
+    },
+    "DataModule": {
+      "DataLoader": null,
+      "DataPrepocesser": null,
+      "defaultHierachyCache": null,
+      "gifLoader": null,
+      "hierarchyNavigate": null
+    },
+    "ManagerModule": {
+      "LayerManager": null,
+      "DrawingManager": null,
+      "MeasurementManager": null,
+      "AnnotationManager": null,
+      "CameraManager": null,
+      "EventManager": null,
+      "AnimationManager": null,
+      "ControlsManager": null,
+      "ConfigManager": null,
+      "SceneManager": null
+    },
+    "EffectModule": {
+      "EffectController": null
+    },
+    "EditorModule": {
+      "EntityDrawer": null,
+      "EntityMaker": null,
+      "Editor": null
+    },
+    "CustomModule": {
+      "MaterialRegister": null
+    },
+    "CreatorModule": {
+      "TextureCreator": null,
+      "PopupCreator": null
+    }
+  }
+}
