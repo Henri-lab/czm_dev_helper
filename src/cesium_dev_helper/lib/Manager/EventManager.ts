@@ -27,18 +27,20 @@ class EventManager extends Manager implements EventManagerClass {
 
     this.listenerOfKeyUp = (event: KeyboardEvent) => {
       const handlers = this.eventHandlers.get('up');
-      handlers.sort(
-        (a: OrderedCallback, b: OrderedCallback) => b.priority - a.priority
-      );
+      handlers &&
+        handlers.sort(
+          (a: OrderedCallback, b: OrderedCallback) => b.priority - a.priority
+        );
       handlers.forEach((item) => {
         item.callback(event, event.key);
       });
     };
     this.listenerOfKeyDown = (event) => {
       const handlers = this.eventHandlers.get('keyup');
-      handlers.sort(
-        (a: OrderedCallback, b: OrderedCallback) => b.priority - a.priority
-      );
+      handlers &&
+        handlers.sort(
+          (a: OrderedCallback, b: OrderedCallback) => b.priority - a.priority
+        );
       handlers.forEach((item) => {
         item.callback(event);
       });

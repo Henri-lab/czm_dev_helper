@@ -1,6 +1,7 @@
 <template>
     <div class="ex1" style="display: flex;flex-direction: column;">
-        <div class="btns" style="width: 100%; height: 20%; display: flex; flex-direction: row;position: absolute;z-index: 100;">
+        <div class="btns"
+            style="width: 100%; height: 20%; display: flex; flex-direction: row;position: absolute;z-index: 100;">
             <el-button @click="newLine('default')">新建（默认模式）</el-button>
             <el-button @click="newLine('follow')">新建（跟随模式）</el-button>
             <el-button @click="newLine('straight')">新建（直线模式）</el-button>
@@ -12,6 +13,7 @@
         <CzmMap width="1600px" height="1000px">
             <CzmCamera :view="view"></CzmCamera>
             <CzmEditor @edit="getEditor"></CzmEditor>
+            <Interaction></Interaction>
         </CzmMap>
         <CodeEditor :value="codeString" style="width: 1600px;height: 500px;"></CodeEditor>
 
@@ -22,7 +24,7 @@
 
 import { onMounted } from 'vue';
 import codeString from './code.js'
-import { CzmEditor, CzmMap, CzmCamera } from '../../components'
+import { CzmEditor, CzmMap, CzmCamera, Interaction } from '../../components'
 import CodeEditor from '@/components/CodeEditor/index.vue'
 import * as Cesium from 'cesium'
 const view = {

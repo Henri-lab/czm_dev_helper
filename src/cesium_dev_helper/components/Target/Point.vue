@@ -9,7 +9,7 @@ const $bus = inject('$bus')
 const $bus_Entity = inject('$bus_Entity')
 const layerNameProp = inject('layerNameProp')
 let _editor_, _viewer_, _eM_, _lM_, pointPrimitiveCollection
-$bus.on('czmEntityEvent@henrifox', ({ viewer, editor, eM, lM }) => {
+$bus.on('czmLayerEvent@henrifox', ({ viewer, editor, eM, lM }) => {
     _viewer_ = viewer
     _editor_ = editor
     _eM_ = eM

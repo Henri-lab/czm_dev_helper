@@ -19,7 +19,7 @@ const props = defineProps({
 let test = 'this is a test popup'
 const $bus = inject('$bus')
 const $bus_Entity = mitt()
-$bus.on('czmEntityEvent@henrifox', ({ lM }) => {
+$bus.on('czmLayerEvent@henrifox', ({ lM }) => {
     if (!props.layerName) return
     lM.addDatasourceByName(props.layerName)
 })

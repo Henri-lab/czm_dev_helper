@@ -10,7 +10,7 @@ export interface LayerManagerClass {
   hideLayer: (layer: ImageryLayer) => void;
   getOrCreateDatasourceByName: (name: String) => DataSource;
   getDatasourceByName: (name: String) => String;
-  // getOwnerOfEntity: (entity:Entity) => ImageryLayer;//this method is static
+  getOwnerOfEntity: (entity:Entity) => ImageryLayer;//this method is static
 }
 export interface EventManagerClass {
   _addEvent(eventType: any, callback: any, priority?: number): void;
