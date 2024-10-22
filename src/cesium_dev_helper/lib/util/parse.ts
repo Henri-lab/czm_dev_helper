@@ -3,8 +3,8 @@ import {
   imageryProviderConfig,
   terrianProviderConfig,
   mapProviderConfig,
-} from '../interface/config';
-import { mapProvider } from '../interface/type';
+} from '../../type/Config';
+import { mapProvider } from '../../type';
 import { Viewer, ImageryProvider, TerrainProvider } from 'cesium';
 // 在 Cesium 中，ImageryProvider 是一个抽象基类，所有具体的图像提供者类都继承自它。因此， UrlTemplateImageryProvider 可以将其视为 ImageryProvider 的一种实现。
 // 当进行类型判断时 使用 instanceof 运算符来检查一个 UrlTemplateImageryProvider 是否是 ImageryProvider 的一个实例。

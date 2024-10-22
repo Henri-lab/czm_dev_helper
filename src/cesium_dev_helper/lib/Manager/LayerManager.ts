@@ -1,11 +1,11 @@
 import Manager from './Manager';
 import * as Cesium from 'cesium';
-import { LayerManagerClass, Viewer } from '../../type/layerManager'
+import { LayerManagerClass } from '../../type/Manager'
 
 // let Cesium = new Manager().Cesium;
 //管理imageryLayers,datasource
 class LayerManager extends Manager implements LayerManagerClass {
-  constructor(viewer: Viewer) {
+  constructor(viewer:Cesium.Viewer) {
     super(viewer);
     this.layers = [];
     this.customCache = [];
