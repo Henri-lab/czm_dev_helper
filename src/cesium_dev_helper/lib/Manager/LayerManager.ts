@@ -46,7 +46,7 @@ class LayerManager extends Manager implements LayerManagerClass {
 
   // Cesium 中的 DataSource 提供了一种管理和组织实体的方式，使得对实体的批量操作和管理更加方便。
   // 通常使用 CustomDataSource 来创建自定义的数据源，然后将实体添加到这个数据源中。
-  getOrCreateDatasourceByName(name: String):Cesium.CustomDataSource {
+  getOrCreateDatasourceByName(name: string):Cesium.CustomDataSource {
     //获得指定图源或者创建一个图源 缓存
     if (typeof name !== 'string') return null;
     const _viewer = this.viewer;
@@ -59,7 +59,7 @@ class LayerManager extends Manager implements LayerManagerClass {
     }
     return dataSource;
   }
-  getDatasourceByName(name: String):String {
+  getDatasourceByName(name: string):string {
     if (typeof name !== 'string') return null;
     const _viewer = this.viewer;
     // find
@@ -68,7 +68,7 @@ class LayerManager extends Manager implements LayerManagerClass {
   }
   // 没有图源就创建图源 并添加到viewer
   // 有图源直接添加到viewer
-  addDatasourceByName(name: String):Cesium.CustomDataSource {
+  addDatasourceByName(name: string):Cesium.CustomDataSource {
     if (typeof name !== 'string') return null;
     let _viewer = this.viewer;
     const uniqueDatasource = this.getOrCreateDatasourceByName(name);

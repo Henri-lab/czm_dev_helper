@@ -3,7 +3,6 @@ import ImageryLayer from 'cesium/Source/Scene/ImageryLayer';
 import Entity from 'cesium/Source/DataSources/Entity';
 import DataSource from 'cesium/Source/DataSources/DataSource';
 
-
 export interface LayerManagerClass {
   addLayer: (layer: ImageryLayer) => void;
   removeLayer: (layer: ImageryLayer) => void;
@@ -25,5 +24,6 @@ export interface EventManagerClass {
   onKeyDown(callback: any, priority?: number): void;
   onKeyUp(callback: any, priority?: number): void;
   removeEventListener(callback: any): void;
+  clear(): void;
   destroy(): void;
 }
