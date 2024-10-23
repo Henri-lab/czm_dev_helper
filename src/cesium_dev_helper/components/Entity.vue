@@ -28,10 +28,10 @@ const $bus = inject('$bus')
 const $bus_Entity = mitt()
 $bus.on('czmLayerEvent@henrifox', ({ viewer, lM }) => {
     if (!props.layerName) return
-    lM.addDatasourceByName(props.layerName)
+    const specialLayer = lM.addDatasourceByName(props.layerName)
     //拖拽实体功能开启
     if (props.draggable) {
-        const dragger = new EntityDragger(viewer)
+        const dragger = new EntityDragger(viewer, specialLayer)
         dragger.enable()
     }
 })

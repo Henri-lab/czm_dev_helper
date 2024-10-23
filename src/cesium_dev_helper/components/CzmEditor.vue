@@ -27,15 +27,11 @@ const props = defineProps({
     }
 })
 
-
 const emits = defineEmits(['edit'])
 $bus.on('czmEditorEvent@henrifox', (editor) => {
     _editor_ = editor
     emits('edit', editor)
     props.draw.line && editor.start('polyline', props.lineOpt)
 })
-
-
-
 
 </script>

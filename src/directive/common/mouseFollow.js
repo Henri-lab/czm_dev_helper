@@ -15,8 +15,8 @@ export default {
             const newTop = Math.min(Math.max(0, mouseY), maxTop);
 
             // Update the element's position
-            el.style.left = `${newLeft + 2}px`;
-            el.style.top = `${newTop + 2}px`;
+            el.style.left = `${newLeft-500}px`;
+            el.style.top = `${newTop-45}px`;
 
             // console.log(el);
         });
