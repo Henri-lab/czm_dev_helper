@@ -9,6 +9,9 @@ import { onMounted } from 'vue';
 import mitt from 'mitt';
 import * as Cesium from 'cesium';
 import { provide } from 'vue';
+import { EntityDragger } from '../lib/Interaction';
+
+
 const props = defineProps({
     layerName: {
         type: String,
@@ -19,9 +22,12 @@ const props = defineProps({
 let test = 'this is a test popup'
 const $bus = inject('$bus')
 const $bus_Entity = mitt()
-$bus.on('czmLayerEvent@henrifox', ({ lM }) => {
+$bus.on('czmLayerEvent@henrifox', ({ viewer, lM }) => {
     if (!props.layerName) return
     lM.addDatasourceByName(props.layerName)
+    //拖拽实体功能开启
+    const dragger = new EntityDragger(viewer)
+    dragger.enable()
 })
 
 provide('$bus_Entity', $bus_Entity)

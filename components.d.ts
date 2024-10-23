@@ -12,6 +12,7 @@ declare module 'vue' {
     copy: typeof import('./src/components/ColorPicker/index copy.vue')['default']
     Draw: typeof import('./src/components/Panel/draw.vue')['default']
     Editor: typeof import('./src/components/Editor/index.vue')['default']
+    ElButt: typeof import('element-plus/es')['ElButt']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElOption: typeof import('element-plus/es')['ElOption']

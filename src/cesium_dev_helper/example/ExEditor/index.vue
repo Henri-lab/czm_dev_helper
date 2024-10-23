@@ -9,6 +9,7 @@
             <el-button @click="recoverLine">恢复</el-button>
             <el-button @click="newPoly">新建（多边形）</el-button>&nbsp;&nbsp;&nbsp;
             <div style="background-color: violet;height: 20px;">测量结果为：{{ measureRes }} Km</div>
+            <!-- <el-button id="myMiddleButton">mouse middle</el-button> -->
         </div>
         <CzmMap width="1600px" height="1000px">
             <CzmCamera :view="view"></CzmCamera>
@@ -27,6 +28,7 @@ import codeString from './code.js'
 import { CzmEditor, CzmMap, CzmCamera, Interaction } from '../../components'
 import CodeEditor from '@/components/CodeEditor/index.vue'
 import * as Cesium from 'cesium'
+
 const view = {
     destination: {
         longitude: 17,
@@ -96,32 +98,8 @@ const newPoly = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const code = ref(null)
-
-
 onMounted(() => {
+    // import("@/util/middleButton.js")
 })
 
 </script>

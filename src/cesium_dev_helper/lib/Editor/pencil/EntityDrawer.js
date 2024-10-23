@@ -32,7 +32,7 @@ export default class EntityDrawer extends DrawingManager {
     }
     // --辅助函数-----------------------------------------
     // 获得屏幕位置的cartesian
-    _getCartesian3FromPX/*pixel*/ = (position) => {
+    _getCartesian3FromPX(position) {/*pixel*/
         return this.$coords.getCartesianFromScreenPosition(position, this.viewer);
     }
     // 给data设置动态属性 则实体options更改时重新render实体
@@ -140,11 +140,11 @@ export default class EntityDrawer extends DrawingManager {
         // --数据准备--
         const type = Type.toLowerCase()
         let that = this
-        let eM = that.$eM,
+        let $eM = that.$eM,
             // 收集click处的坐标
             pickedPosCollection = [],
             // 获取 ~新~ 事件handler程序 ,防止事件绑定间的冲突
-            _handler_ = eM.handler
+            _handler_ = $eM.handler
 
         // register the handlers which is working 
         that.currentHandler = _handler_;
@@ -235,9 +235,9 @@ export default class EntityDrawer extends DrawingManager {
             that.drawWithDefaultEvent(buffer.Type, buffer.options, buffer.pluginFunction);
         }
         // bind events
-        eM.onMouseClick(afterLeftClick);
-        eM.onMouseMove(afterMouseMove);
-        eM.onMouseRightClick(afterRightClick, 100);
+        $eM.onMouseClick(afterLeftClick);
+        $eM.onMouseMove(afterMouseMove);
+        $eM.onMouseRightClick(afterRightClick, 100);
     }
 
     fakeDraw(getPos, option, type) {
@@ -247,30 +247,31 @@ export default class EntityDrawer extends DrawingManager {
     fakeDrawPolyLine(getPos, option) {
         let that = this
         let index = 0
-        let eM = that.$eM
+        let $eM = that.$eM
+        // console.log('events map',$eM.eventHandlers)
         let polylines = []
         let getStart, getCurrent
         let startPointOfStraightLine
         let isDrawing = false;
         let alreadyCreatePolyline = false
         let points = []
-        let afterClick2 = (movement) => {
+        let afterClick2 = (movement) => {//优先级更高
             isDrawing = true;
             alreadyCreatePolyline = false
-            // console.log('click2')
             getStart = () => that._getCartesian3FromPX(movement.position)
-            if (getStart) {
-                // console.log(getStart(), '--->', end())
-                startPointOfStraightLine = getStart();
-                let point = that._fakeLayer.entities.add(new Cesium.Entity({
-                    position: getStart(),
-                    point: {
-                        color: Cesium.Color.GREEN,
-                        pixelSize: 15,
-                    }
-                }));
-                points.push(point)
-            }
+            startPointOfStraightLine = getStart();
+            console.log(getStart(), '--->',)
+            let point = that._fakeLayer.entities.add(new Cesium.Entity({
+                position: startPointOfStraightLine,
+                point: {
+                    color: Cesium.Color.GREEN,
+                    pixelSize: 15,
+                    clampToGround: true,
+                    scaleByDistance: new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e7, 0.5),//缩放
+                    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e7),//可视距离
+                }
+            }));
+            points.push(point)
         }
         let afterMouseMove2 = (movement) => {
             getCurrent = () => that._getCartesian3FromPX(movement.endPosition)
@@ -288,7 +289,7 @@ export default class EntityDrawer extends DrawingManager {
                             false),
                         width: option.width || 2,
                         material: option.color || Cesium.Color.RED,
-                        clampToGround: option.clampToGround || true,
+                        clampToGround: true,
                         scaleByDistance: new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e7, 0.5),//缩放
                         distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, 1.5e7),//可视距离
                     }
@@ -304,9 +305,9 @@ export default class EntityDrawer extends DrawingManager {
             last.polyline.show = false
             that._fakeLayer.entities.remove(last);
         }
-        eM.onMouseClick(afterClick2, 1)
-        eM.onMouseMove(afterMouseMove2, 1)
-        eM.onMouseRightClick(afterRightClick2, 1)
+        $eM.onMouseClick(afterClick2, 1)
+        $eM.onMouseMove(afterMouseMove2, 1)
+        $eM.onMouseRightClick(afterRightClick2, 1)
     }
     /**
      * 移除所有实体
