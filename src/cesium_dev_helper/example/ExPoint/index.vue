@@ -8,7 +8,7 @@
                 <el-button @click="handlePerformance">百万级渲染</el-button>
             </div>
             <CzmMap width="1600px" height="1000px">
-                <Entity layerName="point123">
+                <Entity layerName="point123" draggable>
                     <Point :size="size" :color="fixedColor" :colors="colors" :position="position" :extraOpt="extraOpt"
                         zoom :performance="isPerformance" test />
                     <Material />
@@ -83,7 +83,6 @@ onMounted(() => {
     }
 })
 
-const code = ref(null)
 
 
 onMounted(() => {

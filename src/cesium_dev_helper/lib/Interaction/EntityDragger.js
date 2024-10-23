@@ -16,6 +16,7 @@ export default class EntityDragger {
                 this.draggedEntity = pickedObject.id;
                 this.isDragging = true;
             }
+            this.disableCameraControls();
         }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
 
         // Initialize mouse move event
@@ -25,6 +26,8 @@ export default class EntityDragger {
                 if (cartesian) {
                     this.draggedEntity.position = cartesian;
                 }
+            }else{
+                this.enableCameraControls()
             }
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
@@ -32,9 +35,28 @@ export default class EntityDragger {
         this.handler.setInputAction(() => {
             this.isDragging = false;
             this.draggedEntity = null;
+            this.enableCameraControls(); 
         }, Cesium.ScreenSpaceEventType.LEFT_UP);
     }
+    // Disable camera controls during dragging
+    disableCameraControls() {
+        const controller = this.viewer.scene.screenSpaceCameraController;
+        controller.enableRotate = false;
+        controller.enableTranslate = false;
+        controller.enableZoom = false;
+        controller.enableTilt = false;
+        controller.enableLook = false;
+    }
 
+    // Enable camera controls after dragging
+    enableCameraControls() {
+        const controller = this.viewer.scene.screenSpaceCameraController;
+        controller.enableRotate = true;
+        controller.enableTranslate = true;
+        controller.enableZoom = true;
+        controller.enableTilt = true;
+        controller.enableLook = true;
+    }
     destroy() {
         this.handler.destroy();
     }

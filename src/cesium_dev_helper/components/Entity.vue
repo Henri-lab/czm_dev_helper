@@ -16,6 +16,10 @@ const props = defineProps({
     layerName: {
         type: String,
         default: ''
+    },
+    draggable: {
+        type: Boolean,
+        default: false
     }
 })
 
@@ -26,8 +30,10 @@ $bus.on('czmLayerEvent@henrifox', ({ viewer, lM }) => {
     if (!props.layerName) return
     lM.addDatasourceByName(props.layerName)
     //拖拽实体功能开启
-    const dragger = new EntityDragger(viewer)
-    dragger.enable()
+    if (props.draggable) {
+        const dragger = new EntityDragger(viewer)
+        dragger.enable()
+    }
 })
 
 provide('$bus_Entity', $bus_Entity)
