@@ -2,7 +2,7 @@ import * as Cesium from "cesium";
 
 const lineOpt = {
     datasource: null,
-    t_id: Date.now(),  //timestamp as t_id
+    created_time: Date.now(),  //timestamp as created_time
     name: 'test-line', //图形名称
     positions: [],   //预坐标
     material: Cesium.Color.RED,  //配置线段材质
@@ -17,7 +17,7 @@ const lineOpt = {
 }
 const polygonOpt = {
     datasource: null,
-    t_id: Date.now(),
+    created_time: Date.now(),
     name: 'test-poly',
     positions: [],
     material: Cesium.Color.BLUE,

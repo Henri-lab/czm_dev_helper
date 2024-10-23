@@ -1,26 +1,25 @@
 import Manager from './Manager';
 import * as Cesium from 'cesium';
-import { LayerManagerClass } from '../../type/Manager'
+import { I_LayerManagerClass } from '../../type/Manager';
 
 // let Cesium = new Manager().Cesium;
 //管理imageryLayers,datasource
-class LayerManager extends Manager implements LayerManagerClass {
-  constructor(viewer:Cesium.Viewer) {
+class LayerManager extends Manager implements I_LayerManagerClass {
+  constructor(viewer: Cesium.Viewer) {
     super(viewer);
     this.layers = [];
     this.customCache = [];
     // viewer.dataSources.dataSourceAdded.addEventListener((datasource) => console.log(datasource, 'dataSourceAdded'))
   }
+
   layers: Cesium.ImageryLayer[];
   customCache: Cesium.CustomDataSource[];
   addLayer(layer: Cesium.ImageryLayer) {
-    
     console.log(layer, 'added Layer');
     this.layers.push(layer);
     this.viewer.imageryLayers.addImageryProvider(layer);
   }
   removeLayer(layer: Cesium.ImageryLayer) {
-    
     const index = this.layers.indexOf(layer);
     if (index !== -1) {
       this.layers.splice(index, 1);
@@ -28,14 +27,12 @@ class LayerManager extends Manager implements LayerManagerClass {
     }
   }
   showLayer(layer: Cesium.ImageryLayer) {
-    
     const index = this.viewer.imageryLayers.indexOf(layer);
     if (index !== -1) {
       this.viewer.imageryLayers.get(index).show = true;
     }
   }
   hideLayer(layer: Cesium.ImageryLayer) {
-    
     const index = this.viewer.imageryLayers.indexOf(layer);
     if (index !== -1) {
       this.viewer.imageryLayers.get(index).show = false;
@@ -46,7 +43,7 @@ class LayerManager extends Manager implements LayerManagerClass {
 
   // Cesium 中的 DataSource 提供了一种管理和组织实体的方式，使得对实体的批量操作和管理更加方便。
   // 通常使用 CustomDataSource 来创建自定义的数据源，然后将实体添加到这个数据源中。
-  getOrCreateDatasourceByName(name: string):Cesium.CustomDataSource {
+  getOrCreateDatasourceByName(name: string): Cesium.CustomDataSource {
     //获得指定图源或者创建一个图源 缓存
     if (typeof name !== 'string') return null;
     const _viewer = this.viewer;
@@ -59,7 +56,7 @@ class LayerManager extends Manager implements LayerManagerClass {
     }
     return dataSource;
   }
-  getDatasourceByName(name: string):string {
+  getDatasourceByName(name: string): string {
     if (typeof name !== 'string') return null;
     const _viewer = this.viewer;
     // find
@@ -68,7 +65,7 @@ class LayerManager extends Manager implements LayerManagerClass {
   }
   // 没有图源就创建图源 并添加到viewer
   // 有图源直接添加到viewer
-  addDatasourceByName(name: string):Cesium.CustomDataSource {
+  addDatasourceByName(name: string): Cesium.CustomDataSource {
     if (typeof name !== 'string') return null;
     let _viewer = this.viewer;
     const uniqueDatasource = this.getOrCreateDatasourceByName(name);
@@ -76,8 +73,10 @@ class LayerManager extends Manager implements LayerManagerClass {
     // _viewer.zoomTo(ds)
     return uniqueDatasource; //unique
   }
-
-  static getOwnerOfEntity(entity: Cesium.Entity): Cesium.DataSource | Cesium.CompositeEntityCollection {
+  getOwnerOfEntity: (entity: Cesium.Entity) => Cesium.ImageryLayer;
+  static getOwnerOfEntity(
+    entity: Cesium.Entity
+  ): Cesium.DataSource | Cesium.CompositeEntityCollection {
     return entity.entityCollection.owner;
   }
 }

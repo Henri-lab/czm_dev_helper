@@ -1,12 +1,12 @@
 //Editor 能够 绘制多个实体+存储实体要素
 //增加：重置 收集点 数组，并创建新的线实体以准备绘制下一条线。
-
+import * as Cesium from 'cesium';
 import EntityDrawer from "./pencil/EntityDrawer";
 import { LayerManager } from "../Manager";
 import { lineOpt, polygonOpt } from './config/lineOpt'
 
 export default class Editor {
-    constructor(viewer, $options) {
+    constructor(viewer:Cesium.Viewer, $options) {
         console.log('new Editor class')
         this.viewer = viewer;
         this.$entityDrawer = new EntityDrawer(viewer);

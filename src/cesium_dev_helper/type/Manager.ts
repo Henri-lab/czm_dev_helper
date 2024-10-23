@@ -3,7 +3,7 @@ import ImageryLayer from 'cesium/Source/Scene/ImageryLayer';
 import Entity from 'cesium/Source/DataSources/Entity';
 import DataSource from 'cesium/Source/DataSources/DataSource';
 
-export interface LayerManagerClass {
+export interface I_LayerManagerClass {
   addLayer: (layer: ImageryLayer) => void;
   removeLayer: (layer: ImageryLayer) => void;
   showLayer: (layer: ImageryLayer) => void;
@@ -12,7 +12,7 @@ export interface LayerManagerClass {
   getDatasourceByName: (name: String) => String;
   getOwnerOfEntity: (entity:Entity) => ImageryLayer;//this method is static
 }
-export interface EventManagerClass {
+export interface I_EventManagerClass {
   _addEvent(eventType: any, callback: any, priority?: number): void;
   onMouseClick(callback: any, priority?: number): void;
   onMouseRightClick(callback: any, priority?: number): void;

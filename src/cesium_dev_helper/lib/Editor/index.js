@@ -1,6 +1,6 @@
-import EntityDrawer from './pencil/EntityDrawer';
+import EntityDrawer from './pencil/EntityDrawer.ts';
 import EntityMaker from './pencil/EntityMaker';
-import Editor from './Editor';
+import Editor from './Editor.ts';
 import { lineOpt } from './config/lineOpt';
 
 export {

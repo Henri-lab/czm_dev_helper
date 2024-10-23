@@ -1,11 +1,15 @@
 import Manager from './Manager';
-import { EventManagerClass } from '../../type/Manager';
-import { OrderedCallback, KeyboardEventFunction } from '../../type';
+import { I_EventManagerClass } from '../../type/Manager';
+import {
+  OrderedCallback,
+  KeyboardEventFunction,
+  HandlePickedFunction,
+} from '../../type';
 
 import * as Cesium from 'cesium';
 // let Cesium = new Manager().Cesium;
 
-class EventManager extends Manager implements EventManagerClass {
+class EventManager extends Manager implements I_EventManagerClass {
   handler: Cesium.ScreenSpaceEventHandler;
   eventHandlers: Map<
     Cesium.ScreenSpaceEventType | number | string, //Number,Enum
@@ -51,7 +55,7 @@ class EventManager extends Manager implements EventManagerClass {
   // 核心 事件执行后回调 event, pick的位置 ,pick的对象
   _addEvent(
     eventType: Cesium.ScreenSpaceEventType,
-    callback: Function,
+    callback: HandlePickedFunction,
     priority = 0
   ) {
     let that = this;
@@ -61,7 +65,10 @@ class EventManager extends Manager implements EventManagerClass {
       that.eventHandlers.set(eventType, emptyActions);
       // 调用cesium事件处理程序
       that.handler.setInputAction(
-        (event: { position: any; endPosition: any }) => {
+        (event: {
+          position: Cesium.Cartesian2;
+          endPosition: Cesium.Cartesian2;
+        }) => {
           // 点击处的笛卡尔坐标🗽
           let pickedPos: any;
           if (that.viewer.scene.pickPositionSupported) {
@@ -100,33 +107,21 @@ class EventManager extends Manager implements EventManagerClass {
   /**
    *  @callback参数 -(event, pick的位置 ,pick的对象)
    */
-  onMouseClick(
-    callback: {
-      (movement: any, pickedPos: any, pickedObj: any): void;
-      (movement: any): void;
-    },
-    priority = 0
-  ) {
+  onMouseClick(callback: HandlePickedFunction, priority = 0) {
     let that = this;
     that._addEvent(Cesium.ScreenSpaceEventType.LEFT_CLICK, callback, priority);
   }
   /**
    *  @callback参数 -(event, pick的位置 ,pick的对象)
    */
-  onMouseRightClick(
-    callback: { (movement: any): void; (): void },
-    priority = 0
-  ) {
+  onMouseRightClick(callback: HandlePickedFunction, priority = 0) {
     let that = this;
     that._addEvent(Cesium.ScreenSpaceEventType.RIGHT_CLICK, callback, priority);
   }
   /**
    *  @callback参数 -(event, pick的位置 ,pick的对象)
    */
-  onMouseDoubleClick(
-    callback: (event: any, pickPos: any, pickedObj: any) => Promise<void>,
-    priority = 0
-  ) {
+  onMouseDoubleClick(callback: HandlePickedFunction, priority = 0) {
     let that = this;
     that._addEvent(
       Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK,
@@ -135,27 +130,24 @@ class EventManager extends Manager implements EventManagerClass {
     );
   }
 
-  onMouseDown(callback: any, priority = 0) {
+  onMouseDown(callback: HandlePickedFunction, priority = 0) {
     let that = this;
     that._addEvent(Cesium.ScreenSpaceEventType.LEFT_DOWN, callback, priority);
   }
 
-  onMouseUp(callback: any, priority = 0) {
+  onMouseUp(callback: HandlePickedFunction, priority = 0) {
     let that = this;
     that._addEvent(Cesium.ScreenSpaceEventType.LEFT_UP, callback, priority);
   }
   /**
    *  @callback参数 -(event, pick的位置 ,pick的对象)
    */
-  onMouseMove(
-    callback: { (movement: any): void; (movement: any): void },
-    priority = 0
-  ) {
+  onMouseMove(callback: HandlePickedFunction, priority = 0) {
     let that = this;
     that._addEvent(Cesium.ScreenSpaceEventType.MOUSE_MOVE, callback, priority);
   }
 
-  onMouseWheel(callback: any, priority = 0) {
+  onMouseWheel(callback: HandlePickedFunction, priority = 0) {
     let that = this;
     that._addEvent(Cesium.ScreenSpaceEventType.WHEEL, callback, priority);
   }

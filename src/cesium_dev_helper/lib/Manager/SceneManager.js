@@ -196,7 +196,7 @@ export default class SceneManager extends Manager {
     let res = arr || [];
     function afterLoaded(loaded, type) {
       that.addToScene(loaded, type, extraOpt.layer);
-      res.push({ t_id: Date.now(), model: loaded });//添加model的附属信息
+      res.push({ created_time: Date.now(), model: loaded });//添加model的附属信息
       cb && cb(res);
       if (extraOpt && extraOpt.isZoom) {
         that.viewer.zoomTo(loaded);  // 跳转到模型

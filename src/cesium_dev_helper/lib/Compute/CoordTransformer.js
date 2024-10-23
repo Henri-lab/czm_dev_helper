@@ -185,7 +185,6 @@ class CoordTransformer {
     getCartesianFromScreenPosition(screenPosition, viewer) {
         let scene = viewer.scene;
         let ellipsoid = scene.globe.ellipsoid;
-
         // Convert the screen position to Cartesian coordinates
         let cartesian = viewer.camera.pickEllipsoid(screenPosition, ellipsoid);
         if (cartesian) {
