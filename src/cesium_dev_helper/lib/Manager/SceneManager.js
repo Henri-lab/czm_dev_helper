@@ -11,53 +11,8 @@ export default class SceneManager extends Manager {
     super(viewer);
     this.$dL = new DataLoader(viewer);
   }
-
-  /**
-   * Initializes the scene with the given options.
-   *
-   * @param {Object} options - The options for initializing the scene.
-   * @param {Object} options.sun - The configuration for the sun.
-   * @param {boolean} options.sun.show - Whether to show the sun.
-   * @param {Object} options.moon - The configuration for the moon.
-   * @param {boolean} options.moon.show - Whether to show the moon.
-   * @param {Object} options.globe - The configuration for the globe.
-   * @param {boolean} options.globe.enableLighting - Whether to enable lighting on the globe.
-   * @param {boolean} options.globe.depthTestAgainstTerrain - Whether to depth test against terrain.
-   * @param {boolean} options.globe.showGroundAtmosphere - Whether to show ground atmosphere.
-   * @param {Object} options.postProcessStages - The configuration for post-process stages.
-   * @param {Object} options.postProcessStages.bloom - The configuration for the bloom effect.
-   * @param {boolean} options.postProcessStages.bloom.enabled - Whether to enable the bloom effect.
-   * @param {number} options.postProcessStages.bloom.contrast - The contrast of the bloom effect.
-   * @param {number} options.postProcessStages.bloom.brightness - The brightness of the bloom effect.
-   * @param {boolean} options.postProcessStages.bloom.glowOnly - Whether to apply the effect only to glowing areas.
-   * @param {number} options.postProcessStages.bloom.delta - The delta value for the bloom effect.
-   * @param {number} options.postProcessStages.bloom.sigma - The sigma value for the bloom effect.
-   * @param {number} options.postProcessStages.bloom.stepSize - The step size for the bloom effect.
-   * @param {boolean} options.postProcessStages.bloom.isSelected - Whether the bloom effect is selected.
-   * @param {number} options.postProcessStages.bloom.selectedBloom - The selected bloom value.
-   * @param {Cesium.Color} options.postProcessStages.bloom.bloomColor - The color of the bloom effect.
-   * @param {Object} options.postProcessStages.brightness - The configuration for the brightness adjustment.
-   * @param {boolean} options.postProcessStages.brightness.enabled - Whether to enable brightness adjustment.
-   * @param {number} options.postProcessStages.brightness.brightness - The brightness value.
-   * @param {Object} options.postProcessStages.fxaa - The configuration for the FXAA effect.
-   * @param {boolean} options.postProcessStages.fxaa.enabled - Whether to enable the FXAA effect.
-   * @param {Object} options.shadows - The configuration for shadows.
-   * @param {boolean} options.shadows.enabled - Whether to enable shadows.
-   * @param {number} options.shadows.darkness - The darkness of the shadows.
-   * @param {boolean} options.undergroundMode - Whether to enable underground mode.
-   * @param {Object} options.terrainProvider - The configuration for the terrain provider.
-   * @param {boolean} options.terrainProvider.isCreateSkirt - Whether to create a skirt for the terrain provider.
-   * @param {Object} options.fog - The configuration for the fog effect.
-   * @param {boolean} options.fog.enabled - Whether to enable the fog effect.
-   * @param {Object} options.creditContainer - The configuration for the credit container.
-   * @param {string} options.creditContainer.display - The display property of the credit container.
-   * @param {boolean} options.highDynamicRange - Whether to enable high dynamic range.
-   *
-   * @returns {undefined} This function does not return any value.
-   */
   initScene = (options) => {
     let viewer = this.viewer;
-
     // 设置默认值
     const defaultOptions = {
       sun: {

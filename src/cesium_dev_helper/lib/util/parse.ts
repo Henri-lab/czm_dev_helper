@@ -1,5 +1,5 @@
 import {
-  viewerConfig,
+  ViewerConfig,
   imageryProviderConfig,
   terrianProviderConfig,
   mapProviderConfig,
@@ -46,8 +46,8 @@ let vConfig_native = /**@default*/ {
   navigation: false,
   showRenderLoopErrors: true,
 };
-export const parse_viewerConfig = (viewerConfig: viewerConfig) => {
-  let { containerId, baseConfig, providerConfig, extraConfig } = viewerConfig;
+export const parse_viewerConfig = (ViewerConfig: ViewerConfig) => {
+  let { containerId, baseConfig, providerConfig, extraConfig } = ViewerConfig;
   let images = [];
   let terrian: any = {};
   // 配置token

@@ -1,5 +1,4 @@
-
-export interface viewerConfig {
+export interface ViewerConfig {
   containerId: string;
   baseConfig?: any;
   providerConfig?: mapProviderConfig;
