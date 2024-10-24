@@ -1,11 +1,15 @@
-import { providerTypes, terrainProviderTypes, imageryProviderTypes, viewerProperties } from "./enum";
-
+import {
+  providerTypes,
+  terrainProviderTypes,
+  imageryProviderTypes,
+  viewerProperties,
+} from './enum';
+import * as Cesium from 'cesium';
 // 加速查找操作，因为 Set 的查找时间复杂度为 O(1)
 const _providerTypes = new Set(providerTypes);
 const _viewerProperties = new Set(viewerProperties);
 const _terrainProviderTypes = new Set(terrainProviderTypes);
 const _imageryProviderTypes = new Set(imageryProviderTypes);
-
 
 /**
  * Validates if the given input is a valid 3D Cartesian coordinate.
@@ -18,10 +22,13 @@ const _imageryProviderTypes = new Set(imageryProviderTypes);
  *
  */
 export function isValidCartesian3(coord) {
-    if (!Array.isArray(coord))
-        return typeof coord.x === 'number' && typeof coord.y === 'number' && typeof coord.z === 'number';
-    else
-        return coord.every(item => isValidCartesian3(item));
+  if (!Array.isArray(coord))
+    return (
+      typeof coord.x === 'number' &&
+      typeof coord.y === 'number' &&
+      typeof coord.z === 'number'
+    );
+  else return coord.every((item) => isValidCartesian3(item));
 }
 
 /**
@@ -30,22 +37,22 @@ export function isValidCartesian3(coord) {
  * @returns {boolean} 如果对象是Cesium地理坐标则返回true，否则返回false
  */
 export function isValidCartographic(coord) {
-    if (typeof coord !== 'object' || coord === null) {
-        return false;
-    }
-    if (!Array.isArray(coord)) {
-        const hasLongitude = typeof coord.longitude === 'number';
-        const hasLatitude = typeof coord.latitude === 'number';
-        const hasOptionalHeight = typeof coord.height === 'undefined' || typeof coord.height === 'number';
+  if (typeof coord !== 'object' || coord === null) {
+    return false;
+  }
+  if (!Array.isArray(coord)) {
+    const hasLongitude = typeof coord.longitude === 'number';
+    const hasLatitude = typeof coord.latitude === 'number';
+    const hasOptionalHeight =
+      typeof coord.height === 'undefined' || typeof coord.height === 'number';
 
-        return hasLongitude && hasLatitude && hasOptionalHeight;
-    } else {
-        // --stack 溢出了🤣--
-        // coord.every(item => isValidCartographic(item) === true) ? true : false;
-        return coord.every(item => isValidCartographic(item));
-    }
+    return hasLongitude && hasLatitude && hasOptionalHeight;
+  } else {
+    // --stack 溢出了🤣--
+    // coord.every(item => isValidCartographic(item) === true) ? true : false;
+    return coord.every((item) => isValidCartographic(item));
+  }
 }
-
 
 /**
  * Validates if the given input is a valid Cesium provider.
@@ -68,10 +75,8 @@ export function isValidCartographic(coord) {
  * }
  */
 export function isValidProvider(provider) {
-    return _providerTypes.has(provider.constructor.name);
+  return _providerTypes.has(provider.constructor.name);
 }
-
-
 
 /**
  * Validates if the given input is a valid Cesium terrain provider.
@@ -92,9 +97,8 @@ export function isValidProvider(provider) {
 TypeType
  */
 export function isValidTerrianProviderType(string) {
-    return _terrainProviderTypes.has(string);
+  return _terrainProviderTypes.has(string);
 }
-
 
 /**
  * Validates if the given input is a valid viewer property.
@@ -115,9 +119,8 @@ export function isValidTerrianProviderType(string) {
  * }
  */
 export function isValidViewerProperty(string) {
-    return _viewerProperties.has(string);
+  return _viewerProperties.has(string);
 }
-
 
 /**
  * Validates if the given input is a valid Cesium imagery provider.
@@ -138,15 +141,28 @@ export function isValidViewerProperty(string) {
  * }
  */
 export function isValidImageryProviderType(string) {
-    return _imageryProviderTypes.has(string);
+  return _imageryProviderTypes.has(string);
 }
-
 
 // 验证经纬度格式
 export function isValidLongitude(longitude) {
-    return /^-?(?:180(?:\.0{1,6})?|1[0-7]?\d(?:\.\d{1,6})?|0?\d{1,2}(?:\.\d{1,6})?)$/.test(longitude);
+  return /^-?(?:180(?:\.0{1,6})?|1[0-7]?\d(?:\.\d{1,6})?|0?\d{1,2}(?:\.\d{1,6})?)$/.test(
+    longitude
+  );
 }
 export function isValidLatitude(latitude) {
-    return /^-?(?:90(?:\.0{1,6})?|[0-8]?\d(?:\.\d{1,6})?)$/.test(latitude);
+  return /^-?(?:90(?:\.0{1,6})?|[0-8]?\d(?:\.\d{1,6})?)$/.test(latitude);
 }
 
+export function isValidDataSource(//类型保护 (Type Guard)
+  source: any
+): source is Cesium.DataSource | Cesium.CustomDataSource {
+  if (
+    source instanceof Cesium.CustomDataSource ||
+    source instanceof Cesium.DataSource
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
