@@ -11,7 +11,10 @@ window.CESIUM_BASE_URL = 'node_modules/cesium/Build/CesiumUnminified';
 /**
  * 管理生成cesium viewCesium件 并可以初始化viewer
  */
-export default class ConfigManager extends Manager implements I_ConfigManagerClass  {
+export default class ConfigManager
+  extends Manager
+  implements I_ConfigManagerClass
+{
   data: {};
   constructor() {
     super();
@@ -63,7 +66,12 @@ export default class ConfigManager extends Manager implements I_ConfigManagerCla
     // 设置viewer的其他属性
     const extra = _config.extra;
     if (extra['name']) {
-      Object.defineProperty(viewer, 'name', extra['name']);
+      Object.defineProperty(viewer, 'name', {
+        value: extra['name'],
+        writable: true,   // 允许写入
+        configurable: true,   // 允许删除或重新定义属性
+        enumerable: true,  // 属性在迭代中可见
+      });
     }
 
     if (extra['depthTest']) {
