@@ -10,6 +10,7 @@ import mitt from 'mitt';
 import * as Cesium from 'cesium';
 import { provide } from 'vue';
 import { EntityDragger } from '../lib/Interaction';
+import DataFormator from '../lib/Data/DataFormator';
 
 
 const props = defineProps({
@@ -50,6 +51,13 @@ $bus_Entity.on('popupInfoEvent@henrifox', (pick) => {
     _isPicked_.value = isPicked
 })
 $bus_Entity.on('entityCreatedEvent@henrifox', ({ target, type, isPrimitive }) => {
+    if (target instanceof Cesium.Entity) {
+        const parsed = DataFormator.cesiumEntityToGeoJSON(target)
+        // 将 geojson 对象转换为字符串
+        const geojson = JSON.stringify(parsed, null, 2);
+        console.log(geojson, 'geojson')
+        // alert(geojson);
+    }
     $bus_Entity.emit('materialEvent@henrifox', { target, type, isPrimitive })
 })
 
