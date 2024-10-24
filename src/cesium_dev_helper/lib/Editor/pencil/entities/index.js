@@ -1,18 +1,157 @@
-import { BoxEntity } from "./box";
-import { CorridorEntity } from "./corridor";
-import { EllipseEntity } from "./ellipse";
-import { LineEntity } from "./line";
-import { ModelEntity } from "./model";
-import { PointEntities } from "./point";
-import { PolygonEntity } from "./polygon";
 import { SampleEntity } from './advanced/sample'
 import { objHasOwnProperty, setProperties } from "../../../util/properties";
-
-import EntityMaker from "../EntityMaker";
 import { DrawingManager } from "../../../Manager";
 
 
 const createEntity = DrawingManager.createEntity;
+function BoxEntity(extraOption = {}, options = {}, datasource = {}) {
+    if (options) {
+        let entity = {}
+        entity.box = BoxGraphics(options)
+
+        const finalEntity = {
+            ...extraOption,
+            ...entity,
+        };
+        return datasource.entities.add(finalEntity)
+    }
+}
+function CorridorEntity(extraOption = {}, options = {}, datasource = {}) {
+    if (options && options.positions) {
+        let entity = {}
+
+        const properties = [
+            { key: 'height', defaultValue: 10 },
+            { key: 'width', defaultValue: 10 },
+            { key: 'extrudedHeight', defaultValue: 10 },
+            { key: 'cornerType', defaultValue: 'round' },
+            {
+                key: 'material', defaultValue: new Cesium.Scene.WarnLinkMaterialProperty({
+                    freely: 'cross',
+                    color: Cesium.Color.YELLOW,
+                    duration: 1000,
+                    count: 1.0,
+                    direction: '+'
+                })
+            }
+        ];
+        setProperties(options, properties);
+        entity.corridor = CorridorGraphics(options);
+
+        const finalEntity = {
+            ...extraOption,
+            ...entity,
+        }
+        return datasource.entities.add(finalEntity)
+    }
+}
+function CylinderEntity(extraOption = {}, options = {}, datasource = {}) {
+
+    let entity = {}
+
+    // 设置属性的默认值和传入的值
+    const properties = [
+        { key: 'length', defaultValue: 10 },
+        { key: 'topRadius', defaultValue: 5 },
+        { key: 'bottomRadius', defaultValue: 5 },
+        { key: 'material', defaultValue: new Cesium.ColorMaterialProperty(Cesium.Color.YELLOW) }
+    ];
+
+    // 设置属性
+    setProperties(options, properties);
+
+    // 创建圆柱几何体
+    entity.cylinder = CylinderGraphics(options)
+
+    // 将实体添加到图层
+    return datasource.entities.add({
+        ...extraOption,
+        ...entity
+    });
+
+}
+function EllipseEntity(extraOption = {}, options = {}, datasource = {}) {
+    // 创建实体
+    let entity = {}
+    entity.ellipse = EllipseGraphics(options)
+    const finalEntity = {
+        ...extraOption,
+        ...entity,
+    };
+    return datasource.entities.add(finalEntity)
+}
+function ModelEntity(extraOption = {}, options = {}, datasource = {}) {
+    if (options && options.position) {
+        let entity = {}
+
+        entity.position = options.position
+        entity.model = ModelGraphics(options)
+        const finalEntity = {
+            ...extraOption,
+            ...entity,
+        };
+        return datasource.entities.add(finalEntity)
+    }
+}
+function LineEntity(extraOption = {}, options = {}, datasource = {}) {
+    if (options && options.positions) {
+        // 直接添加Cesium.Entity
+        // let czm_entity = createEntity()
+
+        let entity = {};
+        entity.polyline = LineGraphics(options)
+        entity.polyline.scaleByDistance = options.scaleByDistance || new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e6, 0.5)//缩放
+        entity.polyline.distanceDisplayCondition = options.distanceDisplayCondition || new Cesium.DistanceDisplayCondition(0.0, 1.5e7)//可视距离
+
+        const finalEntity = {
+            ...extraOption,
+            ...entity,
+        };
+
+        return datasource.entities.add(finalEntity)
+        //这个finalEntity 必须是一个普通对象
+    }
+}
+function PointEntities(extraOption = {}, options = {}, datasource = {}) {
+    if (options && options.positions) {
+        let points = []
+        for (let i in options.positions) {
+            let posItem = options.positions[i]
+            let entity = {}
+            if (options.point) entity.point = PointGraphics(options)
+            if (options.billboard)
+                entity.billboard = BillboardGraphics(options.billboard)
+            if (options.label) entity.label = LabelGraphics(options.label)
+            const finalEntity = {
+                ...extraOption,
+                ...entity,
+                position: posItem,
+            }
+            const point = datasource.entities.add(finalEntity)
+            points.push(point)
+        }
+        return points
+    }
+}
+function PolygonEntity(extraOption = {}, options = {}, datasource = {}) {
+    if (options) {
+        let entity = {}
+        entity.polygon = PolygonGraphics(options)
+        entity.polygon.scaleByDistance = options.scaleByDistance || new Cesium.NearFarScalar(1.5e2/*150m*/, 2.0, 1.5e6, 0.5)//缩放
+        entity.polygon.distanceDisplayCondition = options.distanceDisplayCondition || new Cesium.DistanceDisplayCondition(0.0, 1.5e7)//可视距离
+        const finalEntity = {
+            ...extraOption,
+            ...entity,
+        };
+        return datasource.entities.add(finalEntity)
+    }
+}
+
+
+
+
+
+
 
 // 生成实体的坐标要采用Cartesian3
 export {
@@ -23,7 +162,7 @@ export {
     ModelEntity,
     PointEntities,
     PolygonEntity,
-    SampleEntity, 
+    SampleEntity,
     objHasOwnProperty,
     setProperties,
     createEntity,//method in drawing manager
