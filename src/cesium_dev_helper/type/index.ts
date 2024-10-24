@@ -26,7 +26,7 @@ export type EditorPluginFunction = (
 ) => void;
 export type HandlePickedFunction = (
   event: HandlerEventType,
-  pickedPos: Cesium.Cartesian3[],
+  pickedPos: Cesium.Cartesian3,
   pickedObj: Cesium.Entity | Cesium.Primitive
 ) => any;
 export type KeyboardEventFunction = (...args: any[]) => any;

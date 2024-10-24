@@ -3,6 +3,7 @@
 // 特殊:polyline-positions ,corridor-positions,wall-positions, polygon-hierarchy,rectangle-coordinates等等:
 import { objHasOwnProperty, setProperties } from "../../../util/properties";
 import { createEntity } from "../entities";
+import * as Cesium from 'cesium';
 
 
 //根据类型type获得Graphics的方法名
@@ -128,8 +129,7 @@ function LabelGraphics(options = {}) {
     }
 }
 function LineGraphics(options = {}) {
-
-    return new Cesium.PolylineGraphics({
+     return new Cesium.PolylineGraphics({
         ...options,
         show: true,
         positions: options.positions || [],

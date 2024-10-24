@@ -192,6 +192,7 @@ export default class EntityMaker extends DrawingManager {
    */
   // 每一帧 执行 return getNewPosition() <-- _newPositions <-- getNewPosition()
   createDynamicEntity(type, { extraOption, graphicOption, datasource }, getNewPosition) {
+   
     if (typeof getNewPosition !== 'function') throw new Error('cannot get new position')
     const _type = type.toLowerCase();
     let entityOpt = {};
@@ -209,6 +210,7 @@ export default class EntityMaker extends DrawingManager {
       entityOpt.rectangle.coordinates = this.CallBackProperty(Rectangle(getNewPosition()))
     }
     else if (_type === 'polyline') {
+      
       entityOpt.polyline.positions = this.CallBackProperty(getNewPosition())
     }
     else {

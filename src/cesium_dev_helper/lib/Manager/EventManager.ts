@@ -70,7 +70,7 @@ class EventManager extends Manager implements I_EventManagerClass {
           endPosition: Cesium.Cartesian2;
         }) => {
           // 点击处的笛卡尔坐标🗽
-          let pickedPos: any;
+          let pickedPos: Cesium.Cartesian3 | undefined;
           if (that.viewer.scene.pickPositionSupported) {
             pickedPos = that.viewer.scene.pickPosition(
               event.position || event.endPosition

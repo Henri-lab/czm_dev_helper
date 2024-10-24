@@ -4,7 +4,6 @@ import { CoordTransformer } from '../../Compute';
 import { isValidCartesian3 } from '../../util/isValid';
 import TurfUser from '../../Compute/TurfUser';
 import * as Cesium from 'cesium';
-import { get } from '@/util/methods';
 import CallbackProperty from 'cesium/Source/DataSources/CallbackProperty';
 import { I_EntityDrawerClass } from '../../../type/Tool';
 import {
@@ -12,6 +11,7 @@ import {
   ParsedEntityOptions,
   EditorPluginFunction,
 } from '../../../type';
+import { ca } from 'element-plus/es/locale';
 
 /**
  * EntityDrawer class for drawing entities with events on a Cesium viewer with event handling.
@@ -94,6 +94,7 @@ export default class EntityDrawer
     try {
       // 配置解析
       const parsedEntityOpt = that._parseConfig(entityOption);
+
       let Entity = that.$entityMaker.createDynamicEntity(
         typeOfEntity,
         parsedEntityOpt,
@@ -213,17 +214,16 @@ export default class EntityDrawer
     }
     // set callback function
     const afterLeftClick = (
+      // left click
       movement: Cesium.ScreenSpaceEventHandler.PositionedEvent,
-      pickedPos: Cesium.Cartesian3[],
+      pickedPos: Cesium.Cartesian3 | undefined,
       pickedObj: Cesium.Entity
     ) => {
-      // left click
-      // console.log('click1')
       clickFlag = 1;
       // 点击处的直角坐标
       const cartesian = pickedPos;
       // 检查格式
-      if (!cartesian || !isValidCartesian3(cartesian)) return;
+      if (!cartesian) return;
       // 收集 点击处的地理坐标
       pickedPosCollection.push(cartesian); // 更新实体的坐标
       // 特殊处理
@@ -256,7 +256,7 @@ export default class EntityDrawer
       // mouse movement
       let cartesian = that._getCartesian3FromPX(movement.endPosition);
       //shadow follow 持续更新坐标选项 动态实体会每帧读取
-      if (!cartesian || !isValidCartesian3(cartesian)) return;
+      if (!cartesian) return;
       options.mode === 'follow' &&
         clickFlag &&
         pickedPosCollection.push(cartesian);
@@ -268,27 +268,11 @@ export default class EntityDrawer
       clickFlag = 0;
       // 更新图形
       const isClose = true;
+      let cartesian = that._getCartesian3FromPX(movement.position);
       that._updatePosByType(
         type,
         pickedPosCollection,
-        {
-          x: 0,
-          y: 0,
-          z: 0,
-          clone: function (result?: Cesium.Cartesian3): Cesium.Cartesian3 {
-            throw new Error('Function not implemented.');
-          },
-          equals: function (right?: Cesium.Cartesian3): boolean {
-            throw new Error('Function not implemented.');
-          },
-          equalsEpsilon: function (
-            right?: Cesium.Cartesian3,
-            relativeEpsilon?: number,
-            absoluteEpsilon?: number
-          ): boolean {
-            throw new Error('Function not implemented.');
-          },
-        },
+        cartesian,
         options,
         isClose
       );
