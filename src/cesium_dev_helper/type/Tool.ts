@@ -111,8 +111,8 @@ export interface I_EntityDrawerClass {
    * @param option - The options for the polyline.
    */
   fakeDrawPolyLine(
-    getPos: () => Cesium.Cartesian3,
-    option: I_EntityOption
+    getPos?: () => Cesium.Cartesian3,
+    option?: I_EntityOption
   ): void;
 
   /**
@@ -122,9 +122,9 @@ export interface I_EntityDrawerClass {
    * @param type - The type of entity to fake draw (e.g., polyline, polygon).
    */
   fakeDraw(
-    getPos: () => Cesium.Cartesian3,
-    option: I_EntityOption,
-    type: string
+    type: string,
+    getPos?: () => Cesium.Cartesian3,
+    option?: I_EntityOption
   ): void;
 }
 

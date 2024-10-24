@@ -11,7 +11,7 @@ import {
   ParsedEntityOptions,
   EditorPluginFunction,
 } from '../../../type';
-import { ca } from 'element-plus/es/locale';
+
 
 /**
  * EntityDrawer class for drawing entities with events on a Cesium viewer with event handling.
@@ -209,22 +209,16 @@ export default class EntityDrawer
 
     // --EVENT--
     // fake
-    if (type === 'polygon') {
-      that.fakeDraw(null, options, 'polyline');
-    }
+    that.fakeDraw(type);
     // set callback function
     const afterLeftClick = (
-      // left click
       movement: Cesium.ScreenSpaceEventHandler.PositionedEvent,
       pickedPos: Cesium.Cartesian3 | undefined,
       pickedObj: Cesium.Entity
     ) => {
       clickFlag = 1;
-      // 点击处的直角坐标
       const cartesian = pickedPos;
-      // 检查格式
       if (!cartesian) return;
-      // 收集 点击处的地理坐标
       pickedPosCollection.push(cartesian); // 更新实体的坐标
       // 特殊处理
       // 1.绘制两点直线
@@ -317,14 +311,14 @@ export default class EntityDrawer
       );
     };
     // bind events
-    $eM.onMouseClick(afterLeftClick);
-    $eM.onMouseMove(afterMouseMove);
+    $eM.onMouseClick(afterLeftClick,1);
+    $eM.onMouseMove(afterMouseMove,1);
     $eM.onMouseRightClick(afterRightClick, 100);
   }
 
-  fakeDraw(getPos: Function | null, option: EntityOption, type: string) {
+  fakeDraw(type: string, getPos?: Function | null, option?: EntityOption) {
     const _type = type.toLowerCase();
-    if (_type === 'polyline') this.fakeDrawPolyLine(getPos, option);
+    if (_type === 'polygon') this.fakeDrawPolyLine(getPos, option);
   }
   fakeDrawPolyLine(getPos: Function | null, option: EntityOption) {
     let that = this;
@@ -406,9 +400,9 @@ export default class EntityDrawer
       last.polyline.show = false;
       that._fakeLayer.entities.remove(last);
     };
-    $eM.onMouseClick(afterClick2, 1);
-    $eM.onMouseMove(afterMouseMove2, 1);
-    $eM.onMouseRightClick(afterRightClick2, 1);
+    $eM.onMouseClick(afterClick2, 2);
+    $eM.onMouseMove(afterMouseMove2, 2);
+    $eM.onMouseRightClick(afterRightClick2, 2);
   }
   /**
    * 移除所有实体

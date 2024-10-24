@@ -49,7 +49,6 @@ class EventManager extends Manager implements I_EventManagerClass {
         item.callback(event);
       });
     };
-    this.init_KeyboardListener_And_Actions();
   }
 
   // 核心 事件执行后回调 event, pick的位置 ,pick的对象
@@ -58,6 +57,8 @@ class EventManager extends Manager implements I_EventManagerClass {
     callback: HandlePickedFunction,
     priority = 0
   ) {
+    console.log('addEvent', this.eventHandlers);
+
     let that = this;
     if (!that.eventHandlers.has(eventType)) {
       // 如果该事件类型还没有被添加过 就创建一个容器管理这个类型
@@ -183,6 +184,7 @@ class EventManager extends Manager implements I_EventManagerClass {
   }
 
   removeEventListener(callback: any) {
+    
     let that = this;
     for (const [eventType, actions] of that.eventHandlers.entries()) {
       if (eventType === 'keydown') {
@@ -200,9 +202,11 @@ class EventManager extends Manager implements I_EventManagerClass {
         if (actions.length === 0) {
           that.eventHandlers.delete(eventType);
         }
+        console.log('removeEvent',this.eventHandlers);
         return;
       }
     }
+    
   }
 
   clear() {
