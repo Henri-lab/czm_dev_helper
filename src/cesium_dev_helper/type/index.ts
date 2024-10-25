@@ -45,3 +45,8 @@ export type CzmPickedRes = {
   id: Cesium.Entity;
   primitive: Cesium.Primitive;
 };
+export type Coord_LLH = {
+  longitude: number;
+  latitude: number;
+  height: number;
+};

@@ -1,5 +1,6 @@
 import * as Cesium from 'cesium';
-import { GeoJSONFeature } from '../../type';
+import { GeoJSONFeature, Coord_LLH } from '../../type';
+import { isValidCartographic, isValidCartesian3 } from '../util/isValid';
 /**
  * Convert a Cesium entity to GeoJSON
  * @param entity - The Cesium Entity
@@ -70,14 +71,14 @@ export default class DataFormator {
 
     return geojsonFeature;
   }
-  static sureCartesin3(position:any){
-    let _position:Cesium.Cartesian3;
-    if (position instanceof Cesium.Cartographic) {
-        const { longitude, latitude, height } = position;
-        _position = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
-      } else if (position instanceof Cesium.Cartesian3) {
-        _position = position;
-      }
-      return _position;
+  static sureCartesin3(position: any) {
+    let _position: Cesium.Cartesian3;
+    if (isValidCartographic(position)) {
+      const { longitude, latitude, height } = position as Coord_LLH;
+      _position = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
+    } else if (isValidCartesian3(position)) {
+      _position = position;
+    }
+    return _position;
   }
 }

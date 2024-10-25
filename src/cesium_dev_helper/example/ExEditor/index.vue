@@ -13,8 +13,8 @@
         </div>
         <CzmMap width="1600px" height="1000px">
             <CzmCamera :view="view"></CzmCamera>
-            <CzmEditor @edit="getEditor"></CzmEditor>
-            <Interaction></Interaction>
+            <!-- <CzmEditor @edit="getEditor"></CzmEditor> -->
+            <!-- <Interaction></Interaction> -->
         </CzmMap>
         <CodeEditor :value="codeString" style="width: 1600px;height: 500px;"></CodeEditor>
 
