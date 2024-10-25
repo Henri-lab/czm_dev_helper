@@ -7,6 +7,7 @@ export default
                 <el-button @click="handleSize('+')">增加半径</el-button>
                 <el-button @click="handleSize('-')">减小半径</el-button>
                 <el-button @click="handlePerformance">高性能切换</el-button>
+                <el-button @click="generateJSON">生成静态GeoJSON</el-button>
             </div>
             <CzmMap width="1600px" height="1000px">
                 <Entity layerName="point123" draggable>
@@ -29,6 +30,13 @@ export default
                             <span style="color: blanchedalmond;">entity color :</span><br>{{ scope.primitive.color }}<br>
                             <span style="color: blanchedalmond;">entity position :</span><br> {{
                                 scope.primitive.position }}<br>
+                        </div>
+                    </template>
+                    <template #data="scope">
+                        <div class="geojson"
+                            style="background-color: yellow;position: absolute;right: 0; z-index: 100;width: 260px;"
+                            v-show="isJSON">
+                            {{ scope.geojson }}
                         </div>
                     </template>
                 </Entity>
@@ -79,4 +87,8 @@ onMounted(() => {
         ]
     }
 })
+let isJSON = ref(false)
+const generateJSON = () => {
+    isJSON.value = !isJSON.value
+}
 `
