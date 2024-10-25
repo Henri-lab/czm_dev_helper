@@ -51,14 +51,16 @@ class EventManager extends Manager implements I_EventManagerClass {
       });
     };
   }
-
+  getNewHandler() {
+    return new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+  }
   // 核心 事件执行后回调 event, pick的位置 ,pick的对象
   _addEvent(
     eventType: Cesium.ScreenSpaceEventType,
     callback: HandlePickedFunction,
     priority = 0
   ) {
-    console.log('addEvent', this.eventHandlers);
+    // console.log('addEvent', this.eventHandlers);
 
     let that = this;
     if (!that.eventHandlers.has(eventType)) {
@@ -210,7 +212,7 @@ class EventManager extends Manager implements I_EventManagerClass {
         if (actions.length === 0) {
           that.eventHandlers.delete(eventType);
         }
-        console.log('removeEvent', this.eventHandlers);
+        // console.log('removeEvent', this.eventHandlers);
         return;
       }
     }
@@ -220,6 +222,13 @@ class EventManager extends Manager implements I_EventManagerClass {
     let that = this;
     that.destroy();
     that.handler = new Cesium.ScreenSpaceEventHandler(that.viewer.canvas);
+  }
+
+  updateHandler(updateOptions?) {
+    if (!updateOptions) {
+      this.clear();
+      return this.handler;
+    }
   }
 
   destroy() {

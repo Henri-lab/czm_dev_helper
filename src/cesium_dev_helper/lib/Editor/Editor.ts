@@ -34,6 +34,7 @@ export default class Editor {
   }
 
   start(type: string, options: EntityOption) {
+    console.log('editor start draw ', type, options.mode);
     let that = this;
     let _type = type.toLowerCase();
     let _options = options || this.$options[_type];
@@ -56,6 +57,8 @@ export default class Editor {
   }
 
   drawback(type: string, isHide: string = 'hide') {
+    console.log('editor drawback draw');
+    
     let that = this;
     let _type = type.toLowerCase();
     if (_type === 'polyline' && that.lines.length) {
@@ -71,6 +74,7 @@ export default class Editor {
   }
 
   recover(type: string) {
+    console.log('editor recover draw');
     let that = this;
     let _type = type.toLowerCase();
     if (_type === 'polyline' && that.linesTrash.length) {
@@ -85,5 +89,3 @@ export default class Editor {
     }
   }
 }
-
-

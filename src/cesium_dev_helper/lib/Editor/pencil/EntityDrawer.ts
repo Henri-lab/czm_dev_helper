@@ -103,7 +103,6 @@ export default class EntityDrawer
     options: EntityOption,
     pluginFunction?: EditorPluginFunction
   ): Cesium.Entity | null {
-    // console.log('wait drawing:', Type, '-mode:', options.mode)
     let isLeftClick = 0;
     const buffer = { Type, options, pluginFunction };
     if (!this.viewer || !options) return null;
@@ -112,11 +111,11 @@ export default class EntityDrawer
     const type = Type.toLowerCase();
     let that = this;
     let $eM = that.$eM;
-    let pickedPosCollection = [];
+    let pickedPosCollection = []; //坐标渲染源
     const getNewPositions = () => {
       return pickedPosCollection; //整体坐标
     };
-    let _handler_ = $eM.handler;
+    let _handler_ = $eM.updateHandler();
     that.currentHandler = _handler_; // register the handlers which is working in the class
 
     // 准备动态实体的数据
@@ -155,7 +154,7 @@ export default class EntityDrawer
         options.mode === 'straight' &&
         pickedPosCollection.length == 2
       ) {
-        // 执行额外的程序
+        // 暴露实体和坐标渲染源
         if (typeof pluginFunction === 'function') {
           pluginFunction(currentEntity, pickedPosCollection);
         }
