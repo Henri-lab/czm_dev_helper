@@ -5,15 +5,17 @@ import { DataPrepocesser } from '../../lib/Data';
 import DynamicColorProperty from '../../lib/Custom/Property/DynamicColorProperty';
 import * as Cesium from 'cesium'
 import { onBeforeUnmount, watch, createVNode, render } from 'vue';
+import { mockPointsMillion } from '../../mock/points'
 const $bus = inject('$bus')
 const $bus_Entity = inject('$bus_Entity')
 const layerNameProp = inject('layerNameProp')
-let _editor_, _viewer_, _eM_, _lM_, pointPrimitiveCollection
-$bus.on('czmLayerEvent@henrifox', ({ viewer, editor, eM, lM }) => {
+let _editor_, _viewer_, _eM_, _lM_, _cM_, pointPrimitiveCollection
+$bus.on('czmLayerEvent@henrifox', ({ viewer, editor, eM, lM, cM }) => {
     _viewer_ = viewer
     _editor_ = editor
     _eM_ = eM
     _lM_ = lM
+    _cM_ = cM
     pointPrimitiveCollection = _viewer_.scene.primitives.add(new Cesium.PointPrimitiveCollection());
 })
 const props = defineProps({
@@ -28,11 +30,28 @@ const props = defineProps({
     },
     color: {
         type: String,
-        default: null
+        default: 'white'
     },
     colors: {
         type: Object,
-        default: null
+        default: {
+            type: 'infinate',
+            interval: 2,
+            data: [
+                {
+                    value: 'red',
+                    time: 0
+                },
+                {
+                    value: 'green',
+                    time: 2
+                },
+                {
+                    value: 'blue',
+                    time: 4
+                },
+            ]
+        }
     },
     extraOpt: {
         type: Object,
@@ -71,6 +90,34 @@ let curSec = 0;
 let timer1, timer2
 let curEntity
 let curDatasource
+const parsedColor = (string) => {
+    return Cesium.Color.fromCssColorString(string)
+}
+const createDynamicPropertyOfColor = (colorOptions) => {
+    if (!colorOptions) return parsedColor('white');
+    const { type, interval, data } = colorOptions;
+    let colorDefinition = function (time) {  // 定义动态颜色变化函数
+        const endTime = data[data.length - 1].time + interval
+        for (let i = 0; i < data.length; i++) {
+            const color = data[i];
+            if (curSec < color.time) {
+                return parsedColor(data[i == 0 ? data.length - 1 : i - 1].value);
+            }
+        }
+
+        if (type && type.toLowerCase() == 'infinate' && curSec >= endTime) {
+            curSec = curSec % endTime; // 模拟循环
+        } else {
+            // 如果没有设置无限循环，没有找到合适的颜色，返回最后一个颜色
+            return parsedColor(data[data.length - 1].value);
+        }
+
+    }
+    let dynamicColorProperty;
+    colorDefinition && (dynamicColorProperty = new DynamicColorProperty(colorDefinition));// 动态颜色属性
+    return dynamicColorProperty;
+}
+
 const createDynamicPoint = (_viewer_, layerName) => {
     if (!_viewer_) return
     pointPrimitiveCollection.removeAll();
@@ -79,99 +126,30 @@ const createDynamicPoint = (_viewer_, layerName) => {
     if (props.performance) { // 增加性能 图元
         let center
         if (props.test) {
-            // 测试模式 生成100个示例点 
-            const baseLongitude = 2.294481;//基准点 base
-            const baseLatitude = 48.858370;
-            const baseHeight = 20;
-            const colorArray = [
-                Cesium.Color.RED,
-                Cesium.Color.GREEN,
-                Cesium.Color.BLUE
-            ];
-            for (let i = 0; i < 1000000; i++) {
-                const longitudeOffset = (Math.random() - 0.5) * 5; // 经度偏移
-                const latitudeOffset = (Math.random() - 0.5) * 5; // 纬度偏移
-                const heightOffset = (Math.random() - 0.5) * 750000;
-                // 构建点的位置和颜色
-                const position = Cesium.Cartesian3.fromDegrees(
-                    baseLongitude + longitudeOffset,
-                    baseLatitude + latitudeOffset,
-                    baseHeight + heightOffset
-                );
-                // 随机选择颜色
-                const color = colorArray[i % colorArray.length];
-                // 添加点到集合
-                let pointPrimitive = pointPrimitiveCollection.add({
-                    position: position,
-                    color: color,
-                    pixelSize: 5,
-                    scaleByDistance: new Cesium.NearFarScalar(1000, 1.0, 5000, 0.2),
-                });
-            }
-        } else { // 普通实体
-            props.points.forEach(point => {
-                let pointPrimitive = pointPrimitiveCollection.add({
-                    position: Cesium.Cartesian3.fromDegrees(point.longitude, point.latitude, point.height),
-                    color: point.color,
-                    pixelSize: point.size,
-                    ...props.extraOpt
-                });
-            });
+            mockPointsMillion(pointPrimitiveCollection)     // 测试模式 生成million个示例点 
         }
         center = DataPrepocesser.getCenterOfPrimitives(pointPrimitiveCollection._pointPrimitives)
-        props.zoom && _viewer_.camera.setView({
-            destination: center,
-            orientation: {
-                heading: Cesium.Math.toRadians(0.0),
-                pitch: Cesium.Math.toRadians(-45.0),
-                roll: 0.0
-            }
-        });
-        curEntity = curEntity = {
+        props.zoom && _cM_.setViewSimple(center)
+        curEntity = {
             name: 'point@henrifox',
             position: center,
             data: pointPrimitiveCollection._pointPrimitives
         };
     }
     else {
-        const colorsProp = props.colors
-        const positionProp = props.position
         if (!_viewer_) return;
-        function parsedColor(string) {
-            return Cesium.Color.fromCssColorString(string)
-        }
-        let colorDefinition = function (time) {  // 定义动态颜色变化函数
-            if (!colorsProp) return;
-            const colorsData = colorsProp.data;
-            const endTime = colorsData[colorsData.length - 1].time + colorsProp.interval
-            for (let i = 0; i < colorsData.length; i++) {
-                const color = colorsData[i];
-                if (curSec < color.time) {
-                    return parsedColor(colorsData[i == 0 ? colorsData.length - 1 : i - 1].value);
-                }
-            }
-
-            if (colorsProp.type && colorsProp.type.toLowerCase() == 'infinate' && curSec >= endTime) {
-                curSec = curSec % endTime; // 模拟循环
-            } else {
-                // 如果没有设置无限循环，没有找到合适的颜色，返回最后一个颜色
-                return parsedColor(colorsData[colorsData.length - 1].value);
-            }
-
-        }
-        let dynamicColorProperty;
-        colorDefinition && (dynamicColorProperty = new DynamicColorProperty(colorDefinition));// 动态颜色属性
         const entity = curDatasource.entities.add({
             properties: {
                 meta: 'Some additional meta information',
                 html: `<p>Point size- - -${props.size}</p>`
             },
             name: 'Point@henrifox' + Date.now(),
-            position: positionProp,
+            position: props.position,
             point: {
                 pixelSize: props.size,
-                color: !props.color ? dynamicColorProperty : parsedColor(props.color), // 没有指定颜色 则使用动态颜色属性 ;动态属性不存在 则cesium使用默认白色
-                ...props.extraOpt,
+                color: props.color ?
+                    parsedColor(props.color) :
+                    createDynamicPropertyOfColor(props.colors), // 动态颜色属性
             },
         });
         curEntity = entity

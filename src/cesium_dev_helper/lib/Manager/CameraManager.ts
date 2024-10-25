@@ -9,6 +9,7 @@ import Manager from './Manager';
 import { I_CameraManager } from '../../type/Manager';
 import * as Cesium from 'cesium';
 import * as THREE from 'three';
+import DataFormator from '../Data/DataFormator';
 // let Cesium = new Manager().Cesium;
 
 export default class CameraManager extends Manager implements I_CameraManager {
@@ -116,13 +117,9 @@ export default class CameraManager extends Manager implements I_CameraManager {
 
   // 精度和控制程度最高
   setView({ destination, heading = 0, pitch = -90, roll = 0 }) {
-    let _destination: Cartesian3;
-    if (typeof destination === 'object') {
-      const { longitude, latitude, height } = destination;
-      _destination = Cartesian3.fromDegrees(longitude, latitude, height);
-    }
+    let _destination: Cartesian3 = DataFormator.sureCartesin3(destination);
     this.camera.setView({
-      destination: _destination || Cartesian3.ZERO,
+      destination: _destination,
       orientation: {
         heading: CesiumMath.toRadians(heading),
         pitch: CesiumMath.toRadians(pitch),
@@ -130,7 +127,17 @@ export default class CameraManager extends Manager implements I_CameraManager {
       },
     });
   }
-
+  setViewSimple(center: any) {
+    center = DataFormator.sureCartesin3(center);
+    this.camera.setView({
+      destination: center,
+      orientation: {
+        heading: Cesium.Math.toRadians(0.0),
+        pitch: Cesium.Math.toRadians(-45.0),
+        roll: 0.0,
+      },
+    });
+  }
   // 精度和控制程度比lookat更高
   setCameraLookAtTransform(
     targetPosition: Cesium.PositionProperty,

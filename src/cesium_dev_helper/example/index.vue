@@ -36,6 +36,7 @@ import ExPolygon from './ExPolygon/index.vue'
 import ExThree from './ExThree/index.vue'
 import ExParticle from './ExParticle/index.vue'
 import ExVehicle from './ExVehicle/index.vue'
+import ExEntity from './ExEntity/index.vue'
 import { h, ref, watch } from 'vue';
 
 const isEx = ref(false)

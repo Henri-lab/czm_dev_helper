@@ -70,4 +70,14 @@ export default class DataFormator {
 
     return geojsonFeature;
   }
+  static sureCartesin3(position:any){
+    let _position:Cesium.Cartesian3;
+    if (position instanceof Cesium.Cartographic) {
+        const { longitude, latitude, height } = position;
+        _position = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
+      } else if (position instanceof Cesium.Cartesian3) {
+        _position = position;
+      }
+      return _position;
+  }
 }

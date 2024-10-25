@@ -211,7 +211,6 @@ onMounted(async () => {
     $bus.emit('czmCameraEvent@henrifox', cM)
     $bus.emit('czmEditorEvent@henrifox', editor)
     $bus.emit('czmEffectEvent@henrifox', { dP, sM, cM, eM, effecter, editor })
-    $bus.emit('czmLayerEvent@henrifox', { viewer: curViewer, editor, eM, lM })
+    $bus.emit('czmLayerEvent@henrifox', { viewer: curViewer, editor, eM, lM, cM })
 })
 </script>
-
