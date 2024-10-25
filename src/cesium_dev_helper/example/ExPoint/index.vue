@@ -4,6 +4,7 @@
             <div class="btns" style="display: flex;flex-direction:column;position: absolute;z-index: 100;">
                 <el-button @click="handleSize('+')" v-show="isBtn">增加半径</el-button>
                 <el-button @click="handleSize('-')" v-show="isBtn">减小半径</el-button>
+                <el-button @click="generateJSON">生成静态GeoJSON</el-button>
                 <br>
                 <el-button @click="handlePerformance">百万级渲染</el-button>
             </div>
@@ -25,6 +26,13 @@
                                 scope.primitive.position || '' }}<br>
                         </div>
                     </template>
+                    <template #data="scope">
+                        <div class="geojson"
+                            style="background-color: yellow;position: absolute;right: 0; z-index: 100;width: 260px;"
+                            v-show="isJSON">
+                            {{ scope.geojson }}
+                        </div>
+                    </template>
                 </Entity>
             </CzmMap>
         </div>
@@ -41,6 +49,7 @@ import { onMounted, ref } from 'vue'
 import * as Cesium from 'cesium';
 import axios from 'axios'
 import CodeEditor from '@/components/CodeEditor/index.vue'
+import { isJSDoc } from 'typescript';
 const isBtn = ref(true)
 const isPerformance = ref(false)
 const handlePerformance = () => {
@@ -83,10 +92,10 @@ onMounted(() => {
     }
 })
 
-
-
-onMounted(() => {
-})
+let isJSON = ref(false)
+const generateJSON = () => {
+    isJSON.value = !isJSON.value
+}
 
 </script>
 

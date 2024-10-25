@@ -1,7 +1,8 @@
 <template>
     <slot></slot>
     <slot class="popup@henrifox" name="popup" :isPicked="_isPicked_" :entity="_entity_" :primitive="_primitive_"
-        :test="test" />
+        :pickedPos="_pickedPos_" :test="test" />
+    <slot class="entityData@henrifox" name="data" :geojson="geojson" />
 </template>
 
 <script setup>
@@ -42,20 +43,22 @@ provide('layerNameProp', props.layerName)
 
 
 
-let _entity_ = ref(new Cesium.Entity()), _primitive_ = ref(new Cesium.Primitive()), _isPicked_ = ref(false)
+let _entity_ = ref(new Cesium.Entity()), _primitive_ = ref(new Cesium.Primitive()), _pickedPos_ = ref(Cesium.Cartesian3.ZERO), _isPicked_ = ref(false)
 $bus_Entity.on('popupInfoEvent@henrifox', (pick) => {
-    const { entity, primitive, isPicked } = pick
+    const { entity, primitive, pickedPos, isPicked } = pick
     // console.log('popupInfoEvent@henrifox', entity, primitive,isPicked)
     _entity_.value = entity
     _primitive_.value = primitive
+    _pickedPos_.value = pickedPos
     _isPicked_.value = isPicked
 })
+let geojson = ref(JSON.stringify({}))
 $bus_Entity.on('entityCreatedEvent@henrifox', ({ target, type, isPrimitive }) => {
     if (target instanceof Cesium.Entity) {
         const parsed = DataFormator.cesiumEntityToGeoJSON(target)
         // 将 geojson 对象转换为字符串
-        const geojson = JSON.stringify(parsed, null, 2);
-        console.log(geojson, 'geojson')
+        geojson = JSON.stringify(parsed, null, 2);
+        // console.log(geojson, 'geojson')
         // alert(geojson);
     }
     $bus_Entity.emit('materialEvent@henrifox', { target, type, isPrimitive })

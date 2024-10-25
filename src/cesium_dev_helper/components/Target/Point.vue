@@ -171,7 +171,7 @@ const bindEvent = (eM, type) => {
                 // console.log('object picked.', pickedPos)
                 const primitive = pickedObject.primitive;
                 const entity = pickedObject.id;
-                $bus_Entity.emit('popupInfoEvent@henrifox', { entity, primitive, isPicked: true })
+                $bus_Entity.emit('popupInfoEvent@henrifox', { entity, primitive, pickedPos, isPicked: true })
             }
             else {
                 $bus_Entity.emit('popupInfoEvent@henrifox', { isPicked: false })
