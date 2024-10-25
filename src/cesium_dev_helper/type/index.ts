@@ -32,3 +32,11 @@ export type HandlePickedFunction = (
 export type KeyboardEventFunction = (...args: any[]) => any;
 export type ParsedEntityOptions = I_ParsedEntityOptions;
 export type EntityOption = I_EntityOption & Cesium.Entity.ConstructorOptions;
+export type GeoJSONFeature = {
+  type: 'Feature';
+  geometry: {
+    type: string;
+    coordinates: number[][];
+  };
+  properties: Record<string, any> | null;
+};

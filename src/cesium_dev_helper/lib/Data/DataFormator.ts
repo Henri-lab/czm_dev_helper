@@ -1,15 +1,15 @@
 import * as Cesium from 'cesium';
-
+import { GeoJSONFeature } from '../../type';
 /**
  * Convert a Cesium entity to GeoJSON
  * @param entity - The Cesium Entity
  * @returns GeoJSON feature
  */
 export default class DataFormator {
-  static cesiumEntityToGeoJSON(entity: Cesium.Entity): any {
+  static cesiumEntityToGeoJSON(entity: Cesium.Entity): GeoJSONFeature {
     // Placeholder for GeoJSON feature
     let geojsonFeature = {
-      type: 'Feature',
+      type: 'Feature' as const,
       geometry: {
         type: '',
         coordinates: [],
