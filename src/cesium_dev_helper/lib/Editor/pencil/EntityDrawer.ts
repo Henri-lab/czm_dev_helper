@@ -2,16 +2,17 @@ import { DrawingManager, EventManager, LayerManager } from '../../Manager';
 import EntityMaker from './EntityMaker';
 import { CoordTransformer } from '../../Compute';
 import { isValidCartesian3 } from '../../util/isValid';
+import { parse_EntityOption } from '../../util/parse';
 import TurfUser from '../../Compute/TurfUser';
 import * as Cesium from 'cesium';
 import CallbackProperty from 'cesium/Source/DataSources/CallbackProperty';
 import { I_EntityDrawerClass } from '../../../type/Tool';
+import { Updater } from '../../Compute';
 import {
   EntityOption,
   ParsedEntityOptions,
   EditorPluginFunction,
 } from '../../../type';
-
 
 /**
  * EntityDrawer class for drawing entities with events on a Cesium viewer with event handling.
@@ -62,43 +63,25 @@ export default class EntityDrawer
       return data;
     }, false);
   }
-  _parseConfig(entityOption: EntityOption): ParsedEntityOptions {
-    const {
-      created_time,
-      name,
-      description /*可随意添加*/,
-      datasource,
-      ...rest
-    } = entityOption;
-    const parsedEntityOpt = {
-      extraOption: {
-        created_time,
-        name,
-        description,
-      },
-      graphicOption: rest,
-      datasource: datasource || this._drawLayer, //默认加载图层
-    };
-    return parsedEntityOpt;
-  }
-  // 开始准备动态实体(限制在本图层)的绘制
-  // 解析参数 调用createDynamicEntity的中间件
-  _startDynamicEntity = (
+  // 生成动态实体(限制在本图层)的绘制: 解析参数 调用createDynamicEntity
+  _createDynamicEntity = (
     typeOfEntity: string,
     entityOption: EntityOption,
-    getNewPosition: Function
+    getNewPositions: Function
   ): Cesium.Entity | undefined => {
     let that = this;
-    if (typeof getNewPosition !== 'function')
+    if (typeof getNewPositions !== 'function')
       throw new Error('cannot get new position');
     try {
       // 配置解析
-      const parsedEntityOpt = that._parseConfig(entityOption);
+      const parsedEntityOpt = parse_EntityOption(entityOption, {
+        datasource: that._drawLayer,
+      });
 
       let Entity = that.$entityMaker.createDynamicEntity(
         typeOfEntity,
         parsedEntityOpt,
-        getNewPosition
+        getNewPositions
       );
       return Entity;
     } catch (e) {
@@ -107,64 +90,7 @@ export default class EntityDrawer
     }
   };
   // 更新 用于绘制实体的 配置选项的 坐标选项
-  _updatePos(options: EntityOption, newPos: Cesium.Cartesian3[]): void {
-    options.positions = newPos;
-  }
-  _updatePosByType(
-    type: string,
-    pickedPosCollection: Cesium.Cartesian3[] = [],
-    newPickPos: Cesium.Cartesian3 = new Cesium.Cartesian3(0, 0, 0),
-    entityOptions: EntityOption = {},
-    isClose: boolean = true
-  ): void {
-    // --多边形闭合--
-    if (isClose) {
-      if (type !== 'point' && type !== 'polyline') {
-        // 首尾相连
-        pickedPosCollection.push(pickedPosCollection[0]);
-        this._updatePos(entityOptions, pickedPosCollection);
-      }
-      // 只是为了闭合图形更新 提前返回
-      return;
-    }
-    // --多边形编辑--
-    // 线段
-    if (type === 'polyline' && pickedPosCollection.length >= 2) {
-      // 端点更新
-      pickedPosCollection.pop();
-      pickedPosCollection.push(newPickPos);
-    }
-    // 矩形(保持2个点)
-    else if (type === 'rectangle') {
-      if (pickedPosCollection.length === 1) {
-        // 矩形 端点更新(增加)
-        pickedPosCollection.push(newPickPos);
-      } else {
-        // 矩形 端点更新(替换已有点)
-        pickedPosCollection[1] = newPickPos;
-      }
-    }
-    // 圆形
-    else if (type === 'ellipse') {
-      // 检测到还没有创建圆的圆心
-      if (pickedPosCollection.length === 0) return;
-      // 缩放半径
-      if (pickedPosCollection.length === 1) {
-        const _center = pickedPosCollection[0];
-        const _radius = Cesium.Cartesian3.distance(_center, newPickPos);
-        const dynamicRadius = this._CallBack(_radius); //每帧都调用
-        entityOptions.semiMajorAxis = dynamicRadius;
-        entityOptions.semiMinorAxis = dynamicRadius;
-      }
-    }
-    // 其他 直接添加数据点
-    else {
-      pickedPosCollection.push(newPickPos);
-    }
-    // 更新实体的配置选项点坐标
-    this._updatePos(entityOptions, pickedPosCollection);
-    return;
-  }
+
   /**
    * Entity an entity with event handling.
    * @param {String} Type - The type of the entity.
@@ -178,33 +104,35 @@ export default class EntityDrawer
     pluginFunction?: EditorPluginFunction
   ): Cesium.Entity | null {
     // console.log('wait drawing:', Type, '-mode:', options.mode)
-    let clickFlag = 0;
+    let isLeftClick = 0;
     const buffer = { Type, options, pluginFunction };
     if (!this.viewer || !options) return null;
 
     // --数据准备--
     const type = Type.toLowerCase();
     let that = this;
-    let $eM = that.$eM,
-      // 收集click处的坐标
-      pickedPosCollection = [],
-      // 获取 ~新~ 事件handler程序 ,防止事件绑定间的冲突
-      _handler_ = $eM.handler;
-
-    // register the handlers which is working
-    that.currentHandler = _handler_;
-
-    // 准备动态实体的数据
-    options.positions = pickedPosCollection;
-    if (!options.datasource) options.datasource = that._drawLayer; // 默认添至的图层
-
-    const getNewPosition = () => {
-      // return pickedPosCollection[pickedPosCollection.length - 1];最后位置
+    let $eM = that.$eM;
+    let pickedPosCollection = [];
+    const getNewPositions = () => {
       return pickedPosCollection; //整体坐标
     };
-    // --创建动态实体--
-    let currentEntity = that._startDynamicEntity(type, options, getNewPosition);
+    let _handler_ = $eM.handler;
+    that.currentHandler = _handler_; // register the handlers which is working in the class
 
+    // 准备动态实体的数据
+    if (options.positions) {
+      // 初始化坐标 = 预设坐标 + 鼠标交互坐标
+      pickedPosCollection = pickedPosCollection.concat(...options.positions);
+    }
+    options.positions = pickedPosCollection;
+    options.datasource = options.datasource || that._drawLayer; // 默认添至的图层
+
+    // --创建动态实体--
+    let currentEntity = that._createDynamicEntity(
+      type,
+      options,
+      getNewPositions
+    );
     // console.log(currentEntity, 'currentEntity')
 
     // --EVENT--
@@ -216,7 +144,7 @@ export default class EntityDrawer
       pickedPos: Cesium.Cartesian3 | undefined,
       pickedObj: Cesium.Entity
     ) => {
-      clickFlag = 1;
+      isLeftClick = 1;
       const cartesian = pickedPos;
       if (!cartesian) return;
       pickedPosCollection.push(cartesian); // 更新实体的坐标
@@ -252,18 +180,18 @@ export default class EntityDrawer
       //shadow follow 持续更新坐标选项 动态实体会每帧读取
       if (!cartesian) return;
       options.mode === 'follow' &&
-        clickFlag &&
+        isLeftClick &&
         pickedPosCollection.push(cartesian);
     };
     const afterRightClick = (
       movement: Cesium.ScreenSpaceEventHandler.PositionedEvent
     ) => {
       // right click
-      clickFlag = 0;
+      isLeftClick = 0;
       // 更新图形
       const isClose = true;
       let cartesian = that._getCartesian3FromPX(movement.position);
-      that._updatePosByType(
+      Updater.updateEntityPosByType(
         type,
         pickedPosCollection,
         cartesian,
@@ -311,8 +239,8 @@ export default class EntityDrawer
       );
     };
     // bind events
-    $eM.onMouseClick(afterLeftClick,1);
-    $eM.onMouseMove(afterMouseMove,1);
+    $eM.onMouseClick(afterLeftClick, 1);
+    $eM.onMouseMove(afterMouseMove, 1);
     $eM.onMouseRightClick(afterRightClick, 100);
   }
 

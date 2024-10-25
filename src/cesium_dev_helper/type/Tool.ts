@@ -34,48 +34,17 @@ export interface I_EntityDrawerClass {
   _CallBack(data: any): Cesium.CallbackProperty;
 
   /**
-   * Parses entity options and separates extra and graphic options.
-   * @param entityOption - The configuration options for the entity.
-   * @returns A parsed configuration object.
-   */
-  _parseConfig(entityOption: I_EntityOption): I_ParsedEntityOptions;
-
-  /**
    * Prepares and draws a dynamic entity with specific options and event handlers.
    * @param typeOfEntity - The type of the entity (e.g., point, polyline).
    * @param entityOption - The options to configure the entity.
    * @param getNewPosition - A function to get the new position for the dynamic entity.
    * @returns The created dynamic entity.
    */
-  _startDynamicEntity(
+  _createDynamicEntity(
     typeOfEntity: string,
     entityOption: I_EntityOption,
     getNewPosition: () => Cesium.Cartesian3[]
   ): Cesium.Entity | undefined;
-
-  /**
-   * Updates the entity's position options with new coordinates.
-   * @param options - The entity options to update.
-   * @param newPos - The new position for the entity.
-   */
-  _updatePos(options: I_EntityOption, newPos: Cesium.Cartesian3[]): void;
-
-  /**
-   * Updates the positions for specific entity types (polyline, rectangle, etc.).
-   * @param type - The type of the entity (e.g., polyline, rectangle).
-   * @param pickedPosCollection - The collection of positions already picked.
-   * @param newPickPos - The new position to be added.
-   * @param entityOptions - The entity options to update.
-   * @param isClose - Whether the shape should be closed (for polygons).
-   * @returns A boolean indicating whether the update was successful.
-   */
-  _updatePosByType(
-    type: string,
-    pickedPosCollection: Cesium.Cartesian3[],
-    newPickPos: Cesium.Cartesian3,
-    entityOptions: I_EntityOption,
-    isClose: boolean
-  ): void;
 
   /**
    * Draws an entity with default event handling (left click, right click, etc.).
@@ -140,6 +109,7 @@ export interface I_EntityOption {
   semiMinorAxis?: Cesium.CallbackProperty | number;
   datasource?: Cesium.DataSource;
   mode?: string;
+  after?: Function;
   [key: string]: any; // Any additional configuration properties.
 }
 

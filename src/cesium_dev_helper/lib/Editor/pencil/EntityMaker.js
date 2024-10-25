@@ -210,7 +210,6 @@ export default class EntityMaker extends DrawingManager {
       entityOpt.rectangle.coordinates = this.CallBackProperty(Rectangle(getNewPosition()))
     }
     else if (_type === 'polyline') {
-      
       entityOpt.polyline.positions = this.CallBackProperty(getNewPosition())
     }
     else {

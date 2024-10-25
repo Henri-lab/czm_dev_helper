@@ -4,7 +4,7 @@ import {
   terrianProviderConfig,
   mapProviderConfig,
 } from '../../type/Config';
-import { mapProvider } from '../../type';
+import { mapProvider, ParsedEntityOptions, EntityOption } from '../../type';
 import { Viewer, ImageryProvider, TerrainProvider } from 'cesium';
 // 在 Cesium 中，ImageryProvider 是一个抽象基类，所有具体的图像提供者类都继承自它。因此， UrlTemplateImageryProvider 可以将其视为 ImageryProvider 的一种实现。
 // 当进行类型判断时 使用 instanceof 运算符来检查一个 UrlTemplateImageryProvider 是否是 ImageryProvider 的一个实例。
@@ -99,7 +99,28 @@ export const parse_viewerConfig = (ViewerConfig: ViewerConfig) => {
     extra: extraConfig,
   };
 };
-
+export const parse_EntityOption = (
+  entityOption: EntityOption,
+  defaultOption?: EntityOption
+): ParsedEntityOptions => {
+  const {
+    created_time,
+    name,
+    description /*可随意添加*/,
+    datasource,
+    ...rest
+  } = entityOption;
+  const parsedEntityOpt = {
+    extraOption: {
+      created_time,
+      name,
+      description,
+    },
+    graphicOption: rest,
+    datasource: datasource || defaultOption.datasource, //默认加载图层
+  };
+  return parsedEntityOpt;
+};
 /**
  * 分类  cesium provider 为 imagery 和 terrian
  * @param {Object} options - 提供者配置选项
