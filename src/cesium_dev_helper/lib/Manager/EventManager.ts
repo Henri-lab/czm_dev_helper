@@ -4,6 +4,7 @@ import {
   OrderedCallback,
   KeyboardEventFunction,
   HandlePickedFunction,
+  CzmPickedRes,
 } from '../../type';
 
 import * as Cesium from 'cesium';
@@ -74,8 +75,16 @@ class EventManager extends Manager implements I_EventManagerClass {
           let pickedPos: Cesium.Cartesian3 | undefined;
           if (that.viewer.scene.pickPositionSupported) {
             pickedPos = that.viewer.scene.pickPosition(
-              event.position || event.endPosition
+              //被实体遮挡会失效
+              event.position || event.endPosition,
+              pickedPos
             );
+            if (!pickedPos) {
+              const ray = that.viewer.camera.getPickRay(
+                event.position || event.endPosition
+              );
+              pickedPos = that.viewer.scene.globe.pick(ray, that.viewer.scene);
+            }
           } else {
             pickedPos = that.viewer.scene.camera.pickEllipsoid(
               event.position || event.endPosition,
@@ -83,7 +92,7 @@ class EventManager extends Manager implements I_EventManagerClass {
             );
           }
           // 点击处或者移动处的物体
-          const pickedObj = that.viewer.scene.pick(
+          const pickedObj: CzmPickedRes = that.viewer.scene.pick(
             event.position || event.endPosition
           );
           // 获取这个eventType需要做什么动作（action）
@@ -184,7 +193,6 @@ class EventManager extends Manager implements I_EventManagerClass {
   }
 
   removeEventListener(callback: any) {
-    
     let that = this;
     for (const [eventType, actions] of that.eventHandlers.entries()) {
       if (eventType === 'keydown') {
@@ -202,11 +210,10 @@ class EventManager extends Manager implements I_EventManagerClass {
         if (actions.length === 0) {
           that.eventHandlers.delete(eventType);
         }
-        console.log('removeEvent',this.eventHandlers);
+        console.log('removeEvent', this.eventHandlers);
         return;
       }
     }
-    
   }
 
   clear() {

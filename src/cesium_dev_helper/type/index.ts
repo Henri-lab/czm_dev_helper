@@ -40,3 +40,8 @@ export type GeoJSONFeature = {
   };
   properties: Record<string, any> | null;
 };
+export type CzmPickedRes = {
+  collection: Cesium.PrimitiveCollection;
+  id: Cesium.Entity;
+  primitive: Cesium.Primitive;
+};

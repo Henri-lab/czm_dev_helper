@@ -30,7 +30,7 @@ const props = defineProps({
     },
     color: {
         type: String,
-        default: 'white'
+        default: ''
     },
     colors: {
         type: Object,
@@ -141,7 +141,7 @@ const createDynamicPoint = (_viewer_, layerName) => {
         const entity = curDatasource.entities.add({
             properties: {
                 meta: 'Some additional meta information',
-                html: `<p>Point size- - -${props.size}</p>`
+                html: `<p>Point size is ${props.size}</p>`
             },
             name: 'Point@henrifox' + Date.now(),
             position: props.position,
@@ -150,6 +150,7 @@ const createDynamicPoint = (_viewer_, layerName) => {
                 color: props.color ?
                     parsedColor(props.color) :
                     createDynamicPropertyOfColor(props.colors), // 动态颜色属性
+                ...props.extraOpt,
             },
         });
         curEntity = entity
@@ -164,9 +165,10 @@ const bindEvent = (eM, type) => {
             if (e.target instanceof HTMLCanvasElement) {/**bug if (!e.target instanceof HTMLCanvasElement) */ }
             else $bus_Entity.emit('popupInfoEvent@henrifox', { isPicked: false })
         })
-        eM.onMouseClick((e, pickedObjectPos, pickedObject) => {
+        eM.onMouseClick((e, pickedPos, pickedObject) => {
             if (Cesium.defined(pickedObject) && pickedObject.primitive instanceof Cesium.PointPrimitive) {
                 // console.log('object picked.', pickedObject);
+                // console.log('object picked.', pickedPos)
                 const primitive = pickedObject.primitive;
                 const entity = pickedObject.id;
                 $bus_Entity.emit('popupInfoEvent@henrifox', { entity, primitive, isPicked: true })
