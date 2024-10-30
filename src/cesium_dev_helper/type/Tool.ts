@@ -12,12 +12,6 @@ export interface I_EntityDrawerClass {
   viewer: Cesium.Viewer;
 
   /**
-   * Initializes the drawing layer with the given name, ensuring its uniqueness.
-   * @param name - The name of the layer.
-   */
-  initLayer(name: string): void;
-
-  /**
    * Converts a screen position (pixel) to a Cartesian3 coordinate.
    * @param position - The screen position.
    * @returns The Cartesian3 coordinate of the given screen position.
@@ -73,28 +67,6 @@ export interface I_EntityDrawerClass {
    * Destroys the event handler associated with the current drawing.
    */
   destroyHandler(): void;
-
-  /**
-   * Fakes drawing of polylines, typically for visualization purposes.
-   * @param getPos - Function to get the positions.
-   * @param option - The options for the polyline.
-   */
-  fakeDrawPolyLine(
-    getPos?: () => Cesium.Cartesian3,
-    option?: I_EntityOption
-  ): void;
-
-  /**
-   * Fake drawing functionality for visualization of polylines or polygons.
-   * @param getPos - Function to get positions.
-   * @param option - Drawing options.
-   * @param type - The type of entity to fake draw (e.g., polyline, polygon).
-   */
-  fakeDraw(
-    type: string,
-    getPos?: () => Cesium.Cartesian3,
-    option?: I_EntityOption
-  ): void;
 }
 
 /**

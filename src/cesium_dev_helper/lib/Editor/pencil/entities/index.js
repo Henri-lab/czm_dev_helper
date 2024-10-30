@@ -1,6 +1,7 @@
 import { SampleEntity } from './advanced/sample'
 import { objHasOwnProperty, setProperties } from "../../../util/properties";
 import { DrawingManager } from "../../../Manager";
+import EntityScaffold from './EntityScaffold';
 
 
 const createEntity = DrawingManager.createEntity;
@@ -166,6 +167,8 @@ export {
     objHasOwnProperty,
     setProperties,
     createEntity,//method in drawing manager
+
+    EntityScaffold,
 }
 
 
