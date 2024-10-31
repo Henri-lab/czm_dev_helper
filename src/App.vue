@@ -7,7 +7,8 @@
       <router-link to="/login"><el-button type="success" size="large">登录界面</el-button></router-link>&nbsp;&nbsp;
       <router-link to="/layout"><el-button type="success" size="large">Cesium界面</el-button></router-link>&nbsp;&nbsp;
       <router-link to="/subapp/weather/"><el-button type="primary" size="large">子应用</el-button></router-link>&nbsp;&nbsp;
-      <router-link to="/tf"><el-button type="success" size="large">tensorflow</el-button></router-link>
+      <router-link to="/tf"><el-button type="success" size="large">tensorflow</el-button></router-link>&nbsp;&nbsp;
+      <router-link to="/forms"><el-button type="success" size="large">forms</el-button></router-link>
     </div>
     <router-view></router-view>
   </div>

@@ -28,6 +28,11 @@ const testRoutes = [
     path:'/tf',
     name: 'tf',
     component: () => import('@/cesium_dev_helper/Tensorflow/index.vue'),
+  },
+  {
+    path:'/forms',
+    name: 'forms',
+    component: () => import('@/components/Form/index.vue'),
   }
 ]
 
