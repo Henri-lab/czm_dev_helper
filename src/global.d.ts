@@ -15,6 +15,8 @@ interface Window {
 }
 interface ImportMeta {
   env: {
+    MapboxKey: any;
+    BingMapKey: string;
     VITE_CESIUM_KEY: string;
     VITE_GAODE_Key: string;
     VITE_CESIUM_BASE_URL: any;

@@ -14,6 +14,7 @@ import Three from './Third/ThreePlugin.vue'
 // import Three from './Third/ThreeSync.vue';
 import Particle from "./Particle.vue";
 import Interaction from "./Interaction.vue";
+import Terrian from "./Config/Terrian.vue";
 
 
 export {
@@ -31,4 +32,5 @@ export {
     Three,
     Particle,
     Interaction,
+    Terrian,
 }

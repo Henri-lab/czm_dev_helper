@@ -22,6 +22,7 @@
             <ExThree v-if="isEx == 'three'" />
             <ExParticle v-if="isEx == 'particle'" />
             <ExVehicle v-if="isEx == 'vehicle'" />
+            <ExMeasure v-if="isEx =='measure'" />
         </div>
     </div>
 </template>
@@ -37,6 +38,7 @@ import ExThree from './ExThree/index.vue'
 import ExParticle from './ExParticle/index.vue'
 import ExVehicle from './ExVehicle/index.vue'
 import ExEntity from './ExEntity/index.vue'
+import ExMeasure from './ExMeasure/index.vue'
 import { h, ref, watch } from 'vue';
 
 const isEx = ref(false)
@@ -123,6 +125,10 @@ const items = ref([
         key: '7',
         label: '粒子特效',
     },
+    {
+        key: '8',
+        label: '测量',
+    },
 ]);
 const changeTheme = (checked) => {
     theme.value = checked ? 'dark' : 'light';
@@ -148,6 +154,10 @@ watch(() => selectedKeys.value,
             isEx.value = 'three'
         } else if (newV[0] == '7') {
             isEx.value = 'particle'
+        } else if (newV[0] == '8') {
+            isEx.value ='measure'
+        } else {
+            isEx.value = ''
         }
     }
 )

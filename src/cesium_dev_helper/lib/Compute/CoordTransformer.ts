@@ -14,7 +14,6 @@ class CoordTransformer {
     this.EE = 0.00669342162296594323;
   }
 
-
   /**
    * BD-09 To GCJ-02
    * @param lng
@@ -193,26 +192,35 @@ class CoordTransformer {
    * Gets the Cartesian coordinates from a screen position using the provided Cesium viewer.
    *
    * @param {Cartesian2} screenPosition - The screen position to convert.
-   * @param {Viewer} viewer - The Cesium viewer instance.
-   * @returns {Cartesian3|null} The Cartesian coordinates corresponding to the screen position, or null if the conversion failed.
+   * @param {Cesium.Viewer} viewer - The Cesium viewer instance.
+   * @returns {Cesium.Cartesian3|null} The Cartesian coordinates corresponding to the screen position, or null if the conversion failed.
    */
-  getCartesianFromScreenPosition(screenPosition, viewer) {
+  getCartesianFromScreenPosition(
+    screenPosition: Cesium.Cartesian2,
+    viewer: Cesium.Viewer
+  ): Cesium.Cartesian3 | null {
     let scene = viewer.scene;
     let ellipsoid = scene.globe.ellipsoid;
+    let camera = scene.camera;
     // Convert the screen position to Cartesian coordinates
-    let cartesian = viewer.camera.pickEllipsoid(screenPosition, ellipsoid);
-    if (cartesian) {
-      return cartesian;
+    let pickedPos: Cesium.Cartesian3 | undefined;
+    if (scene.pickPositionSupported) {
+      pickedPos = scene.pickPosition(screenPosition, pickedPos); //被实体遮挡会失效
+      if (!pickedPos) {
+        const ray = camera.getPickRay(screenPosition);
+        pickedPos = scene.globe.pick(ray, scene);
+      }
+    } else {
+      pickedPos = camera.pickEllipsoid(screenPosition, ellipsoid);
     }
-
-    return null;
+    return pickedPos;
   }
 
   /**
    * Transforms a Cartesian position to WGS84 coordinates.
    *
-   * @param {Cartesian3} cartesianPosition - The Cartesian position to transform.
-   * @returns {Cartesian3} The WGS84 coordinates.
+   * @param {Cesium.Cartesian3} cartesianPosition - The Cartesian position to transform.
+   * @returns {Cesium.Cartesian3} The WGS84 coordinates.
    */
   static transformCartesianToWGS84(cartesianPosition) {
     if (!isValidCartesian3(cartesianPosition)) return null;
@@ -234,7 +242,7 @@ class CoordTransformer {
    * @param {number} wgs84Position.longitude - The longitude in degrees.
    * @param {number} wgs84Position.latitude - The latitude in degrees.
    * @param {number} wgs84Position.height - The height in meters.
-   * @returns {Cartesian3} The Cartesian coordinates.
+   * @returns {Cesium.Cartesian3} The Cartesian coordinates.
    */
   static transformWGS84ToCartesian(wgs84Position) {
     if (!isValidCartographic(wgs84Position)) return null;

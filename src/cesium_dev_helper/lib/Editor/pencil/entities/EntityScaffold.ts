@@ -4,7 +4,7 @@ import {
   ParsedEntityOptions,
   EditorPluginFunction,
   EventManager,
-  CzmLayer
+  CzmLayer,
 } from '../../../../type';
 
 import * as Cesium from 'cesium';
@@ -15,7 +15,7 @@ export default class EntityScaffold {
   layer: CzmLayer;
   $coords: CoordTransformer;
   viewer: Cesium.Viewer;
-  constructor(arg: { eM: EventManager; layer: CzmLayer; tool?: any; }) {
+  constructor(arg: { eM: EventManager; layer: CzmLayer; tool?: any }) {
     this.$coords = new CoordTransformer();
     this.$eM = arg.eM;
     this.viewer = arg.eM.getViewer();
@@ -24,7 +24,12 @@ export default class EntityScaffold {
   }
   _getCartesian3FromPX(position: Cesium.Cartesian2): Cesium.Cartesian3 {
     /*pixel*/
-    return this.$coords.getCartesianFromScreenPosition(position, this.viewer);
+    let res = this.$coords.getCartesianFromScreenPosition(
+      position,
+      this.viewer
+    );
+
+    return res;
   }
   // 获得屏幕位置的cartesian
 
@@ -61,7 +66,6 @@ export default class EntityScaffold {
       alreadyCreatePolyline = false;
       getStart = () => that._getCartesian3FromPX(movement.position);
       startPointOfStraightLine = getStart();
-      console.log(getStart(), '--->');
       let point = that.layer.entities.add(
         new Cesium.Entity({
           position: startPointOfStraightLine,
@@ -86,9 +90,8 @@ export default class EntityScaffold {
     let afterMouseMove = (
       movement: Cesium.ScreenSpaceEventHandler.MotionEvent
     ) => {
-      getCurrent = () =>
-        that._getCartesian3FromPX(movement.endPosition);
-      // console.log(getCurrent().x - startPointOfStraightLine.x)
+      getCurrent = () => that._getCartesian3FromPX(movement.endPosition);
+
       if (isDrawing && !alreadyCreatePolyline && startPointOfStraightLine) {
         let polyline = that.layer.entities.add(
           new Cesium.Entity({
@@ -103,7 +106,7 @@ export default class EntityScaffold {
                 false
               ),
               width: 2,
-              material: Cesium.Color.RED,
+              material: Cesium.Color.BLACK,
               clampToGround: true,
               distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
                 0.0,

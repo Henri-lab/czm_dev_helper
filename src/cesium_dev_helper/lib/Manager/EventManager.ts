@@ -8,6 +8,7 @@ import {
 } from '../../type';
 
 import * as Cesium from 'cesium';
+import { CoordTransformer } from '../Compute';
 // let Cesium = new Manager().Cesium;
 
 class EventManager extends Manager implements I_EventManagerClass {
@@ -18,8 +19,10 @@ class EventManager extends Manager implements I_EventManagerClass {
   >;
   listenerOfKeyUp: KeyboardEventFunction;
   listenerOfKeyDown: KeyboardEventFunction;
+  $coords: CoordTransformer;
   constructor(viewer: Cesium.Viewer) {
     super(viewer);
+    this.$coords = new CoordTransformer();
     // In most cases,
     // viewer.canvas and viewer.scene.canvas refer to the same <canvas> -'HTML canvas element'.
     // Therefore, both lines of code are effectively doing the same thing,
@@ -51,7 +54,7 @@ class EventManager extends Manager implements I_EventManagerClass {
       });
     };
   }
-  getViewer(){
+  getViewer() {
     return this.viewer;
   }
   getNewHandler() {
@@ -76,30 +79,12 @@ class EventManager extends Manager implements I_EventManagerClass {
           position: Cesium.Cartesian2;
           endPosition: Cesium.Cartesian2;
         }) => {
+          let screenPos = event.position || event.endPosition;
           // 点击处的笛卡尔坐标🗽
-          let pickedPos: Cesium.Cartesian3 | undefined;
-          if (that.viewer.scene.pickPositionSupported) {
-            pickedPos = that.viewer.scene.pickPosition(
-              //被实体遮挡会失效
-              event.position || event.endPosition,
-              pickedPos
-            );
-            if (!pickedPos) {
-              const ray = that.viewer.camera.getPickRay(
-                event.position || event.endPosition
-              );
-              pickedPos = that.viewer.scene.globe.pick(ray, that.viewer.scene);
-            }
-          } else {
-            pickedPos = that.viewer.scene.camera.pickEllipsoid(
-              event.position || event.endPosition,
-              that.viewer.scene.globe.ellipsoid
-            );
-          }
+          let pickedPos: Cesium.Cartesian3 | undefined =
+            that.$coords.getCartesianFromScreenPosition(screenPos, that.viewer);
           // 点击处或者移动处的物体
-          const pickedObj: CzmPickedRes = that.viewer.scene.pick(
-            event.position || event.endPosition
-          );
+          const pickedObj: CzmPickedRes = that.viewer.scene.pick(screenPos);
           // 获取这个eventType需要做什么动作（action）
           const actions = that.eventHandlers.get(eventType);
           //降序 action的优先度越小 越先遍历到 越先执行
