@@ -5,7 +5,9 @@ import {
   I_ParsedEntityOptions,
   I_EntityOption,
 } from './Tool';
-
+export type CzmLayer =
+  | Cesium.DataSource
+  | Cesium.CustomDataSource
 export type mapProvider = Cesium.ImageryProvider | Cesium.TerrainProvider;
 export type CzmViewer = Cesium.Viewer;
 export type LayerManager = I_LayerManagerClass;

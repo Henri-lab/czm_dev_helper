@@ -51,9 +51,6 @@ export default class EntityDrawer
     this.$scaffold = new EntityScaffold({
       eM: this.$eM,
       layer: this._fakeLayer,
-      tool: {
-        _cart3_from_screenpixel_: this._getCartesian3FromPX.bind(this),
-      },
     });
     this.dfSt = StaticMap || undefined; //图片资源path
     this.defaultImageUrl = '';

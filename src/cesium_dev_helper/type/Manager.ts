@@ -15,6 +15,7 @@ export interface I_LayerManagerClass {
   getOwnerOfEntity: (entity: Entity) => ImageryLayer; //this method is static
 }
 export interface I_EventManagerClass {
+  getViewer: () => Cesium.Viewer;
   _addEvent(eventType: any, callback: any, priority?: number): void;
   onMouseClick(callback: any, priority?: number): void;
   onMouseRightClick(callback: any, priority?: number): void;

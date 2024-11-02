@@ -51,6 +51,9 @@ class EventManager extends Manager implements I_EventManagerClass {
       });
     };
   }
+  getViewer(){
+    return this.viewer;
+  }
   getNewHandler() {
     return new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
   }
